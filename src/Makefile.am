@@ -21,3 +21,10 @@ AM_LDFLAGS=`pkg-config --libs guile-1.8` -lssh
 lib_LTLIBRARIES = libguile-ssh.la
 
 libguile_ssh_la_SOURCES = channel.c session.c
+
+## Scheme files
+pkgguilesitedir = $(guilesitedir)/ssh
+
+dist_pkgguilesite_DATA = session.scm channel.scm
+
+ETAGS_DATA = session.scm channel.scm
