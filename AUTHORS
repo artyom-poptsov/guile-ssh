@@ -1,0 +1,9 @@
+Authors of Guile-SSH
+
+* Artyom V. Poptsov <poptsov.artyom@gmail.com>
+
+The libssh that is used by Guile-SSH is initially written by Aris
+Adamantiadis and being developed by developer community.  See AUTHORS
+file that comes along with libssh distribution for full authors list.
+
+Thank you.
