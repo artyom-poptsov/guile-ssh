@@ -1,0 +1,18 @@
+# -*- shell-script -*-
+
+# Backup files
+*\~
+
+# Object files and static libraries
+*.o
+
+# Auto-generated Makefile
+Makefile
+
+config.log
+config.status
+.deps
+autom4te.cache
+
+TAGS
+tags
