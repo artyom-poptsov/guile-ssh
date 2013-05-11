@@ -1,0 +1,5 @@
+			Guile-SSH
+
+Guile-SSH is a library that provides access to the SSH protocol for
+programs written in GNU Guile interpreter.  It is a wrapper to the
+underlying libssh library.
