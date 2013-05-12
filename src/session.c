@@ -91,7 +91,7 @@ guile_ssh_blocking_flush (SCM session_smob, SCM timeout)
 
   c_timeout = scm_to_int (timeout);
 
-  res = scm_blockign_flush (data->ssh_session, c_timeout);
+  res = ssh_blocking_flush (data->ssh_session, c_timeout);
   switch (res)
     {
     case SSH_OK:

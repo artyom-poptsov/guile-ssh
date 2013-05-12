@@ -134,7 +134,7 @@ guile_ssh_channel_pool (SCM channel_smob, SCM is_stderr)
 
   int res; 			/* Result of a function call. */
 
-  SCM_ASSERT (scm_is_boolean (is_stderr), is_stderr, SCM_ARG2, __func__);
+  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG2, __func__);
 
   res = ssh_channel_poll (data->ssh_channel, scm_is_true (is_stderr));
   
@@ -153,29 +153,29 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
   int res; 			/* Result of a function call. */
   char *buffer;			/* Buffer for data. */
   uint32_t c_count;		/* Size of buffer. */
-  SCM data;			/* Obtained data from the channel. */
+  SCM obtained_data;		/* Obtained data from the channel. */
 
   scm_dynwind_begin (0);
 
   SCM_ASSERT (scm_is_unsigned_integer (count, 0, UINT32_MAX), count,
 	      SCM_ARG2, __func__);
-  SCM_ASSERT (scm_is_boolean (is_stderr), is_stderr, SCM_ARG3, __func__);
+  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG3, __func__);
 
   c_count = scm_to_unsigned_integer (count, 0, UINT32_MAX);
 
   buffer = scm_gc_malloc (sizeof (char) * c_count, "data buffer");
   scm_dynwind_free (buffer);
 
-  res = ssh_channel_read (data->ssh_channel, buffer, count, 
+  res = ssh_channel_read (data->ssh_channel, buffer, c_count, 
 			  scm_is_true (is_stderr));
 
   if (res > 0)
     {
-      data = scm_from_locale_string (buffer);
+      obtained_data = scm_from_locale_string (buffer);
     }
   else if (res == 0)
     {
-      data = SCM_BOOL_F;
+      obtained_data = SCM_BOOL_F;
     }
   else
     {
@@ -185,7 +185,7 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
 
   scm_dynwind_end ();
 
-  return data;
+  return obtained_data;
 }
 
 

@@ -1,5 +1,11 @@
 2013-05-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/session.c (guile_ssh_blocking_flush): Fix a misspelled
+	function name: scm_blockign_flush -> ssh_blocking_flush
+	* src/channel.c (guile_ssh_channel_poll): Fix a misspelled
+	function name: scm_is_boolean -> scm_is_bool
+	(guile_ssh_channel_read): Likewise.  Fix variable names.
+
 	* COPYING, INSTALL, NEWS: Add to the repository.
 
 	* AUTHORS: Add to the repository.
