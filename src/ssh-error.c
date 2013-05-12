@@ -18,6 +18,8 @@
  * along with LazyCat.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <libguile.h>
+
 #include "ssh-error.h"
 
 /* Report an error */
