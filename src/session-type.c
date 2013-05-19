@@ -60,10 +60,7 @@ guile_ssh_make_session (void)
 
   session_data->ssh_session = ssh_new ();
   if (session_data->ssh_session == NULL)
-    {
-      ssh_error (__func__, "Couldn't create a new SSH session.",
-                 SCM_BOOL_F, SCM_BOOL_F);
-    }
+    return SCM_BOOL_F;
 
   SCM_NEWSMOB (smob, session_tag, session_data);
 
