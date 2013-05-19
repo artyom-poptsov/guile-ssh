@@ -51,7 +51,8 @@
 	    ssh:connected?
 	    ssh:authenticate-server
 	    ssh:get-public-key-hash
-	    ssh:write-known-host))
+	    ssh:write-known-host
+            ssh:get-error))
 
 (load-extension "libguile-ssh" "init_session")
 
