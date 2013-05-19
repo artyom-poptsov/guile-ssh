@@ -34,7 +34,7 @@ guile_ssh_channel_open_session (SCM channel_smob)
   struct channel_data *data
     = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
 
-  int res; 			/* Result of a function call. */
+  int res;                      /* Result of a function call. */
 
   res = ssh_channel_open_session (data->ssh_channel);
 
@@ -48,8 +48,8 @@ guile_ssh_channel_request_exec (SCM channel_smob, SCM cmd)
   struct channel_data *data
     = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
 
-  int res; 			/* Result of a function call. */
-  char *c_cmd;			/* Command to execute. */
+  int res;                      /* Result of a function call. */
+  char *c_cmd;                  /* Command to execute. */
 
   SCM_ASSERT (scm_is_string (cmd), cmd, SCM_ARG2, __func__);
 
@@ -71,7 +71,7 @@ guile_ssh_channel_request_env (SCM channel_smob, SCM name, SCM value)
 
   char *c_name;
   char *c_value;
-  int res;			/* Result of a function call. */
+  int res;                      /* Result of a function call. */
 
   SCM_ASSERT (scm_is_string (name), name, SCM_ARG2, __func__);
   SCM_ASSERT (scm_is_string (value), value, SCM_ARG3, __func__);
@@ -84,7 +84,7 @@ guile_ssh_channel_request_env (SCM channel_smob, SCM name, SCM value)
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
-/* Poll a channel for data to read.  
+/* Poll a channel for data to read.
  *
  * Return amount of data that can be read, or #f on error.
  */
@@ -94,12 +94,12 @@ guile_ssh_channel_pool (SCM channel_smob, SCM is_stderr)
   struct channel_data *data
     = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
 
-  int res; 			/* Result of a function call. */
+  int res;                      /* Result of a function call. */
 
   SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG2, __func__);
 
   res = ssh_channel_poll (data->ssh_channel, scm_is_true (is_stderr));
-  
+
   if (res >= 0)
     return scm_from_int (res);
   else
@@ -113,15 +113,15 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
   struct channel_data *data
     = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
 
-  int res; 			/* Result of a function call. */
-  char *buffer;			/* Buffer for data. */
-  uint32_t c_count;		/* Size of buffer. */
-  SCM obtained_data;		/* Obtained data from the channel. */
+  int res;                      /* Result of a function call. */
+  char *buffer;                 /* Buffer for data. */
+  uint32_t c_count;             /* Size of buffer. */
+  SCM obtained_data;            /* Obtained data from the channel. */
 
   scm_dynwind_begin (0);
 
   SCM_ASSERT (scm_is_unsigned_integer (count, 0, UINT32_MAX), count,
-	      SCM_ARG2, __func__);
+              SCM_ARG2, __func__);
   SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG3, __func__);
 
   c_count = scm_to_unsigned_integer (count, 0, UINT32_MAX);
@@ -130,11 +130,11 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
   scm_dynwind_free (buffer);
 
   res = ssh_channel_read (data->ssh_channel, buffer, c_count, 
-			  scm_is_true (is_stderr));
+                          scm_is_true (is_stderr));
 
   if (res > 0)
     {
-      buffer[c_count] = 0;	/* Avoid getting garbage in a SCM string */
+      buffer[c_count] = 0;      /* Avoid getting garbage in a SCM string */
       obtained_data = scm_from_locale_string (buffer);
     }
   else if (res == 0)
@@ -145,7 +145,7 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
     {
       /* TODO: Improve error handling. */
       ssh_error (__func__, "Couldn't read data from a channel.",
-		 SCM_BOOL_F, SCM_BOOL_F);
+                 SCM_BOOL_F, SCM_BOOL_F);
     }
 
   scm_dynwind_end ();
@@ -160,7 +160,7 @@ guile_ssh_channel_close (SCM channel_smob)
   struct channel_data *data
     = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
 
-  int res; 			/* Result of a function call. */
+  int res;                      /* Result of a function call. */
 
   res = ssh_channel_close (data->ssh_channel);
 
@@ -176,7 +176,7 @@ guile_ssh_channel_is_open_p (SCM channel_smob)
   struct channel_data *data
     = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
 
-  int res; 			/* Result of a function call. */
+  int res;                      /* Result of a function call. */
 
   res = ssh_channel_is_open (data->ssh_channel);
 
@@ -189,10 +189,10 @@ guile_ssh_channel_is_eof_p (SCM channel_smob)
   struct channel_data *data
     = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
 
-  int res; 			/* Result of a function call. */
+  int res;                      /* Result of a function call. */
 
   res = ssh_channel_is_eof (data->ssh_channel);
-  
+
   return res ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
@@ -202,17 +202,19 @@ void
 init_channel_func (void)
 {
   scm_c_define_gsubr ("ssh:channel-open-session", 1, 0, 0,
-		      guile_ssh_channel_open_session);
+                      guile_ssh_channel_open_session);
   scm_c_define_gsubr ("ssh:channel-request-exec", 2, 0, 0,
-		      guile_ssh_channel_request_exec);
+                      guile_ssh_channel_request_exec);
   scm_c_define_gsubr ("ssh:channel-request-env",  3, 0, 0,
-		      guile_ssh_channel_request_env);
-  
-  scm_c_define_gsubr ("ssh:close-channel!", 1, 0, 0, guile_ssh_channel_close);  
+                      guile_ssh_channel_request_env);
+
+  scm_c_define_gsubr ("ssh:close-channel!", 1, 0, 0, guile_ssh_channel_close);
 
   scm_c_define_gsubr ("ssh:channel-poll",   2, 0, 0, guile_ssh_channel_pool);
   scm_c_define_gsubr ("ssh:channel-read",   3, 0, 0, guile_ssh_channel_read);
 
-  scm_c_define_gsubr ("ssh:channel-open?",  1, 0, 0, guile_ssh_channel_is_open_p);
-  scm_c_define_gsubr ("ssh:channel-eof?",   1, 0, 0, guile_ssh_channel_is_eof_p);
+  scm_c_define_gsubr ("ssh:channel-open?",  1, 0, 0,
+                      guile_ssh_channel_is_open_p);
+  scm_c_define_gsubr ("ssh:channel-eof?",   1, 0, 0,
+                      guile_ssh_channel_is_eof_p);
 }

@@ -3,7 +3,7 @@
  * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * libguile-ssh is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -56,13 +56,13 @@ guile_ssh_make_session (void)
 
   struct session_data *session_data
     = (struct session_data *) scm_gc_malloc (sizeof (struct session_data),
-					     "session");
+                                             "session");
 
   session_data->ssh_session = ssh_new ();
   if (session_data->ssh_session == NULL)
     {
       ssh_error (__func__, "Couldn't create a new SSH session.",
-		 SCM_BOOL_F, SCM_BOOL_F);
+                 SCM_BOOL_F, SCM_BOOL_F);
     }
 
   SCM_NEWSMOB (smob, session_tag, session_data);
@@ -75,7 +75,8 @@ guile_ssh_make_session (void)
 void
 init_session_type (void)
 {
-  session_tag = scm_make_smob_type ("ssh:session", sizeof (struct session_data));
+  session_tag = scm_make_smob_type ("ssh:session", 
+                                    sizeof (struct session_data));
   scm_set_smob_mark (session_tag, mark_session);
   scm_set_smob_free (session_tag, free_session);
 

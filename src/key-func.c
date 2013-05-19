@@ -3,7 +3,7 @@
  * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * libguile-ssh is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -20,15 +20,11 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
-/* Debug */
-#include <assert.h>
-#include <string.h>
-#include <arpa/inet.h>
 
 #include "key-type.h"
 #include "session-type.h"
 
-/* Convert SSH public key to a scheme string. 
+/* Convert SSH public key to a scheme string.
  *
  * TODO: Probably should be replaced with a simply print function.
  */
@@ -40,7 +36,7 @@ guile_ssh_public_key_to_string (SCM key_smob)
   SCM ret;
 
   SCM_ASSERT (scm_to_bool (guile_ssh_is_public_key_p (key_smob)),
-	      key_smob, SCM_ARG4, __func__);
+              key_smob, SCM_ARG4, __func__);
 
   data = (struct key_data *) SCM_SMOB_DATA (key_smob);
 
@@ -62,7 +58,7 @@ guile_ssh_private_key_from_file (SCM session_smob, SCM filename)
   struct key_data *key_data;
   char *c_filename;
 
-  char *passphrase = NULL;	/* No passphrase TODO: Fix it. */
+  char *passphrase = NULL;      /* No passphrase TODO: Fix it. */
 
   scm_dynwind_begin (0);
 
@@ -71,21 +67,23 @@ guile_ssh_private_key_from_file (SCM session_smob, SCM filename)
 
   session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
   key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
-						"ssh key");
+                                                "ssh key");
 
   c_filename = scm_to_locale_string (filename);
   scm_dynwind_free (c_filename);
 
   key_data->key_type = KEY_TYPE_PRIVATE;
   key_data->ssh_private_key = privatekey_from_file (session_data->ssh_session,
-						    c_filename,
-						    0,	/* Detect key type automatically */
-						    passphrase);
+                                                    c_filename,
+                                                    0, /* Detect key type
+                                                          automatically */
+                                                    passphrase);
   if (key_data->ssh_private_key == NULL)
     {
-      scm_display (scm_from_locale_string (c_filename), scm_current_output_port ());
+      scm_display (scm_from_locale_string (c_filename),
+                   scm_current_output_port ());
       ssh_error (__func__, ssh_get_error (session_data->ssh_session),
-		 SCM_BOOL_F, SCM_BOOL_F);
+                 SCM_BOOL_F, SCM_BOOL_F);
     }
 
   SCM_NEWSMOB (key_smob, key_tag, key_data);
@@ -104,12 +102,12 @@ guile_ssh_public_key_from_private_key (SCM key_smob)
   SCM smob;
 
   SCM_ASSERT (scm_to_bool (guile_ssh_is_private_key_p (key_smob)),
-	      key_smob, SCM_ARG4, __func__);
+              key_smob, SCM_ARG4, __func__);
 
   private_key_data = (struct key_data *) SCM_SMOB_DATA (key_smob);
 
   public_key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
-						       "ssh key");
+                                                       "ssh key");
 
   public_key_data->key_type = KEY_TYPE_PUBLIC;
 
@@ -148,8 +146,9 @@ guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
   scm_dynwind_free (c_filename);
 
   public_key_str = publickey_from_file (session_data->ssh_session,
-  					c_filename,
-  					NULL);	/* Detect key type automatically */
+                                        c_filename,
+                                        /* Detect key type automatically */
+                                        NULL);
 
   if (public_key_str == NULL)
     return SCM_BOOL_F;
@@ -164,12 +163,12 @@ guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
 void
 init_key_func (void)
 {
-  scm_c_define_gsubr ("ssh:public-key->string", 1, 0, 0, 
-		      guile_ssh_public_key_to_string);
+  scm_c_define_gsubr ("ssh:public-key->string", 1, 0, 0,
+                      guile_ssh_public_key_to_string);
   scm_c_define_gsubr ("ssh:public-key-from-file", 2, 0, 0,
-		      guile_ssh_public_key_from_file);
+                      guile_ssh_public_key_from_file);
   scm_c_define_gsubr ("ssh:private-key->public-key", 1, 0, 0,
-		      guile_ssh_public_key_from_private_key);
+                      guile_ssh_public_key_from_private_key);
   scm_c_define_gsubr ("ssh:private-key-from-file", 2, 0, 0,
-		      guile_ssh_private_key_from_file);
+                      guile_ssh_private_key_from_file);
 }

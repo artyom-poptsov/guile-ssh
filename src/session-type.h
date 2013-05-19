@@ -1,7 +1,7 @@
 /* Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * libguile-ssh is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -34,4 +34,4 @@ SCM guile_ssh_make_session (void);
 
 void init_session_type (void);
 
-#endif	/* ifndef __SESSION_TYPE_H__ */
+#endif  /* ifndef __SESSION_TYPE_H__ */

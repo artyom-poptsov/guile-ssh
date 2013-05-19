@@ -22,7 +22,7 @@
 ;;; Commentary:
 
 ;; This module contains API that is used for SSH key management.
-;; 
+;;
 ;; These methods are exported:
 ;;
 ;;   ssh:key

@@ -3,7 +3,7 @@
  * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * libguile-ssh is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -65,8 +65,8 @@ guile_ssh_blocking_flush (SCM session_smob, SCM timeout)
 {
   struct session_data *data;
 
-  int c_timeout;		/* Timeout */
-  int res;			/* Result of a function call. */
+  int c_timeout;                /* Timeout */
+  int res;                      /* Result of a function call. */
 
   /* Check types */
   scm_assert_smob_type (session_tag, session_smob);
@@ -114,7 +114,7 @@ set_uint64_opt (ssh_session session, int type, SCM value)
   uint64_t c_value;
 
   SCM_ASSERT (scm_is_unsigned_integer (value, 0, UINT64_MAX), value,
-	      SCM_ARG3, __func__);
+              SCM_ARG3, __func__);
 
   c_value = scm_to_uint64 (value);
   return ssh_options_set (session, type, &c_value);;
@@ -125,8 +125,8 @@ set_uint32_opt (ssh_session session, int type, SCM value)
 {
   unsigned int c_value;
 
-  SCM_ASSERT (scm_is_unsigned_integer (value, 0, UINT32_MAX), value, 
-	      SCM_ARG3, __func__);
+  SCM_ASSERT (scm_is_unsigned_integer (value, 0, UINT32_MAX), value,
+              SCM_ARG3, __func__);
 
   c_value = c_value = scm_to_uint32 (value);
   return ssh_options_set (session, type, &c_value);
@@ -158,7 +158,7 @@ set_bool_opt (ssh_session session, int type, SCM value)
 static int
 set_option (ssh_session session, int type, SCM value)
 {
-  int res = 0;			/* Result of an option setting */
+  int res = 0; /* Result of an option setting */
 
   switch (type)
     {
@@ -204,10 +204,10 @@ set_option (ssh_session session, int type, SCM value)
     }
 
  notsupported:
-  guile_ssh_error1 (__func__, "Operation is not supported yet: %a~%", 
-		    scm_from_int (type));
+  guile_ssh_error1 (__func__, "Operation is not supported yet: %a~%",
+                    scm_from_int (type));
 
-  return -1;			/* ERROR */
+  return -1;                    /* ERROR */
 }
 
 /* Set a SSH option. */
@@ -215,10 +215,10 @@ SCM
 guile_ssh_session_set (SCM session_smob, SCM type, SCM value)
 {
   struct session_data* data;
-  char *c_type_name;		        /* Name of an option */
-  struct option *option;	        /* SSH option mapping */
-  int is_found = 0;			/* Is a parameter found? */
-  int res;				/* Result of a function call */
+  char *c_type_name;                    /* Name of an option */
+  struct option *option;                /* SSH option mapping */
+  int is_found = 0;                     /* Is a parameter found? */
+  int res;                              /* Result of a function call */
 
   SCM_ASSERT (scm_is_symbol (type), type, SCM_ARG2, __func__);
   scm_assert_smob_type (session_tag, session_smob);
@@ -230,10 +230,10 @@ guile_ssh_session_set (SCM session_smob, SCM type, SCM value)
   for (option = session_options; option->symbol != NULL; ++option)
     {
       if (! strcmp (c_type_name, option->symbol))
-	{
-	  is_found = 1;
-	  break;
-	}
+        {
+          is_found = 1;
+          break;
+        }
     }
 
   if(! is_found)
@@ -296,7 +296,7 @@ guile_ssh_get_protocol_version (SCM session_smob)
 {
   struct session_data* data;
   SCM ret;
-  
+
   scm_assert_smob_type (session_tag, session_smob);
 
   data = (struct session_data *) SCM_SMOB_DATA (session_smob);
@@ -437,16 +437,16 @@ init_session_func (void)
   scm_c_define_gsubr ("ssh:blocking-flush!", 2, 0, 0, guile_ssh_blocking_flush);
   scm_c_define_gsubr ("ssh:session-set!",    3, 0, 0, guile_ssh_session_set);
   scm_c_define_gsubr ("ssh:get-protocol-version", 1, 0, 0, 
-		      guile_ssh_get_protocol_version);
+                      guile_ssh_get_protocol_version);
   scm_c_define_gsubr ("ssh:connect!",        1, 0, 0, guile_ssh_connect);
   scm_c_define_gsubr ("ssh:disconnect!",     1, 0, 0, guile_ssh_disconnect);
   scm_c_define_gsubr ("ssh:get-error",       1, 0, 0, guile_ssh_get_error);
   scm_c_define_gsubr ("ssh:authenticate-server", 1, 0, 0,
-		      guile_ssh_authenticate_server);
+                      guile_ssh_authenticate_server);
   scm_c_define_gsubr ("ssh:get-public-key-hash", 1, 0, 0,
-		      guile_ssh_get_public_key_hash);
+                      guile_ssh_get_public_key_hash);
   scm_c_define_gsubr ("ssh:write-known-host", 1, 0, 0,
-		      guile_ssh_write_known_host);
+                      guile_ssh_write_known_host);
 
   scm_c_define_gsubr ("ssh:connected?",      1, 0, 0, guile_ssh_is_connected_p);
 }

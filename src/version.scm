@@ -23,9 +23,9 @@
 
 ;; This module provides functions that is used for getting information
 ;; about current versions.
-;; 
+;;
 ;; These methods are exported:
-;; 
+;;
 ;;   ssh:get-libssh-version
 ;;   ssh:get-library-version
 ;;

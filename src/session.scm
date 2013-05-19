@@ -22,9 +22,9 @@
 ;;; Commentary:
 
 ;; This module contains API that is used for SSH session management.
-;; 
+;;
 ;; These methods are exported:
-;; 
+;;
 ;;   ssh:session
 ;;   ssh:make-session
 ;;   ssh:blocking-flush!
@@ -42,16 +42,16 @@
 
 (define-module (ssh session)
   #:export (ssh:session
-            ssh:make-session
-            ssh:blocking-flush!
-            ssh:session-set!
-            ssh:get-protocol-version
-            ssh:connect!
-            ssh:disconnect!
-            ssh:connected?
-            ssh:authenticate-server
-            ssh:get-public-key-hash
-            ssh:write-known-host))
+	    ssh:make-session
+	    ssh:blocking-flush!
+	    ssh:session-set!
+	    ssh:get-protocol-version
+	    ssh:connect!
+	    ssh:disconnect!
+	    ssh:connected?
+	    ssh:authenticate-server
+	    ssh:get-public-key-hash
+	    ssh:write-known-host))
 
 (load-extension "libguile-ssh" "init_session")
 

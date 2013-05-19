@@ -1,7 +1,7 @@
 /* Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * libguile-ssh is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -38,4 +38,4 @@ SCM guile_ssh_is_channel_p (SCM obj);
 
 void init_channel_type (void);
 
-#endif	/* ifndef __CHANNEL_TYPE_H__ */
+#endif /* ifndef __CHANNEL_TYPE_H__ */

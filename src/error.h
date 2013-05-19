@@ -1,7 +1,7 @@
 /* Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * libguile-ssh is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -21,7 +21,8 @@
 
 #define GUILE_SSH_ERROR "guile-ssh-error"
 
-inline void guile_ssh_error (const char *proc, const char *msg, SCM args, SCM rest);
+inline void guile_ssh_error (const char *proc, const char *msg,
+                                     SCM args, SCM rest);
 inline void guile_ssh_error1 (const char *proc, const char *msg, SCM args);
 
 #endif /* ifndef __GUILE_SSH_ERROR_H__ */

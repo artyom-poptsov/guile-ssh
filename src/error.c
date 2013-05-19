@@ -3,7 +3,7 @@
  * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * LazyCat is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -34,7 +34,7 @@ inline void
 guile_ssh_error1 (const char *proc, const char *msg, SCM args)
 {
   scm_error (scm_from_locale_symbol (GUILE_SSH_ERROR), proc, msg, args,
-	     SCM_BOOL_F);
+             SCM_BOOL_F);
 }
 
 /* ssh-error.c ends here */

@@ -23,9 +23,9 @@
 
 ;; This module contains API that is used for working with SSH
 ;; channels.
-;; 
+;;
 ;; These methods are exported:
-;; 
+;;
 ;;   ssh:channel
 ;;   ssh:channel?
 ;;   ssh:make-channel

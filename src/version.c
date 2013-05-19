@@ -3,7 +3,7 @@
  * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * libguile-ssh is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -40,9 +40,9 @@ void
 init_version (void)
 {
   scm_c_define_gsubr ("ssh:get-libssh-version", 0, 0, 0,
-		      guile_ssh_get_libssh_version);
+                      guile_ssh_get_libssh_version);
   scm_c_define_gsubr ("ssh:get-library-version", 0, 0, 0,
-		      guile_ssh_get_library_version);
+                      guile_ssh_get_library_version);
 }
 
 /* version.c ends here */

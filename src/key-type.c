@@ -3,7 +3,7 @@
  * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * libguile-ssh is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -98,8 +98,7 @@ guile_ssh_is_private_key_p (SCM key_smob)
 void
 init_key_type (void)
 {
-  key_tag 
-    = scm_make_smob_type ("ssh:key", sizeof (struct key_data));
+  key_tag = scm_make_smob_type ("ssh:key", sizeof (struct key_data));
   scm_set_smob_mark (key_tag, scm_markcdr);
   scm_set_smob_free (key_tag, free_key_smob);
 

@@ -20,8 +20,8 @@
 #define __AUTH_H__
 
 SCM guile_ssh_userauth_pubkey (SCM session_smob, SCM username, 
-			       SCM public_key, SCM private_key_smob);
+                               SCM public_key, SCM private_key_smob);
 
 void init_auth_func (void);
 
-#endif	/* ifndef __AUTH_H__ */
+#endif /* ifndef __AUTH_H__ */
