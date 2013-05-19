@@ -21,13 +21,44 @@ AM_INIT_AUTOMAKE
 
 AC_PROG_CC
 
+AC_ARG_WITH([guilesitedir],
+            [AS_HELP_STRING([--with-guilesitedir],
+                            [use the specified installation path for Guile modules])],
+            [case "x$withval" in
+             xyes|xno) guilesitedir="";;
+             *)        guilesitedir="$withval";;
+             esac],
+             [guilesitedir=""])
+
 GUILE_PROGS
 GUILE_FLAGS
+GUILE_SITE_DIR
+
+LT_INIT()
+
+pkgdatadir="$datadir/$PACKAGE"
+if test "x$guilesitedir" = "x"; then
+   guilesitedir="$pkgdatadir"
+fi
+AC_SUBST([guilesitedir])
+
+LIBGUILE_SSH_INTERFACE="0:0:0"
+AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 # Check for libssh
 AC_SEARCH_LIBS([ssh_new], [ssh], [], AC_MSG_ERROR([libssh is not found.], [1]))
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile])
 
 # Generate a Makefile, based on the results.
-AC_OUTPUT()
+AC_OUTPUT
+
+if test "$guilesitedir" != "$GUILE_SITE"; then
+   # Guile has a different prefix than this module
+   AC_MSG_WARN([]
+   [The Guile modules will be installed in ${guilesitedir}.]
+   [You should probably re-run `configure' with]
+   [`--with-guilesitedir=$GUILE_SITE']
+   [Otherwise, you will have to adjust the `GUILE_LOAD_PATH' environment]
+   [variable.])
+fi

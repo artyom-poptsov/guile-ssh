@@ -1,4 +1,4 @@
-;;; session.scm -- SSH session management.
+;;; channel.scm -- API for SSH user authentication.
 
 ;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
@@ -21,38 +21,21 @@
 
 ;;; Commentary:
 
-;; This module contains API that is used for SSH session management.
+;; This module contains API that is used for SSH user authentication.
 ;; 
 ;; These methods are exported:
-;; 
-;;   ssh:session
-;;   ssh:make-session
-;;   ssh:blocking-flush!
-;;   ssh:session-set!
-;;   ssh:get-version
-;;   ssh:connect!
-;;   ssh:disconnect!
-;;   ssh:connected?
-;;   ssh:authenticate-server
-;;   ssh:get-public-key-hash
-;;   ssh:write-known-host))
+;;
+;;   ssh:userauth-pubkey!
+;;   ssh:userauth-password!
 
 
 ;;; Code:
 
-(define-module (ssh session)
-  #:export (ssh:session
-            ssh:make-session
-            ssh:blocking-flush!
-            ssh:session-set!
-            ssh:get-protocol-version
-            ssh:connect!
-            ssh:disconnect!
-            ssh:connected?
-            ssh:authenticate-server
-            ssh:get-public-key-hash
-            ssh:write-known-host))
+(define-module (ssh auth)
+  #:use-module (ssh session)
+  #:export (ssh:userauth-pubkey!
+            ssh:userauth-password!))
 
-(load-extension "libguile-ssh" "init_session")
+(load-extension "libguile-ssh" "init_auth_func")
 
-;;; session.scm ends here
+;;; channel.scm ends here.

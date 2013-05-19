@@ -1,4 +1,4 @@
-;;; session.scm -- SSH session management.
+;;; version.scm -- Get information about versions.
 
 ;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
@@ -21,38 +21,31 @@
 
 ;;; Commentary:
 
-;; This module contains API that is used for SSH session management.
+;; This module provides functions that is used for getting information
+;; about current versions.
 ;; 
 ;; These methods are exported:
 ;; 
-;;   ssh:session
-;;   ssh:make-session
-;;   ssh:blocking-flush!
-;;   ssh:session-set!
-;;   ssh:get-version
-;;   ssh:connect!
-;;   ssh:disconnect!
-;;   ssh:connected?
-;;   ssh:authenticate-server
-;;   ssh:get-public-key-hash
-;;   ssh:write-known-host))
+;;   ssh:get-libssh-version
+;;   ssh:get-library-version
+;;
+;; ssh:get-libssh-version returns libssh version as a string in the
+;; follwing format:
+;;
+;;   <version> ::= <major> "." <minor> "." <micro>
+;;
+;; For example, "0.5.2".
+;;
+;; ssh:get-library-version returns version of the libguile-ssh
+;; library as a string.
 
 
 ;;; Code:
 
-(define-module (ssh session)
-  #:export (ssh:session
-            ssh:make-session
-            ssh:blocking-flush!
-            ssh:session-set!
-            ssh:get-protocol-version
-            ssh:connect!
-            ssh:disconnect!
-            ssh:connected?
-            ssh:authenticate-server
-            ssh:get-public-key-hash
-            ssh:write-known-host))
+(define-module (ssh version)
+  #:export (ssh:get-libssh-version
+            ssh:get-library-version))
 
-(load-extension "libguile-ssh" "init_session")
+(load-extension "libguile-ssh" "init_version")
 
 ;;; session.scm ends here

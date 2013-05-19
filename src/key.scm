@@ -1,4 +1,4 @@
-;;; session.scm -- SSH session management.
+;;; key.scm -- SSH keys management.
 
 ;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
@@ -21,38 +21,32 @@
 
 ;;; Commentary:
 
-;; This module contains API that is used for SSH session management.
+;; This module contains API that is used for SSH key management.
 ;; 
 ;; These methods are exported:
-;; 
-;;   ssh:session
-;;   ssh:make-session
-;;   ssh:blocking-flush!
-;;   ssh:session-set!
-;;   ssh:get-version
-;;   ssh:connect!
-;;   ssh:disconnect!
-;;   ssh:connected?
-;;   ssh:authenticate-server
-;;   ssh:get-public-key-hash
-;;   ssh:write-known-host))
+;;
+;;   ssh:key
+;;   ssh:key?
+;;   ssh:public-key?
+;;   ssh:private-key?
+;;   ssh:public-key->string
+;;   ssh:public-key-from-file
+;;   ssh:private-key->public-key
+;;   ssh:private-key-from-file
 
 
 ;;; Code:
 
-(define-module (ssh session)
-  #:export (ssh:session
-            ssh:make-session
-            ssh:blocking-flush!
-            ssh:session-set!
-            ssh:get-protocol-version
-            ssh:connect!
-            ssh:disconnect!
-            ssh:connected?
-            ssh:authenticate-server
-            ssh:get-public-key-hash
-            ssh:write-known-host))
+(define-module (ssh key)
+  #:export (ssh:key
+            ssh:key?
+            ssh:public-key?
+            ssh:private-key?
+            ssh:public-key->string
+            ssh:public-key-from-file
+            ssh:private-key->public-key
+            ssh:private-key-from-file))
 
-(load-extension "libguile-ssh" "init_session")
+(load-extension "libguile-ssh" "init_key")
 
-;;; session.scm ends here
+;;; key.scm ends here.

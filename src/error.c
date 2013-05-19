@@ -20,14 +20,21 @@
 
 #include <libguile.h>
 
-#include "ssh-error.h"
+#include "error.h"
 
 /* Report an error */
 inline void
-ssh_error (const char *subr, char *message, SCM args, SCM rest)
+guile_ssh_error (const char *proc, const char *msg, SCM args, SCM rest)
 {
-  SCM key = scm_from_locale_symbol (GUILE_SSH_EXCEPTION);
-  scm_error (key, subr, message, args, rest);
+  scm_error (scm_from_locale_symbol (GUILE_SSH_ERROR), proc, msg, args, rest);
+}
+
+/* Report an error (shorter version). */
+inline void
+guile_ssh_error1 (const char *proc, const char *msg, SCM args)
+{
+  scm_error (scm_from_locale_symbol (GUILE_SSH_ERROR), proc, msg, args,
+	     SCM_BOOL_F);
 }
 
 /* ssh-error.c ends here */

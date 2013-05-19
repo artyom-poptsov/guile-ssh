@@ -1,4 +1,4 @@
-/* channel.c -- SSH channel smob.
+/* channel-func.c -- SSH channel manipulation functions.
  *
  * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
@@ -15,79 +15,19 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with libguile-ssh.  If not, see <http://www.gnu.org/licenses/>.
+ * along with libguile-ssh.  If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 
 #include <libguile.h>
 #include <libssh/libssh.h>
 
-#include "session.h"
-#include "channel.h"
-#include "ssh-error.h"
-
-static scm_t_bits channel_tag;	/* Smob tag. */
+#include "channel-type.h"
 
 
-/* Smob specific procedures */
+/* Functions */
 
-SCM
-mark_channel (SCM channel_smob)
-{
-  return SCM_BOOL_F;
-}
-
-size_t
-free_channel (SCM channel_smob)
-{
-  struct channel_data *data
-    = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
-
-  ssh_channel_free (data->ssh_channel);
-
-  return 0;
-}
-
-/* Allocate a new SSH channel. */
-SCM
-guile_ssh_make_channel (SCM session_smob)
-{
-  SCM smob;
-
-  struct session_data *session_data
-    = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
-  struct channel_data *channel_data 
-    = (struct channel_data *) scm_gc_malloc (sizeof (struct channel_data),
-					     "channel");
-  channel_data->ssh_channel = ssh_channel_new (session_data->ssh_session);
-  if (channel_data->ssh_channel == NULL)
-    {
-      ssh_error (__func__, "Couldn't allocate a new channel.",
-		 SCM_BOOL_F, SCM_BOOL_F);
-    }
-
-  SCM_NEWSMOB (smob, channel_tag, channel_data);
-
-  return smob;
-}
-
-
-/* SSH channel specific procedures. */
-
-/* Close a channel. */
-SCM
-guile_ssh_channel_close (SCM channel_smob)
-{
-  struct channel_data *data
-    = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
-
-  int res; 			/* Result of a function call. */
-
-  res = ssh_channel_close (data->ssh_channel);
-
-  return res ? SCM_BOOL_T : SCM_BOOL_F;
-}
-
+/* Open a new session */
 SCM
 guile_ssh_channel_open_session (SCM channel_smob)
 {
@@ -101,7 +41,7 @@ guile_ssh_channel_open_session (SCM channel_smob)
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
-/* Run a shell command without an interactive shell. */
+/* Run a shell command CMD without an interactive shell. */
 SCM
 guile_ssh_channel_request_exec (SCM channel_smob, SCM cmd)
 {
@@ -118,6 +58,28 @@ guile_ssh_channel_request_exec (SCM channel_smob, SCM cmd)
   res = ssh_channel_request_exec (data->ssh_channel, c_cmd);
 
   free (c_cmd);
+
+  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+}
+
+/* Set an environment variable NAME to value VALUE */
+SCM
+guile_ssh_channel_request_env (SCM channel_smob, SCM name, SCM value)
+{
+  struct channel_data *data
+    = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
+
+  char *c_name;
+  char *c_value;
+  int res;			/* Result of a function call. */
+
+  SCM_ASSERT (scm_is_string (name), name, SCM_ARG2, __func__);
+  SCM_ASSERT (scm_is_string (value), value, SCM_ARG3, __func__);
+
+  c_name  = scm_to_locale_string (name);
+  c_value = scm_to_locale_string (value);
+
+  res = ssh_channel_request_env (data->ssh_channel, c_name, c_value);
 
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
@@ -144,6 +106,7 @@ guile_ssh_channel_pool (SCM channel_smob, SCM is_stderr)
     return SCM_BOOL_F;
 }
 
+/* Read data from the channel. */
 SCM
 guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
 {
@@ -171,6 +134,7 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
 
   if (res > 0)
     {
+      buffer[c_count] = 0;	/* Avoid getting garbage in a SCM string */
       obtained_data = scm_from_locale_string (buffer);
     }
   else if (res == 0)
@@ -179,6 +143,7 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
     }
   else
     {
+      /* TODO: Improve error handling. */
       ssh_error (__func__, "Couldn't read data from a channel.",
 		 SCM_BOOL_F, SCM_BOOL_F);
     }
@@ -188,11 +153,25 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
   return obtained_data;
 }
 
+/* Close a channel. */
+SCM
+guile_ssh_channel_close (SCM channel_smob)
+{
+  struct channel_data *data
+    = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
+
+  int res; 			/* Result of a function call. */
+
+  res = ssh_channel_close (data->ssh_channel);
+
+  return res ? SCM_BOOL_T : SCM_BOOL_F;
+}
+
 
 /* Predicates */
 
 SCM
-guile_ssh_channel_is_open (SCM channel_smob)
+guile_ssh_channel_is_open_p (SCM channel_smob)
 {
   struct channel_data *data
     = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
@@ -205,7 +184,7 @@ guile_ssh_channel_is_open (SCM channel_smob)
 }
 
 SCM
-guile_ssh_channel_is_eof (SCM channel_smob)
+guile_ssh_channel_is_eof_p (SCM channel_smob)
 {
   struct channel_data *data
     = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
@@ -218,24 +197,22 @@ guile_ssh_channel_is_eof (SCM channel_smob)
 }
 
 
-/* channel smob initialization. */
+/* Initialize channel related functions. */
 void
-init_channel_type (void)
+init_channel_func (void)
 {
-  channel_tag = scm_make_smob_type ("ssh:channel", sizeof (struct channel_data));
-  scm_set_smob_mark (channel_tag, mark_channel);
-  scm_set_smob_free (channel_tag, free_channel); 
-
-  scm_c_define_gsubr ("ssh:make-channel",   1, 0, 0, guile_ssh_make_channel);
-  scm_c_define_gsubr ("ssh:close-channel!", 1, 0, 0, guile_ssh_channel_close);
+  scm_c_define_gsubr ("ssh:channel-open-session", 1, 0, 0,
+		      guile_ssh_channel_open_session);
   scm_c_define_gsubr ("ssh:channel-request-exec", 2, 0, 0,
 		      guile_ssh_channel_request_exec);
+  scm_c_define_gsubr ("ssh:channel-request-env",  3, 0, 0,
+		      guile_ssh_channel_request_env);
+  
+  scm_c_define_gsubr ("ssh:close-channel!", 1, 0, 0, guile_ssh_channel_close);  
 
   scm_c_define_gsubr ("ssh:channel-poll",   2, 0, 0, guile_ssh_channel_pool);
   scm_c_define_gsubr ("ssh:channel-read",   3, 0, 0, guile_ssh_channel_read);
 
-  scm_c_define_gsubr ("ssh:channel-open?",  1, 0, 0, guile_ssh_channel_is_open);
-  scm_c_define_gsubr ("ssh:channel-eof?",   1, 0, 0, guile_ssh_channel_is_eof);
+  scm_c_define_gsubr ("ssh:channel-open?",  1, 0, 0, guile_ssh_channel_is_open_p);
+  scm_c_define_gsubr ("ssh:channel-eof?",   1, 0, 0, guile_ssh_channel_is_eof_p);
 }
-
-/* channel.c ends here */
