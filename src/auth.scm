@@ -1,4 +1,4 @@
-;;; channel.scm -- API for SSH user authentication.
+;;; auth.scm -- API for SSH user authentication.
 
 ;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
@@ -38,4 +38,4 @@
 
 (load-extension "libguile-ssh" "init_auth_func")
 
-;;; channel.scm ends here.
+;;; auth.scm ends here.
