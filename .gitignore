@@ -6,6 +6,8 @@
 # Object files and static libraries
 *.o
 *.lo
+*.la
+src/.libs
 
 # Auto-generated Makefile
 Makefile
