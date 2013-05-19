@@ -117,7 +117,7 @@ set_uint64_opt (ssh_session session, int type, SCM value)
               SCM_ARG3, __func__);
 
   c_value = scm_to_uint64 (value);
-  return ssh_options_set (session, type, &c_value);;
+  return ssh_options_set (session, type, &c_value);
 }
 
 static inline int
