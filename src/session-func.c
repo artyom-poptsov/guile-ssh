@@ -59,7 +59,9 @@ static struct option session_options[] = {
   { NULL,                -1 }
 };
 
-/* Blocking flush of the outgoing buffer. */
+/* Blocking flush of the outgoing buffer.  
+
+   Return on of the following symbols: 'ok, 'error. 'again. */
 SCM
 guile_ssh_blocking_flush (SCM session_smob, SCM timeout)
 {
@@ -93,6 +95,7 @@ guile_ssh_blocking_flush (SCM session_smob, SCM timeout)
 
 /* Set SSH session options */
 
+/* Convert VALUE to a string and pass it to ssh_options_set */
 static inline int
 set_string_opt (ssh_session session, int type, SCM value)
 {
@@ -108,6 +111,7 @@ set_string_opt (ssh_session session, int type, SCM value)
   return ret;
 }
 
+/* Convert VALUE to uint64 and pass it to ssh_options_set */
 static inline int
 set_uint64_opt (ssh_session session, int type, SCM value)
 {
@@ -120,6 +124,7 @@ set_uint64_opt (ssh_session session, int type, SCM value)
   return ssh_options_set (session, type, &c_value);
 }
 
+/* Convert VALUE to uint32 and pass it to ssh_options_set */
 static inline int
 set_uint32_opt (ssh_session session, int type, SCM value)
 {
@@ -132,6 +137,7 @@ set_uint32_opt (ssh_session session, int type, SCM value)
   return ssh_options_set (session, type, &c_value);
 }
 
+/* Convert VALUE to int32 and pass it to ssh_options_set */
 static inline int
 set_int32_opt (ssh_session session, int type, SCM value)
 {
@@ -143,6 +149,9 @@ set_int32_opt (ssh_session session, int type, SCM value)
   return ssh_options_set (session, type, &c_value);
 }
 
+/* Convert VALUE to integer that represents a boolan value (0
+   considered as false, any other value is true), and pass it to
+   ssh_options_set */
 static inline int
 set_bool_opt (ssh_session session, int type, SCM value)
 {
@@ -154,6 +163,8 @@ set_bool_opt (ssh_session session, int type, SCM value)
   return ssh_options_set (session, type, &bool);
 }
 
+/* Convert VALUE to a socket file descriptor and pass it to
+   ssh_options_set */
 static inline int
 set_port_opt (ssh_session session, int type, SCM value)
 {
@@ -216,7 +227,7 @@ set_option (ssh_session session, int type, SCM value)
   return -1;                    /* ERROR */
 }
 
-/* Set a SSH option. */
+/* Set a SSH option.  Return #t on success, #f on error. */
 SCM
 guile_ssh_session_set (SCM session_smob, SCM type, SCM value)
 {
@@ -252,7 +263,9 @@ guile_ssh_session_set (SCM session_smob, SCM type, SCM value)
   return (res == 0) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
-/* Connect to the SSH server. */
+/* Connect to the SSH server. 
+
+   Return one of the following symbols: 'ok, 'error, 'again */
 SCM
 guile_ssh_connect (SCM session_smob)
 {
@@ -278,7 +291,8 @@ guile_ssh_connect (SCM session_smob)
     }
 }
 
-/* Disconnect from a session (client or server). */
+/* Disconnect from a session (client or server). 
+   Return value is undefined.*/
 SCM
 guile_ssh_disconnect (SCM session_smob)
 {
@@ -333,6 +347,10 @@ guile_ssh_get_error (SCM session_smob)
   return error;
 }
 
+/* Authenticate the server.  
+
+   Return one of the following symbols: 'ok, 'known-changed,
+   'found-other, 'not-known, 'file-not-fount, 'error */
 SCM
 guile_ssh_authenticate_server (SCM session_smob)
 {
@@ -367,7 +385,9 @@ guile_ssh_authenticate_server (SCM session_smob)
     }
 }
 
-/* Get MD5 hash of the public key */
+/* Get MD5 hash of the public key.
+
+   Return MD5 hash on success, #f on error. */
 SCM
 guile_ssh_get_public_key_hash (SCM session_smob)
 {
@@ -399,7 +419,9 @@ guile_ssh_get_public_key_hash (SCM session_smob)
   return ret;
 }
 
-/* Write the current server as known in the known hosts file. */
+/* Write the current server as known in the known hosts file. 
+
+   Return #t on success, #f on error. */
 SCM
 guile_ssh_write_known_host (SCM session_smob)
 {
@@ -419,7 +441,9 @@ guile_ssh_write_known_host (SCM session_smob)
 
 /* Predicates */
 
-/* Check if we are connected. */
+/* Check if we are connected. 
+
+   Return #f if we are connected to a server, #f if we aren't. */
 SCM
 guile_ssh_is_connected_p (SCM session_smob)
 {

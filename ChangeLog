@@ -1,6 +1,7 @@
 2013-05-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
-	* src/session-func.c (set_option): Implement missed options.
+	* src/session-func.c: Add comments.
+	(set_option): Implement missed options.
 	(set_port_opt): New static function.
 
 2013-05-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
