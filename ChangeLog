@@ -1,3 +1,26 @@
+2013-05-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/session-func.c (set_option): Implement missed options.
+	(set_port_opt): New static function.
+
+2013-05-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/session.scm: Export ssh:get-error
+
+	* src/session-func.c (set_uint64_opt): Remove extra semicolon.
+
+	* .gitignore: Update.
+
+	* src/session-type.c (guile_ssh_make_session): Return SCM_BOOL_F
+	on error.
+
+	* Clean up the code.  Fix coding style.
+
+	* src/auth.scm: Fix comments.
+
+	* Improve the library.
+	Quite stable version, but some functions are not implemented yet.
+
 2013-05-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/ssh-error.c: Include libguile.h

@@ -154,12 +154,22 @@ set_bool_opt (ssh_session session, int type, SCM value)
   return ssh_options_set (session, type, &bool);
 }
 
+static inline int
+set_port_opt (ssh_session session, int type, SCM value)
+{
+  socket_t sfd;                 /* Socket File Descriptor */
+
+  SCM_ASSERT (scm_port_p (value), value, SCM_ARG3, __func__);
+
+  sfd = scm_to_int (scm_fileno (value));
+
+  return ssh_options_set (session, type, &sfd);
+}
+
 /* Set an SSH session option. */
 static int
 set_option (ssh_session session, int type, SCM value)
 {
-  int res = 0; /* Result of an option setting */
-
   switch (type)
     {
     case SSH_OPTIONS_PORT:
@@ -174,9 +184,16 @@ set_option (ssh_session session, int type, SCM value)
     case SSH_OPTIONS_SSH_DIR:
     case SSH_OPTIONS_KNOWNHOSTS:
     case SSH_OPTIONS_IDENTITY:
+    case SSH_OPTIONS_ADD_IDENTITY: /* Same as IDENTITY */
+    case SSH_OPTIONS_CIPHERS_C_S:
+    case SSH_OPTIONS_CIPHERS_S_C:
+    case SSH_OPTIONS_COMPRESSION_C_S:
+    case SSH_OPTIONS_COMPRESSION_S_C:
+    case SSH_OPTIONS_PROXYCOMMAND:
       return set_string_opt (session, type, value);
 
     case SSH_OPTIONS_LOG_VERBOSITY:
+    case SSH_OPTIONS_COMPRESSION_LEVEL:
       return set_int32_opt (session, type, value);
 
     case SSH_OPTIONS_TIMEOUT:
@@ -185,27 +202,16 @@ set_option (ssh_session session, int type, SCM value)
 
     case SSH_OPTIONS_SSH1:
     case SSH_OPTIONS_SSH2:
+    case SSH_OPTIONS_STRICTHOSTKEYCHECK:
       return set_bool_opt (session, type, value);
 
-    case SSH_OPTIONS_COMPRESSION_LEVEL:
-      return set_int32_opt (session, type, value);
-
-      /* TODO: Implement all this. */
-
     case SSH_OPTIONS_FD:
-    case SSH_OPTIONS_ADD_IDENTITY:
-    case SSH_OPTIONS_CIPHERS_C_S:
-    case SSH_OPTIONS_CIPHERS_S_C:
-    case SSH_OPTIONS_COMPRESSION_C_S:
-    case SSH_OPTIONS_COMPRESSION_S_C:
-    case SSH_OPTIONS_PROXYCOMMAND:
-    case SSH_OPTIONS_STRICTHOSTKEYCHECK:
-      goto notsupported;
-    }
+      return set_port_opt (session, type, value);
 
- notsupported:
-  guile_ssh_error1 (__func__, "Operation is not supported yet: %a~%",
-                    scm_from_int (type));
+    default:
+      guile_ssh_error1 (__func__, "Operation is not supported yet: %a~%",
+                        scm_from_int (type));
+    }
 
   return -1;                    /* ERROR */
 }
@@ -436,7 +442,7 @@ init_session_func (void)
 {
   scm_c_define_gsubr ("ssh:blocking-flush!", 2, 0, 0, guile_ssh_blocking_flush);
   scm_c_define_gsubr ("ssh:session-set!",    3, 0, 0, guile_ssh_session_set);
-  scm_c_define_gsubr ("ssh:get-protocol-version", 1, 0, 0, 
+  scm_c_define_gsubr ("ssh:get-protocol-version", 1, 0, 0,
                       guile_ssh_get_protocol_version);
   scm_c_define_gsubr ("ssh:connect!",        1, 0, 0, guile_ssh_connect);
   scm_c_define_gsubr ("ssh:disconnect!",     1, 0, 0, guile_ssh_disconnect);
