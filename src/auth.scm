@@ -27,6 +27,7 @@
 ;;
 ;;   ssh:userauth-pubkey!
 ;;   ssh:userauth-password!
+;;   ssh:userauth-none!
 
 
 ;;; Code:
@@ -34,7 +35,8 @@
 (define-module (ssh auth)
   #:use-module (ssh session)
   #:export (ssh:userauth-pubkey!
-            ssh:userauth-password!))
+            ssh:userauth-password!
+            ssh:userauth-none!))
 
 (load-extension "libguile-ssh" "init_auth_func")
 

@@ -1,5 +1,12 @@
 2013-05-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/auth.c (guile_ssh_userauth_none): New function.
+	(ssh_auth_result_to_symbol): New static function.
+	(guile_ssh_userauth_pubkey): Use ssh_auth_result_to_symbol to
+	convert auth result to a Scheme symbol.
+	(guile_ssh_userauth_password): Likewise.
+	* src/auth.scm: Export ssh:userauth-none!
+
 	* src/session-func.c: Add comments.
 	(set_option): Implement missed options.
 	(set_port_opt): New static function.

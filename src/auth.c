@@ -24,6 +24,35 @@
 #include "session-type.h"
 #include "key-type.h"
 
+
+/* Convert SSH authentication result to a Scheme symbol 
+
+   Return a symbol, or #f on error. */
+static SCM
+ssh_auth_result_to_symbol (const int res)
+{
+  switch (res)
+    {
+    case SSH_AUTH_SUCCESS:
+      return scm_from_locale_symbol ("success");
+
+    case SSH_AUTH_ERROR:
+      return scm_from_locale_symbol ("error");
+
+    case SSH_AUTH_DENIED:
+      return scm_from_locale_symbol ("denied");
+
+    case SSH_AUTH_PARTIAL:
+      return scm_from_locale_symbol ("partial");
+
+    case SSH_AUTH_AGAIN:
+      return scm_from_locale_symbol ("again");
+
+    default:
+      return SCM_BOOL_F;
+    }
+}
+
 SCM
 guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
                            SCM public_key, SCM private_key_smob)
@@ -33,7 +62,6 @@ guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
   char *c_username;
   char *c_public_key;
   int res;                      /* Result of a function call */
-  SCM ret;
 
   scm_dynwind_begin (0);
 
@@ -67,27 +95,9 @@ guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
                              NULL,
                              private_key_data->ssh_private_key);
 
-  switch (res)
-    {
-    case SSH_AUTH_ERROR:
-      ret = scm_from_locale_symbol ("error");
-      break;
-
-    case SSH_AUTH_DENIED:
-      ret = scm_from_locale_symbol ("denied");
-      break;
-
-    case SSH_AUTH_PARTIAL:
-      ret = scm_from_locale_symbol ("partial");
-      break;
-
-    case SSH_AUTH_SUCCESS:
-      ret = scm_from_locale_symbol ("success");
-      break;
-    }
-
   scm_dynwind_end ();
-  return ret;
+
+  return ssh_auth_result_to_symbol (res);
 }
 
 /* Try to authenticate by password.
@@ -103,7 +113,6 @@ guile_ssh_userauth_password (SCM session_smob, SCM username, SCM password)
   char *c_username;
   char *c_password;
   int res;
-  SCM ret;
 
   scm_dynwind_begin (0);
 
@@ -133,31 +142,31 @@ guile_ssh_userauth_password (SCM session_smob, SCM username, SCM password)
                                c_username,
                                c_password);
 
-  switch (res)
-    {
-    case SSH_AUTH_SUCCESS:
-      ret = scm_from_locale_symbol ("success");
-      break;
-
-    case SSH_AUTH_ERROR:
-      ret = scm_from_locale_symbol ("error");
-      break;
-
-    case SSH_AUTH_DENIED:
-      ret = scm_from_locale_symbol ("denied");
-      break;
-
-    case SSH_AUTH_PARTIAL:
-      ret = scm_from_locale_symbol ("partial");
-      break;
-
-    case SSH_AUTH_AGAIN:
-      ret = scm_from_locale_symbol ("again");
-    }
-
   scm_dynwind_end ();
 
-  return ret;
+  return ssh_auth_result_to_symbol (res);
+}
+
+
+/* Try to authenticate through the "none" method. 
+
+   Return one of the following symbols: 'success, 'error, 'denied,
+   'partial, 'again */
+SCM
+guile_ssh_userauth_none (SCM session_smob)
+{
+  struct session_data *session_data;
+  int res;
+
+  scm_assert_smob_type (session_tag, session_smob);
+
+  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
+
+  /* username is deprecated parameter.  Should be set to NULL. */
+  res = ssh_userauth_none (session_data->ssh_session, 
+                           NULL); /* Username */
+
+  return ssh_auth_result_to_symbol (res);
 }
 
 
@@ -169,6 +178,8 @@ init_auth_func (void)
                       guile_ssh_userauth_pubkey);
   scm_c_define_gsubr ("ssh:userauth-password!", 3, 0, 0,
                       guile_ssh_userauth_password);
+  scm_c_define_gsubr ("ssh:userauth-none!", 1, 0, 0,
+                      guile_ssh_userauth_none);
 }
 
 /* auth.c ends here */
