@@ -146,8 +146,8 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
   else
     {
       /* TODO: Improve error handling. */
-      ssh_error (__func__, "Couldn't read data from a channel.",
-                 SCM_BOOL_F, SCM_BOOL_F);
+      guile_ssh_error1 (__func__, "Couldn't read data from a channel.", 
+                        SCM_BOOL_F);
     }
 
   scm_dynwind_end ();

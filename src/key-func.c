@@ -78,13 +78,9 @@ guile_ssh_private_key_from_file (SCM session_smob, SCM filename)
                                                     0, /* Detect key type
                                                           automatically */
                                                     passphrase);
+
   if (key_data->ssh_private_key == NULL)
-    {
-      scm_display (scm_from_locale_string (c_filename),
-                   scm_current_output_port ());
-      ssh_error (__func__, ssh_get_error (session_data->ssh_session),
-                 SCM_BOOL_F, SCM_BOOL_F);
-    }
+    return SCM_BOOL_F;;
 
   SCM_NEWSMOB (key_smob, key_tag, key_data);
 
