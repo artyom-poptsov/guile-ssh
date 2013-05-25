@@ -160,6 +160,8 @@ guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
   return public_key;
 }
 
+
+/* Initialize Scheme procedures. */
 void
 init_key_func (void)
 {
@@ -172,3 +174,5 @@ init_key_func (void)
   scm_c_define_gsubr ("ssh:private-key-from-file", 2, 0, 0,
                       guile_ssh_private_key_from_file);
 }
+
+/* key-func.c ends here */

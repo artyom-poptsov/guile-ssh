@@ -1,5 +1,7 @@
 2013-05-25  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/key-func.c: Add comments.
+
 	* src/auth.h, src/channel-func.h, src/channel-type.h, src/error.h,
 	src/key-func.h, src/key-type.h, src/session-func.h,
 	src/session-type.h: Mark prototypes as external functions.
