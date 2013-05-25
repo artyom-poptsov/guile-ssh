@@ -1,4 +1,4 @@
-/* auth.c -- SSH authentification procedures.
+/* auth.c -- User authentication procedures.
  *
  * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
