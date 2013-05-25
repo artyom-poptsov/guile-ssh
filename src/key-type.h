@@ -44,10 +44,10 @@ struct key_data {
 
 /* Procedures */
 
-SCM guile_ssh_is_key_p (SCM obj);
-SCM guile_ssh_is_public_key_p (SCM key_smob);
-SCM guile_ssh_is_private_key_p (SCM key_smob);
+extern SCM guile_ssh_is_key_p (SCM arg1);
+extern SCM guile_ssh_is_public_key_p (SCM arg1);
+extern SCM guile_ssh_is_private_key_p (SCM arg1);
 
-void init_key_type (void);
+extern void init_key_type (void);
 
 #endif	/* ifndef __KEY_TYPE_H__ */

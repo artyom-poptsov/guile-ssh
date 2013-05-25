@@ -21,11 +21,11 @@
 
 #include <libguile.h>
 
-SCM guile_ssh_blocking_flush (SCM session_smob, SCM timeout);
-SCM guile_ssh_session_set (SCM session_smob, SCM type, SCM value);
-SCM guile_ssh_get_version (SCM session_smob);
-SCM guile_ssh_is_connected_p (SCM session_smob);
+extern SCM guile_ssh_blocking_flush (SCM arg1, SCM arg2);
+extern SCM guile_ssh_session_set (SCM arg1, SCM arg2, SCM arg3);
+extern SCM guile_ssh_get_version (SCM arg1);
+extern SCM guile_ssh_is_connected_p (SCM arg1);
 
-void init_session_func (void);
+extern void init_session_func (void);
 
 #endif	/* ifndef __SESSION_FUNC_H__ */

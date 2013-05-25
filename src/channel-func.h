@@ -19,15 +19,15 @@
 #ifndef __CHANNEL_FUNC_H__
 #define __CHANNEL_FUNC_H__
 
-SCM guile_ssh_channel_open_session (SCM channel_smob);
-SCM guile_ssh_channel_request_exec (SCM channel_smob, SCM cmd);
-SCM guile_ssh_channel_pool (SCM channel_smob, SCM is_stderr);
-SCM guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr);
-SCM guile_ssh_channel_close (SCM channel_smob);
+extern SCM guile_ssh_channel_open_session (SCM arg1);
+extern SCM guile_ssh_channel_request_exec (SCM arg1, SCM arg2);
+extern SCM guile_ssh_channel_pool (SCM arg1, SCM arg2);
+extern SCM guile_ssh_channel_read (SCM arg1, SCM arg2, SCM arg3);
+extern SCM guile_ssh_channel_close (SCM arg1);
 
-SCM guile_ssh_channel_is_open_p (SCM channel_smob);
-SCM guile_ssh_channel_is_eof_p (SCM channel_smob);
+extern SCM guile_ssh_channel_is_open_p (SCM arg1);
+extern SCM guile_ssh_channel_is_eof_p (SCM arg1);
 
-void init_channel_func (void);
+extern void init_channel_func (void);
 
 #endif /* ifndef __CHANNEL_FUNC_H__ */

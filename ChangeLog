@@ -1,3 +1,10 @@
+2013-05-25  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/auth.h, src/channel-func.h, src/channel-type.h, src/error.h,
+	src/key-func.h, src/key-type.h, src/session-func.h,
+	src/session-type.h: Mark prototypes as external functions.
+	Simplify SCM functions arg list.
+
 2013-05-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/auth.c (guile_ssh_userauth_none): New function.

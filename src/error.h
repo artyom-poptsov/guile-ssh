@@ -21,8 +21,9 @@
 
 #define GUILE_SSH_ERROR "guile-ssh-error"
 
-inline void guile_ssh_error (const char *proc, const char *msg,
+extern inline void guile_ssh_error (const char *proc, const char *msg,
                                      SCM args, SCM rest);
-inline void guile_ssh_error1 (const char *proc, const char *msg, SCM args);
+extern inline void guile_ssh_error1 (const char *proc, const char *msg, 
+                                     SCM args);
 
 #endif /* ifndef __GUILE_SSH_ERROR_H__ */

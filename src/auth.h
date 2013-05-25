@@ -19,9 +19,10 @@
 #ifndef __AUTH_H__
 #define __AUTH_H__
 
-SCM guile_ssh_userauth_pubkey (SCM session_smob, SCM username, 
-                               SCM public_key, SCM private_key_smob);
+extern SCM guile_ssh_userauth_pubkey (SCM arg1, SCM arg2, SCM arg3, SCM arg4);
+extern SCM guile_ssh_userauth_password (SCM arg1, SCM arg2, SCM arg3);
+extern SCM guile_ssh_userauth_none (SCM arg1);
 
-void init_auth_func (void);
+extern void init_auth_func (void);
 
 #endif /* ifndef __AUTH_H__ */

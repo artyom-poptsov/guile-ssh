@@ -19,10 +19,10 @@
 #ifndef __KEY_FUNC_H__
 #define __KEY_FUNC_H__
 
-SCM guile_ssh_public_key_to_string (SCM key_smob);
-SCM guile_ssh_private_key_from_file (SCM session_smob, SCM filename);
-SCM guile_ssh_public_key_from_file (SCM session_smob, SCM filename);
+extern SCM guile_ssh_public_key_to_string (SCM arg1);
+extern SCM guile_ssh_private_key_from_file (SCM arg1, SCM arg2);
+extern SCM guile_ssh_public_key_from_file (SCM arg1, SCM arg2);
 
-void init_key_func (void);
+extern void init_key_func (void);
 
 #endif	/* ifndef __KEY_FUNC_H__ */

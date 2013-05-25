@@ -33,9 +33,9 @@ struct channel_data {
 
 /* API */
 
-SCM guile_ssh_make_channel (SCM session_smob);
-SCM guile_ssh_is_channel_p (SCM obj);
+extern SCM guile_ssh_make_channel (SCM arg1);
+extern SCM guile_ssh_is_channel_p (SCM arg1);
 
-void init_channel_type (void);
+extern void init_channel_type (void);
 
 #endif /* ifndef __CHANNEL_TYPE_H__ */

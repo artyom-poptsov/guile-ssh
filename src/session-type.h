@@ -30,8 +30,8 @@ struct session_data {
 };
 
 
-SCM guile_ssh_make_session (void);
+extern SCM guile_ssh_make_session (void);
 
-void init_session_type (void);
+extern void init_session_type (void);
 
 #endif  /* ifndef __SESSION_TYPE_H__ */
