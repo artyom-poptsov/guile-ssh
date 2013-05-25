@@ -1,5 +1,7 @@
 2013-05-25  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* configure.ac, NEWS: Bump version to 0.2
+
 	* src/channel-func.c (guile_ssh_channel_is_eof_p)
 	(guile_ssh_channel_is_open_p, guile_ssh_channel_close)
 	(guile_ssh_channel_read, guile_ssh_channel_pool)
