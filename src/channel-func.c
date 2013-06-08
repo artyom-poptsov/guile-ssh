@@ -22,6 +22,7 @@
 #include <libguile.h>
 #include <libssh/libssh.h>
 
+#include "error.h"
 #include "channel-type.h"
 
 
@@ -116,7 +117,7 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
   int res;
   char *buffer;                 /* Buffer for data. */
   uint32_t c_count;             /* Size of buffer. */
-  SCM obtained_data;            /* Obtained data from the channel. */
+  SCM obtained_data = SCM_BOOL_F; /* Obtained data from the channel. */
 
   scm_assert_smob_type (channel_tag, channel_smob);
   SCM_ASSERT (scm_is_unsigned_integer (count, 0, UINT32_MAX), count,

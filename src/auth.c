@@ -21,6 +21,7 @@
 #include <libguile.h>
 #include <libssh/libssh.h>
 
+#include "error.h"
 #include "session-type.h"
 #include "key-type.h"
 
@@ -59,8 +60,8 @@ guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
 {
   struct session_data *session_data;
   struct key_data *private_key_data;
-  char *c_username;
-  char *c_public_key;
+  char *c_username   = NULL;
+  char *c_public_key = NULL;
   int res;                      /* Result of a function call */
 
   scm_dynwind_begin (0);

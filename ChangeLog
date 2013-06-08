@@ -1,5 +1,11 @@
 2013-06-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-func.c: Include error.h
+	(guile_ssh_channel_read): Initialize obtained_data with
+	SCM_BOOL_F
+	* src/auth.c: Include error.h
+	(guile_ssh_userauth_pubkey): Initialize strings with null.
+
 	* src/session-func.c (guile_ssh_connect)
 	(guile_ssh_blocking_flush): Return 'error by default.
 
