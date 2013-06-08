@@ -84,11 +84,12 @@ guile_ssh_blocking_flush (SCM session_smob, SCM timeout)
     case SSH_OK:
       return scm_from_locale_symbol ("ok");
 
-    case SSH_ERROR:
-      return scm_from_locale_symbol ("error");
-
     case SSH_AGAIN:
       return scm_from_locale_symbol ("again");
+
+    case SSH_ERROR:
+    default:
+      return scm_from_locale_symbol ("error");
     }
 }
 
@@ -283,11 +284,12 @@ guile_ssh_connect (SCM session_smob)
     case SSH_OK:
       return scm_from_locale_symbol ("ok");
 
-    case SSH_ERROR:
-      return scm_from_locale_symbol ("error");
-
     case SSH_AGAIN:
       return scm_from_locale_symbol ("again");
+
+    case SSH_ERROR:
+    default:
+      return scm_from_locale_symbol ("error");
     }
 }
 

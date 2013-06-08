@@ -1,5 +1,8 @@
 2013-06-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/session-func.c (guile_ssh_connect)
+	(guile_ssh_blocking_flush): Return 'error by default.
+
 	* src/session-func.c (set_uint32_opt): Fix wrong variable
 	assignment.
 
