@@ -36,7 +36,7 @@ guile_ssh_public_key_to_string (SCM key_smob)
   SCM ret;
 
   SCM_ASSERT (scm_to_bool (guile_ssh_is_public_key_p (key_smob)),
-              key_smob, SCM_ARG4, __func__);
+              key_smob, SCM_ARG1, __func__);
 
   data = (struct key_data *) SCM_SMOB_DATA (key_smob);
 
