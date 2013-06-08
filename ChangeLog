@@ -1,5 +1,8 @@
 2013-06-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/session-func.c (set_uint32_opt): Fix wrong variable
+	assignment.
+
 	* src/Makefile.am (AM_LDFLAGS): Fix flags.
 	(AM_CFLAGS): Likewise.  Add "-Wall" and "-g" flags.
 

@@ -133,7 +133,7 @@ set_uint32_opt (ssh_session session, int type, SCM value)
   SCM_ASSERT (scm_is_unsigned_integer (value, 0, UINT32_MAX), value,
               SCM_ARG3, __func__);
 
-  c_value = c_value = scm_to_uint32 (value);
+  c_value = scm_to_uint32 (value);
   return ssh_options_set (session, type, &c_value);
 }
 
