@@ -16,8 +16,8 @@
 ## along with libguile-ssh.  If not, see
 ## <http://www.gnu.org/licenses/>.
 
-AM_CFLAGS = @GUILE_CFLAGS@ -lssh `pkg-config --cflags guile-1.8` 
-AM_LDFLAGS=`pkg-config --libs guile-1.8` -lssh
+AM_CFLAGS = @GUILE_CFLAGS@ `pkg-config --cflags guile-1.8` -Wall -g
+AM_LDFLAGS=`pkg-config --libs guile-1.8 libssh`
 
 lib_LTLIBRARIES = libguile-ssh.la
 

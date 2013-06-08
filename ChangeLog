@@ -1,5 +1,8 @@
 2013-06-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/Makefile.am (AM_LDFLAGS): Fix flags.
+	(AM_CFLAGS): Likewise.  Add "-Wall" and "-g" flags.
+
 	* src/key-func.c (guile_ssh_public_key_to_string): Fix SCM_ASSERT
 	call.
 
