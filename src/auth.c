@@ -24,6 +24,7 @@
 #include "error.h"
 #include "session-type.h"
 #include "key-type.h"
+#include "key-func.h"
 
 
 /* Convert SSH authentication result to a Scheme symbol 
@@ -54,46 +55,55 @@ ssh_auth_result_to_symbol (const int res)
     }
 }
 
+/* Try to authenticate with a public key.
+ *
+ * USERNAME can be either string or #f.  If USERNAME is #f it's assumed that
+ * the USERNAME was set through ssh:option-set! call.
+ */
 SCM
 guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
-                           SCM public_key, SCM private_key_smob)
+                           SCM public_key_smob, SCM private_key_smob)
 {
   struct session_data *session_data;
   struct key_data *private_key_data;
-  char *c_username   = NULL;
-  char *c_public_key = NULL;
-  int res;                      /* Result of a function call */
+  struct key_data *public_key_data;
+  char *c_username = NULL;
+  ssh_string public_key;
+  int res;
 
   scm_dynwind_begin (0);
 
   /* Check types. */
   scm_assert_smob_type (session_tag, session_smob);
-  SCM_ASSERT (scm_is_string (public_key), public_key, SCM_ARG3, __func__);
+  /* username can be either a string or SCM_BOOL_F */
+  SCM_ASSERT (scm_is_string (username)
+              || (scm_is_bool (username) && (! scm_to_bool (username))),
+              username, SCM_ARG2, __func__);
+  SCM_ASSERT (scm_to_bool (guile_ssh_is_public_key_p (public_key_smob)),
+              public_key_smob, SCM_ARG3, __func__);
   SCM_ASSERT (scm_to_bool (guile_ssh_is_private_key_p (private_key_smob)),
               private_key_smob, SCM_ARG4, __func__);
 
-  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
+  session_data     = (struct session_data *) SCM_SMOB_DATA (session_smob);
   private_key_data = (struct key_data *) SCM_SMOB_DATA (private_key_smob);
-
-  c_public_key = scm_to_locale_string (public_key);
-  scm_dynwind_free (c_public_key);
+  public_key_data  = (struct key_data *) SCM_SMOB_DATA (public_key_smob);
 
   if (scm_is_string (username))
     {
       c_username = scm_to_locale_string (username);
       scm_dynwind_free (c_username);
     }
-  else if ((scm_is_bool (username)) && (! scm_to_bool (username)))
+  else                          /* username was set to SCM_BOOL_F */
     {
       c_username = NULL;
     }
-  else
-    {
-      guile_ssh_error1 (__func__, "Wrong argument: %a~%", username);
-    }
+
+  public_key = public_key_to_ssh_string (public_key_data);
+  scm_dynwind_unwind_handler ((void (*)(void*)) ssh_string_free, public_key,
+                                  SCM_F_WIND_EXPLICITLY);
 
   res = ssh_userauth_pubkey (session_data->ssh_session, c_username,
-                             NULL,
+                             public_key,
                              private_key_data->ssh_private_key);
 
   scm_dynwind_end ();

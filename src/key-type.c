@@ -52,6 +52,10 @@ free_key_smob (SCM key_smob)
       publickey_free (data->ssh_public_key);
       break;
 
+    case KEY_TYPE_PUBLIC_STR:
+      ssh_string_free (data->ssh_public_key_str);
+      break;
+
     case KEY_TYPE_PRIVATE:
       privatekey_free (data->ssh_private_key);
       break;
@@ -78,7 +82,11 @@ guile_ssh_is_public_key_p (SCM key_smob)
 
   data = (struct key_data *) SCM_SMOB_DATA (key_smob);
 
-  return (data->key_type == KEY_TYPE_PUBLIC) ? SCM_BOOL_T : SCM_BOOL_F;
+  if ((data->key_type == KEY_TYPE_PUBLIC)
+      || (data->key_type == KEY_TYPE_PUBLIC_STR))
+    return SCM_BOOL_T;
+  else
+    return SCM_BOOL_F;
 }
 
 SCM

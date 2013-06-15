@@ -16,18 +16,9 @@
  * along with libguile-ssh.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __KEY_FUNC_H__
-#define __KEY_FUNC_H__
+#ifndef __BASE64_H__
+#define __BASE64_H__
 
-extern inline ssh_string
-public_key_to_ssh_string (const struct key_data* public_key_data);
+extern unsigned char *bin_to_base64(const unsigned char *source, size_t len);
 
-
-/* Guile SSH API */
-extern SCM guile_ssh_public_key_to_string (SCM arg1);
-extern SCM guile_ssh_private_key_from_file (SCM arg1, SCM arg2);
-extern SCM guile_ssh_public_key_from_file (SCM arg1, SCM arg2);
-
-extern void init_key_func (void);
-
-#endif	/* ifndef __KEY_FUNC_H__ */
+#endif  /* ifndef __BASE64_H__ */

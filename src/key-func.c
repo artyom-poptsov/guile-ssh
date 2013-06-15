@@ -23,6 +23,19 @@
 
 #include "key-type.h"
 #include "session-type.h"
+#include "base64.h"
+
+/* Convert a public key to SSH string.  Return newly allocated SSH
+   string.  NOTE that a) the string should be freed after usage, and
+   b) the function doesn't any checks for the key type. */
+inline ssh_string
+public_key_to_ssh_string (const struct key_data *public_key_data)
+{
+  if (public_key_data->key_type == KEY_TYPE_PUBLIC)
+    return publickey_to_string (public_key_data->ssh_public_key);
+  else                          /* key_type == KEY_TYPE_PUBLIC_STR */
+    return ssh_string_copy (public_key_data->ssh_public_key_str);
+}
 
 /* Convert SSH public key to a scheme string.
  *
@@ -31,20 +44,32 @@
 SCM
 guile_ssh_public_key_to_string (SCM key_smob)
 {
-  struct key_data *data;
-  ssh_string str_key;
+  struct key_data *key_data;
+  ssh_string public_key;
+  unsigned char *key_str;
+  size_t        key_len;
   SCM ret;
+
+  scm_dynwind_begin (0);
 
   SCM_ASSERT (scm_to_bool (guile_ssh_is_public_key_p (key_smob)),
               key_smob, SCM_ARG1, __func__);
 
-  data = (struct key_data *) SCM_SMOB_DATA (key_smob);
+  key_data = (struct key_data *) SCM_SMOB_DATA (key_smob);
 
-  /* TODO: Are there any memory leaks because of conversion between
-           data types? */
-  str_key = publickey_to_string (data->ssh_public_key);
-  ret = scm_from_locale_string (ssh_string_to_char (str_key));
-  ssh_string_free (str_key);
+  public_key = public_key_to_ssh_string (key_data);
+  scm_dynwind_unwind_handler ((void (*)(void*)) ssh_string_free, public_key,
+                              SCM_F_WIND_EXPLICITLY);
+
+  key_str = (unsigned char *) ssh_string_to_char (public_key);
+  scm_dynwind_free (key_str);
+
+  key_len = ssh_string_len (public_key);
+
+  /* Convert the public key from binary representation to a base64. */
+  ret = scm_from_locale_string (bin_to_base64 (key_str, key_len));
+
+  scm_dynwind_end ();
 
   return ret;
 }
@@ -118,18 +143,19 @@ guile_ssh_public_key_from_private_key (SCM key_smob)
   return smob;
 }
 
-/* Read public key from a file FILENAME 
+/* Read public key from a file FILENAME.
  *
- * FIXME: It doesn't work properly because of strange behaviour of
- *        ssh_string_to_char :-/
+ * Return a SSH key smob.
  */
 SCM
 guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
 {
   struct session_data *session_data;
+  struct key_data *public_key_data;
   char *c_filename;
   ssh_string public_key_str;
-  SCM public_key;
+  SCM key_smob;
+  int key_type;
 
   scm_dynwind_begin (0);
 
@@ -143,17 +169,21 @@ guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
 
   public_key_str = publickey_from_file (session_data->ssh_session,
                                         c_filename,
-                                        /* Detect key type automatically */
-                                        NULL);
+                                        &key_type);
 
   if (public_key_str == NULL)
-    return SCM_BOOL_F;
+      return SCM_BOOL_F;
 
-  public_key = scm_from_locale_string (ssh_string_to_char (public_key_str));
+  public_key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
+                                                       "ssh key");
+  public_key_data->key_type = KEY_TYPE_PUBLIC_STR;
+  public_key_data->ssh_public_key_str = public_key_str;
+
+  SCM_NEWSMOB (key_smob, key_tag, public_key_data);
 
   scm_dynwind_end ();
 
-  return public_key;
+  return key_smob;
 }
 
 

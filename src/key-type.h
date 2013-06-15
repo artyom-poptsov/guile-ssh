@@ -28,7 +28,8 @@ extern scm_t_bits key_tag;
 enum KEY_TYPE {
   KEY_TYPE_NONE,
   KEY_TYPE_PRIVATE,
-  KEY_TYPE_PUBLIC
+  KEY_TYPE_PUBLIC,
+  KEY_TYPE_PUBLIC_STR
 };
 
 /* Smob data. */
@@ -37,6 +38,12 @@ struct key_data {
   union {
     ssh_private_key ssh_private_key;
     ssh_public_key  ssh_public_key;
+
+    /* Some libssh API functions working with public keys represented
+       as a ssh_string instead of ssh_public_key.  The string contains
+       binary data.  Here we hide this peculiarity. */
+    ssh_string      ssh_public_key_str;
+
     ssh_key         ssh_key;
   };
 };

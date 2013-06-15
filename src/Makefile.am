@@ -27,7 +27,7 @@ libguile_ssh_la_SOURCES = \
 	error.c error.h key-func.c key-func.h key-main.c \
 	key-type.c key-type.h session-func.c session-func.h \
 	session-type.c session-type.h session-main.c \
-	version.c
+	version.c base64.c
 
 libguile_ssh_la_LDFLAGS = -module -no-undefined -version-info	\
 	$(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)

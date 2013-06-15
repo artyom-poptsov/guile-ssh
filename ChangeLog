@@ -1,3 +1,20 @@
+2013-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Improve working with public keys.  Because some libssh functions
+	working with public keys represented as a ssh_string instead of a
+	ssh_public_key, we try to hide this peculiarity so all kinds of
+	keys are look like a key_smob from the Scheme perspective.
+	* src/key-type.h: Add ssh_public_key_str to key_data struct.
+	* src/key-type.c (free_key_smob): Handle public keys that
+	represented by a ssh_string.
+	(guile_ssh_is_public_key_p): Likewise.
+	* src/key-func.c (public_key_to_ssh_string): New function.
+	(guile_ssh_public_key_to_string): Fix converting a public key.
+	(guile_ssh_public_key_from_file): Make it work.
+	* src/key-func.h: Add public_key_to_ssh_string.
+	* src/Makefile.am: Add base64.c
+	* src/base64.c, src/base64.h: New files.
+
 2013-06-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/channel-func.c: Include error.h
