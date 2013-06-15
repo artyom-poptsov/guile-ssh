@@ -27,7 +27,7 @@
 
 /* Convert a public key to SSH string.  Return newly allocated SSH
    string.  NOTE that a) the string should be freed after usage, and
-   b) the function doesn't any checks for the key type. */
+   b) the function doesn't do any checks for the key type. */
 inline ssh_string
 public_key_to_ssh_string (const struct key_data *public_key_data)
 {

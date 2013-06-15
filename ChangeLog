@@ -1,5 +1,7 @@
 2013-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/key-func.c: Fix a comment.
+
 	Improve working with public keys.  Because some libssh functions
 	working with public keys represented as a ssh_string instead of a
 	ssh_public_key, we try to hide this peculiarity so all kinds of
@@ -11,6 +13,7 @@
 	* src/key-func.c (public_key_to_ssh_string): New function.
 	(guile_ssh_public_key_to_string): Fix converting a public key.
 	(guile_ssh_public_key_from_file): Make it work.
+
 	* src/key-func.h: Add public_key_to_ssh_string.
 	* src/Makefile.am: Add base64.c
 	* src/base64.c, src/base64.h: New files.
