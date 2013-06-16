@@ -36,7 +36,8 @@
   #:use-module (ssh session)
   #:export (ssh:userauth-pubkey!
             ssh:userauth-password!
-            ssh:userauth-none!))
+            ssh:userauth-none!
+            ssh:userauth-get-list))
 
 (load-extension "libguile-ssh" "init_auth_func")
 

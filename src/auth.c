@@ -180,6 +180,52 @@ guile_ssh_userauth_none (SCM session_smob)
   return ssh_auth_result_to_symbol (res);
 }
 
+/* Get available authentication methods for a session SESSION_SMOB.
+
+   Return list of available methods. */
+SCM
+guile_ssh_userauth_get_list (SCM session_smob)
+{
+  struct session_data *session_data;
+  SCM auth_list = SCM_EOL;
+  int res;
+
+  scm_assert_smob_type (session_tag, session_smob);
+
+  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
+
+  /* The second argument of the function is a username.  According to
+     the documentation for libssh 0.5.3, this argument is deprecated
+     and must be set to NULL. */
+  res = ssh_userauth_list (session_data->ssh_session, NULL);
+
+  if (res & SSH_AUTH_METHOD_PASSWORD)
+    {
+      SCM method = scm_from_locale_symbol ("password");
+      auth_list = scm_append (scm_list_2 (auth_list, method));
+    }
+
+  if (res & SSH_AUTH_METHOD_PUBLICKEY)
+    {
+      SCM method = scm_from_locale_symbol ("public-key");
+      auth_list = scm_append (scm_list_2 (auth_list, method));
+    }
+
+  if (res & SSH_AUTH_METHOD_HOSTBASED)
+    {
+      SCM method = scm_from_locale_symbol ("host-based");
+      auth_list = scm_append (scm_list_2 (auth_list, method));
+    }
+
+  if (res & SSH_AUTH_METHOD_INTERACTIVE)
+    {
+      SCM method = scm_from_locale_symbol ("interactive");
+      auth_list = scm_append (scm_list_2 (auth_list, method));
+    }
+
+  return auth_list;
+}
+
 
 /* Initialization */
 void
@@ -191,6 +237,9 @@ init_auth_func (void)
                       guile_ssh_userauth_password);
   scm_c_define_gsubr ("ssh:userauth-none!", 1, 0, 0,
                       guile_ssh_userauth_none);
+
+  scm_c_define_gsubr ("ssh:userauth-get-list", 1, 0, 0,
+                      guile_ssh_userauth_get_list);
 }
 
 /* auth.c ends here */
