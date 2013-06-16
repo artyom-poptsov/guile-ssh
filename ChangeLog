@@ -1,9 +1,13 @@
 2013-06-16  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/auth.c (guile_ssh_userauth_get_list): Fix a bug with wrong
+	scm_append call during making the list.
+
 	Implement ssh:userauth-get-list that returns a list of available
 	authentication methods for a given SSH session.
 	* src/auth.c (guile_ssh_userauth_get_list): New function.
 	(init_auth_func): Define ssh:userauth-get-list.
+
 	* src/auth.h: Likewise.
 	* src/auth.scm: Add ssh:userauth-get-list.
 

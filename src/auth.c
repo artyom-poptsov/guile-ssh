@@ -202,25 +202,25 @@ guile_ssh_userauth_get_list (SCM session_smob)
   if (res & SSH_AUTH_METHOD_PASSWORD)
     {
       SCM method = scm_from_locale_symbol ("password");
-      auth_list = scm_append (scm_list_2 (auth_list, method));
+      auth_list = scm_append (scm_list_2 (auth_list, scm_list_1 (method)));
     }
 
   if (res & SSH_AUTH_METHOD_PUBLICKEY)
     {
       SCM method = scm_from_locale_symbol ("public-key");
-      auth_list = scm_append (scm_list_2 (auth_list, method));
+      auth_list = scm_append (scm_list_2 (auth_list, scm_list_1 (method)));
     }
 
   if (res & SSH_AUTH_METHOD_HOSTBASED)
     {
       SCM method = scm_from_locale_symbol ("host-based");
-      auth_list = scm_append (scm_list_2 (auth_list, method));
+      auth_list = scm_append (scm_list_2 (auth_list, scm_list_1 (method)));
     }
 
   if (res & SSH_AUTH_METHOD_INTERACTIVE)
     {
       SCM method = scm_from_locale_symbol ("interactive");
-      auth_list = scm_append (scm_list_2 (auth_list, method));
+      auth_list = scm_append (scm_list_2 (auth_list, scm_list_1 (method)));
     }
 
   return auth_list;
