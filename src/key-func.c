@@ -34,7 +34,7 @@ public_key_to_ssh_string (const struct key_data *public_key_data)
   if (public_key_data->key_type == KEY_TYPE_PUBLIC)
     return publickey_to_string (public_key_data->ssh_public_key);
   else                          /* key_type == KEY_TYPE_PUBLIC_STR */
-    return ssh_string_copy (public_key_data->ssh_public_key_str);
+    return ssh_string_copy (public_key_data->ssh_public_key_str.key);
 }
 
 /* Convert SSH public key to a scheme string.
@@ -177,7 +177,8 @@ guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
   public_key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                        "ssh key");
   public_key_data->key_type = KEY_TYPE_PUBLIC_STR;
-  public_key_data->ssh_public_key_str = public_key_str;
+  public_key_data->ssh_public_key_str.key      = public_key_str;
+  public_key_data->ssh_public_key_str.key_type = key_type;
 
   SCM_NEWSMOB (key_smob, key_tag, public_key_data);
 

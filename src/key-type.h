@@ -32,6 +32,13 @@ enum KEY_TYPE {
   KEY_TYPE_PUBLIC_STR
 };
 
+/* SSH public key KEY represented as a SSH string with a binary
+   content along with its type KEY_TYPE */
+struct public_key_str {
+  ssh_string key;
+  int32_t    key_type;
+};
+
 /* Smob data. */
 struct key_data {
   uint8_t key_type;		/* Type of the key. */
@@ -42,7 +49,7 @@ struct key_data {
     /* Some libssh API functions working with public keys represented
        as a ssh_string instead of ssh_public_key.  The string contains
        binary data.  Here we hide this peculiarity. */
-    ssh_string      ssh_public_key_str;
+    struct public_key_str ssh_public_key_str;
 
     ssh_key         ssh_key;
   };
@@ -54,6 +61,8 @@ struct key_data {
 extern SCM guile_ssh_is_key_p (SCM arg1);
 extern SCM guile_ssh_is_public_key_p (SCM arg1);
 extern SCM guile_ssh_is_private_key_p (SCM arg1);
+
+extern SCM guile_ssh_key_get_type (SCM arg1);
 
 extern void init_key_type (void);
 

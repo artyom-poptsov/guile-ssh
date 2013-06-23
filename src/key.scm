@@ -29,6 +29,7 @@
 ;;   ssh:key?
 ;;   ssh:public-key?
 ;;   ssh:private-key?
+;;   ssh:get-key-type
 ;;   ssh:public-key->string
 ;;   ssh:public-key-from-file
 ;;   ssh:private-key->public-key
@@ -42,6 +43,7 @@
             ssh:key?
             ssh:public-key?
             ssh:private-key?
+            ssh:get-key-type
             ssh:public-key->string
             ssh:public-key-from-file
             ssh:private-key->public-key
