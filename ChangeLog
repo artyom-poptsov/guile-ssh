@@ -1,5 +1,9 @@
 2013-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-func.c (guile_ssh_channel_close): Fix return value:
+	return SCM_BOOL_T if channel is closed successfully, SCM_BOOL_F
+	otherwise.
+
 	Fix GC'ing of SSH objects: the program doesn't crashes anymore
 	during GC'ing of channels and keys.
 	* src/session-type.c (free_session): Mark all related channels as

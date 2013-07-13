@@ -168,7 +168,7 @@ guile_ssh_channel_close (SCM channel_smob)
   data = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
   res = ssh_channel_close (data->ssh_channel);
 
-  return res ? SCM_BOOL_T : SCM_BOOL_F;
+  return (res = SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
 
