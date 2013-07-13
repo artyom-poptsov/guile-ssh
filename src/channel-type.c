@@ -39,18 +39,8 @@ mark_channel (SCM channel_smob)
 size_t
 free_channel (SCM channel_smob)
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
-
-  /* If the SSH session is already freed, we don't need to call
-     ssh_channel_free for the channel, because allocated resourses are
-     already freed by ssh_free.  Moreover, we'll get segmentation
-     fault if we try to call ssh_channel_free when the session is
-     GC'ed. */
-  if (data->is_session_alive)
-    ssh_channel_free (data->ssh_channel);
-
-  SCM_SET_SMOB_DATA (channel_smob, NULL);
-
+  /* All resources allocated by the SSH channel will be freed along
+     with the related SSH session. */
   return 0;
 }
 
@@ -71,24 +61,7 @@ guile_ssh_make_channel (SCM arg1)
   if (channel_data->ssh_channel == NULL)
     return SCM_BOOL_F;
 
-  channel_data->is_session_alive = 1;
-
   SCM_NEWSMOB (smob, channel_tag, channel_data);
-
-  /* FIXME: channels array can only grow for now.  Generally it means
-     two things: a) the maximum number of channels is limited by
-     UINT32_MAX, and b) closed channels won't be removed from the
-     array. */
-  cnt    = session_data->channel_cnt;
-  old_sz = sizeof (struct channel_data *) * cnt;
-  new_sz = sizeof (struct channel_data *) * (cnt + 1);
-  session_data->channels = scm_gc_realloc (session_data->channels,
-                                           old_sz, new_sz,
-                                           "channel list");
-
-  ++session_data->channel_cnt;
-
-  session_data->channels[session_data->channel_cnt - 1] = channel_data;
 
   return smob;
 }

@@ -41,17 +41,10 @@ mark_session (SCM session_smob)
 size_t
 free_session (SCM session_smob)
 {
-  size_t i;
   struct session_data *data = _scm_to_ssh_session (session_smob);
 
   ssh_disconnect (data->ssh_session);
   ssh_free (data->ssh_session);
-
-  for (i = 0; i < data->channel_cnt; ++i)
-    data->channels[i]->is_session_alive = 0;
-
-  if (data->channel_cnt)
-    scm_gc_free (data->channels, sizeof data->channels, "channel list");
 
   SCM_SET_SMOB_DATA (session_smob, NULL);
 

@@ -1,5 +1,20 @@
 2013-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	Use a simpler method to GC'ing of SSH channels.  The idea is that
+	we don't have to free resources allocated by a channel during its
+	GC'ing, because these resources will be freed anyway when the
+	related SSH session is GC'ed.  However, to be able to control
+	allocating of resources more precisely, introduce new procedure
+	ssh:free-channel! that can be used for freeing resources allocated
+	by a channel.
+	* src/channel-func.c (guile_ssh_channel_free): New procedure.
+	(init_channel_func): Add ssh:free-channel!
+	* src/channel-type.c (free_channel): Don't free channel resourses.
+	(guile_ssh_make_channel): Remove extra code.
+	* src/channel-type.h: Remove the extra field from channel_data.
+	* src/channel.scm: Add ssh:free-channel!
+	* src/session-type.c (free_session): Remove extra code.
+
 	* configure.ac, NEWS: Bump version to 0.3
 
 	Implement equalp callbacks for smobs.

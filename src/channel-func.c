@@ -146,6 +146,14 @@ guile_ssh_channel_close (SCM arg1)
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
+SCM
+guile_ssh_channel_free (SCM arg1)
+{
+  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  ssh_channel_free (data->ssh_channel);
+  return SCM_UNDEFINED;
+}
+
 
 /* Predicates */
 
@@ -178,6 +186,7 @@ init_channel_func (void)
                       guile_ssh_channel_request_env);
 
   scm_c_define_gsubr ("ssh:close-channel!", 1, 0, 0, guile_ssh_channel_close);
+  scm_c_define_gsubr ("ssh:free-channel!",  1, 0, 0, guile_ssh_channel_free);
 
   scm_c_define_gsubr ("ssh:channel-poll",   2, 0, 0, guile_ssh_channel_pool);
   scm_c_define_gsubr ("ssh:channel-read",   3, 0, 0, guile_ssh_channel_read);

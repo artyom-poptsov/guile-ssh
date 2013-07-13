@@ -47,6 +47,7 @@
             ssh:channel?
             ssh:make-channel
             ssh:close-channel!
+            ssh:free-channel!
             ssh:channel-open-session
             ssh:channel-request-env
             ssh:channel-request-exec
