@@ -81,6 +81,22 @@ guile_ssh_make_session (void)
 }
 
 
+/* Predicates */
+SCM
+equalp_session (SCM x1, SCM x2)
+{
+  struct session_data *session1 = _scm_to_ssh_session (x1);
+  struct session_data *session2 = _scm_to_ssh_session (x2);
+
+  if ((! session1) || (! session2))
+    return SCM_BOOL_F;
+  else if (session1 != session2)
+    return SCM_BOOL_F;
+  else
+    return SCM_BOOL_T;
+}
+
+
 /* Helper procedures  */
 
 /* Convert SCM object to a SSH session */
@@ -100,6 +116,7 @@ init_session_type (void)
                                     sizeof (struct session_data));
   scm_set_smob_mark (session_tag, mark_session);
   scm_set_smob_free (session_tag, free_session);
+  scm_set_smob_equalp (session_tag, equalp_session);
 
   scm_c_define_gsubr ("ssh:make-session",    0, 0, 0, guile_ssh_make_session);
 }

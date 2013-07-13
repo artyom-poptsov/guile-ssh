@@ -140,6 +140,20 @@ guile_ssh_is_private_key_p (SCM arg1)
   return scm_from_bool (_private_key_p (key));
 }
 
+SCM
+equalp_key (SCM x1, SCM x2)
+{
+  struct key_data *key1 = _scm_to_ssh_key (x1);
+  struct key_data *key2 = _scm_to_ssh_key (x2);
+
+  if ((! key1) || (! key2))
+    return SCM_BOOL_F;
+  else if (key1 != key2)
+    return SCM_BOOL_F;
+  else
+    return SCM_BOOL_T;
+}
+
 
 /* Helper procedures */
 
@@ -174,6 +188,7 @@ init_key_type (void)
   key_tag = scm_make_smob_type ("ssh:key", sizeof (struct key_data));
   scm_set_smob_mark (key_tag, mark_key_smob);
   scm_set_smob_free (key_tag, free_key_smob);
+  scm_set_smob_equalp (key_tag, equalp_key);
 
   scm_c_define_gsubr ("ssh:key?",         1, 0, 0, guile_ssh_is_key_p);
   scm_c_define_gsubr ("ssh:public-key?",  1, 0, 0, guile_ssh_is_public_key_p);

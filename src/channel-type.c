@@ -102,6 +102,20 @@ guile_ssh_is_channel_p (SCM obj)
   return scm_from_bool (SCM_SMOB_PREDICATE (channel_tag, obj));
 }
 
+SCM
+equalp_channel (SCM x1, SCM x2)
+{
+  struct channel_data *channel1 = _scm_to_ssh_channel (x1);
+  struct channel_data *channel2 = _scm_to_ssh_channel (x2);
+
+  if ((! channel1) || (! channel2))
+    return SCM_BOOL_F;
+  else if (channel1 != channel2)
+    return SCM_BOOL_F;
+  else
+    return SCM_BOOL_T;
+}
+
 
 /* Helper procedures */
 
@@ -122,6 +136,7 @@ init_channel_type (void)
                                     sizeof (struct channel_data));
   scm_set_smob_mark (channel_tag, mark_channel);
   scm_set_smob_free (channel_tag, free_channel);
+  scm_set_smob_equalp (channel_tag, equalp_channel);
 
   scm_c_define_gsubr ("ssh:make-channel", 1, 0, 0, guile_ssh_make_channel);
 

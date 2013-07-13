@@ -1,5 +1,13 @@
 2013-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	Implement equalp callbacks for smobs.
+	* src/channel-type.c (equalp_channel): New procedure.
+	(init_channel_type): Register the equalp callback.
+	* src/key-type.c (equalp_key): New procedure.
+	(init_key_type): Register the equalp callback.
+	* src/session-type.c (equalp_session): New procedure.
+	(init_session_type): Register the equalp callback.
+
 	* src/session-type.c (_scm_to_ssh_session): New procedure.
 	(free_session): Use _scm_to_ssh_session.
 	* src/session-type.h: (_scm_to_ssh_session): New procedure.
