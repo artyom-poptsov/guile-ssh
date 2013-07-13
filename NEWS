@@ -1,6 +1,51 @@
 Guile-SSH News
 --------------
 
+* Changes in version 0.3 (2013-07-13)
+
+** Improve working with public keys.
+   Because some libssh functions are working with public keys
+   represented as a ssh_string instead of a ssh_public_key, we try to
+   hide this peculiarity so all kinds of keys are look like a <key>
+   class from the Scheme perspective.
+
+** Fix segmentation faults on GC'ing of SSH objects.
+   The program doesn't crashes anymore during GC'ing of SSH objecs.
+
+** ssh:public-key-from-file
+   Make it work.  Return newly created <key> instance or #f on error.
+
+** ssh:public-key->string
+   Take a key as a <key> instance.
+
+** ssh:private-key-from-file
+   Fix call to an undefined procedure.  Return #f on error.
+
+** ssh:get-key-type
+   New procedure.  The procedure returns type for a passed <key>
+   instance.  Possible types are: 'dss, 'rsa, 'rsa1, 'unknown
+
+** ssh:userauth-get-list
+   New procedure.  The procedure returns a list of available
+   authentication methods for a given SSH session
+
+** ssh:channel-read
+   Fix call to an undefined procedure.  Throw guile-ssh-error
+   exception on error.
+
+** ssh:close-channel!
+   Fix return value: return #t if channel is closed successfully, #f
+   otherwise.
+
+** ssh:blocking-flush!
+   Return 'error by default.
+
+** ssh:session-set!
+   Fix a bug with uint32 options setting.
+
+** SSH objects now comparable.
+
+
 * Changes in version 0.2 (2013-05-25)
 
 ** Release of the first stable version of Guile-SSH.

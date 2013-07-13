@@ -15,7 +15,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with libguile-ssh.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([libguile-ssh], [0.2], [poptsov.artyom@gmail.com])
+AC_INIT([libguile-ssh], [0.3], [poptsov.artyom@gmail.com])
 
 AM_INIT_AUTOMAKE
 
@@ -42,7 +42,7 @@ if test "x$guilesitedir" = "x"; then
 fi
 AC_SUBST([guilesitedir])
 
-LIBGUILE_SSH_INTERFACE="1:0:1"
+LIBGUILE_SSH_INTERFACE="2:0:0"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 # Check for libssh
