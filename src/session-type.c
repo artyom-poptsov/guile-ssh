@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "session-type.h"
+#include "channel-type.h"
 #include "error.h"
 
 #define PRINT_DEBUG(data)\
@@ -40,11 +41,21 @@ mark_session (SCM session_smob)
 size_t
 free_session (SCM session_smob)
 {
+  size_t i;
   struct session_data *data
     = (struct session_data *) SCM_SMOB_DATA (session_smob);
 
   ssh_disconnect (data->ssh_session);
   ssh_free (data->ssh_session);
+
+  for (i = 0; i < data->channel_cnt; ++i)
+    data->channels[i]->is_session_alive = 0;
+
+  if (data->channel_cnt)
+    scm_gc_free (data->channels, sizeof data->channels, "channel list");
+
+  SCM_SET_SMOB_DATA (session_smob, NULL);
+
   return 0;
 }
 
@@ -61,6 +72,9 @@ guile_ssh_make_session (void)
   session_data->ssh_session = ssh_new ();
   if (session_data->ssh_session == NULL)
     return SCM_BOOL_F;
+
+  session_data->channels = NULL;
+  session_data->channel_cnt = 0;
 
   SCM_NEWSMOB (smob, session_tag, session_data);
 

@@ -21,12 +21,19 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include "channel-type.h"
 
 extern scm_t_bits session_tag;
 
 
 struct session_data {
   ssh_session ssh_session;
+
+  /* The reason for storing references to all channels related to the
+     session is that we have to prevent freeing of the channels that
+     are normally freed along with the session. */
+  size_t channel_cnt;
+  struct channel_data **channels;
 };
 
 

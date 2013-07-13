@@ -27,9 +27,9 @@ scm_t_bits key_tag; /* Smob tag. */
 
 /* Smob marking */
 SCM
-scm_markcdr (SCM key_smob)
+mark_key_smob (SCM key_smob)
 {
-  return SCM_SMOB_OBJECT (key_smob);
+  return SCM_BOOL_F;
 }
 
 /* Free the smob. */
@@ -37,7 +37,6 @@ size_t
 free_key_smob (SCM key_smob)
 {
   struct key_data *data;
-
   scm_assert_smob_type (key_tag, key_smob);
 
   data = (struct key_data *) SCM_SMOB_DATA (key_smob);
@@ -169,7 +168,7 @@ void
 init_key_type (void)
 {
   key_tag = scm_make_smob_type ("ssh:key", sizeof (struct key_data));
-  scm_set_smob_mark (key_tag, scm_markcdr);
+  scm_set_smob_mark (key_tag, mark_key_smob);
   scm_set_smob_free (key_tag, free_key_smob);
 
   scm_c_define_gsubr ("ssh:key?",         1, 0, 0, guile_ssh_is_key_p);

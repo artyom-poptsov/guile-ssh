@@ -28,6 +28,7 @@ extern scm_t_bits channel_tag;
 /* Smob data. */
 struct channel_data {
   ssh_channel ssh_channel;
+  int is_session_alive;
 };
 
 

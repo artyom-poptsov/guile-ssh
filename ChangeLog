@@ -1,3 +1,18 @@
+2013-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Fix GC'ing of SSH objects: the program doesn't crashes anymore
+	during GC'ing of channels and keys.
+	* src/session-type.c (free_session): Mark all related channels as
+	freed.
+	(guile_ssh_make_session): Initialize the channels array.
+	* src/key-type.c (mark_key_smob): Fix smob marking.
+	* src/channel-type.c (free_channel): Check if the channel has been
+	already freed along with the related SSH session.
+	(guile_ssh_make_channel): Store the reference to the channel in
+	the array of channels related to the SSH session.
+	* src/channel-type.h: Add is_channel_alive field to channel_data.
+	* TODO: Add to the repository.
+
 2013-06-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/key-type.h: Improve storing of public keys represented as a
