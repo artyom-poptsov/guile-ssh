@@ -30,16 +30,10 @@
 
 /* Open a new session */
 SCM
-guile_ssh_channel_open_session (SCM channel_smob)
+guile_ssh_channel_open_session (SCM arg1)
 {
-  struct channel_data *data;
-  int res;
-
-  scm_assert_smob_type (channel_tag, channel_smob);
-
-  data = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
-  res = ssh_channel_open_session (data->ssh_channel);
-
+  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  int res = ssh_channel_open_session (data->ssh_channel);
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
@@ -47,18 +41,14 @@ guile_ssh_channel_open_session (SCM channel_smob)
 SCM
 guile_ssh_channel_request_exec (SCM channel_smob, SCM cmd)
 {
-  struct channel_data *data;
+  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
   int res;
   char *c_cmd;                  /* Command to execute. */
 
-  scm_assert_smob_type (channel_tag, channel_smob);
   SCM_ASSERT (scm_is_string (cmd), cmd, SCM_ARG2, __func__);
 
-  data = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
   c_cmd = scm_to_locale_string (cmd);
-
   res = ssh_channel_request_exec (data->ssh_channel, c_cmd);
-
   free (c_cmd);
 
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
@@ -68,19 +58,16 @@ guile_ssh_channel_request_exec (SCM channel_smob, SCM cmd)
 SCM
 guile_ssh_channel_request_env (SCM channel_smob, SCM name, SCM value)
 {
-  struct channel_data *data;
+  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
   char *c_name;
   char *c_value;
   int res;
 
-  scm_assert_smob_type (channel_tag, channel_smob);
   SCM_ASSERT (scm_is_string (name), name, SCM_ARG2, __func__);
   SCM_ASSERT (scm_is_string (value), value, SCM_ARG3, __func__);
 
-  data = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
   c_name  = scm_to_locale_string (name);
   c_value = scm_to_locale_string (value);
-
   res = ssh_channel_request_env (data->ssh_channel, c_name, c_value);
 
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
@@ -93,13 +80,10 @@ guile_ssh_channel_request_env (SCM channel_smob, SCM name, SCM value)
 SCM
 guile_ssh_channel_pool (SCM channel_smob, SCM is_stderr)
 {
-  struct channel_data *data;
+  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
   int res;
 
-  scm_assert_smob_type (channel_tag, channel_smob);
   SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG2, __func__);
-
-  data = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
 
   res = ssh_channel_poll (data->ssh_channel, scm_is_true (is_stderr));
 
@@ -113,22 +97,19 @@ guile_ssh_channel_pool (SCM channel_smob, SCM is_stderr)
 SCM
 guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
 {
-  struct channel_data *data;
+  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
   int res;
   char *buffer;                 /* Buffer for data. */
   uint32_t c_count;             /* Size of buffer. */
   SCM obtained_data = SCM_BOOL_F; /* Obtained data from the channel. */
 
-  scm_assert_smob_type (channel_tag, channel_smob);
   SCM_ASSERT (scm_is_unsigned_integer (count, 0, UINT32_MAX), count,
               SCM_ARG2, __func__);
   SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG3, __func__);
 
   scm_dynwind_begin (0);
 
-  data = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
   c_count = scm_to_unsigned_integer (count, 0, UINT32_MAX);
-
   buffer = scm_gc_malloc (sizeof (char) * c_count, "data buffer");
   scm_dynwind_free (buffer);
 
@@ -158,48 +139,30 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
 
 /* Close a channel. */
 SCM
-guile_ssh_channel_close (SCM channel_smob)
+guile_ssh_channel_close (SCM arg1)
 {
-  struct channel_data *data;
-  int res;
-
-  scm_assert_smob_type (channel_tag, channel_smob);
-
-  data = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
-  res = ssh_channel_close (data->ssh_channel);
-
-  return (res = SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  int res = ssh_channel_close (data->ssh_channel);
+  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
 
 /* Predicates */
 
 SCM
-guile_ssh_channel_is_open_p (SCM channel_smob)
+guile_ssh_channel_is_open_p (SCM arg1)
 {
-  struct channel_data *data;
-  int res;
-
-  scm_assert_smob_type (channel_tag, channel_smob);
-
-  data = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
-  res = ssh_channel_is_open (data->ssh_channel);
-
-  return res ? SCM_BOOL_T : SCM_BOOL_F;
+  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  int res = ssh_channel_is_open (data->ssh_channel);
+  return scm_from_bool (res);
 }
 
 SCM
-guile_ssh_channel_is_eof_p (SCM channel_smob)
+guile_ssh_channel_is_eof_p (SCM arg1)
 {
-  struct channel_data *data;
-  int res;
-
-  scm_assert_smob_type (channel_tag, channel_smob);
-
-  data = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
-  res = ssh_channel_is_eof (data->ssh_channel);
-
-  return res ? SCM_BOOL_T : SCM_BOOL_F;
+  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  int res = ssh_channel_is_eof (data->ssh_channel);
+  return scm_from_bool (res);
 }
 
 

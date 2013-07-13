@@ -65,16 +65,13 @@ static struct option session_options[] = {
 SCM
 guile_ssh_blocking_flush (SCM session_smob, SCM timeout)
 {
-  struct session_data *data;
+  struct session_data *data = _scm_to_ssh_session (session_smob);
 
   int c_timeout;                /* Timeout */
   int res;                      /* Result of a function call. */
 
   /* Check types */
-  scm_assert_smob_type (session_tag, session_smob);
   SCM_ASSERT (scm_is_integer (timeout), timeout, SCM_ARG2, __func__);
-
-  data = (struct session_data *) SCM_SMOB_DATA (session_smob);
 
   c_timeout = scm_to_int (timeout);
 
@@ -230,18 +227,15 @@ set_option (ssh_session session, int type, SCM value)
 
 /* Set a SSH option.  Return #t on success, #f on error. */
 SCM
-guile_ssh_session_set (SCM session_smob, SCM type, SCM value)
+guile_ssh_session_set (SCM session, SCM type, SCM value)
 {
-  struct session_data* data;
+  struct session_data* data = _scm_to_ssh_session (session);
   char *c_type_name;                    /* Name of an option */
   struct option *option;                /* SSH option mapping */
   int is_found = 0;                     /* Is a parameter found? */
   int res;                              /* Result of a function call */
 
   SCM_ASSERT (scm_is_symbol (type), type, SCM_ARG2, __func__);
-  scm_assert_smob_type (session_tag, session_smob);
-
-  data = (struct session_data *) SCM_SMOB_DATA (session_smob);
 
   c_type_name = scm_to_locale_string (scm_symbol_to_string (type));
 
@@ -259,7 +253,7 @@ guile_ssh_session_set (SCM session_smob, SCM type, SCM value)
 
   res = set_option (data->ssh_session, option->type, value);
 
-  scm_remember_upto_here_1 (session_smob);
+  scm_remember_upto_here_1 (session);
 
   return (res == 0) ? SCM_BOOL_T : SCM_BOOL_F;
 }
@@ -268,17 +262,10 @@ guile_ssh_session_set (SCM session_smob, SCM type, SCM value)
 
    Return one of the following symbols: 'ok, 'error, 'again */
 SCM
-guile_ssh_connect (SCM session_smob)
+guile_ssh_connect (SCM arg1)
 {
-  struct session_data* data;
-  int res;
-
-  /* Check types. */
-  scm_assert_smob_type (session_tag, session_smob);
-
-  data = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
-  res = ssh_connect (data->ssh_session);
+  struct session_data* data = _scm_to_ssh_session (arg1);
+  int res = ssh_connect (data->ssh_session);
   switch (res)
     {
     case SSH_OK:
@@ -296,16 +283,10 @@ guile_ssh_connect (SCM session_smob)
 /* Disconnect from a session (client or server). 
    Return value is undefined.*/
 SCM
-guile_ssh_disconnect (SCM session_smob)
+guile_ssh_disconnect (SCM arg1)
 {
-  struct session_data* session_data;
-
-  scm_assert_smob_type (session_tag, session_smob);
-
-  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
+  struct session_data* session_data = _scm_to_ssh_session (arg1);
   ssh_disconnect (session_data->ssh_session);
-
   return SCM_UNDEFINED;
 }
 
@@ -314,15 +295,10 @@ guile_ssh_disconnect (SCM session_smob)
  * Return 1 for SSH1, 2 for SSH2 or #f on error
  */
 SCM
-guile_ssh_get_protocol_version (SCM session_smob)
+guile_ssh_get_protocol_version (SCM arg1)
 {
-  struct session_data* data;
+  struct session_data* data = _scm_to_ssh_session (arg1);
   SCM ret;
-
-  scm_assert_smob_type (session_tag, session_smob);
-
-  data = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
   int version = ssh_get_version (data->ssh_session);
 
   if (version >= 0)
@@ -334,18 +310,10 @@ guile_ssh_get_protocol_version (SCM session_smob)
 }
 
 SCM
-guile_ssh_get_error (SCM session_smob)
+guile_ssh_get_error (SCM arg1)
 {
-  SCM error;
-  struct session_data* data;
-
-  /* Check types */
-  scm_assert_smob_type (session_tag, session_smob);
-
-  data = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
-  error = scm_from_locale_string (ssh_get_error (data->ssh_session));
-
+  struct session_data* data = _scm_to_ssh_session (arg1);
+  SCM error = scm_from_locale_string (ssh_get_error (data->ssh_session));
   return error;
 }
 
@@ -354,14 +322,9 @@ guile_ssh_get_error (SCM session_smob)
    Return one of the following symbols: 'ok, 'known-changed,
    'found-other, 'not-known, 'file-not-fount, 'error */
 SCM
-guile_ssh_authenticate_server (SCM session_smob)
+guile_ssh_authenticate_server (SCM arg1)
 {
-  struct session_data* data;
-
-  scm_assert_smob_type (session_tag, session_smob);
-
-  data = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
+  struct session_data* data = _scm_to_ssh_session (arg1);
   int res = ssh_is_server_known (data->ssh_session);
 
   switch (res)
@@ -391,20 +354,15 @@ guile_ssh_authenticate_server (SCM session_smob)
 
    Return MD5 hash on success, #f on error. */
 SCM
-guile_ssh_get_public_key_hash (SCM session_smob)
+guile_ssh_get_public_key_hash (SCM arg1)
 {
-  struct session_data *session_data;
+  struct session_data *session_data = _scm_to_ssh_session (arg1);
   unsigned char *hash = NULL;
   char *hash_str;
   int res;
   SCM ret;
 
   scm_dynwind_begin (0);
-
-  /* Check types. */
-  scm_assert_smob_type (session_tag, session_smob);
-
-  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
 
   res = ssh_get_pubkey_hash (session_data->ssh_session, &hash);
   scm_dynwind_free (hash);
@@ -425,18 +383,10 @@ guile_ssh_get_public_key_hash (SCM session_smob)
 
    Return #t on success, #f on error. */
 SCM
-guile_ssh_write_known_host (SCM session_smob)
+guile_ssh_write_known_host (SCM arg1)
 {
-  struct session_data *session_data;
-  int res;
-
-  /* Check types. */
-  scm_assert_smob_type (session_tag, session_smob);
-
-  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
-  res = ssh_write_knownhost (session_data->ssh_session);
-
+  struct session_data *session_data = _scm_to_ssh_session (arg1);
+  int res = ssh_write_knownhost (session_data->ssh_session);
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
@@ -447,18 +397,11 @@ guile_ssh_write_known_host (SCM session_smob)
 
    Return #f if we are connected to a server, #f if we aren't. */
 SCM
-guile_ssh_is_connected_p (SCM session_smob)
+guile_ssh_is_connected_p (SCM arg1)
 {
-  struct session_data* data;
-
-  /* Check types */
-  scm_assert_smob_type (session_tag, session_smob);
-
-  data = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
+  struct session_data* data = _scm_to_ssh_session (arg1);
   int res = ssh_is_connected (data->ssh_session);
-
-  return res ? SCM_BOOL_T : SCM_BOOL_F;
+  return scm_from_bool (res);
 }
 
 

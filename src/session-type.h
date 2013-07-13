@@ -41,4 +41,8 @@ extern SCM guile_ssh_make_session (void);
 
 extern void init_session_type (void);
 
+
+/* Helper procedures */
+extern struct session_data*_scm_to_ssh_session (SCM x);
+
 #endif  /* ifndef __SESSION_TYPE_H__ */

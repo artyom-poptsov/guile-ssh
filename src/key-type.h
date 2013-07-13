@@ -66,4 +66,10 @@ extern SCM guile_ssh_key_get_type (SCM arg1);
 
 extern void init_key_type (void);
 
+
+/* Helper procedures */
+extern struct key_data *_scm_to_ssh_key (SCM x);
+extern inline int _private_key_p (struct key_data *key);
+extern inline int _public_key_p (struct key_data *key);
+
 #endif	/* ifndef __KEY_TYPE_H__ */

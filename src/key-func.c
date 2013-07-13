@@ -42,9 +42,9 @@ public_key_to_ssh_string (const struct key_data *public_key_data)
  * TODO: Probably should be replaced with a simply print function.
  */
 SCM
-guile_ssh_public_key_to_string (SCM key_smob)
+guile_ssh_public_key_to_string (SCM arg1)
 {
-  struct key_data *key_data;
+  struct key_data *key_data = _scm_to_ssh_key (arg1);
   ssh_string public_key;
   unsigned char *key_str;
   size_t        key_len;
@@ -52,10 +52,7 @@ guile_ssh_public_key_to_string (SCM key_smob)
 
   scm_dynwind_begin (0);
 
-  SCM_ASSERT (scm_to_bool (guile_ssh_is_public_key_p (key_smob)),
-              key_smob, SCM_ARG1, __func__);
-
-  key_data = (struct key_data *) SCM_SMOB_DATA (key_smob);
+  SCM_ASSERT (_public_key_p (key_data), arg1, SCM_ARG1, __func__);
 
   public_key = public_key_to_ssh_string (key_data);
   scm_dynwind_unwind_handler ((void (*)(void*)) ssh_string_free, public_key,
@@ -79,7 +76,7 @@ SCM
 guile_ssh_private_key_from_file (SCM session_smob, SCM filename)
 {
   SCM key_smob;
-  struct session_data *session_data;
+  struct session_data *session_data = _scm_to_ssh_session (session_smob);
   struct key_data *key_data;
   char *c_filename;
 
@@ -87,10 +84,8 @@ guile_ssh_private_key_from_file (SCM session_smob, SCM filename)
 
   scm_dynwind_begin (0);
 
-  scm_assert_smob_type (session_tag, session_smob);
   SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, __func__);
 
-  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
   key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                 "ssh key");
 
@@ -116,16 +111,13 @@ guile_ssh_private_key_from_file (SCM session_smob, SCM filename)
 
 /* Get public key from a private key KEY_SMOB */
 SCM
-guile_ssh_public_key_from_private_key (SCM key_smob)
+guile_ssh_public_key_from_private_key (SCM arg1)
 {
-  struct key_data *private_key_data;
+  struct key_data *private_key_data = _scm_to_ssh_key (arg1);
   struct key_data *public_key_data;
   SCM smob;
 
-  SCM_ASSERT (scm_to_bool (guile_ssh_is_private_key_p (key_smob)),
-              key_smob, SCM_ARG4, __func__);
-
-  private_key_data = (struct key_data *) SCM_SMOB_DATA (key_smob);
+  SCM_ASSERT (_private_key_p (private_key_data), arg1, SCM_ARG1, __func__);
 
   public_key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                        "ssh key");
@@ -150,7 +142,7 @@ guile_ssh_public_key_from_private_key (SCM key_smob)
 SCM
 guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
 {
-  struct session_data *session_data;
+  struct session_data *session_data = _scm_to_ssh_session (session_smob);
   struct key_data *public_key_data;
   char *c_filename;
   ssh_string public_key_str;
@@ -159,10 +151,7 @@ guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
 
   scm_dynwind_begin (0);
 
-  scm_assert_smob_type (session_tag, session_smob);
   SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, __func__);
-
-  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
 
   c_filename = scm_to_locale_string (filename);
   scm_dynwind_free (c_filename);

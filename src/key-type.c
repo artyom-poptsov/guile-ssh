@@ -34,12 +34,9 @@ mark_key_smob (SCM key_smob)
 
 /* Free the smob. */
 size_t
-free_key_smob (SCM key_smob)
+free_key_smob (SCM arg1)
 {
-  struct key_data *data;
-  scm_assert_smob_type (key_tag, key_smob);
-
-  data = (struct key_data *) SCM_SMOB_DATA (key_smob);
+  struct key_data *data = _scm_to_ssh_key (arg1);
 
   switch (data->key_type)
     {
@@ -93,15 +90,10 @@ scm_from_ssh_key_type (int type)
    Return a key type as a Scheme symbol.  The type can be one of the
    following list: 'dss, 'rsa, 'rsa1, 'unknown */
 SCM
-guile_ssh_key_get_type (SCM key_smob)
+guile_ssh_key_get_type (SCM arg1)
 {
-  struct key_data *data;
+  struct key_data *data = _scm_to_ssh_key (arg1);
   enum ssh_keytypes_e type = SSH_KEYTYPE_UNKNOWN;
-  SCM ret;
-
-  scm_assert_smob_type (key_tag, key_smob);
-
-  data = (struct key_data *) SCM_SMOB_DATA (key_smob);
 
   switch (data->key_type)
     {
@@ -135,31 +127,43 @@ guile_ssh_is_key_p (SCM obj)
 }
 
 SCM
-guile_ssh_is_public_key_p (SCM key_smob)
+guile_ssh_is_public_key_p (SCM arg1)
 {
-  struct key_data *data;
-
-  scm_assert_smob_type (key_tag, key_smob);
-
-  data = (struct key_data *) SCM_SMOB_DATA (key_smob);
-
-  if ((data->key_type == KEY_TYPE_PUBLIC)
-      || (data->key_type == KEY_TYPE_PUBLIC_STR))
-    return SCM_BOOL_T;
-  else
-    return SCM_BOOL_F;
+  struct key_data *key = _scm_to_ssh_key (arg1);
+  return scm_from_bool (_public_key_p (key));
 }
 
 SCM
-guile_ssh_is_private_key_p (SCM key_smob)
+guile_ssh_is_private_key_p (SCM arg1)
 {
-  struct key_data *data;
+  struct key_data *key = _scm_to_ssh_key (arg1);
+  return scm_from_bool (_private_key_p (key));
+}
 
-  scm_assert_smob_type (key_tag, key_smob);
+
+/* Helper procedures */
 
-  data = (struct key_data *) SCM_SMOB_DATA (key_smob);
+/* Convert X to a SSH key */
+struct key_data *
+_scm_to_ssh_key (SCM x)
+{
+  scm_assert_smob_type (key_tag, x);
+  return (struct key_data *) SCM_SMOB_DATA (x);
+}
 
-  return (data->key_type == KEY_TYPE_PRIVATE) ? SCM_BOOL_T : SCM_BOOL_F;
+/* Check that KEY is a SSH private key. */
+inline int
+_private_key_p (struct key_data *key)
+{
+  return (key->key_type == KEY_TYPE_PRIVATE);
+}
+
+/* Check that KEY is a SSH public key */
+inline int
+_public_key_p (struct key_data *key)
+{
+  return ((key->key_type == KEY_TYPE_PUBLIC)
+          || (key->key_type == KEY_TYPE_PUBLIC_STR));
 }
 
 

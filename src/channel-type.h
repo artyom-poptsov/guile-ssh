@@ -39,4 +39,8 @@ extern SCM guile_ssh_is_channel_p (SCM arg1);
 
 extern void init_channel_type (void);
 
+
+/* Helper procedures */
+struct channel_data *_scm_to_ssh_channel (SCM x);
+
 #endif /* ifndef __CHANNEL_TYPE_H__ */

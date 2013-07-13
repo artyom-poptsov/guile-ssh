@@ -42,8 +42,7 @@ size_t
 free_session (SCM session_smob)
 {
   size_t i;
-  struct session_data *data
-    = (struct session_data *) SCM_SMOB_DATA (session_smob);
+  struct session_data *data = _scm_to_ssh_session (session_smob);
 
   ssh_disconnect (data->ssh_session);
   ssh_free (data->ssh_session);
@@ -79,6 +78,17 @@ guile_ssh_make_session (void)
   SCM_NEWSMOB (smob, session_tag, session_data);
 
   return smob;
+}
+
+
+/* Helper procedures  */
+
+/* Convert SCM object to a SSH session */
+struct session_data*
+_scm_to_ssh_session (SCM x)
+{
+  scm_assert_smob_type (session_tag, x);
+  return (struct session_data *) SCM_SMOB_DATA (x);
 }
 
 

@@ -64,9 +64,9 @@ SCM
 guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
                            SCM public_key_smob, SCM private_key_smob)
 {
-  struct session_data *session_data;
-  struct key_data *private_key_data;
-  struct key_data *public_key_data;
+  struct session_data *session_data = _scm_to_ssh_session (session_smob);
+  struct key_data *public_key_data  = _scm_to_ssh_key (public_key_smob);
+  struct key_data *private_key_data = _scm_to_ssh_key (private_key_smob);
   char *c_username = NULL;
   ssh_string public_key;
   int res;
@@ -74,19 +74,15 @@ guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
   scm_dynwind_begin (0);
 
   /* Check types. */
-  scm_assert_smob_type (session_tag, session_smob);
+
   /* username can be either a string or SCM_BOOL_F */
   SCM_ASSERT (scm_is_string (username)
               || (scm_is_bool (username) && (! scm_to_bool (username))),
               username, SCM_ARG2, __func__);
-  SCM_ASSERT (scm_to_bool (guile_ssh_is_public_key_p (public_key_smob)),
+  SCM_ASSERT (_public_key_p (public_key_data),
               public_key_smob, SCM_ARG3, __func__);
-  SCM_ASSERT (scm_to_bool (guile_ssh_is_private_key_p (private_key_smob)),
+  SCM_ASSERT (_private_key_p (private_key_data),
               private_key_smob, SCM_ARG4, __func__);
-
-  session_data     = (struct session_data *) SCM_SMOB_DATA (session_smob);
-  private_key_data = (struct key_data *) SCM_SMOB_DATA (private_key_smob);
-  public_key_data  = (struct key_data *) SCM_SMOB_DATA (public_key_smob);
 
   if (scm_is_string (username))
     {
@@ -120,7 +116,7 @@ guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
 SCM
 guile_ssh_userauth_password (SCM session_smob, SCM username, SCM password)
 {
-  struct session_data* session_data;
+  struct session_data* session_data = _scm_to_ssh_session (session_smob);
   char *c_username;
   char *c_password;
   int res;
@@ -128,12 +124,9 @@ guile_ssh_userauth_password (SCM session_smob, SCM username, SCM password)
   scm_dynwind_begin (0);
 
   /* Check types. */
-  scm_assert_smob_type (session_tag, session_smob);
   SCM_ASSERT ((scm_is_string (username) || scm_is_bool (username)),
               password, SCM_ARG2, __func__);
   SCM_ASSERT (scm_is_string (password), password, SCM_ARG3, __func__);
-
-  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
 
   if (scm_is_true (username))
     {
@@ -164,19 +157,12 @@ guile_ssh_userauth_password (SCM session_smob, SCM username, SCM password)
    Return one of the following symbols: 'success, 'error, 'denied,
    'partial, 'again */
 SCM
-guile_ssh_userauth_none (SCM session_smob)
+guile_ssh_userauth_none (SCM arg1)
 {
-  struct session_data *session_data;
-  int res;
-
-  scm_assert_smob_type (session_tag, session_smob);
-
-  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
+  struct session_data *session_data = _scm_to_ssh_session (arg1);
   /* username is deprecated parameter.  Should be set to NULL. */
-  res = ssh_userauth_none (session_data->ssh_session, 
-                           NULL); /* Username */
-
+  int res = ssh_userauth_none (session_data->ssh_session, 
+                               NULL); /* Username */
   return ssh_auth_result_to_symbol (res);
 }
 
@@ -184,20 +170,15 @@ guile_ssh_userauth_none (SCM session_smob)
 
    Return list of available methods. */
 SCM
-guile_ssh_userauth_get_list (SCM session_smob)
+guile_ssh_userauth_get_list (SCM arg1)
 {
-  struct session_data *session_data;
+  struct session_data *session_data = _scm_to_ssh_session (arg1);
   SCM auth_list = SCM_EOL;
-  int res;
-
-  scm_assert_smob_type (session_tag, session_smob);
-
-  session_data = (struct session_data *) SCM_SMOB_DATA (session_smob);
 
   /* The second argument of the function is a username.  According to
      the documentation for libssh 0.5.3, this argument is deprecated
      and must be set to NULL. */
-  res = ssh_userauth_list (session_data->ssh_session, NULL);
+  int res = ssh_userauth_list (session_data->ssh_session, NULL);
 
   if (res & SSH_AUTH_METHOD_PASSWORD)
     {

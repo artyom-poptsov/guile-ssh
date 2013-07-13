@@ -1,5 +1,43 @@
 2013-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/session-type.c (_scm_to_ssh_session): New procedure.
+	(free_session): Use _scm_to_ssh_session.
+	* src/session-type.h: (_scm_to_ssh_session): New procedure.
+	* src/key-type.c (free_key_smob, guile_ssh_key_get_type): Use
+	_scm_to_ssh_key to get smob data.
+	(guile_ssh_is_public_key_p): Likewise.  Use _public_key_p to check
+	the key type.
+	(guile_ssh_is_private_key_p): Use _scm_to_ssh_key.  Use
+	_private_key_p to check the key type.
+	(_scm_to_ssh_key, _private_key_p, _public_key_p): New procedures.
+	* src/key-type.h (_scm_to_ssh_key, _private_key_p, _public_key_p):
+	New procedures.
+	* src/channel-type.c (_scm_to_ssh_channel): New procedure.
+	(guile_ssh_make_channel): Use _scm_to_ssh_session.
+	* src/channel-type.h (_scm_to_ssh_channel): New procedure.
+	* src/auth.c (guile_ssh_userauth_pubkey)
+	(guile_ssh_userauth_password, guile_ssh_userauth_none)
+	(guile_ssh_userauth_get_list): Use _scm_to_* to get smob data and
+	predicates related so corresponding types to check their types.
+	Clean up the code.
+	* src/session-func.c (guile_ssh_blocking_flush)
+	(guile_ssh_session_set, guile_ssh_connect, guile_ssh_disconnect)
+	(guile_ssh_get_protocol_version, guile_ssh_get_error)
+	(guile_ssh_authenticate_server, guile_ssh_get_public_key_hash)
+	(guile_ssh_write_known_host, guile_ssh_is_connected_p): Use
+	_scm_to_ssh_session.
+	* src/key-func.c (guile_ssh_public_key_to_string)
+	(guile_ssh_private_key_from_file)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_public_key_from_file): Use _scm_to_ssh_key to get smob
+	data.  Use _private_key_p and _public_key_p predicates to check
+	smob type.
+	* src/channel-func.c (guile_ssh_channel_open_session)
+	(guile_ssh_channel_request_exec, guile_ssh_channel_request_env)
+	(guile_ssh_channel_pool, guile_ssh_channel_read)
+	(guile_ssh_channel_close, guile_ssh_channel_is_open_p)
+	(guile_ssh_channel_is_eof_p): Use _scm_to_ssh_channel.
+
 	* src/channel-func.c (guile_ssh_channel_close): Fix return value:
 	return SCM_BOOL_T if channel is closed successfully, SCM_BOOL_F
 	otherwise.

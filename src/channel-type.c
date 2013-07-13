@@ -39,8 +39,7 @@ mark_channel (SCM channel_smob)
 size_t
 free_channel (SCM channel_smob)
 {
-  struct channel_data *data
-    = (struct channel_data *) SCM_SMOB_DATA (channel_smob);
+  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
 
   /* If the SSH session is already freed, we don't need to call
      ssh_channel_free for the channel, because allocated resourses are
@@ -57,16 +56,14 @@ free_channel (SCM channel_smob)
 
 /* Allocate a new SSH channel. */
 SCM
-guile_ssh_make_channel (SCM session_smob)
+guile_ssh_make_channel (SCM arg1)
 {
   SCM smob;
   size_t cnt;                   /* Channel count */
   size_t old_sz;                /* Old channels array size */
   size_t new_sz;                /* New channels array size */
 
-  struct session_data *session_data
-    = (struct session_data *) SCM_SMOB_DATA (session_smob);
-
+  struct session_data *session_data = _scm_to_ssh_session (arg1);
   struct channel_data *channel_data
     = (struct channel_data *) scm_gc_malloc (sizeof (struct channel_data),
                                              "channel");
@@ -103,6 +100,17 @@ SCM
 guile_ssh_is_channel_p (SCM obj)
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (channel_tag, obj));
+}
+
+
+/* Helper procedures */
+
+/* Convert X to a SSH channel */
+struct channel_data *
+_scm_to_ssh_channel (SCM x)
+{
+  scm_assert_smob_type (channel_tag, x);
+  return (struct channel_data *) SCM_SMOB_DATA (x);
 }
 
 
