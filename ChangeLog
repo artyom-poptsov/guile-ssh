@@ -1,5 +1,7 @@
 2013-07-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-type.c (guile_ssh_make_channel): Cleanup the code.
+
 	* README: Add info about dependencies.
 	* TODO: Update.
 

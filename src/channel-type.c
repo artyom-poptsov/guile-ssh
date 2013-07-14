@@ -49,9 +49,6 @@ SCM
 guile_ssh_make_channel (SCM arg1)
 {
   SCM smob;
-  size_t cnt;                   /* Channel count */
-  size_t old_sz;                /* Old channels array size */
-  size_t new_sz;                /* New channels array size */
 
   struct session_data *session_data = _scm_to_ssh_session (arg1);
   struct channel_data *channel_data
