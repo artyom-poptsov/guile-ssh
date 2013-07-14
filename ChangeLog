@@ -1,5 +1,7 @@
 2013-07-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* configure.ac, NEWS: Bump version to 0.3.1
+
 	Fix several bugs.
 	* src/threads.c, src/threads.h: Fix a bug with variable
 	initialization: use constant value to initialize SSH threads
