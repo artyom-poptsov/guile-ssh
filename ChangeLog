@@ -1,3 +1,11 @@
+2013-07-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Make the library thread-safe.
+	* src/channel-main.c (init_channel): Initialize threads.
+	* src/key-main.c (init_key): Likewise.
+	* src/session-main.c (init_session): Likewise.
+	* src/threads.c, src/threads.c: New files.
+
 2013-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	Use a simpler method to GC'ing of SSH channels.  The idea is that

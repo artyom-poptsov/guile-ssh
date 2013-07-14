@@ -20,12 +20,14 @@
 
 #include "key-type.h"
 #include "key-func.h"
+#include "threads.h"
 
 void
 init_key (void)
 {
   init_key_type ();
   init_key_func ();
+  init_pthreads ();
 }
 
 /* key-main.c ends here */

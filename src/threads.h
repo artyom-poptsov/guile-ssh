@@ -1,9 +1,7 @@
-/* session-main.c -- SSH session initialization.
- *
- * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
- * 
+ *
  * libguile-ssh is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -18,16 +16,9 @@
  * along with libguile-ssh.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "session-type.h"
-#include "session-func.h"
-#include "threads.h"
+#ifndef __THREADS_H__
+#define __THREADS_H__
 
-void
-init_session (void)
-{
-  init_session_type ();
-  init_session_func ();
-  init_pthreads ();
-}
+void init_pthreads (void);
 
-/* session-main.c ends here */
+#endif  /* ifndef __THREADS_H__ */

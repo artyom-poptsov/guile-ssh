@@ -19,10 +19,12 @@
 
 #include "channel-type.h"
 #include "channel-func.h"
+#include "threads.h"
 
 void
 init_channel (void)
 {
   init_channel_type ();
   init_channel_func ();
+  init_pthreads ();
 }

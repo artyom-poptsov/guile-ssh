@@ -1,4 +1,4 @@
-/* session-main.c -- SSH session initialization.
+/* threads.c -- Initialization of SSH threads
  *
  * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
@@ -18,16 +18,24 @@
  * along with libguile-ssh.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "session-type.h"
-#include "session-func.h"
-#include "threads.h"
+#include <libssh/callbacks.h>
 
+static const int PTHREADS_DISABLED = 0;
+static const int PTHREADS_ENABLED  = 1;
+
+/* Current SSH threading state */
+static int pthreads_state = PTHREADS_DISABLED;
+
+/* Initialize threading if it has not been initialized yet. */
 void
-init_session (void)
+init_pthreads (void)
 {
-  init_session_type ();
-  init_session_func ();
-  init_pthreads ();
+  if (pthreads_state == PTHREADS_DISABLED)
+    {
+      ssh_threads_set_callbacks(ssh_threads_get_pthread());
+      ssh_init();
+      pthreads_state = PTHREADS_ENABLED;
+    }
 }
 
-/* session-main.c ends here */
+/* threads.c ends here */
