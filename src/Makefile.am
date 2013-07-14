@@ -17,7 +17,6 @@
 ## <http://www.gnu.org/licenses/>.
 
 AM_CFLAGS = @GUILE_CFLAGS@ `pkg-config --cflags guile-1.8` -Wall -g
-AM_LDFLAGS=`pkg-config --libs guile-1.8 libssh` -lssh_threads
 
 lib_LTLIBRARIES = libguile-ssh.la
 
@@ -27,10 +26,10 @@ libguile_ssh_la_SOURCES = \
 	error.c error.h key-func.c key-func.h key-main.c \
 	key-type.c key-type.h session-func.c session-func.h \
 	session-type.c session-type.h session-main.c \
-	version.c base64.c
+	version.c base64.c threads.c threads.h
 
-libguile_ssh_la_LDFLAGS = -module -no-undefined -version-info	\
-	$(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)
+libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
+	-version-info $(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)
 
 ## Scheme files
 pkgguilesitedir = $(guilesitedir)/ssh

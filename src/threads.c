@@ -19,22 +19,20 @@
  */
 
 #include <libssh/callbacks.h>
-
-static const int PTHREADS_DISABLED = 0;
-static const int PTHREADS_ENABLED  = 1;
+#include "threads.h"
 
 /* Current SSH threading state */
-static int pthreads_state = PTHREADS_DISABLED;
+static int pthreads_state = SSH_PTHREADS_DISABLED;
 
 /* Initialize threading if it has not been initialized yet. */
 void
 init_pthreads (void)
 {
-  if (pthreads_state == PTHREADS_DISABLED)
+  if (pthreads_state == SSH_PTHREADS_DISABLED)
     {
-      ssh_threads_set_callbacks(ssh_threads_get_pthread());
-      ssh_init();
-      pthreads_state = PTHREADS_ENABLED;
+      ssh_threads_set_callbacks (ssh_threads_get_pthread ());
+      ssh_init ();
+      pthreads_state = SSH_PTHREADS_ENABLED;
     }
 }
 

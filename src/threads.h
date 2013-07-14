@@ -19,6 +19,9 @@
 #ifndef __THREADS_H__
 #define __THREADS_H__
 
+#define SSH_PTHREADS_DISABLED 0
+#define SSH_PTHREADS_ENABLED  1
+
 void init_pthreads (void);
 
 #endif  /* ifndef __THREADS_H__ */

@@ -1,5 +1,12 @@
 2013-07-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	Fix several bugs.
+	* src/threads.c, src/threads.h: Fix a bug with variable
+	initialization: use constant value to initialize SSH threads
+	state.
+	* src/Makefile.am (libguile_ssh_la_SOURCES): Add missed files.
+	(libguile_ssh_la_LDFLAGS): Add missed flags.
+
 	* src/channel-type.c (guile_ssh_make_channel): Cleanup the code.
 
 	* README: Add info about dependencies.
