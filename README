@@ -3,3 +3,12 @@
 Guile-SSH is a library that provides access to the SSH protocol for
 programs written in GNU Guile interpreter.  It is a wrapper to the
 underlying libssh library.
+
+
+	DEPENDENCIES
+
+* GNU Guile 1.8 (probably will work with 2.0, not tested)
+  <https://www.gnu.org/software/guile/>
+
+* libssh 0.5.4
+  <http://www.libssh.org/>

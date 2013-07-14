@@ -1,5 +1,8 @@
 2013-07-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README: Add info about dependencies.
+	* TODO: Update.
+
 	Make the library thread-safe.
 	* src/channel-main.c (init_channel): Initialize threads.
 	* src/key-main.c (init_key): Likewise.

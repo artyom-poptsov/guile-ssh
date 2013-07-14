@@ -1,9 +1,4 @@
 -*- Mode: Outline -*-
 
-* Improve GC'ing of SSH channels.
-  Array of channel references stored in session_data can only grow for
-  now.  Generally it means two things: a) the maximum number of
-  channels is limited by UINT32_MAX, and b) closed channels won't be
-  removed from the array.  That is, if your program constantly opens
-  new channels for one session, then at some point you can run into
-  the problems with making new channels.
+* Implement SSH server API.
+  
