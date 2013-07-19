@@ -155,7 +155,7 @@ set_bool_opt (ssh_session session, int type, SCM value)
 {
   int32_t bool;
 
-  SCM_ASSERT (scm_is_integer (value), value, SCM_ARG3, __func__);
+  SCM_ASSERT (scm_is_bool (value), value, SCM_ARG3, __func__);
 
   bool = scm_to_bool (value);
   return ssh_options_set (session, type, &bool);

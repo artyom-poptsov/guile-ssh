@@ -2,6 +2,8 @@
 
 	* src/session-func.c: Fix a typo in the option symbol:
 	'strcthostkeycheck -> 'stricthostkeycheck
+	(set_bool_opt): Fix the assertion for the third argument: expect
+	a boolean value instead of an integer value.
 
 2013-07-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
