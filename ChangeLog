@@ -1,3 +1,8 @@
+2013-07-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/session-func.c: Fix a typo in the option symbol:
+	'strcthostkeycheck -> 'stricthostkeycheck
+
 2013-07-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* configure.ac, NEWS: Bump version to 0.3.1
