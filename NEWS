@@ -1,6 +1,16 @@
 Guile-SSH News
 --------------
 
+* Unreleased
+
+** ssh:session-set!
+   Fix the bug that leads to an error if the user tried to set a
+   correct boolean option.
+
+** Fix a typo in an option symbol
+   'strcthostkeycheck -> 'stricthostkeycheck
+
+
 * Changes in version 0.3.1 (2013-07-14)
 
 ** Use a simpler method to GC'ing of SSH channels.
