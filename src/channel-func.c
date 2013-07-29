@@ -107,19 +107,15 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
               SCM_ARG2, __func__);
   SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG3, __func__);
 
-  scm_dynwind_begin (0);
-
   c_count = scm_to_unsigned_integer (count, 0, UINT32_MAX);
-  buffer = scm_gc_malloc (sizeof (char) * c_count, "data buffer");
-  scm_dynwind_free (buffer);
-
-  res = ssh_channel_read (data->ssh_channel, buffer, c_count,
+  buffer = scm_gc_calloc (sizeof (char) * c_count + 1, "data buffer");
+  res = ssh_channel_read (data->ssh_channel, buffer, c_count + 1,
                           scm_is_true (is_stderr));
 
   if (res > 0)
     {
-      buffer[c_count] = 0;      /* Avoid getting garbage in a SCM string */
-      obtained_data = scm_from_locale_string (buffer);
+      buffer[res] = 0;          /* Avoid getting garbage in a SCM string */
+      obtained_data = scm_take_locale_string (buffer);
     }
   else if (res == 0)
     {
@@ -131,8 +127,6 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
       guile_ssh_error1 (__func__, "Couldn't read data from a channel.", 
                         SCM_BOOL_F);
     }
-
-  scm_dynwind_end ();
 
   return obtained_data;
 }

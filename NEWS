@@ -3,6 +3,10 @@ Guile-SSH News
 
 * Unreleased
 
+** ssh:channel-read
+   Fix a memory corruption.  The problem was seen on reading of an
+   output from "lsb_release -a" command.
+
 ** ssh:session-set!
    Fix the bug that leads to an error if the user tried to set a
    correct boolean option.

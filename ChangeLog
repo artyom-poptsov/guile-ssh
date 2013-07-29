@@ -1,3 +1,10 @@
+2013-07-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-func.c (guile_ssh_channel_read): Fix memory
+	corruption during freeing of the allocated memory.  Initialize
+	allocated memory with zeroes.  Don't use dynwind.
+	* NEWS: Update.
+
 2013-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* NEWS: Update.
