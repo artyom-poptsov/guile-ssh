@@ -1,3 +1,10 @@
+2013-08-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/session-func.c: Use a short macro for getting long SSH
+	options names.
+	(TYPE): New macro.
+	(set_option): Use TEST macro.
+
 2013-08-25  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	Use the Guile magic snarfer to make guile_ssh_* functions visible

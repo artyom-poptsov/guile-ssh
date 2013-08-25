@@ -30,32 +30,35 @@ struct option {
   int   type;
 };
 
+
 /* SSH options mapping to Guile symbols. */
+
+#define TYPE(OPT) SSH_OPTIONS_ ## OPT
 static struct option session_options[] = {
-  { "host",               SSH_OPTIONS_HOST               },
-  { "port",               SSH_OPTIONS_PORT               },
-  { "port-str",           SSH_OPTIONS_PORT_STR           },
-  { "fd",                 SSH_OPTIONS_FD                 },
-  { "bindaddr",           SSH_OPTIONS_BINDADDR           },
-  { "user",               SSH_OPTIONS_USER               },
-  { "ssh-dir",            SSH_OPTIONS_SSH_DIR            },
-  { "identity",           SSH_OPTIONS_IDENTITY           },
-  { "add-identity",       SSH_OPTIONS_ADD_IDENTITY       },
-  { "knownhosts",         SSH_OPTIONS_KNOWNHOSTS         },
-  { "timeout",            SSH_OPTIONS_TIMEOUT            },
-  { "timeout-usec",       SSH_OPTIONS_TIMEOUT_USEC       },
-  { "ssh1",               SSH_OPTIONS_SSH1               },
-  { "ssh2",               SSH_OPTIONS_SSH2               },
-  { "log-verbosity",      SSH_OPTIONS_LOG_VERBOSITY      },
-  { "log-verbosity-str",  SSH_OPTIONS_LOG_VERBOSITY_STR  },
-  { "ciphers-c-s",        SSH_OPTIONS_CIPHERS_C_S        },
-  { "ciphers-s-c",        SSH_OPTIONS_CIPHERS_S_C        },
-  { "compression-c-s",    SSH_OPTIONS_COMPRESSION_C_S    },
-  { "compression-s-c",    SSH_OPTIONS_COMPRESSION_S_C    },
-  { "proxycommand",       SSH_OPTIONS_PROXYCOMMAND       },
-  { "stricthostkeycheck", SSH_OPTIONS_STRICTHOSTKEYCHECK },
-  { "compression",        SSH_OPTIONS_COMPRESSION        },
-  { "compression-level",  SSH_OPTIONS_COMPRESSION_LEVEL  },
+  { "host",               TYPE (HOST)               },
+  { "port",               TYPE (PORT)               },
+  { "port-str",           TYPE (PORT_STR)           },
+  { "fd",                 TYPE (FD)                 },
+  { "bindaddr",           TYPE (BINDADDR)           },
+  { "user",               TYPE (USER)               },
+  { "ssh-dir",            TYPE (SSH_DIR)            },
+  { "identity",           TYPE (IDENTITY)           },
+  { "add-identity",       TYPE (ADD_IDENTITY)       },
+  { "knownhosts",         TYPE (KNOWNHOSTS)         },
+  { "timeout",            TYPE (TIMEOUT)            },
+  { "timeout-usec",       TYPE (TIMEOUT_USEC)       },
+  { "ssh1",               TYPE (SSH1)               },
+  { "ssh2",               TYPE (SSH2)               },
+  { "log-verbosity",      TYPE (LOG_VERBOSITY)      },
+  { "log-verbosity-str",  TYPE (LOG_VERBOSITY_STR)  },
+  { "ciphers-c-s",        TYPE (CIPHERS_C_S)        },
+  { "ciphers-s-c",        TYPE (CIPHERS_S_C)        },
+  { "compression-c-s",    TYPE (COMPRESSION_C_S)    },
+  { "compression-s-c",    TYPE (COMPRESSION_S_C)    },
+  { "proxycommand",       TYPE (PROXYCOMMAND)       },
+  { "stricthostkeycheck", TYPE (STRICTHOSTKEYCHECK) },
+  { "compression",        TYPE (COMPRESSION)        },
+  { "compression-level",  TYPE (COMPRESSION_LEVEL)  },
   { NULL,                 -1 }
 };
 
@@ -185,40 +188,40 @@ set_option (ssh_session session, int type, SCM value)
 {
   switch (type)
     {
-    case SSH_OPTIONS_PORT:
+    case TYPE (PORT):
       return set_uint32_opt (session, type, value);
 
-    case SSH_OPTIONS_HOST:
-    case SSH_OPTIONS_PORT_STR:
-    case SSH_OPTIONS_BINDADDR:
-    case SSH_OPTIONS_USER:
-    case SSH_OPTIONS_COMPRESSION:
-    case SSH_OPTIONS_LOG_VERBOSITY_STR:
-    case SSH_OPTIONS_SSH_DIR:
-    case SSH_OPTIONS_KNOWNHOSTS:
-    case SSH_OPTIONS_IDENTITY:
-    case SSH_OPTIONS_ADD_IDENTITY: /* Same as IDENTITY */
-    case SSH_OPTIONS_CIPHERS_C_S:
-    case SSH_OPTIONS_CIPHERS_S_C:
-    case SSH_OPTIONS_COMPRESSION_C_S:
-    case SSH_OPTIONS_COMPRESSION_S_C:
-    case SSH_OPTIONS_PROXYCOMMAND:
+    case TYPE (HOST):
+    case TYPE (PORT_STR):
+    case TYPE (BINDADDR):
+    case TYPE (USER):
+    case TYPE (COMPRESSION):
+    case TYPE (LOG_VERBOSITY_STR):
+    case TYPE (SSH_DIR):
+    case TYPE (KNOWNHOSTS):
+    case TYPE (IDENTITY):
+    case TYPE (ADD_IDENTITY): /* Same as IDENTITY */
+    case TYPE (CIPHERS_C_S):
+    case TYPE (CIPHERS_S_C):
+    case TYPE (COMPRESSION_C_S):
+    case TYPE (COMPRESSION_S_C):
+    case TYPE (PROXYCOMMAND):
       return set_string_opt (session, type, value);
 
-    case SSH_OPTIONS_LOG_VERBOSITY:
-    case SSH_OPTIONS_COMPRESSION_LEVEL:
+    case TYPE (LOG_VERBOSITY):
+    case TYPE (COMPRESSION_LEVEL):
       return set_int32_opt (session, type, value);
 
-    case SSH_OPTIONS_TIMEOUT:
-    case SSH_OPTIONS_TIMEOUT_USEC:
+    case TYPE (TIMEOUT):
+    case TYPE (TIMEOUT_USEC):
       return set_uint64_opt (session, type, value);
 
-    case SSH_OPTIONS_SSH1:
-    case SSH_OPTIONS_SSH2:
-    case SSH_OPTIONS_STRICTHOSTKEYCHECK:
+    case TYPE (SSH1):
+    case TYPE (SSH2):
+    case TYPE (STRICTHOSTKEYCHECK):
       return set_bool_opt (session, type, value);
 
-    case SSH_OPTIONS_FD:
+    case TYPE (FD):
       return set_port_opt (session, type, value);
 
     default:
@@ -229,6 +232,8 @@ set_option (ssh_session session, int type, SCM value)
 
   return -1;                    /* ERROR */
 }
+
+#undef TYPE
 
 /* Set a SSH option.  Return #t on success, #f on error. */
 SCM_DEFINE (guile_ssh_session_set, "ssh:session-set!", 3, 0, 0,
