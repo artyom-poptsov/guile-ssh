@@ -16,6 +16,8 @@
 ## along with libguile-ssh.  If not, see
 ## <http://www.gnu.org/licenses/>.
 
+include $(top_srcdir)/am/snarf
+
 AM_CFLAGS = @GUILE_CFLAGS@ `pkg-config --cflags guile-1.8` -Wall -g
 
 lib_LTLIBRARIES = libguile-ssh.la
@@ -28,6 +30,10 @@ libguile_ssh_la_SOURCES = \
 	session-type.c session-type.h session-main.c \
 	version.c base64.c threads.c threads.h
 
+BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
+	key-func.x key-type.x session-func.x session-type.x \
+	version.x
+
 libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
 	-version-info $(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)
 
@@ -38,3 +44,10 @@ dist_pkgguilesite_DATA = auth.scm channel.scm key.scm session.scm	\
 	version.scm
 
 ETAGS_ARGS = auth.scm channel.scm key.scm session.scm version.scm
+
+snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+SUFFIXES = .x
+.c.x:
+	$(AM_V_SNARF)$(GUILE_SNARF) -o $@ $< $(snarfcppopts)
+
+CLEANFILES = *.x

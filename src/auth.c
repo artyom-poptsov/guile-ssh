@@ -60,9 +60,14 @@ ssh_auth_result_to_symbol (const int res)
  * USERNAME can be either string or #f.  If USERNAME is #f it's assumed that
  * the USERNAME was set through ssh:option-set! call.
  */
-SCM
-guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
-                           SCM public_key_smob, SCM private_key_smob)
+SCM_DEFINE (guile_ssh_userauth_pubkey, "ssh:userauth-pubkey!", 4, 0, 0,
+            (SCM session_smob, SCM username,
+             SCM public_key_smob, SCM private_key_smob),
+            "Try to authenticate with a public key.\n"
+            "\n"
+            "USERNAME can be either string or #f,  If USERNAME is #f it's\n"
+            "assumed that the USERNAME was set though `ssh:option-set!' call.")
+#define FUNC_NAME s_guile_ssh_userauth_pubkey
 {
   struct session_data *session_data = _scm_to_ssh_session (session_smob);
   struct key_data *public_key_data  = _scm_to_ssh_key (public_key_smob);
@@ -78,11 +83,11 @@ guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
   /* username can be either a string or SCM_BOOL_F */
   SCM_ASSERT (scm_is_string (username)
               || (scm_is_bool (username) && (! scm_to_bool (username))),
-              username, SCM_ARG2, __func__);
+              username, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (_public_key_p (public_key_data),
-              public_key_smob, SCM_ARG3, __func__);
+              public_key_smob, SCM_ARG3, FUNC_NAME);
   SCM_ASSERT (_private_key_p (private_key_data),
-              private_key_smob, SCM_ARG4, __func__);
+              private_key_smob, SCM_ARG4, FUNC_NAME);
 
   if (scm_is_string (username))
     {
@@ -106,6 +111,7 @@ guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
 
   return ssh_auth_result_to_symbol (res);
 }
+#undef FUNC_NAME
 
 /* Try to authenticate by password.
  *
@@ -113,10 +119,12 @@ guile_ssh_userauth_pubkey (SCM session_smob, SCM username,
  * the USERNAME was set through ssh:option-set! call.
  *
  */
-SCM
-guile_ssh_userauth_password (SCM session_smob, SCM username, SCM password)
+SCM_DEFINE (guile_ssh_userauth_password, "ssh:userauth-password!", 3, 0, 0,
+            (SCM session, SCM username, SCM password),
+            "Try to authenticate by password.")
+#define FUNC_NAME s_guile_ssh_userauth_password
 {
-  struct session_data* session_data = _scm_to_ssh_session (session_smob);
+  struct session_data* session_data = _scm_to_ssh_session (session);
   char *c_username;
   char *c_password;
   int res;
@@ -125,8 +133,8 @@ guile_ssh_userauth_password (SCM session_smob, SCM username, SCM password)
 
   /* Check types. */
   SCM_ASSERT ((scm_is_string (username) || scm_is_bool (username)),
-              password, SCM_ARG2, __func__);
-  SCM_ASSERT (scm_is_string (password), password, SCM_ARG3, __func__);
+              password, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (password), password, SCM_ARG3, FUNC_NAME);
 
   if (scm_is_true (username))
     {
@@ -150,14 +158,16 @@ guile_ssh_userauth_password (SCM session_smob, SCM username, SCM password)
 
   return ssh_auth_result_to_symbol (res);
 }
+#undef FUNC_NAME
 
 
 /* Try to authenticate through the "none" method. 
 
    Return one of the following symbols: 'success, 'error, 'denied,
    'partial, 'again */
-SCM
-guile_ssh_userauth_none (SCM arg1)
+SCM_DEFINE (guile_ssh_userauth_none, "ssh:userauth-none!", 1, 0, 0,
+            (SCM arg1),
+            "Try to authenticate through the \"none\" method.")
 {
   struct session_data *session_data = _scm_to_ssh_session (arg1);
   /* username is deprecated parameter.  Should be set to NULL. */
@@ -169,10 +179,11 @@ guile_ssh_userauth_none (SCM arg1)
 /* Get available authentication methods for a session SESSION_SMOB.
 
    Return list of available methods. */
-SCM
-guile_ssh_userauth_get_list (SCM arg1)
+SCM_DEFINE (guile_ssh_userauth_get_list, "ssh:userauth-get-list", 1, 0, 0,
+            (SCM session),
+            "Get available authentication methods for a session SESSION.")
 {
-  struct session_data *session_data = _scm_to_ssh_session (arg1);
+  struct session_data *session_data = _scm_to_ssh_session (session);
   SCM auth_list = SCM_EOL;
 
   /* The second argument of the function is a username.  According to
@@ -212,15 +223,7 @@ guile_ssh_userauth_get_list (SCM arg1)
 void
 init_auth_func (void)
 {
-  scm_c_define_gsubr ("ssh:userauth-pubkey!", 4, 0, 0,
-                      guile_ssh_userauth_pubkey);
-  scm_c_define_gsubr ("ssh:userauth-password!", 3, 0, 0,
-                      guile_ssh_userauth_password);
-  scm_c_define_gsubr ("ssh:userauth-none!", 1, 0, 0,
-                      guile_ssh_userauth_none);
-
-  scm_c_define_gsubr ("ssh:userauth-get-list", 1, 0, 0,
-                      guile_ssh_userauth_get_list);
+#include "auth.x"
 }
 
 /* auth.c ends here */

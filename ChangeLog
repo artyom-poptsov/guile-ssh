@@ -1,3 +1,16 @@
+2013-08-25  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Use the Guile magic snarfer to make guile_ssh_* functions visible
+	to the Scheme world.  Use functions names as they seen from Scheme
+	instead of C names in type check macros.
+	* src/auth.c, src/channel-func.c, src/channel-type.c,
+	src/key-func.c, src/key-type.c, src/session-func.c,
+	src/session-type.c, src/version.c: Use snarfing macros.
+	* src/Makefile.am: Use guile-snarf to generate needed files.  Fix
+	some comments.
+	* configure.ac: Use AM_SILENT_RULES.
+	* .gitignore: Ignore files produced by the magic snarfer.
+
 2013-07-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/channel-func.c (guile_ssh_channel_read): Fix memory

@@ -18,6 +18,7 @@
 AC_INIT([libguile-ssh], [0.3.1], [poptsov.artyom@gmail.com])
 
 AM_INIT_AUTOMAKE
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])], [AC_SUBST([AM_DEFAULT_VERBOSITY],1)])
 
 AC_PROG_CC
 

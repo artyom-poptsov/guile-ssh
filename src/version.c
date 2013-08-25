@@ -22,15 +22,17 @@
 #include <libssh/libssh.h>
 
 /* Get version of the libssh. */
-SCM
-guile_ssh_get_libssh_version (void)
+SCM_DEFINE (guile_ssh_get_libssh_version, "ssh:get-libssh-version", 0, 0, 0,
+            (),
+            "Get version of the libssh.")
 {
   return scm_from_locale_string (SSH_STRINGIFY (LIBSSH_VERSION));
 }
 
 /* Get version of the libguile-ssh. */
-SCM
-guile_ssh_get_library_version (void)
+SCM_DEFINE (guile_ssh_get_library_version, "ssh:get-library-version", 0, 0, 0,
+            (),
+            "Get version of the libguile-ssh.")
 {
   return scm_from_locale_string (PACKAGE_VERSION);
 }
@@ -39,10 +41,7 @@ guile_ssh_get_library_version (void)
 void
 init_version (void)
 {
-  scm_c_define_gsubr ("ssh:get-libssh-version", 0, 0, 0,
-                      guile_ssh_get_libssh_version);
-  scm_c_define_gsubr ("ssh:get-library-version", 0, 0, 0,
-                      guile_ssh_get_library_version);
+#include "version.x"
 }
 
 /* version.c ends here */

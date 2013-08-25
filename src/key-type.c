@@ -89,10 +89,12 @@ scm_from_ssh_key_type (int type)
 
    Return a key type as a Scheme symbol.  The type can be one of the
    following list: 'dss, 'rsa, 'rsa1, 'unknown */
-SCM
-guile_ssh_key_get_type (SCM arg1)
+SCM_DEFINE (guile_ssh_key_get_type, "ssh:get-key-type", 1, 0, 0,
+            (SCM key),
+            "Get a symbol that represents the type of the key KEY_SMOB.\n"
+            "Possible types are: 'dss, 'rsa, 'rsa1, 'unknown")
 {
-  struct key_data *data = _scm_to_ssh_key (arg1);
+  struct key_data *data = _scm_to_ssh_key (key);
   enum ssh_keytypes_e type = SSH_KEYTYPE_UNKNOWN;
 
   switch (data->key_type)
@@ -120,23 +122,26 @@ guile_ssh_key_get_type (SCM arg1)
 
 /* Predicates */
 
-SCM
-guile_ssh_is_key_p (SCM obj)
+SCM_DEFINE (guile_ssh_is_key_p, "ssh:key?", 1, 0, 0,
+            (SCM x),
+            "Return #t if X is a ssh:key, #f otherwise.")
 {
-  return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, obj));
+  return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x));
 }
 
-SCM
-guile_ssh_is_public_key_p (SCM arg1)
+SCM_DEFINE (guile_ssh_is_public_key_p, "ssh:public-key?", 1, 0, 0,
+            (SCM x),
+            "Return #t if X is a ssh:public-key, #f otherwise.")
 {
-  struct key_data *key = _scm_to_ssh_key (arg1);
+  struct key_data *key = _scm_to_ssh_key (x);
   return scm_from_bool (_public_key_p (key));
 }
 
-SCM
-guile_ssh_is_private_key_p (SCM arg1)
+SCM_DEFINE (guile_ssh_is_private_key_p, "ssh:private-key?", 1, 0, 0,
+            (SCM x),
+            "Return #t if X is a ssh:private-key, #f otherwise.")
 {
-  struct key_data *key = _scm_to_ssh_key (arg1);
+  struct key_data *key = _scm_to_ssh_key (x);
   return scm_from_bool (_private_key_p (key));
 }
 
@@ -190,11 +195,7 @@ init_key_type (void)
   scm_set_smob_free (key_tag, free_key_smob);
   scm_set_smob_equalp (key_tag, equalp_key);
 
-  scm_c_define_gsubr ("ssh:key?",         1, 0, 0, guile_ssh_is_key_p);
-  scm_c_define_gsubr ("ssh:public-key?",  1, 0, 0, guile_ssh_is_public_key_p);
-  scm_c_define_gsubr ("ssh:private-key?", 1, 0, 0, guile_ssh_is_private_key_p);
-
-  scm_c_define_gsubr ("ssh:get-key-type", 1, 0, 0, guile_ssh_key_get_type);
+#include "key-type.x"
 }
 
 /* private-key.c ends here */

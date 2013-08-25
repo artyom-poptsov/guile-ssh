@@ -12,6 +12,9 @@ src/.libs
 # Auto-generated Makefile
 Makefile
 
+# Ignore files produced by the magic snarfer
+*.x
+
 config.log
 config.status
 .deps

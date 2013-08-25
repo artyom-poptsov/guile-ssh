@@ -41,8 +41,10 @@ public_key_to_ssh_string (const struct key_data *public_key_data)
  *
  * TODO: Probably should be replaced with a simply print function.
  */
-SCM
-guile_ssh_public_key_to_string (SCM arg1)
+SCM_DEFINE (guile_ssh_public_key_to_string, "ssh:public-key->string", 1, 0, 0,
+            (SCM arg1),
+            "Convert SSH public key to a scheme string.")
+#define FUNC_NAME s_guile_ssh_public_key_to_string
 {
   struct key_data *key_data = _scm_to_ssh_key (arg1);
   ssh_string public_key;
@@ -52,7 +54,7 @@ guile_ssh_public_key_to_string (SCM arg1)
 
   scm_dynwind_begin (0);
 
-  SCM_ASSERT (_public_key_p (key_data), arg1, SCM_ARG1, __func__);
+  SCM_ASSERT (_public_key_p (key_data), arg1, SCM_ARG1, FUNC_NAME);
 
   public_key = public_key_to_ssh_string (key_data);
   scm_dynwind_unwind_handler ((void (*)(void*)) ssh_string_free, public_key,
@@ -70,13 +72,16 @@ guile_ssh_public_key_to_string (SCM arg1)
 
   return ret;
 }
+#undef FUNC_NAME
 
 /* Read private key from a file FILENAME */
-SCM
-guile_ssh_private_key_from_file (SCM session_smob, SCM filename)
+SCM_DEFINE (guile_ssh_private_key_from_file, "ssh:private-key-from-file", 2, 0, 0,
+            (SCM session, SCM filename),
+            "Read private key from a file FILENAME")
+#define FUNC_NAME s_guile_ssh_private_key_from_file
 {
   SCM key_smob;
-  struct session_data *session_data = _scm_to_ssh_session (session_smob);
+  struct session_data *session_data = _scm_to_ssh_session (session);
   struct key_data *key_data;
   char *c_filename;
 
@@ -84,7 +89,7 @@ guile_ssh_private_key_from_file (SCM session_smob, SCM filename)
 
   scm_dynwind_begin (0);
 
-  SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, __func__);
+  SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, FUNC_NAME);
 
   key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                 "ssh key");
@@ -108,16 +113,20 @@ guile_ssh_private_key_from_file (SCM session_smob, SCM filename)
 
   return key_smob;
 }
+#undef FUNC_NAME
 
-/* Get public key from a private key KEY_SMOB */
-SCM
-guile_ssh_public_key_from_private_key (SCM arg1)
+/* Get public key from a private key KEY */
+SCM_DEFINE (guile_ssh_public_key_from_private_key, "ssh:private-key->public-key",
+            1, 0, 0,
+            (SCM key),
+            "Get public key from a private key KEY")
+#define FUNC_NAME s_guile_ssh_public_key_from_private_key
 {
-  struct key_data *private_key_data = _scm_to_ssh_key (arg1);
+  struct key_data *private_key_data = _scm_to_ssh_key (key);
   struct key_data *public_key_data;
   SCM smob;
 
-  SCM_ASSERT (_private_key_p (private_key_data), arg1, SCM_ARG1, __func__);
+  SCM_ASSERT (_private_key_p (private_key_data), key, SCM_ARG1, FUNC_NAME);
 
   public_key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                        "ssh key");
@@ -134,15 +143,18 @@ guile_ssh_public_key_from_private_key (SCM arg1)
 
   return smob;
 }
+#undef FUNC_NAME
 
 /* Read public key from a file FILENAME.
  *
  * Return a SSH key smob.
  */
-SCM
-guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
+SCM_DEFINE (guile_ssh_public_key_from_file, "ssh:public-key-from-file", 2, 0, 0,
+            (SCM session, SCM filename),
+            "Read public key from a file FILENAME.  Return a SSH key.")
+#define FUNC_NAME s_guile_ssh_public_key_from_file
 {
-  struct session_data *session_data = _scm_to_ssh_session (session_smob);
+  struct session_data *session_data = _scm_to_ssh_session (session);
   struct key_data *public_key_data;
   char *c_filename;
   ssh_string public_key_str;
@@ -151,7 +163,7 @@ guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
 
   scm_dynwind_begin (0);
 
-  SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, __func__);
+  SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, FUNC_NAME);
 
   c_filename = scm_to_locale_string (filename);
   scm_dynwind_free (c_filename);
@@ -175,20 +187,14 @@ guile_ssh_public_key_from_file (SCM session_smob, SCM filename)
 
   return key_smob;
 }
+#undef FUNC_NAME
 
 
 /* Initialize Scheme procedures. */
 void
 init_key_func (void)
 {
-  scm_c_define_gsubr ("ssh:public-key->string", 1, 0, 0,
-                      guile_ssh_public_key_to_string);
-  scm_c_define_gsubr ("ssh:public-key-from-file", 2, 0, 0,
-                      guile_ssh_public_key_from_file);
-  scm_c_define_gsubr ("ssh:private-key->public-key", 1, 0, 0,
-                      guile_ssh_public_key_from_private_key);
-  scm_c_define_gsubr ("ssh:private-key-from-file", 2, 0, 0,
-                      guile_ssh_private_key_from_file);
+#include "key-func.x"
 }
 
 /* key-func.c ends here */

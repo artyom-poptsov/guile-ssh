@@ -29,23 +29,26 @@
 /* Functions */
 
 /* Open a new session */
-SCM
-guile_ssh_channel_open_session (SCM arg1)
+SCM_DEFINE (guile_ssh_channel_open_session, "ssh:channel-open-session", 1, 0, 0,
+            (SCM channel),
+            "Open a new session.")
 {
-  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  struct channel_data *data = _scm_to_ssh_channel (channel);
   int res = ssh_channel_open_session (data->ssh_channel);
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
 /* Run a shell command CMD without an interactive shell. */
-SCM
-guile_ssh_channel_request_exec (SCM channel_smob, SCM cmd)
+SCM_DEFINE (guile_ssh_channel_request_exec, "ssh:channel-request-exec", 2, 0, 0,
+            (SCM channel, SCM cmd),
+            "Run a shell command CMD without an interactive shell.")
+#define FUNC_NAME s_guile_ssh_channel_request_exec
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
+  struct channel_data *data = _scm_to_ssh_channel (channel);
   int res;
   char *c_cmd;                  /* Command to execute. */
 
-  SCM_ASSERT (scm_is_string (cmd), cmd, SCM_ARG2, __func__);
+  SCM_ASSERT (scm_is_string (cmd), cmd, SCM_ARG2, FUNC_NAME);
 
   c_cmd = scm_to_locale_string (cmd);
   res = ssh_channel_request_exec (data->ssh_channel, c_cmd);
@@ -53,18 +56,21 @@ guile_ssh_channel_request_exec (SCM channel_smob, SCM cmd)
 
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
+#undef FUNC_NAME
 
 /* Set an environment variable NAME to value VALUE */
-SCM
-guile_ssh_channel_request_env (SCM channel_smob, SCM name, SCM value)
+SCM_DEFINE (guile_ssh_channel_request_env, "ssh:channel-request-env", 3, 0, 0,
+            (SCM channel, SCM name, SCM value),
+            "Set an environment variable NAME to value VALUE")
+#define FUNC_NAME s_guile_ssh_channel_request_env
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
+  struct channel_data *data = _scm_to_ssh_channel (channel);
   char *c_name;
   char *c_value;
   int res;
 
-  SCM_ASSERT (scm_is_string (name), name, SCM_ARG2, __func__);
-  SCM_ASSERT (scm_is_string (value), value, SCM_ARG3, __func__);
+  SCM_ASSERT (scm_is_string (name), name, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (value), value, SCM_ARG3, FUNC_NAME);
 
   c_name  = scm_to_locale_string (name);
   c_value = scm_to_locale_string (value);
@@ -72,18 +78,22 @@ guile_ssh_channel_request_env (SCM channel_smob, SCM name, SCM value)
 
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
+#undef FUNC_NAME
 
 /* Poll a channel for data to read.
  *
  * Return amount of data that can be read, or #f on error.
  */
-SCM
-guile_ssh_channel_pool (SCM channel_smob, SCM is_stderr)
+SCM_DEFINE (guile_ssh_channel_pool, "ssh:channel-poll", 2, 0, 0,
+            (SCM channel, SCM is_stderr),
+            "Poll a channel for data to read.\n"
+            "Return amount of data that can be read, or #f on error.")
+#define FUNC_NAME s_guile_ssh_channel_pool
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
+  struct channel_data *data = _scm_to_ssh_channel (channel);
   int res;
 
-  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG2, __func__);
+  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG2, FUNC_NAME);
 
   res = ssh_channel_poll (data->ssh_channel, scm_is_true (is_stderr));
 
@@ -92,20 +102,23 @@ guile_ssh_channel_pool (SCM channel_smob, SCM is_stderr)
   else
     return SCM_BOOL_F;
 }
+#undef FUNC_NAME
 
 /* Read data from the channel. */
-SCM
-guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
+SCM_DEFINE (guile_ssh_channel_read, "ssh:channel-read", 3, 0, 0,
+            (SCM channel, SCM count, SCM is_stderr),
+            "Read data from the channel CHANNEL.")
+#define FUNC_NAME s_guile_ssh_channel_read
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel_smob);
+  struct channel_data *data = _scm_to_ssh_channel (channel);
   int res;
   char *buffer;                 /* Buffer for data. */
   uint32_t c_count;             /* Size of buffer. */
   SCM obtained_data = SCM_BOOL_F; /* Obtained data from the channel. */
 
   SCM_ASSERT (scm_is_unsigned_integer (count, 0, UINT32_MAX), count,
-              SCM_ARG2, __func__);
-  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG3, __func__);
+              SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG3, FUNC_NAME);
 
   c_count = scm_to_unsigned_integer (count, 0, UINT32_MAX);
   buffer = scm_gc_calloc (sizeof (char) * c_count + 1, "data buffer");
@@ -124,26 +137,29 @@ guile_ssh_channel_read (SCM channel_smob, SCM count, SCM is_stderr)
   else
     {
       /* TODO: Improve error handling. */
-      guile_ssh_error1 (__func__, "Couldn't read data from a channel.", 
+      guile_ssh_error1 (FUNC_NAME, "Couldn't read data from a channel.", 
                         SCM_BOOL_F);
     }
 
   return obtained_data;
 }
+#undef FUNC_NAME
 
 /* Close a channel. */
-SCM
-guile_ssh_channel_close (SCM arg1)
+SCM_DEFINE (guile_ssh_channel_close, "ssh:close-channel!", 1, 0, 0,
+            (SCM arg1),
+            "Close a channel.")
 {
   struct channel_data *data = _scm_to_ssh_channel (arg1);
   int res = ssh_channel_close (data->ssh_channel);
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
-SCM
-guile_ssh_channel_free (SCM arg1)
+SCM_DEFINE (guile_ssh_channel_free, "ssh:free-channel!", 1, 0, 0,
+            (SCM channel),
+            "Free resourses allocated by channel CHANNEL")
 {
-  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  struct channel_data *data = _scm_to_ssh_channel (channel);
   ssh_channel_free (data->ssh_channel);
   return SCM_UNDEFINED;
 }
@@ -151,18 +167,20 @@ guile_ssh_channel_free (SCM arg1)
 
 /* Predicates */
 
-SCM
-guile_ssh_channel_is_open_p (SCM arg1)
+SCM_DEFINE (guile_ssh_channel_is_open_p, "ssh:channel-open?", 1, 0, 0,
+            (SCM channel),
+            "Return #t if channel CHANNEL is open, #f otherwise.")
 {
-  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  struct channel_data *data = _scm_to_ssh_channel (channel);
   int res = ssh_channel_is_open (data->ssh_channel);
   return scm_from_bool (res);
 }
 
-SCM
-guile_ssh_channel_is_eof_p (SCM arg1)
+SCM_DEFINE (guile_ssh_channel_is_eof_p, "ssh:channel-eof?", 1, 0, 0,
+            (SCM channel),
+            "Return #t if remote has set EOF, #f otherwise.")
 {
-  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  struct channel_data *data = _scm_to_ssh_channel (channel);
   int res = ssh_channel_is_eof (data->ssh_channel);
   return scm_from_bool (res);
 }
@@ -172,23 +190,7 @@ guile_ssh_channel_is_eof_p (SCM arg1)
 void
 init_channel_func (void)
 {
-  scm_c_define_gsubr ("ssh:channel-open-session", 1, 0, 0,
-                      guile_ssh_channel_open_session);
-  scm_c_define_gsubr ("ssh:channel-request-exec", 2, 0, 0,
-                      guile_ssh_channel_request_exec);
-  scm_c_define_gsubr ("ssh:channel-request-env",  3, 0, 0,
-                      guile_ssh_channel_request_env);
-
-  scm_c_define_gsubr ("ssh:close-channel!", 1, 0, 0, guile_ssh_channel_close);
-  scm_c_define_gsubr ("ssh:free-channel!",  1, 0, 0, guile_ssh_channel_free);
-
-  scm_c_define_gsubr ("ssh:channel-poll",   2, 0, 0, guile_ssh_channel_pool);
-  scm_c_define_gsubr ("ssh:channel-read",   3, 0, 0, guile_ssh_channel_read);
-
-  scm_c_define_gsubr ("ssh:channel-open?",  1, 0, 0,
-                      guile_ssh_channel_is_open_p);
-  scm_c_define_gsubr ("ssh:channel-eof?",   1, 0, 0,
-                      guile_ssh_channel_is_eof_p);
+#include "channel-func.x"
 }
 
 /* channel-func.c ends here */
