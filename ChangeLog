@@ -1,3 +1,10 @@
+2013-08-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Implement the basic server functionality.
+	* src/server-func.c, src/server-func.h, src/server-main.c,
+	src/server-type.c, src/server-type.h, src/server.scm: New files.
+	* src/Makefile.am: Add server related sources.
+
 2013-08-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/session-func.c: Use a short macro for getting long SSH

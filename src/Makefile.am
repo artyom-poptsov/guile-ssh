@@ -28,11 +28,13 @@ libguile_ssh_la_SOURCES = \
 	error.c error.h key-func.c key-func.h key-main.c \
 	key-type.c key-type.h session-func.c session-func.h \
 	session-type.c session-type.h session-main.c \
+	server-main.c server-func.c server-func.h server-type.c \
+	server-type.h \
 	version.c base64.c threads.c threads.h
 
 BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 	key-func.x key-type.x session-func.x session-type.x \
-	version.x
+	server-type.x server-func.x version.x
 
 libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
 	-version-info $(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)
@@ -41,9 +43,10 @@ libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
 pkgguilesitedir = $(guilesitedir)/ssh
 
 dist_pkgguilesite_DATA = auth.scm channel.scm key.scm session.scm	\
-	version.scm
+	server.scm version.scm
 
-ETAGS_ARGS = auth.scm channel.scm key.scm session.scm version.scm
+ETAGS_ARGS = auth.scm channel.scm key.scm session.scm server.scm \
+	version.scm
 
 snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 SUFFIXES = .x
