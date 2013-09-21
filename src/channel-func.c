@@ -145,6 +145,28 @@ SCM_DEFINE (guile_ssh_channel_read, "channel-read", 3, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_write, "channel-write", 3, 0, 0,
+            (SCM channel, SCM len, SCM data),
+            "Write data DATA of the length LEN to the channel CHANNEL")
+#define FUNC_NAME s_guile_ssh_channel_write
+{
+  struct channel_data *channel_data = _scm_to_ssh_channel (channel);
+  int res;
+  uint32_t c_len;
+  char *c_data;
+
+  SCM_ASSERT (scm_is_unsigned_integer (len, 0, UINT32_MAX), len,
+              SCM_ARG2, FUNC_NAME);
+
+  c_len = scm_to_uint32 (len);
+  c_data = scm_to_locale_string (data);
+
+  res = ssh_channel_write (channel_data->ssh_channel, c_data, c_len);
+
+  return (res != SSH_ERROR) ? scm_from_int (res) : SCM_BOOL_F;
+}
+#undef FUNC_NAME
+
 /* Close a channel. */
 SCM_DEFINE (guile_ssh_channel_close, "close-channel!", 1, 0, 0,
             (SCM arg1),

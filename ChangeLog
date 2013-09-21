@@ -1,5 +1,8 @@
 2013-09-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-func.c (guile_ssh_channel_write): New procedure.
+	* src/channel.scm: Likewise.
+
 	* NEWS: Update.
 
 	* src/session-func.c (session_options): Don't use TYPE macro to
