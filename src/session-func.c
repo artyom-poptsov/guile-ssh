@@ -33,39 +33,38 @@ struct option {
 
 /* SSH options mapping to Guile symbols. */
 
-#define TYPE(OPT) SSH_OPTIONS_ ## OPT
 static struct option session_options[] = {
-  { "host",               TYPE (HOST)               },
-  { "port",               TYPE (PORT)               },
-  { "port-str",           TYPE (PORT_STR)           },
-  { "fd",                 TYPE (FD)                 },
-  { "bindaddr",           TYPE (BINDADDR)           },
-  { "user",               TYPE (USER)               },
-  { "ssh-dir",            TYPE (SSH_DIR)            },
-  { "identity",           TYPE (IDENTITY)           },
-  { "add-identity",       TYPE (ADD_IDENTITY)       },
-  { "knownhosts",         TYPE (KNOWNHOSTS)         },
-  { "timeout",            TYPE (TIMEOUT)            },
-  { "timeout-usec",       TYPE (TIMEOUT_USEC)       },
-  { "ssh1",               TYPE (SSH1)               },
-  { "ssh2",               TYPE (SSH2)               },
-  { "log-verbosity",      TYPE (LOG_VERBOSITY)      },
-  { "log-verbosity-str",  TYPE (LOG_VERBOSITY_STR)  },
-  { "ciphers-c-s",        TYPE (CIPHERS_C_S)        },
-  { "ciphers-s-c",        TYPE (CIPHERS_S_C)        },
-  { "compression-c-s",    TYPE (COMPRESSION_C_S)    },
-  { "compression-s-c",    TYPE (COMPRESSION_S_C)    },
-  { "proxycommand",       TYPE (PROXYCOMMAND)       },
-  { "stricthostkeycheck", TYPE (STRICTHOSTKEYCHECK) },
-  { "compression",        TYPE (COMPRESSION)        },
-  { "compression-level",  TYPE (COMPRESSION_LEVEL)  },
+  { "host",               SSH_OPTIONS_HOST               },
+  { "port",               SSH_OPTIONS_PORT               },
+  { "port-str",           SSH_OPTIONS_PORT_STR           },
+  { "fd",                 SSH_OPTIONS_FD                 },
+  { "bindaddr",           SSH_OPTIONS_BINDADDR           },
+  { "user",               SSH_OPTIONS_USER               },
+  { "ssh-dir",            SSH_OPTIONS_SSH_DIR            },
+  { "identity",           SSH_OPTIONS_IDENTITY           },
+  { "add-identity",       SSH_OPTIONS_ADD_IDENTITY       },
+  { "knownhosts",         SSH_OPTIONS_KNOWNHOSTS         },
+  { "timeout",            SSH_OPTIONS_TIMEOUT            },
+  { "timeout-usec",       SSH_OPTIONS_TIMEOUT_USEC       },
+  { "ssh1",               SSH_OPTIONS_SSH1               },
+  { "ssh2",               SSH_OPTIONS_SSH2               },
+  { "log-verbosity",      SSH_OPTIONS_LOG_VERBOSITY      },
+  { "log-verbosity-str",  SSH_OPTIONS_LOG_VERBOSITY_STR  },
+  { "ciphers-c-s",        SSH_OPTIONS_CIPHERS_C_S        },
+  { "ciphers-s-c",        SSH_OPTIONS_CIPHERS_S_C        },
+  { "compression-c-s",    SSH_OPTIONS_COMPRESSION_C_S    },
+  { "compression-s-c",    SSH_OPTIONS_COMPRESSION_S_C    },
+  { "proxycommand",       SSH_OPTIONS_PROXYCOMMAND       },
+  { "stricthostkeycheck", SSH_OPTIONS_STRICTHOSTKEYCHECK },
+  { "compression",        SSH_OPTIONS_COMPRESSION        },
+  { "compression-level",  SSH_OPTIONS_COMPRESSION_LEVEL  },
   { NULL,                 -1 }
 };
 
 /* Blocking flush of the outgoing buffer.
 
    Return on of the following symbols: 'ok, 'error. 'again. */
-SCM_DEFINE (guile_ssh_blocking_flush, "ssh:blocking-flush!", 2, 0, 0,
+SCM_DEFINE (guile_ssh_blocking_flush, "blocking-flush!", 2, 0, 0,
             (SCM session_smob, SCM timeout),
             "Blocking flush of the outgoing buffer.\n"
             "Return on of the following symbols: 'ok, 'error, 'again.")
@@ -107,7 +106,7 @@ set_string_opt (ssh_session session, int type, SCM value)
   char *str;
   int ret;
 
-  SCM_ASSERT (scm_is_string (value),  value, SCM_ARG3, "ssh:session-set!");
+  SCM_ASSERT (scm_is_string (value),  value, SCM_ARG3, "session-set!");
 
   str = scm_to_locale_string (value);
   ret = ssh_options_set (session, type, str);
@@ -123,7 +122,7 @@ set_uint64_opt (ssh_session session, int type, SCM value)
   uint64_t c_value;
 
   SCM_ASSERT (scm_is_unsigned_integer (value, 0, UINT64_MAX), value,
-              SCM_ARG3, "ssh:session-set!");
+              SCM_ARG3, "session-set!");
 
   c_value = scm_to_uint64 (value);
   return ssh_options_set (session, type, &c_value);
@@ -136,7 +135,7 @@ set_uint32_opt (ssh_session session, int type, SCM value)
   unsigned int c_value;
 
   SCM_ASSERT (scm_is_unsigned_integer (value, 0, UINT32_MAX), value,
-              SCM_ARG3, "ssh:session-set!");
+              SCM_ARG3, "session-set!");
 
   c_value = scm_to_uint32 (value);
   return ssh_options_set (session, type, &c_value);
@@ -148,7 +147,7 @@ set_int32_opt (ssh_session session, int type, SCM value)
 {
   int32_t c_value;
 
-  SCM_ASSERT (scm_is_integer (value), value, SCM_ARG3, "ssh:session-set!");
+  SCM_ASSERT (scm_is_integer (value), value, SCM_ARG3, "session-set!");
 
   c_value = scm_to_int (value);
   return ssh_options_set (session, type, &c_value);
@@ -162,7 +161,7 @@ set_bool_opt (ssh_session session, int type, SCM value)
 {
   int32_t bool;
 
-  SCM_ASSERT (scm_is_bool (value), value, SCM_ARG3, "ssh:session-set!");
+  SCM_ASSERT (scm_is_bool (value), value, SCM_ARG3, "session-set!");
 
   bool = scm_to_bool (value);
   return ssh_options_set (session, type, &bool);
@@ -175,7 +174,7 @@ set_port_opt (ssh_session session, int type, SCM value)
 {
   socket_t sfd;                 /* Socket File Descriptor */
 
-  SCM_ASSERT (scm_port_p (value), value, SCM_ARG3, "ssh:session-set!");
+  SCM_ASSERT (scm_port_p (value), value, SCM_ARG3, "session-set!");
 
   sfd = scm_to_int (scm_fileno (value));
 
@@ -188,44 +187,44 @@ set_option (ssh_session session, int type, SCM value)
 {
   switch (type)
     {
-    case TYPE (PORT):
+    case SSH_OPTIONS_PORT:
       return set_uint32_opt (session, type, value);
 
-    case TYPE (HOST):
-    case TYPE (PORT_STR):
-    case TYPE (BINDADDR):
-    case TYPE (USER):
-    case TYPE (COMPRESSION):
-    case TYPE (LOG_VERBOSITY_STR):
-    case TYPE (SSH_DIR):
-    case TYPE (KNOWNHOSTS):
-    case TYPE (IDENTITY):
-    case TYPE (ADD_IDENTITY): /* Same as IDENTITY */
-    case TYPE (CIPHERS_C_S):
-    case TYPE (CIPHERS_S_C):
-    case TYPE (COMPRESSION_C_S):
-    case TYPE (COMPRESSION_S_C):
-    case TYPE (PROXYCOMMAND):
+    case SSH_OPTIONS_HOST:
+    case SSH_OPTIONS_PORT_STR:
+    case SSH_OPTIONS_BINDADDR:
+    case SSH_OPTIONS_USER:
+    case SSH_OPTIONS_COMPRESSION:
+    case SSH_OPTIONS_LOG_VERBOSITY_STR:
+    case SSH_OPTIONS_SSH_DIR:
+    case SSH_OPTIONS_KNOWNHOSTS:
+    case SSH_OPTIONS_IDENTITY:
+    case SSH_OPTIONS_ADD_IDENTITY: /* Same as IDENTITY */
+    case SSH_OPTIONS_CIPHERS_C_S:
+    case SSH_OPTIONS_CIPHERS_S_C:
+    case SSH_OPTIONS_COMPRESSION_C_S:
+    case SSH_OPTIONS_COMPRESSION_S_C:
+    case SSH_OPTIONS_PROXYCOMMAND:
       return set_string_opt (session, type, value);
 
-    case TYPE (LOG_VERBOSITY):
-    case TYPE (COMPRESSION_LEVEL):
+    case SSH_OPTIONS_LOG_VERBOSITY:
+    case SSH_OPTIONS_COMPRESSION_LEVEL:
       return set_int32_opt (session, type, value);
 
-    case TYPE (TIMEOUT):
-    case TYPE (TIMEOUT_USEC):
+    case SSH_OPTIONS_TIMEOUT:
+    case SSH_OPTIONS_TIMEOUT_USEC:
       return set_uint64_opt (session, type, value);
 
-    case TYPE (SSH1):
-    case TYPE (SSH2):
-    case TYPE (STRICTHOSTKEYCHECK):
+    case SSH_OPTIONS_SSH1:
+    case SSH_OPTIONS_SSH2:
+    case SSH_OPTIONS_STRICTHOSTKEYCHECK:
       return set_bool_opt (session, type, value);
 
-    case TYPE (FD):
+    case SSH_OPTIONS_FD:
       return set_port_opt (session, type, value);
 
     default:
-      guile_ssh_error1 ("ssh:session-set!",
+      guile_ssh_error1 ("session-set!",
                         "Operation is not supported yet: %a~%",
                         scm_from_int (type));
     }
@@ -233,10 +232,8 @@ set_option (ssh_session session, int type, SCM value)
   return -1;                    /* ERROR */
 }
 
-#undef TYPE
-
 /* Set a SSH option.  Return #t on success, #f on error. */
-SCM_DEFINE (guile_ssh_session_set, "ssh:session-set!", 3, 0, 0,
+SCM_DEFINE (guile_ssh_session_set, "session-set!", 3, 0, 0,
             (SCM session, SCM type, SCM value),
             "Set a SSH option.  Return #t on success, #f on error.")
 #define FUNC_NAME s_guile_ssh_session_set
@@ -274,7 +271,7 @@ SCM_DEFINE (guile_ssh_session_set, "ssh:session-set!", 3, 0, 0,
 /* Connect to the SSH server. 
 
    Return one of the following symbols: 'ok, 'error, 'again */
-SCM_DEFINE (guile_ssh_connect, "ssh:connect!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_connect, "connect!", 1, 0, 0,
             (SCM arg1),
             "Connect to the SSH server.\n"
             "Return one of the following symbols: 'ok, 'error, 'again")
@@ -297,7 +294,7 @@ SCM_DEFINE (guile_ssh_connect, "ssh:connect!", 1, 0, 0,
 
 /* Disconnect from a session (client or server). 
    Return value is undefined.*/
-SCM_DEFINE (guile_ssh_disconnect, "ssh:disconnect!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_disconnect, "disconnect!", 1, 0, 0,
             (SCM arg1),
             "Disconnect from a session (client or server).\n"
             "Return value is undefined.")
@@ -311,7 +308,7 @@ SCM_DEFINE (guile_ssh_disconnect, "ssh:disconnect!", 1, 0, 0,
  *
  * Return 1 for SSH1, 2 for SSH2 or #f on error
  */
-SCM_DEFINE (guile_ssh_get_protocol_version, "ssh:get-protocol-version", 1, 0, 0,
+SCM_DEFINE (guile_ssh_get_protocol_version, "get-protocol-version", 1, 0, 0,
             (SCM arg1),
             "Get SSH version.\n"
             "Return 1 for SSH1, 2 for SSH2 or #f on error.")
@@ -328,7 +325,7 @@ SCM_DEFINE (guile_ssh_get_protocol_version, "ssh:get-protocol-version", 1, 0, 0,
   return ret;
 }
 
-SCM_DEFINE (guile_ssh_get_error, "ssh:get-error", 1, 0, 1,
+SCM_DEFINE (guile_ssh_get_error, "get-error", 1, 0, 1,
             (SCM arg1),
             "Retrieve the error text message from the last error.")
 {
@@ -341,7 +338,7 @@ SCM_DEFINE (guile_ssh_get_error, "ssh:get-error", 1, 0, 1,
 
    Return one of the following symbols: 'ok, 'known-changed,
    'found-other, 'not-known, 'file-not-found, 'error */
-SCM_DEFINE (guile_ssh_authenticate_server, "ssh:authenticate-server", 1, 0, 0,
+SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
             (SCM arg1),
             "Authenticate the server.\n"
             "Return one of the following symbols: 'ok, 'known-changed,\n"
@@ -376,7 +373,7 @@ SCM_DEFINE (guile_ssh_authenticate_server, "ssh:authenticate-server", 1, 0, 0,
 /* Get MD5 hash of the public key.
 
    Return MD5 hash on success, #f on error. */
-SCM_DEFINE (guile_ssh_get_public_key_hash, "ssh:get-public-key-hash", 1, 0, 0,
+SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 1, 0, 0,
             (SCM arg1),
             "Get MD5 hash of the public key.\n"
             "Return MD5 hash on success, #f on error.")
@@ -407,7 +404,7 @@ SCM_DEFINE (guile_ssh_get_public_key_hash, "ssh:get-public-key-hash", 1, 0, 0,
 /* Write the current server as known in the known hosts file.
 
    Return #t on success, #f on error. */
-SCM_DEFINE (guile_ssh_write_known_host, "ssh:authenticate-server", 1, 0, 0,
+SCM_DEFINE (guile_ssh_write_known_host, "authenticate-server", 1, 0, 0,
             (SCM arg1),
             "Write the current server as known in the known hosts file.\n"
             "Return #t on success, #f on error.")
@@ -423,7 +420,7 @@ SCM_DEFINE (guile_ssh_write_known_host, "ssh:authenticate-server", 1, 0, 0,
 /* Check if we are connected. 
 
    Return #f if we are connected to a server, #f if we aren't. */
-SCM_DEFINE (guile_ssh_is_connected_p, "ssh:connected?", 1, 0, 0,
+SCM_DEFINE (guile_ssh_is_connected_p, "connected?", 1, 0, 0,
             (SCM arg1),
             "Check if we are connected.\n"
             "Return #f if we are connected to a server, #f if we aren't.")

@@ -29,7 +29,7 @@
 /* Functions */
 
 /* Open a new session */
-SCM_DEFINE (guile_ssh_channel_open_session, "ssh:channel-open-session", 1, 0, 0,
+SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
             (SCM channel),
             "Open a new session.")
 {
@@ -39,7 +39,7 @@ SCM_DEFINE (guile_ssh_channel_open_session, "ssh:channel-open-session", 1, 0, 0,
 }
 
 /* Run a shell command CMD without an interactive shell. */
-SCM_DEFINE (guile_ssh_channel_request_exec, "ssh:channel-request-exec", 2, 0, 0,
+SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
             (SCM channel, SCM cmd),
             "Run a shell command CMD without an interactive shell.")
 #define FUNC_NAME s_guile_ssh_channel_request_exec
@@ -59,7 +59,7 @@ SCM_DEFINE (guile_ssh_channel_request_exec, "ssh:channel-request-exec", 2, 0, 0,
 #undef FUNC_NAME
 
 /* Set an environment variable NAME to value VALUE */
-SCM_DEFINE (guile_ssh_channel_request_env, "ssh:channel-request-env", 3, 0, 0,
+SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
             (SCM channel, SCM name, SCM value),
             "Set an environment variable NAME to value VALUE")
 #define FUNC_NAME s_guile_ssh_channel_request_env
@@ -84,7 +84,7 @@ SCM_DEFINE (guile_ssh_channel_request_env, "ssh:channel-request-env", 3, 0, 0,
  *
  * Return amount of data that can be read, or #f on error.
  */
-SCM_DEFINE (guile_ssh_channel_pool, "ssh:channel-poll", 2, 0, 0,
+SCM_DEFINE (guile_ssh_channel_pool, "channel-poll", 2, 0, 0,
             (SCM channel, SCM is_stderr),
             "Poll a channel for data to read.\n"
             "Return amount of data that can be read, or #f on error.")
@@ -105,7 +105,7 @@ SCM_DEFINE (guile_ssh_channel_pool, "ssh:channel-poll", 2, 0, 0,
 #undef FUNC_NAME
 
 /* Read data from the channel. */
-SCM_DEFINE (guile_ssh_channel_read, "ssh:channel-read", 3, 0, 0,
+SCM_DEFINE (guile_ssh_channel_read, "channel-read", 3, 0, 0,
             (SCM channel, SCM count, SCM is_stderr),
             "Read data from the channel CHANNEL.")
 #define FUNC_NAME s_guile_ssh_channel_read
@@ -146,7 +146,7 @@ SCM_DEFINE (guile_ssh_channel_read, "ssh:channel-read", 3, 0, 0,
 #undef FUNC_NAME
 
 /* Close a channel. */
-SCM_DEFINE (guile_ssh_channel_close, "ssh:close-channel!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_channel_close, "close-channel!", 1, 0, 0,
             (SCM arg1),
             "Close a channel.")
 {
@@ -155,7 +155,7 @@ SCM_DEFINE (guile_ssh_channel_close, "ssh:close-channel!", 1, 0, 0,
   return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
 }
 
-SCM_DEFINE (guile_ssh_channel_free, "ssh:free-channel!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_channel_free, "free-channel!", 1, 0, 0,
             (SCM channel),
             "Free resourses allocated by channel CHANNEL")
 {
@@ -167,7 +167,7 @@ SCM_DEFINE (guile_ssh_channel_free, "ssh:free-channel!", 1, 0, 0,
 
 /* Predicates */
 
-SCM_DEFINE (guile_ssh_channel_is_open_p, "ssh:channel-open?", 1, 0, 0,
+SCM_DEFINE (guile_ssh_channel_is_open_p, "channel-open?", 1, 0, 0,
             (SCM channel),
             "Return #t if channel CHANNEL is open, #f otherwise.")
 {
@@ -176,7 +176,7 @@ SCM_DEFINE (guile_ssh_channel_is_open_p, "ssh:channel-open?", 1, 0, 0,
   return scm_from_bool (res);
 }
 
-SCM_DEFINE (guile_ssh_channel_is_eof_p, "ssh:channel-eof?", 1, 0, 0,
+SCM_DEFINE (guile_ssh_channel_is_eof_p, "channel-eof?", 1, 0, 0,
             (SCM channel),
             "Return #t if remote has set EOF, #f otherwise.")
 {

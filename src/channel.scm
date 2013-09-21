@@ -26,35 +26,35 @@
 ;;
 ;; These methods are exported:
 ;;
-;;   ssh:channel
-;;   ssh:channel?
-;;   ssh:make-channel
-;;   ssh:close-channel!
-;;   ssh:channel-open-session
-;;   ssh:channel-request-env
-;;   ssh:channel-request-exec
-;;   ssh:channel-poll
-;;   ssh:channel-read
-;;   ssh:channel-open?
-;;   ssh:channel-eof?
+;;   channel?
+;;   make-channel
+;;   close-channel!
+;;   free-channel!
+;;   channel-open-session
+;;   channel-request-env
+;;   channel-request-exec
+;;   channel-poll
+;;   channel-read
+;;   channel-open?
+;;   channel-eof?
 
 
 ;;; Code:
 
 (define-module (ssh channel)
   #:use-module (ssh session)
-  #:export (ssh:channel
-            ssh:channel?
-            ssh:make-channel
-            ssh:close-channel!
-            ssh:free-channel!
-            ssh:channel-open-session
-            ssh:channel-request-env
-            ssh:channel-request-exec
-            ssh:channel-poll
-            ssh:channel-read
-            ssh:channel-open?
-            ssh:channel-eof?))
+  #:export (channel
+            channel?
+            make-channel
+            close-channel!
+            free-channel!
+            channel-open-session
+            channel-request-env
+            channel-request-exec
+            channel-poll
+            channel-read
+            channel-open?
+            channel-eof?))
 
 (load-extension "libguile-ssh" "init_channel")
 

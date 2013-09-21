@@ -3,11 +3,16 @@ Guile-SSH News
 
 * Unreleased
 
-** ssh:channel-read
+** Remove "ssh:" prefix from procedures names.
+   If it is needed, an user's prefix can be added by setting a renamer
+   for a module on loading.  See the documentation for the GNU Guile
+   module system.
+
+** channel-read
    Fix a memory corruption.  The problem was seen on reading of an
    output from "lsb_release -a" command.
 
-** ssh:session-set!
+** session-set!
    Fix the bug that leads to an error if the user tried to set a
    correct boolean option.
 

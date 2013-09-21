@@ -1,5 +1,19 @@
 2013-09-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Update.
+
+	* src/session-func.c (session_options): Don't use TYPE macro to
+	get names of SSH constants.
+	(set_option): Likewise.
+	(TYPE): Remove the macro.
+
+	* src/auth.c, src/auth.scm, src/channel-func.c,
+	src/channel-type.c, src/channel.scm, src/key-func.c,
+	src/key-type.c, src/key.scm, src/session-func.c,
+	src/session-type.c, src/session.scm, src/version.c,
+	src/version.scm: Remove "ssh:" prefix from functions names.
+	Update comments.
+
 	Implement the SSH message type.
 	* src/Makefile.am: Add message* files.
 	* src/server-func.c (guile_ssh_server_set_message_callback_x)

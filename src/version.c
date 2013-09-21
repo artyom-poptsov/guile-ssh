@@ -22,7 +22,7 @@
 #include <libssh/libssh.h>
 
 /* Get version of the libssh. */
-SCM_DEFINE (guile_ssh_get_libssh_version, "ssh:get-libssh-version", 0, 0, 0,
+SCM_DEFINE (guile_ssh_get_libssh_version, "get-libssh-version", 0, 0, 0,
             (),
             "Get version of the libssh.")
 {
@@ -30,7 +30,7 @@ SCM_DEFINE (guile_ssh_get_libssh_version, "ssh:get-libssh-version", 0, 0, 0,
 }
 
 /* Get version of the libguile-ssh. */
-SCM_DEFINE (guile_ssh_get_library_version, "ssh:get-library-version", 0, 0, 0,
+SCM_DEFINE (guile_ssh_get_library_version, "get-library-version", 0, 0, 0,
             (),
             "Get version of the libguile-ssh.")
 {
