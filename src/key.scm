@@ -25,29 +25,29 @@
 ;;
 ;; These methods are exported:
 ;;
-;;   ssh:key
-;;   ssh:key?
-;;   ssh:public-key?
-;;   ssh:private-key?
-;;   ssh:get-key-type
-;;   ssh:public-key->string
-;;   ssh:public-key-from-file
-;;   ssh:private-key->public-key
-;;   ssh:private-key-from-file
+;;   key
+;;   key?
+;;   public-key?
+;;   private-key?
+;;   get-key-type
+;;   public-key->string
+;;   public-key-from-file
+;;   private-key->public-key
+;;   private-key-from-file
 
 
 ;;; Code:
 
 (define-module (ssh key)
-  #:export (ssh:key
-            ssh:key?
-            ssh:public-key?
-            ssh:private-key?
-            ssh:get-key-type
-            ssh:public-key->string
-            ssh:public-key-from-file
-            ssh:private-key->public-key
-            ssh:private-key-from-file))
+  #:export (key
+            key?
+            public-key?
+            private-key?
+            get-key-type
+            public-key->string
+            public-key-from-file
+            private-key->public-key
+            private-key-from-file))
 
 (load-extension "libguile-ssh" "init_key")
 

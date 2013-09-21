@@ -25,34 +25,34 @@
 ;;
 ;; These methods are exported:
 ;;
-;;   ssh:session
-;;   ssh:make-session
-;;   ssh:blocking-flush!
-;;   ssh:session-set!
-;;   ssh:get-version
-;;   ssh:connect!
-;;   ssh:disconnect!
-;;   ssh:connected?
-;;   ssh:authenticate-server
-;;   ssh:get-public-key-hash
-;;   ssh:write-known-host))
+;;   make-session
+;;   blocking-flush!
+;;   session-set!
+;;   get-version
+;;   connect!
+;;   disconnect!
+;;   connected?
+;;   authenticate-server
+;;   get-public-key-hash
+;;   write-known-host))
+;;   get-error
 
 
 ;;; Code:
 
 (define-module (ssh session)
-  #:export (ssh:session
-	    ssh:make-session
-	    ssh:blocking-flush!
-	    ssh:session-set!
-	    ssh:get-protocol-version
-	    ssh:connect!
-	    ssh:disconnect!
-	    ssh:connected?
-	    ssh:authenticate-server
-	    ssh:get-public-key-hash
-	    ssh:write-known-host
-            ssh:get-error))
+  #:export (session
+	    make-session
+	    blocking-flush!
+	    session-set!
+	    get-protocol-version
+	    connect!
+	    disconnect!
+	    connected?
+	    authenticate-server
+	    get-public-key-hash
+	    write-known-host
+            get-error))
 
 (load-extension "libguile-ssh" "init_session")
 

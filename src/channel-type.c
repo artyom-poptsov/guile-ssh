@@ -45,7 +45,7 @@ free_channel (SCM channel_smob)
 }
 
 /* Allocate a new SSH channel. */
-SCM_DEFINE (guile_ssh_make_channel, "ssh:make-channel", 1, 0, 0,
+SCM_DEFINE (guile_ssh_make_channel, "make-channel", 1, 0, 0,
             (SCM arg1),
             "Allocate a new SSH channel.")
 {
@@ -67,7 +67,7 @@ SCM_DEFINE (guile_ssh_make_channel, "ssh:make-channel", 1, 0, 0,
 
 /* Predicates */
 
-SCM_DEFINE (guile_ssh_is_channel_p, "ssh:channel?", 1, 0, 0,
+SCM_DEFINE (guile_ssh_is_channel_p, "channel?", 1, 0, 0,
             (SCM x),
             "Return #t if X is a SSH channel, #f otherwise.")
 {
@@ -104,7 +104,7 @@ _scm_to_ssh_channel (SCM x)
 void
 init_channel_type (void)
 {
-  channel_tag = scm_make_smob_type ("ssh:channel",
+  channel_tag = scm_make_smob_type ("channel",
                                     sizeof (struct channel_data));
   scm_set_smob_mark (channel_tag, mark_channel);
   scm_set_smob_free (channel_tag, free_channel);

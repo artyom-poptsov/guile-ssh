@@ -52,7 +52,7 @@ free_session (SCM session_smob)
 }
 
 /* Create a new session. */
-SCM_DEFINE (guile_ssh_make_session, "ssh:make-session", 0, 0, 0,
+SCM_DEFINE (guile_ssh_make_session, "make-session", 0, 0, 0,
             (),
             "Create a new session.")
 {
@@ -106,7 +106,7 @@ _scm_to_ssh_session (SCM x)
 void
 init_session_type (void)
 {
-  session_tag = scm_make_smob_type ("ssh:session", 
+  session_tag = scm_make_smob_type ("session", 
                                     sizeof (struct session_data));
   scm_set_smob_mark (session_tag, mark_session);
   scm_set_smob_free (session_tag, free_session);

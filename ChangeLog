@@ -1,3 +1,12 @@
+2013-09-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/auth.c, src/auth.scm, src/channel-func.c,
+	src/channel-type.c, src/channel.scm, src/key-func.c,
+	src/key-type.c, src/key.scm, src/session-func.c,
+	src/session-type.c, src/session.scm, src/version.c,
+	src/version.scm: Remove "ssh:" prefix from functions names.
+	Update comments.
+
 2013-08-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/session-func.c: Use a short macro for getting long SSH

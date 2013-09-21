@@ -89,9 +89,9 @@ scm_from_ssh_key_type (int type)
 
    Return a key type as a Scheme symbol.  The type can be one of the
    following list: 'dss, 'rsa, 'rsa1, 'unknown */
-SCM_DEFINE (guile_ssh_key_get_type, "ssh:get-key-type", 1, 0, 0,
+SCM_DEFINE (guile_ssh_key_get_type, "get-key-type", 1, 0, 0,
             (SCM key),
-            "Get a symbol that represents the type of the key KEY_SMOB.\n"
+            "Get a symbol that represents the type of the SSH key KEY.\n"
             "Possible types are: 'dss, 'rsa, 'rsa1, 'unknown")
 {
   struct key_data *data = _scm_to_ssh_key (key);
@@ -122,24 +122,24 @@ SCM_DEFINE (guile_ssh_key_get_type, "ssh:get-key-type", 1, 0, 0,
 
 /* Predicates */
 
-SCM_DEFINE (guile_ssh_is_key_p, "ssh:key?", 1, 0, 0,
+SCM_DEFINE (guile_ssh_is_key_p, "key?", 1, 0, 0,
             (SCM x),
-            "Return #t if X is a ssh:key, #f otherwise.")
+            "Return #t if X is a SSH key, #f otherwise.")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x));
 }
 
-SCM_DEFINE (guile_ssh_is_public_key_p, "ssh:public-key?", 1, 0, 0,
+SCM_DEFINE (guile_ssh_is_public_key_p, "public-key?", 1, 0, 0,
             (SCM x),
-            "Return #t if X is a ssh:public-key, #f otherwise.")
+            "Return #t if X is a SSH public-key, #f otherwise.")
 {
   struct key_data *key = _scm_to_ssh_key (x);
   return scm_from_bool (_public_key_p (key));
 }
 
-SCM_DEFINE (guile_ssh_is_private_key_p, "ssh:private-key?", 1, 0, 0,
+SCM_DEFINE (guile_ssh_is_private_key_p, "private-key?", 1, 0, 0,
             (SCM x),
-            "Return #t if X is a ssh:private-key, #f otherwise.")
+            "Return #t if X is a SSH private-key, #f otherwise.")
 {
   struct key_data *key = _scm_to_ssh_key (x);
   return scm_from_bool (_private_key_p (key));
@@ -190,7 +190,7 @@ _public_key_p (struct key_data *key)
 void
 init_key_type (void)
 {
-  key_tag = scm_make_smob_type ("ssh:key", sizeof (struct key_data));
+  key_tag = scm_make_smob_type ("key", sizeof (struct key_data));
   scm_set_smob_mark (key_tag, mark_key_smob);
   scm_set_smob_free (key_tag, free_key_smob);
   scm_set_smob_equalp (key_tag, equalp_key);

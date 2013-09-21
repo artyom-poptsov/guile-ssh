@@ -60,13 +60,13 @@ ssh_auth_result_to_symbol (const int res)
  * USERNAME can be either string or #f.  If USERNAME is #f it's assumed that
  * the USERNAME was set through ssh:option-set! call.
  */
-SCM_DEFINE (guile_ssh_userauth_pubkey, "ssh:userauth-pubkey!", 4, 0, 0,
+SCM_DEFINE (guile_ssh_userauth_pubkey, "userauth-pubkey!", 4, 0, 0,
             (SCM session_smob, SCM username,
              SCM public_key_smob, SCM private_key_smob),
             "Try to authenticate with a public key.\n"
             "\n"
             "USERNAME can be either string or #f,  If USERNAME is #f it's\n"
-            "assumed that the USERNAME was set though `ssh:option-set!' call.")
+            "assumed that the USERNAME was set though `option-set!' call.")
 #define FUNC_NAME s_guile_ssh_userauth_pubkey
 {
   struct session_data *session_data = _scm_to_ssh_session (session_smob);
@@ -119,7 +119,7 @@ SCM_DEFINE (guile_ssh_userauth_pubkey, "ssh:userauth-pubkey!", 4, 0, 0,
  * the USERNAME was set through ssh:option-set! call.
  *
  */
-SCM_DEFINE (guile_ssh_userauth_password, "ssh:userauth-password!", 3, 0, 0,
+SCM_DEFINE (guile_ssh_userauth_password, "userauth-password!", 3, 0, 0,
             (SCM session, SCM username, SCM password),
             "Try to authenticate by password.")
 #define FUNC_NAME s_guile_ssh_userauth_password
@@ -165,7 +165,7 @@ SCM_DEFINE (guile_ssh_userauth_password, "ssh:userauth-password!", 3, 0, 0,
 
    Return one of the following symbols: 'success, 'error, 'denied,
    'partial, 'again */
-SCM_DEFINE (guile_ssh_userauth_none, "ssh:userauth-none!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_userauth_none, "userauth-none!", 1, 0, 0,
             (SCM arg1),
             "Try to authenticate through the \"none\" method.")
 {
@@ -179,7 +179,7 @@ SCM_DEFINE (guile_ssh_userauth_none, "ssh:userauth-none!", 1, 0, 0,
 /* Get available authentication methods for a session SESSION_SMOB.
 
    Return list of available methods. */
-SCM_DEFINE (guile_ssh_userauth_get_list, "ssh:userauth-get-list", 1, 0, 0,
+SCM_DEFINE (guile_ssh_userauth_get_list, "userauth-get-list", 1, 0, 0,
             (SCM session),
             "Get available authentication methods for a session SESSION.")
 {

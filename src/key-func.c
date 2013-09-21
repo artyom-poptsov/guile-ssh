@@ -41,7 +41,7 @@ public_key_to_ssh_string (const struct key_data *public_key_data)
  *
  * TODO: Probably should be replaced with a simply print function.
  */
-SCM_DEFINE (guile_ssh_public_key_to_string, "ssh:public-key->string", 1, 0, 0,
+SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
             (SCM arg1),
             "Convert SSH public key to a scheme string.")
 #define FUNC_NAME s_guile_ssh_public_key_to_string
@@ -75,7 +75,7 @@ SCM_DEFINE (guile_ssh_public_key_to_string, "ssh:public-key->string", 1, 0, 0,
 #undef FUNC_NAME
 
 /* Read private key from a file FILENAME */
-SCM_DEFINE (guile_ssh_private_key_from_file, "ssh:private-key-from-file", 2, 0, 0,
+SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 0, 0,
             (SCM session, SCM filename),
             "Read private key from a file FILENAME")
 #define FUNC_NAME s_guile_ssh_private_key_from_file
@@ -116,7 +116,7 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "ssh:private-key-from-file", 2, 0, 
 #undef FUNC_NAME
 
 /* Get public key from a private key KEY */
-SCM_DEFINE (guile_ssh_public_key_from_private_key, "ssh:private-key->public-key",
+SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
             1, 0, 0,
             (SCM key),
             "Get public key from a private key KEY")
@@ -149,7 +149,7 @@ SCM_DEFINE (guile_ssh_public_key_from_private_key, "ssh:private-key->public-key"
  *
  * Return a SSH key smob.
  */
-SCM_DEFINE (guile_ssh_public_key_from_file, "ssh:public-key-from-file", 2, 0, 0,
+SCM_DEFINE (guile_ssh_public_key_from_file, "public-key-from-file", 2, 0, 0,
             (SCM session, SCM filename),
             "Read public key from a file FILENAME.  Return a SSH key.")
 #define FUNC_NAME s_guile_ssh_public_key_from_file

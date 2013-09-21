@@ -26,25 +26,25 @@
 ;;
 ;; These methods are exported:
 ;;
-;;   ssh:get-libssh-version
-;;   ssh:get-library-version
+;;   get-libssh-version
+;;   get-library-version
 ;;
-;; ssh:get-libssh-version returns libssh version as a string in the
+;; `get-libssh-version' returns libssh version as a string in the
 ;; follwing format:
 ;;
 ;;   <version> ::= <major> "." <minor> "." <micro>
 ;;
 ;; For example, "0.5.2".
 ;;
-;; ssh:get-library-version returns version of the libguile-ssh
-;; library as a string.
+;; `get-library-version' returns version of the libguile-ssh library
+;; as a string.
 
 
 ;;; Code:
 
 (define-module (ssh version)
-  #:export (ssh:get-libssh-version
-            ssh:get-library-version))
+  #:export (get-libssh-version
+            get-library-version))
 
 (load-extension "libguile-ssh" "init_version")
 

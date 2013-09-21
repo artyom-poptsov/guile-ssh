@@ -65,7 +65,7 @@ static struct option session_options[] = {
 /* Blocking flush of the outgoing buffer.
 
    Return on of the following symbols: 'ok, 'error. 'again. */
-SCM_DEFINE (guile_ssh_blocking_flush, "ssh:blocking-flush!", 2, 0, 0,
+SCM_DEFINE (guile_ssh_blocking_flush, "blocking-flush!", 2, 0, 0,
             (SCM session_smob, SCM timeout),
             "Blocking flush of the outgoing buffer.\n"
             "Return on of the following symbols: 'ok, 'error, 'again.")
@@ -107,7 +107,7 @@ set_string_opt (ssh_session session, int type, SCM value)
   char *str;
   int ret;
 
-  SCM_ASSERT (scm_is_string (value),  value, SCM_ARG3, "ssh:session-set!");
+  SCM_ASSERT (scm_is_string (value),  value, SCM_ARG3, "session-set!");
 
   str = scm_to_locale_string (value);
   ret = ssh_options_set (session, type, str);
@@ -123,7 +123,7 @@ set_uint64_opt (ssh_session session, int type, SCM value)
   uint64_t c_value;
 
   SCM_ASSERT (scm_is_unsigned_integer (value, 0, UINT64_MAX), value,
-              SCM_ARG3, "ssh:session-set!");
+              SCM_ARG3, "session-set!");
 
   c_value = scm_to_uint64 (value);
   return ssh_options_set (session, type, &c_value);
@@ -136,7 +136,7 @@ set_uint32_opt (ssh_session session, int type, SCM value)
   unsigned int c_value;
 
   SCM_ASSERT (scm_is_unsigned_integer (value, 0, UINT32_MAX), value,
-              SCM_ARG3, "ssh:session-set!");
+              SCM_ARG3, "session-set!");
 
   c_value = scm_to_uint32 (value);
   return ssh_options_set (session, type, &c_value);
@@ -148,7 +148,7 @@ set_int32_opt (ssh_session session, int type, SCM value)
 {
   int32_t c_value;
 
-  SCM_ASSERT (scm_is_integer (value), value, SCM_ARG3, "ssh:session-set!");
+  SCM_ASSERT (scm_is_integer (value), value, SCM_ARG3, "session-set!");
 
   c_value = scm_to_int (value);
   return ssh_options_set (session, type, &c_value);
@@ -162,7 +162,7 @@ set_bool_opt (ssh_session session, int type, SCM value)
 {
   int32_t bool;
 
-  SCM_ASSERT (scm_is_bool (value), value, SCM_ARG3, "ssh:session-set!");
+  SCM_ASSERT (scm_is_bool (value), value, SCM_ARG3, "session-set!");
 
   bool = scm_to_bool (value);
   return ssh_options_set (session, type, &bool);
@@ -175,7 +175,7 @@ set_port_opt (ssh_session session, int type, SCM value)
 {
   socket_t sfd;                 /* Socket File Descriptor */
 
-  SCM_ASSERT (scm_port_p (value), value, SCM_ARG3, "ssh:session-set!");
+  SCM_ASSERT (scm_port_p (value), value, SCM_ARG3, "session-set!");
 
   sfd = scm_to_int (scm_fileno (value));
 
@@ -225,7 +225,7 @@ set_option (ssh_session session, int type, SCM value)
       return set_port_opt (session, type, value);
 
     default:
-      guile_ssh_error1 ("ssh:session-set!",
+      guile_ssh_error1 ("session-set!",
                         "Operation is not supported yet: %a~%",
                         scm_from_int (type));
     }
@@ -236,7 +236,7 @@ set_option (ssh_session session, int type, SCM value)
 #undef TYPE
 
 /* Set a SSH option.  Return #t on success, #f on error. */
-SCM_DEFINE (guile_ssh_session_set, "ssh:session-set!", 3, 0, 0,
+SCM_DEFINE (guile_ssh_session_set, "session-set!", 3, 0, 0,
             (SCM session, SCM type, SCM value),
             "Set a SSH option.  Return #t on success, #f on error.")
 #define FUNC_NAME s_guile_ssh_session_set
@@ -274,7 +274,7 @@ SCM_DEFINE (guile_ssh_session_set, "ssh:session-set!", 3, 0, 0,
 /* Connect to the SSH server. 
 
    Return one of the following symbols: 'ok, 'error, 'again */
-SCM_DEFINE (guile_ssh_connect, "ssh:connect!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_connect, "connect!", 1, 0, 0,
             (SCM arg1),
             "Connect to the SSH server.\n"
             "Return one of the following symbols: 'ok, 'error, 'again")
@@ -297,7 +297,7 @@ SCM_DEFINE (guile_ssh_connect, "ssh:connect!", 1, 0, 0,
 
 /* Disconnect from a session (client or server). 
    Return value is undefined.*/
-SCM_DEFINE (guile_ssh_disconnect, "ssh:disconnect!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_disconnect, "disconnect!", 1, 0, 0,
             (SCM arg1),
             "Disconnect from a session (client or server).\n"
             "Return value is undefined.")
@@ -311,7 +311,7 @@ SCM_DEFINE (guile_ssh_disconnect, "ssh:disconnect!", 1, 0, 0,
  *
  * Return 1 for SSH1, 2 for SSH2 or #f on error
  */
-SCM_DEFINE (guile_ssh_get_protocol_version, "ssh:get-protocol-version", 1, 0, 0,
+SCM_DEFINE (guile_ssh_get_protocol_version, "get-protocol-version", 1, 0, 0,
             (SCM arg1),
             "Get SSH version.\n"
             "Return 1 for SSH1, 2 for SSH2 or #f on error.")
@@ -328,7 +328,7 @@ SCM_DEFINE (guile_ssh_get_protocol_version, "ssh:get-protocol-version", 1, 0, 0,
   return ret;
 }
 
-SCM_DEFINE (guile_ssh_get_error, "ssh:get-error", 1, 0, 1,
+SCM_DEFINE (guile_ssh_get_error, "get-error", 1, 0, 1,
             (SCM arg1),
             "Retrieve the error text message from the last error.")
 {
@@ -341,7 +341,7 @@ SCM_DEFINE (guile_ssh_get_error, "ssh:get-error", 1, 0, 1,
 
    Return one of the following symbols: 'ok, 'known-changed,
    'found-other, 'not-known, 'file-not-found, 'error */
-SCM_DEFINE (guile_ssh_authenticate_server, "ssh:authenticate-server", 1, 0, 0,
+SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
             (SCM arg1),
             "Authenticate the server.\n"
             "Return one of the following symbols: 'ok, 'known-changed,\n"
@@ -376,7 +376,7 @@ SCM_DEFINE (guile_ssh_authenticate_server, "ssh:authenticate-server", 1, 0, 0,
 /* Get MD5 hash of the public key.
 
    Return MD5 hash on success, #f on error. */
-SCM_DEFINE (guile_ssh_get_public_key_hash, "ssh:get-public-key-hash", 1, 0, 0,
+SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 1, 0, 0,
             (SCM arg1),
             "Get MD5 hash of the public key.\n"
             "Return MD5 hash on success, #f on error.")
@@ -407,7 +407,7 @@ SCM_DEFINE (guile_ssh_get_public_key_hash, "ssh:get-public-key-hash", 1, 0, 0,
 /* Write the current server as known in the known hosts file.
 
    Return #t on success, #f on error. */
-SCM_DEFINE (guile_ssh_write_known_host, "ssh:authenticate-server", 1, 0, 0,
+SCM_DEFINE (guile_ssh_write_known_host, "authenticate-server", 1, 0, 0,
             (SCM arg1),
             "Write the current server as known in the known hosts file.\n"
             "Return #t on success, #f on error.")
@@ -423,7 +423,7 @@ SCM_DEFINE (guile_ssh_write_known_host, "ssh:authenticate-server", 1, 0, 0,
 /* Check if we are connected. 
 
    Return #f if we are connected to a server, #f if we aren't. */
-SCM_DEFINE (guile_ssh_is_connected_p, "ssh:connected?", 1, 0, 0,
+SCM_DEFINE (guile_ssh_is_connected_p, "connected?", 1, 0, 0,
             (SCM arg1),
             "Check if we are connected.\n"
             "Return #f if we are connected to a server, #f if we aren't.")

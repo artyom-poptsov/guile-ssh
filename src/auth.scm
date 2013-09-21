@@ -25,19 +25,19 @@
 ;; 
 ;; These methods are exported:
 ;;
-;;   ssh:userauth-pubkey!
-;;   ssh:userauth-password!
-;;   ssh:userauth-none!
+;;   userauth-pubkey!
+;;   userauth-password!
+;;   userauth-none!
 
 
 ;;; Code:
 
 (define-module (ssh auth)
   #:use-module (ssh session)
-  #:export (ssh:userauth-pubkey!
-            ssh:userauth-password!
-            ssh:userauth-none!
-            ssh:userauth-get-list))
+  #:export (userauth-pubkey!
+            userauth-password!
+            userauth-none!
+            userauth-get-list))
 
 (load-extension "libguile-ssh" "init_auth_func")
 
