@@ -1,5 +1,7 @@
 2013-09-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Update.
+
 	* src/session-func.c (session_options): Don't use TYPE macro to
 	get names of SSH constants.
 	(set_option): Likewise.
