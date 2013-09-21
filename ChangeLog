@@ -11,8 +11,10 @@
 	src/channel-type.c, src/channel.scm, src/key-func.c,
 	src/key-type.c, src/key.scm, src/session-func.c,
 	src/session-type.c, src/session.scm, src/version.c,
-	src/version.scm: Remove "ssh:" prefix from functions names.
-	Update comments.
+	src/version.scm, src/message-func.c, src/message-type.c,
+	src/message.scm, src/server-func.c, src/server-type.c,
+	src/server.scm: Remove "ssh:" prefix from functions names.  Update
+	comments.
 
 	Implement the SSH message type.
 	* src/Makefile.am: Add message* files.

@@ -25,28 +25,28 @@
 ;;
 ;; These methods are exported:
 ;;
-;;   ssh:make-server
-;;   ssh:server-accept!
-;;   ssh:server-set!
-;;   ssh:server-listen
-;;   ssh:server-set-blocking!
-;;   ssh:server-handle-key-exchange
-;;   ssh:server-set-message-callback!
-;;   ssh:server-message-get
+;;   make-server
+;;   server-accept!
+;;   server-set!
+;;   server-listen
+;;   server-set-blocking!
+;;   server-handle-key-exchange
+;;   server-set-message-callback!
+;;   server-message-get
 
 
 ;;; Code:
 
 (define-module (ssh server)
-  #:export (ssh:server
-	    ssh:make-server
-            ssh:server-accept!
-            ssh:server-set!
-            ssh:server-listen
-            ssh:server-set-blocking!
-            ssh:server-handle-key-exchange
-            ssh:server-set-message-callback!
-            ssh:server-message-get))
+  #:export (server
+	    make-server
+            server-accept!
+            server-set!
+            server-listen
+            server-set-blocking!
+            server-handle-key-exchange
+            server-set-message-callback!
+            server-message-get))
 
 (load-extension "libguile-ssh" "init_server")
 

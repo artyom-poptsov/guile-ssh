@@ -61,7 +61,7 @@ equalp_message (SCM x1, SCM x2)
 }
 
 SCM_DEFINE (guile_ssh_is_message_p,
-            "ssh:message?", 1, 0, 0,
+            "message?", 1, 0, 0,
             (SCM x),
             "Return #t if X a SSH message, #f otherwise.")
 {
@@ -84,7 +84,7 @@ _scm_to_ssh_message (SCM x)
 void
 init_message_type (void)
 {
-  message_tag = scm_make_smob_type ("ssh:message", sizeof (struct message_data));
+  message_tag = scm_make_smob_type ("message", sizeof (struct message_data));
   scm_set_smob_mark (message_tag, mark_message);
   scm_set_smob_free (message_tag, free_message);
   scm_set_smob_equalp (message_tag, equalp_message);

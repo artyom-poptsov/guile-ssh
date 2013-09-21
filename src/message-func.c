@@ -27,7 +27,7 @@
 #include "key-type.h"
 
 SCM_DEFINE (guile_ssh_message_reply_default,
-            "ssh:message-reply-default", 1, 0, 0,
+            "message-reply-default", 1, 0, 0,
             (SCM msg),
             "")
 {
@@ -38,7 +38,7 @@ SCM_DEFINE (guile_ssh_message_reply_default,
 
 
 SCM_DEFINE (guile_ssh_message_service_reply_success,
-            "ssh:message-service-reply-success", 1, 0, 0,
+            "message-service-reply-success", 1, 0, 0,
             (SCM msg),
             "")
 {
@@ -50,7 +50,7 @@ SCM_DEFINE (guile_ssh_message_service_reply_success,
 
 
 SCM_DEFINE (guile_ssh_message_auth_reply_success,
-            "ssh:message-auth-reply-success", 2, 0, 0,
+            "message-auth-reply-success", 2, 0, 0,
             (SCM msg, SCM partial_p),
             "")
 {
@@ -61,7 +61,7 @@ SCM_DEFINE (guile_ssh_message_auth_reply_success,
 }
 
 SCM_DEFINE (guile_ssh_message_auth_reply_public_key_success,
-            "ssh:message-auth-reply-public-key-success", 1, 0, 0,
+            "message-auth-reply-public-key-success", 1, 0, 0,
             (SCM msg),
             "Answer OK to a public key auth request from message MSG.")
 {
@@ -72,7 +72,7 @@ SCM_DEFINE (guile_ssh_message_auth_reply_public_key_success,
 
 
 SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
-            "ssh:message-channel-request-open-reply-accept", 1, 0, 0,
+            "message-channel-request-open-reply-accept", 1, 0, 0,
             (SCM msg),
             "")
 {
@@ -196,7 +196,7 @@ _ssh_message_type_to_scm (ssh_message msg)
 
 
 SCM_DEFINE (guile_ssh_message_get_type,
-            "ssh:message-get-type", 1, 0, 0,
+            "message-get-type", 1, 0, 0,
             (SCM msg),
             "Get type of the message MSG.")
 {
@@ -205,7 +205,7 @@ SCM_DEFINE (guile_ssh_message_get_type,
 }
 
 SCM_DEFINE (guile_ssh_message_auth_get_user,
-            "ssh:message-auth-get-user", 1, 0, 0,
+            "message-auth-get-user", 1, 0, 0,
             (SCM msg),
             "Get an user name from the message MSG.")
 {
@@ -215,7 +215,7 @@ SCM_DEFINE (guile_ssh_message_auth_get_user,
 }
 
 SCM_DEFINE (guile_ssh_message_auth_get_password,
-            "ssh:message-auth-get-password", 1, 0, 0,
+            "message-auth-get-password", 1, 0, 0,
             (SCM msg),
             "Get an user password from the message MSG.")
 {
@@ -226,7 +226,7 @@ SCM_DEFINE (guile_ssh_message_auth_get_password,
 
 
 SCM_DEFINE (guile_ssh_message_auth_get_public_key,
-            "ssh:message-auth-get-public-key", 1, 0, 0,
+            "message-auth-get-public-key", 1, 0, 0,
             (SCM msg),
             "Get the publickey of an auth request from message MSG")
 {
@@ -248,7 +248,7 @@ SCM_DEFINE (guile_ssh_message_auth_get_public_key,
 
 
 SCM_DEFINE (guile_ssh_message_auth_set_methods_x,
-            "ssh:message-auth-set-methods!", 2, 0, 0,
+            "message-auth-set-methods!", 2, 0, 0,
             (SCM msg, SCM methods_list),
             "Set authentication methods.")
 #define FUNC_NAME s_guile_ssh_message_auth_set_methods_x

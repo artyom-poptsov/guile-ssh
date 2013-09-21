@@ -55,7 +55,7 @@ set_string_opt (ssh_bind bind, int type, SCM value)
   char *str;
   int ret;
 
-  SCM_ASSERT (scm_is_string (value),  value, SCM_ARG3, "ssh:server-set!");
+  SCM_ASSERT (scm_is_string (value),  value, SCM_ARG3, "server-set!");
 
   str = scm_to_locale_string (value);
   ret = ssh_bind_options_set (bind, type, str);
@@ -70,7 +70,7 @@ set_int32_opt (ssh_bind bind, int type, SCM value)
 {
   int32_t c_value;
 
-  SCM_ASSERT (scm_is_integer (value), value, SCM_ARG3, "ssh:server-set!");
+  SCM_ASSERT (scm_is_integer (value), value, SCM_ARG3, "server-set!");
 
   c_value = scm_to_int (value);
   return ssh_bind_options_set (bind, type, &c_value);
@@ -83,7 +83,7 @@ set_uint32_opt (ssh_bind bind, int type, SCM value)
   unsigned int c_value;
 
   SCM_ASSERT (scm_is_unsigned_integer (value, 0, UINT32_MAX), value,
-              SCM_ARG3, "ssh:server-set!");
+              SCM_ARG3, "server-set!");
 
   c_value = scm_to_uint32 (value);
   return ssh_bind_options_set (bind, type, &c_value);
@@ -108,7 +108,7 @@ set_option (ssh_bind bind, int type, SCM value)
       return set_int32_opt (bind, type, value);
 
     default:
-      guile_ssh_error1 ("ssh:server-set!",
+      guile_ssh_error1 ("server-set!",
                         "Operation is not supported yet: %a~%",
                         scm_from_int (type));
     }
@@ -119,7 +119,7 @@ set_option (ssh_bind bind, int type, SCM value)
 #undef TYPE
 
 
-SCM_DEFINE (guile_ssh_server_set_x, "ssh:server-set!", 3, 0, 0,
+SCM_DEFINE (guile_ssh_server_set_x, "server-set!", 3, 0, 0,
             (SCM server, SCM option, SCM value),
             "Set a SSH server option.  Return #t on success, #f on error.")
 #define FUNC_NAME s_guile_ssh_server_set_x
@@ -155,7 +155,7 @@ SCM_DEFINE (guile_ssh_server_set_x, "ssh:server-set!", 3, 0, 0,
 #undef FUNC_NAME
 
 
-SCM_DEFINE (guile_ssh_server_listen, "ssh:server-listen", 1, 0, 0,
+SCM_DEFINE (guile_ssh_server_listen, "server-listen", 1, 0, 0,
             (SCM server),
             "Start listening to the socket.\n"
             "Return #t on success, #f otherwise.")
@@ -166,7 +166,7 @@ SCM_DEFINE (guile_ssh_server_listen, "ssh:server-listen", 1, 0, 0,
 }
 
 
-SCM_DEFINE (guile_ssh_server_accept_x, "ssh:server-accept!", 2, 0, 0,
+SCM_DEFINE (guile_ssh_server_accept_x, "server-accept!", 2, 0, 0,
             (SCM server, SCM session),
             "Accept an incoming ssh connection to the server SERVER\n"
             "and initialize the session SESSION.")
@@ -179,7 +179,7 @@ SCM_DEFINE (guile_ssh_server_accept_x, "ssh:server-accept!", 2, 0, 0,
 
 
 SCM_DEFINE (guile_ssh_server_handle_key_exchange,
-            "ssh:server-handle-key-exchange", 1, 0, 0,
+            "server-handle-key-exchange", 1, 0, 0,
             (SCM session),
             "Handle key exchange for a server SERVER and setup encryption.\n"
             "Return #t on success, #f otherwise.")
@@ -190,7 +190,7 @@ SCM_DEFINE (guile_ssh_server_handle_key_exchange,
 }
 
 
-SCM_DEFINE (guile_ssh_server_set_blocking_x, "ssh:server-set-blocking!", 2, 0, 0,
+SCM_DEFINE (guile_ssh_server_set_blocking_x, "server-set-blocking!", 2, 0, 0,
             (SCM server, SCM blocking),
             "Set the SERVER to blocking/nonblocking mode.\n"
             "Return value is undefined.")
@@ -219,7 +219,7 @@ callback (ssh_session session, ssh_message message, void *data)
       SCM smob;
       struct session_data *session_data 
         = (struct session_data *) scm_gc_malloc (sizeof (struct session_data),
-                                             "session");
+                                                 "session");
       session_data->ssh_session = session;
       SCM_NEWSMOB (smob, session_tag, session_data);
       /* scm_call_3 (scm_callback_proc, smob */
@@ -228,7 +228,7 @@ callback (ssh_session session, ssh_message message, void *data)
 }
 
 SCM_DEFINE (guile_ssh_server_set_message_callback_x,
-            "ssh:server-set-message-callback!", 3, 0, 0,
+            "server-set-message-callback!", 3, 0, 0,
             (SCM session, SCM proc, SCM data),
             "Set callback procedure PROC for incoming messages for session "
             "SESSION.\n"
@@ -241,7 +241,7 @@ SCM_DEFINE (guile_ssh_server_set_message_callback_x,
 
 
 SCM_DEFINE (guile_ssh_server_message_get,
-            "ssh:server-message-get", 1, 0, 0,
+            "server-message-get", 1, 0, 0,
             (SCM session),
             "Get a message.")
 {

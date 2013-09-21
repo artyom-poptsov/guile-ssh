@@ -46,7 +46,7 @@ free_server (SCM server)
 
 /* Smob specific procedures. */
 
-SCM_DEFINE (guile_ssh_make_server, "ssh:make-server", 0, 0, 0,
+SCM_DEFINE (guile_ssh_make_server, "make-server", 0, 0, 0,
             (),
             "Make a new SSH server.")
 {
@@ -60,7 +60,7 @@ SCM_DEFINE (guile_ssh_make_server, "ssh:make-server", 0, 0, 0,
 }
 
 
-SCM_DEFINE (guile_ssh_server_close_x, "ssh:server-close!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_server_close_x, "server-close!", 1, 0, 0,
             (SCM server),
             "Close the SSH server SERVER.\n"
             "Return value is undefined.")
@@ -103,7 +103,7 @@ _scm_to_ssh_server (SCM x)
 void
 init_server_type (void)
 {
-  server_tag = scm_make_smob_type ("ssh:server", sizeof (struct server_data));
+  server_tag = scm_make_smob_type ("server", sizeof (struct server_data));
   scm_set_smob_mark (server_tag, mark_server);
   scm_set_smob_free (server_tag, free_server);
   scm_set_smob_equalp (server_tag, equalp_server);

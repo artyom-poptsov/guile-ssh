@@ -25,15 +25,15 @@
 ;;; Code:
 
 (define-module (ssh message)
-  #:export (ssh:message
-            ssh:message-reply-default
-            ssh:message-get-type
-            ssh:message-auth-reply-success
-            ssh:message-auth-reply-public-key-success
-            ssh:message-auth-get-user
-            ssh:message-auth-get-password
-            ssh:message-auth-set-methods!
-            ssh:message-channel-request-open-reply-accept))
+  #:export (message
+            message-reply-default
+            message-get-type
+            message-auth-reply-success
+            message-auth-reply-public-key-success
+            message-auth-get-user
+            message-auth-get-password
+            message-auth-set-methods!
+            message-channel-request-open-reply-accept))
 
 (load-extension "libguile-ssh" "init_message")
 
