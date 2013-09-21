@@ -24,6 +24,7 @@
 
 #include "session-type.h"
 #include "server-type.h"
+#include "message-type.h"
 #include "error.h"
 
 /* SSH option mapping. */
@@ -204,6 +205,62 @@ SCM_DEFINE (guile_ssh_server_set_blocking_x, "ssh:server-set-blocking!", 2, 0, 0
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
+
+
+static SCM scm_callback_proc = SCM_UNDEFINED;
+
+static int
+callback (ssh_session session, ssh_message message, void *data)
+{
+  scm_display (scm_from_locale_string ("callback called!\n"),
+               scm_current_output_port ());
+  if (! SCM_UNBNDP (scm_callback_proc))
+    {
+      SCM smob;
+      struct session_data *session_data 
+        = (struct session_data *) scm_gc_malloc (sizeof (struct session_data),
+                                             "session");
+      session_data->ssh_session = session;
+      SCM_NEWSMOB (smob, session_tag, session_data);
+      /* scm_call_3 (scm_callback_proc, smob */
+    }
+  return 0;
+}
+
+SCM_DEFINE (guile_ssh_server_set_message_callback_x,
+            "ssh:server-set-message-callback!", 3, 0, 0,
+            (SCM session, SCM proc, SCM data),
+            "Set callback procedure PROC for incoming messages for session "
+            "SESSION.\n"
+            "Return value is undefined.")
+{
+  struct session_data *session_data = _scm_to_ssh_session (session);
+  ssh_set_message_callback (session_data->ssh_session, callback, NULL);
+  return SCM_UNDEFINED;
+}
+
+
+SCM_DEFINE (guile_ssh_server_message_get,
+            "ssh:server-message-get", 1, 0, 0,
+            (SCM session),
+            "Get a message.")
+{
+  SCM smob;
+  struct session_data *session_data = _scm_to_ssh_session (session);
+  struct message_data *message_data
+    = (struct message_data *) scm_gc_malloc (sizeof (struct message_data),
+                                             "message");
+
+  message_data->message = ssh_message_get (session_data->ssh_session);
+  if (! message_data->message)
+    {
+      scm_gc_free (message_data, sizeof (struct message_data), "message");
+      return SCM_BOOL_F;
+    }
+
+  SCM_NEWSMOB (smob, message_tag, message_data);
+  return smob;
+}
 
 
 /* Initialize server related functions. */

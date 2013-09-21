@@ -1,3 +1,15 @@
+2013-09-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Implement the SSH message type.
+	* src/Makefile.am: Add message* files.
+	* src/server-func.c (guile_ssh_server_set_message_callback_x)
+	(guile_ssh_server_message_get, callback): New procedures.
+	* src/server.scm (ssh:server-set-message-callback!)
+	(ssh:server-message-get): Export.
+	* src/message-func.c, src/message-func.h, src/message-main.c,
+	src/message-type.c, src/message-type.h, src/message.scm: New
+	files.
+
 2013-08-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	Implement the basic server functionality.

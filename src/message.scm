@@ -1,4 +1,4 @@
-;;; server.scm -- SSH server API.
+;;; message.scm -- Procedures for working with SSH messages.
 
 ;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
@@ -21,33 +21,20 @@
 
 ;;; Commentary:
 
-;; This module contains API that is used for SSH server.
-;;
-;; These methods are exported:
-;;
-;;   ssh:make-server
-;;   ssh:server-accept!
-;;   ssh:server-set!
-;;   ssh:server-listen
-;;   ssh:server-set-blocking!
-;;   ssh:server-handle-key-exchange
-;;   ssh:server-set-message-callback!
-;;   ssh:server-message-get
 
-
 ;;; Code:
 
-(define-module (ssh server)
-  #:export (ssh:server
-	    ssh:make-server
-            ssh:server-accept!
-            ssh:server-set!
-            ssh:server-listen
-            ssh:server-set-blocking!
-            ssh:server-handle-key-exchange
-            ssh:server-set-message-callback!
-            ssh:server-message-get))
+(define-module (ssh message)
+  #:export (ssh:message
+            ssh:message-reply-default
+            ssh:message-get-type
+            ssh:message-auth-reply-success
+            ssh:message-auth-reply-public-key-success
+            ssh:message-auth-get-user
+            ssh:message-auth-get-password
+            ssh:message-auth-set-methods!
+            ssh:message-channel-request-open-reply-accept))
 
-(load-extension "libguile-ssh" "init_server")
+(load-extension "libguile-ssh" "init_message")
 
-;;; server.scm ends here
+;;; message.scm ends here
