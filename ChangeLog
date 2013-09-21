@@ -1,5 +1,10 @@
 2013-09-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/session-func.c (session_options): Don't use TYPE macro to
+	get names of SSH constants.
+	(set_option): Likewise.
+	(TYPE): Remove the macro.
+
 	* src/auth.c, src/auth.scm, src/channel-func.c,
 	src/channel-type.c, src/channel.scm, src/key-func.c,
 	src/key-type.c, src/key.scm, src/session-func.c,
