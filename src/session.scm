@@ -51,7 +51,7 @@
 	    connected?
 	    authenticate-server
 	    get-public-key-hash
-	    write-known-host
+	    write-known-host!
             get-error))
 
 (load-extension "libguile-ssh" "init_session")
