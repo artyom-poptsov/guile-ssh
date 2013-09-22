@@ -1,5 +1,11 @@
 2013-09-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/server-func.c (guile_ssh_server_accept_x): Rename to
+	`guile_ssh_server_accept'.  Change Scheme name to `server-accept'.
+	Change the function so it has no side effects.
+	* src/server-func.h: Update.
+	* src/server.scm: Export `server-accept'.
+
 	* src/message-func.c
 	(guile_ssh_message_channel_request_reply_success): New procedure.
 	* src/message.scm (message-channel-request-reply-success): Export.

@@ -166,15 +166,16 @@ SCM_DEFINE (guile_ssh_server_listen, "server-listen", 1, 0, 0,
 }
 
 
-SCM_DEFINE (guile_ssh_server_accept_x, "server-accept!", 2, 0, 0,
-            (SCM server, SCM session),
-            "Accept an incoming ssh connection to the server SERVER\n"
-            "and initialize the session SESSION.")
+SCM_DEFINE (guile_ssh_server_accept, "server-accept", 1, 0, 0,
+            (SCM server),
+            "Accept an incoming ssh connection to the server SERVER.\n"
+            "Return a new SSH session.")
 {
   struct server_data *server_data   = _scm_to_ssh_server (server);
+  SCM session = guile_ssh_make_session ();
   struct session_data *session_data = _scm_to_ssh_session (session);
   int res = ssh_bind_accept (server_data->bind, session_data->ssh_session);
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  return (res == SSH_OK) ? session : SCM_BOOL_F;
 }
 
 

@@ -26,7 +26,7 @@
 ;; These methods are exported:
 ;;
 ;;   make-server
-;;   server-accept!
+;;   server-accept
 ;;   server-set!
 ;;   server-listen
 ;;   server-set-blocking!
@@ -40,7 +40,7 @@
 (define-module (ssh server)
   #:export (server
 	    make-server
-            server-accept!
+            server-accept
             server-set!
             server-listen
             server-set-blocking!
