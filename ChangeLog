@@ -3,8 +3,12 @@
 	* src/server-func.c (guile_ssh_server_accept_x): Rename to
 	`guile_ssh_server_accept'.  Change Scheme name to `server-accept'.
 	Change the function so it has no side effects.
+	(guile_ssh_server_listen): Rename to `guile_ssh_server_listen_x'
+	because of side effects.  Change Scheme name to `server-listen!'.
+
 	* src/server-func.h: Update.
-	* src/server.scm: Export `server-accept'.
+	* src/server.scm: Export `server-accept'.  Rename `server-listen'
+	to `server-listen!'.
 
 	* src/message-func.c
 	(guile_ssh_message_channel_request_reply_success): New procedure.

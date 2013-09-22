@@ -28,7 +28,7 @@
 ;;   make-server
 ;;   server-accept
 ;;   server-set!
-;;   server-listen
+;;   server-listen!
 ;;   server-set-blocking!
 ;;   server-handle-key-exchange
 ;;   server-set-message-callback!
@@ -42,7 +42,7 @@
 	    make-server
             server-accept
             server-set!
-            server-listen
+            server-listen!
             server-set-blocking!
             server-handle-key-exchange
             server-set-message-callback!
