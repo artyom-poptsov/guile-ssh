@@ -1,3 +1,9 @@
+2013-09-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/session-func.c (guile_ssh_write_known_host): Fix the wrong
+	Scheme name: rename to `write-known-host!'.
+	* src/session.scm: Likewise.
+
 2013-09-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/channel-func.c (guile_ssh_channel_write): New procedure.
