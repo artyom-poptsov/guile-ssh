@@ -92,6 +92,17 @@ SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
 }
 
 
+SCM_DEFINE (guile_ssh_message_channel_request_reply_success,
+            "message-channel-request-reply-success", 1, 0, 0,
+            (SCM msg),
+            "")                 /* TODO: Add description */
+{
+  struct message_data *msg_data = _scm_to_ssh_message (msg);
+  int res = ssh_message_channel_request_reply_success (msg_data->message);
+  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+}
+
+
 struct symbol_mapping {
   char* symbol;
   int   value;

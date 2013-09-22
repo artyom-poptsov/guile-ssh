@@ -1,5 +1,9 @@
 2013-09-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/message-func.c
+	(guile_ssh_message_channel_request_reply_success): New procedure.
+	* src/message.scm (message-channel-request-reply-success): Export.
+
 	* src/session-func.c (guile_ssh_write_known_host): Fix the wrong
 	Scheme name: rename to `write-known-host!'.
 	* src/session.scm: Likewise.
