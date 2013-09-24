@@ -2,7 +2,10 @@
 
 	* src/session-func.c (guile_ssh_connect): Rename to
 	`guile_ssh_connect_x'.  Throw an exception on error.
-	* src/session-func.h: Add `guile_ssh_connect_x'.
+	(guile_ssh_authenticate_server): Throw an exception on error.
+
+	* src/session-func.h: Add `guile_ssh_connect_x'.  Add
+	`guile_ssh_authenticate_server'.
 
 	* src/session-type.c (guile_ssh_make_session): Change Scheme name
 	to `%make-session'.
