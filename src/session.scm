@@ -25,6 +25,7 @@
 ;;
 ;; These methods are exported:
 ;;
+;;   %make-session
 ;;   make-session
 ;;   blocking-flush!
 ;;   session-set!
@@ -41,18 +42,57 @@
 ;;; Code:
 
 (define-module (ssh session)
+  #:use-module (ice-9 optargs)
   #:export (session
-	    make-session
+            %make-session
+            make-session
 	    blocking-flush!
-	    session-set!
-	    get-protocol-version
-	    connect!
-	    disconnect!
-	    connected?
-	    authenticate-server
-	    get-public-key-hash
-	    write-known-host!
+            session-set!
+            get-protocol-version
+            connect!
+            disconnect!
+            connected?
+            authenticate-server
+            get-public-key-hash
+            write-known-host!
             get-error))
+
+;; Set a SSH option if it is specified by the user
+(define-macro (session-set-if-specified! option)
+  `(if ,option (session-set! session (quote ,option) ,option)))
+
+;; This procedure is more convenient than primitive `%make-session',
+;; but on other hand it should be a bit slower because of additional
+;; checks.  I think we can put up with this. -avp
+(define* (make-session #:key host port user ssh-dir identity add-identity
+                       knownhosts timeout timeout-usec ssh1 ssh2 log-verbosity
+                       ciphers-c-s ciphers-s-c compression-c-s compression-s-c
+                       proxycommand stricthostkeycheck compression
+                       compression-level)
+  "Make a new SSH session with specified configuration.\n
+Return a new SSH session."
+  (let ((session (%make-session)))
+    (session-set-if-specified! host)
+    (session-set-if-specified! port)
+    (session-set-if-specified! user)
+    (session-set-if-specified! ssh-dir)
+    (session-set-if-specified! identity)
+    (session-set-if-specified! add-identity)
+    (session-set-if-specified! knownhosts)
+    (session-set-if-specified! timeout)
+    (session-set-if-specified! timeout-usec)
+    (session-set-if-specified! ssh1)
+    (session-set-if-specified! ssh2)
+    (session-set-if-specified! log-verbosity)
+    (session-set-if-specified! ciphers-c-s)
+    (session-set-if-specified! ciphers-s-c)
+    (session-set-if-specified! compression-c-s)
+    (session-set-if-specified! compression-s-c)
+    (session-set-if-specified! proxycommand)
+    (session-set-if-specified! stricthostkeycheck)
+    (session-set-if-specified! compression)
+    (session-set-if-specified! compression-level)
+    session))
 
 (load-extension "libguile-ssh" "init_session")
 

@@ -1,3 +1,9 @@
+2013-09-25  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/session-type.c (guile_ssh_make_session): Change Scheme name
+	to `%make-session'.
+	* src/session.scm (make-session): New procedure.
+
 2013-09-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/session-func.c (guile_ssh_write_known_host): Throw an
