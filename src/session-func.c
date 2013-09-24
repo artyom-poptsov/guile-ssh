@@ -270,13 +270,14 @@ SCM_DEFINE (guile_ssh_session_set, "session-set!", 3, 0, 0,
 
 /* Connect to the SSH server. 
 
-   Return one of the following symbols: 'ok, 'error, 'again */
-SCM_DEFINE (guile_ssh_connect, "connect!", 1, 0, 0,
-            (SCM arg1),
+   Return one of the following symbols: 'ok, 'again */
+SCM_DEFINE (guile_ssh_connect_x, "connect!", 1, 0, 0,
+            (SCM session),
             "Connect to the SSH server.\n"
-            "Return one of the following symbols: 'ok, 'error, 'again")
+            "Return one of the following symbols: 'ok, 'again")
+#define FUNC_NAME s_guile_ssh_connect_x
 {
-  struct session_data* data = _scm_to_ssh_session (arg1);
+  struct session_data* data = _scm_to_ssh_session (session);
   int res = ssh_connect (data->ssh_session);
   switch (res)
     {
@@ -288,9 +289,12 @@ SCM_DEFINE (guile_ssh_connect, "connect!", 1, 0, 0,
 
     case SSH_ERROR:
     default:
-      return scm_from_locale_symbol ("error");
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (data->ssh_session),
+                        session);
+      return SCM_BOOL_F;        /* Not reached. */
     }
 }
+#undef FUNC_NAME
 
 /* Disconnect from a session (client or server). 
    Return value is undefined.*/
@@ -337,14 +341,15 @@ SCM_DEFINE (guile_ssh_get_error, "get-error", 1, 0, 1,
 /* Authenticate the server.  
 
    Return one of the following symbols: 'ok, 'known-changed,
-   'found-other, 'not-known, 'file-not-found, 'error */
+   'found-other, 'not-known, 'file-not-found */
 SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
-            (SCM arg1),
+            (SCM session),
             "Authenticate the server.\n"
             "Return one of the following symbols: 'ok, 'known-changed,\n"
-            "'found-other, 'not-known, 'file-not-found, 'error")
+            "'found-other, 'not-known, 'file-not-found")
+#define FUNC_NAME s_guile_ssh_authenticate_server
 {
-  struct session_data* data = _scm_to_ssh_session (arg1);
+  struct session_data* data = _scm_to_ssh_session (session);
   int res = ssh_is_server_known (data->ssh_session);
 
   switch (res)
@@ -366,9 +371,12 @@ SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
 
     case SSH_SERVER_ERROR:
     default:
-      return scm_from_locale_symbol ("error");
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (data->ssh_session),
+                        session);
+      return SCM_BOOL_F;        /* Not reached. */
     }
 }
+#undef FUNC_NAME
 
 /* Get MD5 hash of the public key.
 

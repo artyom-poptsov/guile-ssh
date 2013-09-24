@@ -25,6 +25,8 @@ extern SCM guile_ssh_blocking_flush (SCM arg1, SCM arg2);
 extern SCM guile_ssh_session_set (SCM arg1, SCM arg2, SCM arg3);
 extern SCM guile_ssh_get_version (SCM arg1);
 extern SCM guile_ssh_is_connected_p (SCM arg1);
+extern SCM guile_ssh_connect_x (SCM arg1);
+extern SCM guile_ssh_authenticate_server (SCM arg1);
 
 extern void init_session_func (void);
 

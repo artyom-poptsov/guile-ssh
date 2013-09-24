@@ -52,7 +52,7 @@ free_session (SCM session_smob)
 }
 
 /* Create a new session. */
-SCM_DEFINE (guile_ssh_make_session, "make-session", 0, 0, 0,
+SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
             (),
             "Create a new session.")
 {
