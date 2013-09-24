@@ -1,3 +1,8 @@
+2013-09-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/session-func.c (guile_ssh_write_known_host): Throw an
+	exception on error.  Make return value undefined.
+
 2013-09-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/session-func.c (guile_ssh_write_known_host): Fix the wrong
