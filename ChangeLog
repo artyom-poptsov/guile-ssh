@@ -1,3 +1,11 @@
+2013-09-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/session-func.c (guile_ssh_write_known_host): Throw an
+	exception on error.  Make return value undefined.
+	* src/channel-func.c (guile_ssh_channel_open_session)
+	(guile_ssh_channel_request_exec, guile_ssh_channel_request_env)
+	(guile_ssh_channel_close): Likewise.
+
 2013-09-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/server-func.c (guile_ssh_server_accept_x): Rename to

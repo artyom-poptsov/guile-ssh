@@ -403,16 +403,24 @@ SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 1, 0, 0,
 
 /* Write the current server as known in the known hosts file.
 
-   Return #t on success, #f on error. */
+   Return value is undefined. */
 SCM_DEFINE (guile_ssh_write_known_host, "write-known-host!", 1, 0, 0,
             (SCM session),
             "Write the current server as known in the known hosts file.\n"
-            "Return #t on success, #f on error.")
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_write_known_host
 {
   struct session_data *session_data = _scm_to_ssh_session (session);
   int res = ssh_write_knownhost (session_data->ssh_session);
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    {
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session_data->ssh_session),
+                        session);
+    }
+                      
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 
 /* Predicates */
