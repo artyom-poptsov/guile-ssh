@@ -28,15 +28,23 @@
 
 /* Functions */
 
-/* Open a new session */
+/* Open a new session.  Return value is undefined. */
 SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
             (SCM channel),
-            "Open a new session.")
+            "Open a new session.  Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_channel_open_session
 {
   struct channel_data *data = _scm_to_ssh_channel (channel);
   int res = ssh_channel_open_session (data->ssh_channel);
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    {
+      ssh_session session = ssh_channel_get_session (data->ssh_channel);
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+    }
+
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 /* Run a shell command CMD without an interactive shell. */
 SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
@@ -53,15 +61,23 @@ SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
   c_cmd = scm_to_locale_string (cmd);
   res = ssh_channel_request_exec (data->ssh_channel, c_cmd);
   free (c_cmd);
+  if (res != SSH_OK)
+    {
+      ssh_session session = ssh_channel_get_session (data->ssh_channel);
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session),
+                        scm_list_2 (channel, cmd));
+    }
 
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
 
-/* Set an environment variable NAME to value VALUE */
+/* Set an environment variable NAME to value VALUE 
+   Return value is undefined. */
 SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
             (SCM channel, SCM name, SCM value),
-            "Set an environment variable NAME to value VALUE")
+            "Set an environment variable NAME to value VALUE.  Return value is "
+            "undefined.")
 #define FUNC_NAME s_guile_ssh_channel_request_env
 {
   struct channel_data *data = _scm_to_ssh_channel (channel);
@@ -75,8 +91,13 @@ SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
   c_name  = scm_to_locale_string (name);
   c_value = scm_to_locale_string (value);
   res = ssh_channel_request_env (data->ssh_channel, c_name, c_value);
+  if (res != SSH_OK)
+    {
+      ssh_session session = ssh_channel_get_session (data->ssh_channel);
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+    }
 
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
 
@@ -147,13 +168,21 @@ SCM_DEFINE (guile_ssh_channel_read, "channel-read", 3, 0, 0,
 
 /* Close a channel. */
 SCM_DEFINE (guile_ssh_channel_close, "close-channel!", 1, 0, 0,
-            (SCM arg1),
-            "Close a channel.")
+            (SCM channel),
+            "Close a channel CHANNEL.  Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_channel_close
 {
-  struct channel_data *data = _scm_to_ssh_channel (arg1);
+  struct channel_data *data = _scm_to_ssh_channel (channel);
   int res = ssh_channel_close (data->ssh_channel);
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    {
+      ssh_session session = ssh_channel_get_session (data->ssh_channel);
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+    }
+
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 SCM_DEFINE (guile_ssh_channel_free, "free-channel!", 1, 0, 0,
             (SCM channel),
