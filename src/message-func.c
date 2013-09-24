@@ -25,16 +25,23 @@
 #include "channel-type.h"
 #include "message-type.h"
 #include "key-type.h"
+#include "error.h"
 
 SCM_DEFINE (guile_ssh_message_reply_default,
             "message-reply-default", 1, 0, 0,
             (SCM msg),
-            "")
+            "Reduced version of the reply default that only reply with "
+            "SSH_MSG_UNIMPLEMENTED.\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_message_reply_default
 {
   struct message_data *msg_data = _scm_to_ssh_message (msg);
   int res = ssh_message_reply_default (msg_data->message);
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 
 SCM_DEFINE (guile_ssh_message_service_reply_success,
@@ -52,23 +59,36 @@ SCM_DEFINE (guile_ssh_message_service_reply_success,
 SCM_DEFINE (guile_ssh_message_auth_reply_success,
             "message-auth-reply-success", 2, 0, 0,
             (SCM msg, SCM partial_p),
-            "")
+            "TODO: Add description.\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_message_auth_reply_success
 {
   struct message_data *msg_data = _scm_to_ssh_message (msg);
   int c_partial_p = scm_to_bool (partial_p);
   int res = ssh_message_auth_reply_success (msg_data->message, c_partial_p);
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Unable to reply",
+                        scm_list_2 (msg, partial_p));
+    }
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 SCM_DEFINE (guile_ssh_message_auth_reply_public_key_success,
             "message-auth-reply-public-key-success", 1, 0, 0,
             (SCM msg),
-            "Answer OK to a public key auth request from message MSG.")
+            "Answer OK to a public key auth request from message MSG.\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_message_auth_reply_public_key_success
 {
   struct message_data *msg_data = _scm_to_ssh_message (msg);
   int res = ssh_message_auth_reply_pk_ok_simple (msg_data->message);
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 
 SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
@@ -95,12 +115,17 @@ SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
 SCM_DEFINE (guile_ssh_message_channel_request_reply_success,
             "message-channel-request-reply-success", 1, 0, 0,
             (SCM msg),
-            "")                 /* TODO: Add description */
+            "TODO: Add description.\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_message_channel_request_reply_success
 {
   struct message_data *msg_data = _scm_to_ssh_message (msg);
   int res = ssh_message_channel_request_reply_success (msg_data->message);
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 
 struct symbol_mapping {
@@ -261,7 +286,8 @@ SCM_DEFINE (guile_ssh_message_auth_get_public_key,
 SCM_DEFINE (guile_ssh_message_auth_set_methods_x,
             "message-auth-set-methods!", 2, 0, 0,
             (SCM msg, SCM methods_list),
-            "Set authentication methods.")
+            "Set authentication methods.\n"
+            "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_auth_set_methods_x
 {
   struct message_data *message_data = _scm_to_ssh_message (msg);
@@ -295,7 +321,13 @@ SCM_DEFINE (guile_ssh_message_auth_set_methods_x,
     }
 
   res = ssh_message_auth_set_methods (message_data->message, methods);
-  return (res >= 0) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Unable to set auth methods",
+                        scm_list_2 (msg, methods_list));
+    }
+
+  return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
 

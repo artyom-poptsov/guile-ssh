@@ -1,5 +1,15 @@
 2013-09-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/message-func.c (guile_ssh_message_reply_default)
+	(guile_ssh_message_auth_reply_success)
+	(guile_ssh_message_auth_reply_public_key_success)
+	(guile_ssh_message_channel_request_reply_success)
+	(guile_ssh_message_auth_set_methods_x): Throw an exception on
+	error.  Make return value undefined.  Change the description.
+	* src/server-func.c (guile_ssh_server_set_x)
+	(guile_ssh_server_listen_x, guile_ssh_server_handle_key_exchange):
+	Likewise.
+
 	* src/session-func.c (guile_ssh_write_known_host): Throw an
 	exception on error.  Make return value undefined.
 	* src/channel-func.c (guile_ssh_channel_open_session)

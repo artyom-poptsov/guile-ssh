@@ -121,7 +121,8 @@ set_option (ssh_bind bind, int type, SCM value)
 
 SCM_DEFINE (guile_ssh_server_set_x, "server-set!", 3, 0, 0,
             (SCM server, SCM option, SCM value),
-            "Set a SSH server option.  Return #t on success, #f on error.")
+            "Set a SSH server option.\n"
+            "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_server_set_x
 {
   struct server_data *server_data = _scm_to_ssh_server (server);
@@ -144,13 +145,18 @@ SCM_DEFINE (guile_ssh_server_set_x, "server-set!", 3, 0, 0,
     }
 
   if (! is_found)
-    return SCM_BOOL_F;
+    guile_ssh_error1 (FUNC_NAME, "No such option", option);
 
   res = set_option (server_data->bind, opt->type, value);
+  if (res != SSH_OK)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Unable to set the option",
+                        scm_list_3 (server, option, value));
+    }
 
   scm_remember_upto_here_1 (server);
 
-  return (res == 0) ? SCM_BOOL_T : SCM_BOOL_F;
+  return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
 
@@ -158,12 +164,16 @@ SCM_DEFINE (guile_ssh_server_set_x, "server-set!", 3, 0, 0,
 SCM_DEFINE (guile_ssh_server_listen_x, "server-listen!", 1, 0, 0,
             (SCM server),
             "Start listening to the socket.\n"
-            "Return #t on success, #f otherwise.")
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_server_listen_x
 {
   struct server_data *server_data = _scm_to_ssh_server (server);
   int res = ssh_bind_listen (server_data->bind);
-  return (res == 0) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    guile_ssh_error1 (FUNC_NAME, "Could'n listen the socket.", server);
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 
 SCM_DEFINE (guile_ssh_server_accept, "server-accept", 1, 0, 0,
@@ -183,12 +193,19 @@ SCM_DEFINE (guile_ssh_server_handle_key_exchange,
             "server-handle-key-exchange", 1, 0, 0,
             (SCM session),
             "Handle key exchange for a server SERVER and setup encryption.\n"
-            "Return #t on success, #f otherwise.")
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_server_handle_key_exchange
 {
   struct session_data *session_data = _scm_to_ssh_session (session);
   int res = ssh_handle_key_exchange (session_data->ssh_session);
-  return (res == SSH_OK) ? SCM_BOOL_T : SCM_BOOL_F;
+  if (res != SSH_OK)
+    {
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session_data->ssh_session),
+                        session);
+    }
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 
 SCM_DEFINE (guile_ssh_server_set_blocking_x, "server-set-blocking!", 2, 0, 0,
