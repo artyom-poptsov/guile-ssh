@@ -1,3 +1,9 @@
+2013-09-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/server-type.c (guile_ssh_make_server): Change Scheme name to
+	`%make-server'.
+	* src/server.scm (make-server): New procedure.
+
 2013-09-25  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/session-func.c (guile_ssh_connect): Rename to

@@ -46,7 +46,7 @@ free_server (SCM server)
 
 /* Smob specific procedures. */
 
-SCM_DEFINE (guile_ssh_make_server, "make-server", 0, 0, 0,
+SCM_DEFINE (guile_ssh_make_server, "%make-server", 0, 0, 0,
             (),
             "Make a new SSH server.")
 {

@@ -25,6 +25,7 @@
 ;;
 ;; These methods are exported:
 ;;
+;;   %make-server
 ;;   make-server
 ;;   server-accept
 ;;   server-set!
@@ -38,8 +39,10 @@
 ;;; Code:
 
 (define-module (ssh server)
+  #:use-module (ice-9 optargs)
   #:export (server
-	    make-server
+	    %make-server
+            make-server
             server-accept
             server-set!
             server-listen!
@@ -47,6 +50,24 @@
             server-handle-key-exchange
             server-set-message-callback!
             server-message-get))
+
+;; Set a SSH option if it is specified by the user
+(define-macro (server-set-if-specified! option)
+  `(if ,option (server-set! server (quote ,option) ,option)))
+
+(define* (make-server #:key bindaddr bindport hostkey dsakey rsakey banner
+                      log-verbosity)
+  "Make a new SSH server with the specified configuration.\n
+Return a new SSH server."
+  (let ((server (%make-server)))
+    (server-set-if-specified! bindaddr)
+    (server-set-if-specified! bindport)
+    (server-set-if-specified! hostkey)
+    (server-set-if-specified! dsakey)
+    (server-set-if-specified! rsakey)
+    (server-set-if-specified! banner)
+    (server-set-if-specified! log-verbosity)
+    server))
 
 (load-extension "libguile-ssh" "init_server")
 
