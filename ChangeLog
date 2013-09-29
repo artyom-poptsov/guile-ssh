@@ -1,3 +1,8 @@
+2013-09-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/message-func.c (guile_ssh_message_auth_get_password): Return
+	a password as a string instead of a symbol.w
+
 2013-09-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/server-type.c (guile_ssh_make_server): Change Scheme name to

@@ -253,11 +253,12 @@ SCM_DEFINE (guile_ssh_message_auth_get_user,
 SCM_DEFINE (guile_ssh_message_auth_get_password,
             "message-auth-get-password", 1, 0, 0,
             (SCM msg),
-            "Get an user password from the message MSG.")
+            "Get an user password from the message MSG.\n"
+            "Return the password as a string or #f on error.")
 {
   struct message_data *message_data = _scm_to_ssh_message (msg);
   char *pswd = ssh_message_auth_password (message_data->message);
-  return pswd ? scm_from_locale_symbol (pswd) : SCM_BOOL_F;
+  return pswd ? scm_from_locale_string (pswd) : SCM_BOOL_F;
 }
 
 
