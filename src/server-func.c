@@ -189,7 +189,7 @@ SCM_DEFINE (guile_ssh_server_listen_x, "server-listen!", 1, 0, 0,
   struct server_data *server_data = _scm_to_ssh_server (server);
   int res = ssh_bind_listen (server_data->bind);
   if (res != SSH_OK)
-    guile_ssh_error1 (FUNC_NAME, "Could'n listen the socket.", server);
+    guile_ssh_error1 (FUNC_NAME, "Couldn't listen the socket.", server);
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
