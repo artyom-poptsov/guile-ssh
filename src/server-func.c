@@ -30,7 +30,7 @@
 /* Guile SSH specific options that are aimed to unificate the way of
    server configuration. */
 enum gssh_server_options {
-  /* Should not interleave with SSH server API. */
+  /* Should not intersect with options from SSH server API. */
   GSSH_BIND_OPTIONS_BLOCKING_MODE = 100
 };
 

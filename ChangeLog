@@ -1,9 +1,12 @@
 2013-10-10  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/server-func.c: Fix a comment.
+
 	Unificate the way of server configuration: use `server-set!' to set
 	server to the blocking/nonblocking mode.
 	* src/server-func.c (set_option): Handle 'blocking-mode
 	(guile_ssh_server_set_blocking_x): Remove procedure.
+
 	* src/server.scm (server-set-blocking!): Remove procedure.
 	(make-server): Handle "blocking-mode" keyword.
 
