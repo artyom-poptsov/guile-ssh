@@ -27,6 +27,13 @@
 #include "message-type.h"
 #include "error.h"
 
+/* Guile SSH specific options that are aimed to unificate the way of
+   server configuration. */
+enum gssh_server_options {
+  /* Should not interleave with SSH server API. */
+  GSSH_BIND_OPTIONS_BLOCKING_MODE = 100
+};
+
 /* SSH option mapping. */
 struct option {
   char* symbol;
@@ -36,14 +43,15 @@ struct option {
 
 /* SSH server options mapping to Guile symbols. */
 static struct option server_options[] = {
-  { "bindaddr",           SSH_BIND_OPTIONS_BINDADDR      },
-  { "bindport",           SSH_BIND_OPTIONS_BINDPORT      },
-  { "hostkey",            SSH_BIND_OPTIONS_HOSTKEY       },
-  { "dsakey",             SSH_BIND_OPTIONS_DSAKEY        },
-  { "rsakey",             SSH_BIND_OPTIONS_RSAKEY        },
-  { "banner",             SSH_BIND_OPTIONS_BANNER        },
-  { "log-verbosity",      SSH_BIND_OPTIONS_LOG_VERBOSITY },
-  { NULL,                 -1                   }
+  { "bindaddr",           SSH_BIND_OPTIONS_BINDADDR       },
+  { "bindport",           SSH_BIND_OPTIONS_BINDPORT       },
+  { "hostkey",            SSH_BIND_OPTIONS_HOSTKEY        },
+  { "dsakey",             SSH_BIND_OPTIONS_DSAKEY         },
+  { "rsakey",             SSH_BIND_OPTIONS_RSAKEY         },
+  { "banner",             SSH_BIND_OPTIONS_BANNER         },
+  { "log-verbosity",      SSH_BIND_OPTIONS_LOG_VERBOSITY  },
+  { "blocking-mode",      GSSH_BIND_OPTIONS_BLOCKING_MODE },
+  { NULL,                 -1                              }
 };
 
 /* Convert VALUE to a string and pass it to ssh_bind_options_set */
@@ -87,6 +95,18 @@ set_uint32_opt (ssh_bind bind, int type, SCM value)
   return ssh_bind_options_set (bind, type, &c_value);
 }
 
+/* Set a SSH bind BIND to blocking/nonblocking mode according to value
+   VALUE.  VALUE is expected to be #t or #f.
+
+   Always return SSH_OK. */
+static inline int
+set_blocking_mode (ssh_bind bind, SCM value)
+{
+  SCM_ASSERT (scm_is_bool (value), value, SCM_ARG2, "server-set!");
+  ssh_bind_set_blocking (bind, scm_to_bool (value));
+  return SSH_OK;
+}
+
 static int
 set_option (ssh_bind bind, int type, SCM value)
 {
@@ -104,6 +124,9 @@ set_option (ssh_bind bind, int type, SCM value)
 
     case SSH_BIND_OPTIONS_LOG_VERBOSITY:
       return set_int32_opt (bind, type, value);
+
+    case GSSH_BIND_OPTIONS_BLOCKING_MODE:
+      return set_blocking_mode (bind, value);
 
     default:
       guile_ssh_error1 ("server-set!",
@@ -199,23 +222,6 @@ SCM_DEFINE (guile_ssh_server_handle_key_exchange,
       guile_ssh_error1 (FUNC_NAME, ssh_get_error (session_data->ssh_session),
                         session);
     }
-  return SCM_UNDEFINED;
-}
-#undef FUNC_NAME
-
-
-SCM_DEFINE (guile_ssh_server_set_blocking_x, "server-set-blocking!", 2, 0, 0,
-            (SCM server, SCM blocking),
-            "Set the SERVER to blocking/nonblocking mode.\n"
-            "Return value is undefined.")
-#define FUNC_NAME s_guile_ssh_server_set_blocking_x
-{
-  struct server_data *server_data = _scm_to_ssh_server (server);
-
-  SCM_ASSERT (scm_is_bool (blocking), blocking, SCM_ARG2, FUNC_NAME);
-  
-  ssh_bind_set_blocking (server_data->bind, scm_to_bool (blocking));
-
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
