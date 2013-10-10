@@ -35,16 +35,14 @@ struct option {
 
 
 /* SSH server options mapping to Guile symbols. */
-
-#define TYPE(OPT) SSH_BIND_OPTIONS_ ## OPT
 static struct option server_options[] = {
-  { "bindaddr",           TYPE (BINDADDR)      },
-  { "bindport",           TYPE (BINDPORT)      },
-  { "hostkey",            TYPE (HOSTKEY)       },
-  { "dsakey",             TYPE (DSAKEY)        },
-  { "rsakey",             TYPE (RSAKEY)        },
-  { "banner",             TYPE (BANNER)        },
-  { "log-verbosity",      TYPE (LOG_VERBOSITY) },
+  { "bindaddr",           SSH_BIND_OPTIONS_BINDADDR      },
+  { "bindport",           SSH_BIND_OPTIONS_BINDPORT      },
+  { "hostkey",            SSH_BIND_OPTIONS_HOSTKEY       },
+  { "dsakey",             SSH_BIND_OPTIONS_DSAKEY        },
+  { "rsakey",             SSH_BIND_OPTIONS_RSAKEY        },
+  { "banner",             SSH_BIND_OPTIONS_BANNER        },
+  { "log-verbosity",      SSH_BIND_OPTIONS_LOG_VERBOSITY },
   { NULL,                 -1                   }
 };
 
@@ -94,17 +92,17 @@ set_option (ssh_bind bind, int type, SCM value)
 {
   switch (type)
     {
-    case TYPE (BINDADDR):
-    case TYPE (HOSTKEY):
-    case TYPE (DSAKEY):
-    case TYPE (RSAKEY):
-    case TYPE (BANNER):
+    case SSH_BIND_OPTIONS_BINDADDR:
+    case SSH_BIND_OPTIONS_HOSTKEY:
+    case SSH_BIND_OPTIONS_DSAKEY:
+    case SSH_BIND_OPTIONS_RSAKEY:
+    case SSH_BIND_OPTIONS_BANNER:
       return set_string_opt (bind, type, value);
 
-    case TYPE (BINDPORT):
+    case SSH_BIND_OPTIONS_BINDPORT:
       return set_uint32_opt (bind, type, value);
 
-    case TYPE (LOG_VERBOSITY):
+    case SSH_BIND_OPTIONS_LOG_VERBOSITY:
       return set_int32_opt (bind, type, value);
 
     default:
@@ -115,8 +113,6 @@ set_option (ssh_bind bind, int type, SCM value)
 
   return -1;                    /* ERROR */
 }
-
-#undef TYPE
 
 
 SCM_DEFINE (guile_ssh_server_set_x, "server-set!", 3, 0, 0,
