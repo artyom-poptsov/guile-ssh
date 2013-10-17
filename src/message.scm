@@ -34,7 +34,8 @@
             message-auth-get-password
             message-auth-set-methods!
             message-channel-request-open-reply-accept
-            message-channel-request-reply-success))
+            message-channel-request-reply-success
+            message-exec-get-command))
 
 (load-extension "libguile-ssh" "init_message")
 

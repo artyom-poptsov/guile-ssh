@@ -283,6 +283,16 @@ SCM_DEFINE (guile_ssh_message_auth_get_public_key,
   return smob;
 }
 
+SCM_DEFINE (guile_ssh_message_exec_get_command,
+	    "message-exec-get-command", 1, 0, 0,
+	    (SCM msg),
+	    "Get a command from the message MSG")
+{
+  struct message_data *message_data = _scm_to_ssh_message (msg);
+  char* cmd = ssh_message_channel_request_command (message_data->message);
+  return cmd ? scm_from_locale_string (cmd) : SCM_BOOL_F;
+}
+
 
 SCM_DEFINE (guile_ssh_message_auth_set_methods_x,
             "message-auth-set-methods!", 2, 0, 0,
