@@ -1,3 +1,7 @@
+2013-10-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/message.scm (exec-req:cmd): Export.
+
 2013-10-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/message.scm: Unify way of getting information from requests.

@@ -42,6 +42,8 @@
             pty-req:term pty-req:width pty-req:height pty-req:pxwidth
             pty-req:pxheight
 
+            exec-req:cmd
+
             env-req:name env-req:value
 
             global-req:addr global-req:port))
