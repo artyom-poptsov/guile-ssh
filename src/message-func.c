@@ -294,6 +294,14 @@ SCM_DEFINE (guile_ssh_message_exec_get_command,
 }
 
 
+/* A convenient wrapper for `scm_member' that returns its result as
+   int. */
+static inline int
+_scm_member_p (SCM elem, SCM lst)
+{
+  return scm_is_true (scm_member (elem, lst));
+}
+
 SCM_DEFINE (guile_ssh_message_auth_set_methods_x,
             "message-auth-set-methods!", 2, 0, 0,
             (SCM msg, SCM methods_list),
@@ -307,29 +315,17 @@ SCM_DEFINE (guile_ssh_message_auth_set_methods_x,
 
   SCM_ASSERT (scm_list_p (methods_list), methods_list, SCM_ARG2, FUNC_NAME);
 
-  if (scm_is_true (scm_member (scm_from_locale_symbol ("password"),
-                               methods_list)))
-    {
-      methods |= SSH_AUTH_METHOD_PASSWORD;
-    }
+  if (_scm_member_p (scm_from_locale_symbol ("password"), methods_list))
+    methods |= SSH_AUTH_METHOD_PASSWORD;
 
-  if (scm_is_true (scm_member (scm_from_locale_symbol ("public-key"),
-                               methods_list)))
-    {
-      methods |= SSH_AUTH_METHOD_PUBLICKEY;
-    }
+  if (_scm_member_p (scm_from_locale_symbol ("public-key"), methods_list))
+    methods |= SSH_AUTH_METHOD_PUBLICKEY;
 
-  if (scm_is_true (scm_member (scm_from_locale_symbol ("interactive"),
-                               methods_list)))
-    {
-      methods |= SSH_AUTH_METHOD_INTERACTIVE;
-    }
+  if (_scm_member_p (scm_from_locale_symbol ("interactive"), methods_list))
+    methods |= SSH_AUTH_METHOD_INTERACTIVE;
 
-  if (scm_is_true (scm_member (scm_from_locale_symbol ("host-based"),
-                               methods_list)))
-    {
-      methods |= SSH_AUTH_METHOD_HOSTBASED;
-    }
+  if (_scm_member_p (scm_from_locale_symbol ("host-based"), methods_list))
+    methods |= SSH_AUTH_METHOD_HOSTBASED;
 
   res = ssh_message_auth_set_methods (message_data->message, methods);
   if (res != SSH_OK)
