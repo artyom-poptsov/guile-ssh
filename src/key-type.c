@@ -60,6 +60,22 @@ free_key_smob (SCM arg1)
   return 0;
 }
 
+static int
+print_key (SCM smob, SCM port, scm_print_state *pstate)
+{
+  struct key_data *key_data = _scm_to_ssh_key (smob);
+  SCM type = guile_ssh_key_get_type (smob);
+
+  scm_puts ("#<", port);
+  scm_puts (_public_key_p (key_data) ? "public" : "private", port);
+  scm_puts (" ", port);
+  scm_display (type, port);
+  scm_puts (" key", port);
+  scm_puts (">", port);
+
+  return 1;
+}
+
 
 /* Convert SSH key type to a Scheme symbol.
 
@@ -100,11 +116,11 @@ SCM_DEFINE (guile_ssh_key_get_type, "get-key-type", 1, 0, 0,
   switch (data->key_type)
     {
     case KEY_TYPE_NONE:
-      type = ssh_key_type (data->ssh_key);
+      type = ssh_privatekey_type ((ssh_private_key) data->ssh_key);
       break;
 
     case KEY_TYPE_PUBLIC:
-      type = ssh_key_type (data->ssh_public_key);
+      type = ssh_privatekey_type ((ssh_private_key) data->ssh_public_key);
       break;
 
     case KEY_TYPE_PUBLIC_STR:
@@ -112,7 +128,7 @@ SCM_DEFINE (guile_ssh_key_get_type, "get-key-type", 1, 0, 0,
       break;
 
     case KEY_TYPE_PRIVATE:
-      type = ssh_key_type (data->ssh_private_key);
+      type = ssh_privatekey_type (data->ssh_private_key);
       break;
     }
 
@@ -193,6 +209,7 @@ init_key_type (void)
   key_tag = scm_make_smob_type ("key", sizeof (struct key_data));
   scm_set_smob_mark (key_tag, mark_key_smob);
   scm_set_smob_free (key_tag, free_key_smob);
+  scm_set_smob_print (key_tag, print_key);
   scm_set_smob_equalp (key_tag, equalp_key);
 
 #include "key-type.x"
