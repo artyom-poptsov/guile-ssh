@@ -1,3 +1,11 @@
+2013-10-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Improve printing of SSH keys.
+	* src/key-type.c (print_key): New procedure.
+	(init_key_type): Register the callback for printing.
+	(guile_ssh_key_get_type): Use `ssh_privatekey_type' instead of
+	`ssh_key_type'.
+
 2013-10-17  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/message-func.c (guile_ssh_message_exec_get_command): New
