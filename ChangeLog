@@ -1,5 +1,18 @@
 2013-10-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/message.scm: Unify way of getting information from requests.
+	(auth-req:user, auth-req:password, auth-req:pubkey, pty-req:term)
+	(pty-req:width, pty-req:height, pty-req:pxwidth)
+	(pty-req:pxheight, env-req:name, env-req:value, exec-req:cmd)
+	(global-req:addr, global-req:port): New procedures.
+	* src/message-func.c (get_auth_req, get_pty_req, get_env_req)
+	(get_exec_req, get_global_req, guile_ssh_message_get_req): New
+	procedures.
+	(guile_ssh_message_auth_get_user)
+	(guile_ssh_message_auth_get_password)
+	(guile_ssh_message_auth_get_public_key)
+	(guile_ssh_message_exec_get_command): Remove.
+
 	* src/message-func.c (_scm_member_p): New procedure.
 	(guile_ssh_message_auth_set_methods_x): Improve.
 

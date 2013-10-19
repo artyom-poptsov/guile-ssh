@@ -25,18 +25,47 @@
 ;;; Code:
 
 (define-module (ssh message)
+  #:use-module (ssh key)
   #:export (message
             message-reply-default
             message-get-type
+            message-get-req
+
             message-auth-reply-success
             message-auth-reply-public-key-success
-            message-auth-get-user
-            message-auth-get-password
             message-auth-set-methods!
+            auth-req:user auth-req:password auth-req:pubkey
+
             message-channel-request-open-reply-accept
             message-channel-request-reply-success
-            message-exec-get-command))
 
+            pty-req:term pty-req:width pty-req:height pty-req:pxwidth
+            pty-req:pxheight
+
+            env-req:name env-req:value
+
+            global-req:addr global-req:port))
+
+
+(define (auth-req:user req)     (vector-ref req 0))
+(define (auth-req:password req) (vector-ref req 1))
+(define (auth-req:pubkey req)   (vector-ref req 2))
+
+(define (pty-req:term req)     (vector-ref req 0))
+(define (pty-req:width req)    (vector-ref req 1))
+(define (pty-req:height req)   (vector-ref req 2))
+(define (pty-req:pxwidth req)  (vector-ref req 3))
+(define (pty-req:pxheight req) (vector-ref req 4))
+
+(define (env-req:name req)  (vector-ref req 0))
+(define (env-req:value req) (vector-ref req 1))
+
+(define (exec-req:cmd req) (vector-ref req 0))
+
+(define (global-req:addr req) (vector-ref req 0))
+(define (global-req:port req) (vector-ref req 1))
+
+
 (load-extension "libguile-ssh" "init_message")
 
 ;;; message.scm ends here

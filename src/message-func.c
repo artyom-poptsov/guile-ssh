@@ -24,6 +24,7 @@
 
 #include "channel-type.h"
 #include "message-type.h"
+#include "message-func.h"
 #include "key-type.h"
 #include "error.h"
 
@@ -240,58 +241,158 @@ SCM_DEFINE (guile_ssh_message_get_type,
   return _ssh_message_type_to_scm (message_data->message);
 }
 
-SCM_DEFINE (guile_ssh_message_auth_get_user,
-            "message-auth-get-user", 1, 0, 0,
-            (SCM msg),
-            "Get an user name from the message MSG.")
-{
-  struct message_data *message_data = _scm_to_ssh_message (msg);
-  char *usr = ssh_message_auth_user (message_data->message);
-  return usr ? scm_from_locale_string (usr) : SCM_BOOL_F;
-}
-
-SCM_DEFINE (guile_ssh_message_auth_get_password,
-            "message-auth-get-password", 1, 0, 0,
-            (SCM msg),
-            "Get an user password from the message MSG.\n"
-            "Return the password as a string or #f on error.")
-{
-  struct message_data *message_data = _scm_to_ssh_message (msg);
-  char *pswd = ssh_message_auth_password (message_data->message);
-  return pswd ? scm_from_locale_string (pswd) : SCM_BOOL_F;
-}
-
 
-SCM_DEFINE (guile_ssh_message_auth_get_public_key,
-            "message-auth-get-public-key", 1, 0, 0,
+/* These procedures return an object that represents a SSH request. */
+
+/* Get the content of authentication request as a vector of the
+   following format:
+     <result> = "#(" <user> <WSP> <password> <WSP> <key> ")" */
+static SCM
+get_auth_req (ssh_message msg)
+{
+  SCM result = scm_c_make_vector (3, SCM_UNDEFINED);
+  char *user     = ssh_message_auth_user (msg);
+  char *password = ssh_message_auth_password (msg);
+  ssh_public_key public_key = ssh_message_auth_publickey (msg);
+  SCM pkey_smob;
+  struct key_data *pkey_data;
+
+  if (user)
+    SCM_SIMPLE_VECTOR_SET (result, 0, scm_from_locale_string (user));
+  else
+    SCM_SIMPLE_VECTOR_SET (result, 0, SCM_BOOL_F);
+
+  if (password)
+    SCM_SIMPLE_VECTOR_SET (result, 1, scm_from_locale_string (password));
+  else
+    SCM_SIMPLE_VECTOR_SET (result, 1, SCM_BOOL_F);
+
+  pkey_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
+                                                 "ssh key");
+  pkey_data->key_type = KEY_TYPE_PUBLIC;
+  pkey_data->ssh_public_key = public_key;
+
+  SCM_NEWSMOB (pkey_smob, key_tag, pkey_data);
+
+  SCM_SIMPLE_VECTOR_SET (result, 2, pkey_smob);
+
+  return result;
+}
+
+/* Get the content of a pty request as a vector of the following
+   format:
+     <result> = "#(" <term> <WSP> <width> <WSP> <height> <WSP>
+                <pxwidth> <WSP> <pxheight> ")" */
+static SCM
+get_pty_req (ssh_message msg)
+{
+  SCM result = scm_c_make_vector (5, SCM_UNDEFINED);
+  char *term = ssh_message_channel_request_pty_term (msg);
+  int w   = ssh_message_channel_request_pty_width (msg);
+  int h   = ssh_message_channel_request_pty_height (msg);
+  int pxw = ssh_message_channel_request_pty_pxwidth (msg);
+  int pxh = ssh_message_channel_request_pty_pxheight (msg);
+
+  SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (term));
+  SCM_SIMPLE_VECTOR_SET(result, 1, scm_from_int (w));
+  SCM_SIMPLE_VECTOR_SET(result, 2, scm_from_int (h));
+  SCM_SIMPLE_VECTOR_SET(result, 3, scm_from_int (pxw));
+  SCM_SIMPLE_VECTOR_SET(result, 4, scm_from_int (pxh));
+
+  return result;
+}
+
+/* Get the content of an env request as a vector of the following
+   format:
+     <result> = "#(" <name> <WSP> <value> ")" */
+static SCM
+get_env_req (ssh_message msg)
+{
+  SCM result  = scm_c_make_vector (3, SCM_UNDEFINED);
+  char *name  = ssh_message_channel_request_env_name (msg);
+  char *value = ssh_message_channel_request_env_value (msg);
+
+  SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (name));
+  SCM_SIMPLE_VECTOR_SET(result, 1, scm_from_locale_string (value));
+
+  return result;
+}
+
+/* Get the content of an exec request as a vector of the following
+   format:
+     <result> = "#(" <cmd> ")" */
+static SCM
+get_exec_req (ssh_message msg)
+{
+  SCM result = scm_c_make_vector (1, SCM_UNDEFINED);
+  char *cmd = ssh_message_channel_request_command (msg);
+  SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (cmd));
+  return result;
+}
+
+/* Get the content of a global request as a vector of the following
+   format:
+     <result> = "#(" <addr> <WSP> <port> ")" */
+static SCM
+get_global_req (ssh_message msg)
+{
+  SCM result = scm_c_make_vector (2, SCM_UNDEFINED);
+  char *addr = ssh_message_global_request_address (msg);
+  int port = ssh_message_global_request_port (msg);
+
+  SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (addr));
+  SCM_SIMPLE_VECTOR_SET(result, 1, scm_from_int (port));
+
+  return result;
+}
+
+SCM_DEFINE (guile_ssh_message_get_req,
+            "message-get-req", 1, 0, 0,
             (SCM msg),
-            "Get the publickey of an auth request from message MSG")
+            "Get a request object from the message MSG")
+#define FUNC_NAME s_guile_ssh_message_get_req
 {
   struct message_data *message_data = _scm_to_ssh_message (msg);
-  SCM smob;
-  struct key_data *key_data;
+  ssh_message ssh_msg = message_data->message;
+  int type = ssh_message_type (ssh_msg);
 
-  key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
-                                                "ssh key");
-  key_data->key_type = KEY_TYPE_PUBLIC;
-  key_data->ssh_public_key = ssh_message_auth_publickey (message_data->message);
-  if (key_data->ssh_public_key == NULL)
-    return SCM_BOOL_F;
+  switch (type)
+    {
+    case SSH_REQUEST_AUTH:
+      return get_auth_req (ssh_msg);
 
-  SCM_NEWSMOB (smob, key_tag, key_data);
+    case SSH_REQUEST_CHANNEL:
+      {
+        int subtype = ssh_message_subtype (ssh_msg);
+        switch (subtype)
+          {
+          case SSH_CHANNEL_REQUEST_PTY:
+            return get_pty_req (ssh_msg);
 
-  return smob;
+          case SSH_CHANNEL_REQUEST_EXEC:
+            return get_exec_req (ssh_msg);
+
+          case SSH_CHANNEL_REQUEST_ENV:
+            return get_env_req (ssh_msg);
+
+          default:
+            guile_ssh_error1 (FUNC_NAME, "Wrong message subtype",
+                              scm_from_int (subtype));
+          }
+      }
+
+    case SSH_REQUEST_GLOBAL:
+      return get_global_req (ssh_msg);
+
+    default:
+      guile_ssh_error1 (FUNC_NAME, "Wrong message type",
+                        _ssh_const_to_scm (req_types, type));
+
+    }
+
+  return SCM_BOOL_F;            /* Never reached. */
 }
-
-SCM_DEFINE (guile_ssh_message_exec_get_command,
-	    "message-exec-get-command", 1, 0, 0,
-	    (SCM msg),
-	    "Get a command from the message MSG")
-{
-  struct message_data *message_data = _scm_to_ssh_message (msg);
-  char* cmd = ssh_message_channel_request_command (message_data->message);
-  return cmd ? scm_from_locale_string (cmd) : SCM_BOOL_F;
-}
+#undef FUNC_NAME
 
 
 /* A convenient wrapper for `scm_member' that returns its result as
