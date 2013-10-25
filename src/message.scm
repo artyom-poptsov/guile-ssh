@@ -21,6 +21,17 @@
 
 ;;; Commentary:
 
+;; This module contains message parsing utilites for Guile-SSH
+;; servers.
+;;
+;; Messages can be fetched from the client by calling
+;; `server-message-get' procedure.  The server can get content of the
+;; requests by calling `message-get-req' procedure with a message
+;; passed as an arguement.
+;;
+;; `message-get-req' returns the content of a request as a vector
+;; which can be parsed by related procedures such as `auth:req:user'
+;; and friends.
 
 ;;; Code:
 

@@ -2,7 +2,8 @@
 
 	* src/message-func.c (guile_ssh_message_service_reply_success):
 	New procedure.
-	* src/message.scm (message-service-reply-success): Export.
+	* src/message.scm: Add commentary.
+	(message-service-reply-success): Export.
 
 2013-10-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
