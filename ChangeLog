@@ -1,3 +1,9 @@
+2013-10-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/message-func.c (guile_ssh_message_service_reply_success):
+	New procedure.
+	* src/message.scm (message-service-reply-success): Export.
+
 2013-10-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/message.scm (exec-req:cmd): Export.

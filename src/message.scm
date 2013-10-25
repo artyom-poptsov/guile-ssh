@@ -39,6 +39,8 @@
             message-channel-request-open-reply-accept
             message-channel-request-reply-success
 
+            message-service-reply-success
+
             pty-req:term pty-req:width pty-req:height pty-req:pxwidth
             pty-req:pxheight
 

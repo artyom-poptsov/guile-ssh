@@ -49,12 +49,15 @@ SCM_DEFINE (guile_ssh_message_service_reply_success,
             "message-service-reply-success", 1, 0, 0,
             (SCM msg),
             "")
+#define FUNC_NAME s_guile_ssh_message_service_reply_success
 {
   struct message_data *msg_data = _scm_to_ssh_message (msg);
-  /* TODO: implement this */
-  //  int res = ssh_message_service_reply_success (
-  return SCM_BOOL_F;
+  int res = ssh_message_service_reply_success (msg_data->message);
+  if (res != SSH_OK)
+    guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
+  return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 
 SCM_DEFINE (guile_ssh_message_auth_reply_success,
