@@ -1,3 +1,11 @@
+2013-10-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/message-func.c (guile_ssh_message_service_reply_success)
+	(guile_ssh_message_auth_reply_success)
+	(guile_ssh_message_auth_reply_public_key_success)
+	(guile_ssh_message_channel_request_open_reply_accept): Add
+	description.
+
 2013-10-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/message-func.c (guile_ssh_message_service_reply_success):

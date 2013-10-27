@@ -48,7 +48,9 @@ SCM_DEFINE (guile_ssh_message_reply_default,
 SCM_DEFINE (guile_ssh_message_service_reply_success,
             "message-service-reply-success", 1, 0, 0,
             (SCM msg),
-            "")
+            "Reply with \"success\" status on the service-request "
+            "message MSG.\n"
+            "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_service_reply_success
 {
   struct message_data *msg_data = _scm_to_ssh_message (msg);
@@ -63,7 +65,7 @@ SCM_DEFINE (guile_ssh_message_service_reply_success,
 SCM_DEFINE (guile_ssh_message_auth_reply_success,
             "message-auth-reply-success", 2, 0, 0,
             (SCM msg, SCM partial_p),
-            "TODO: Add description.\n"
+            "Reply with \"success\" on the auth-request message MSG.\n"
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_auth_reply_success
 {
@@ -82,7 +84,8 @@ SCM_DEFINE (guile_ssh_message_auth_reply_success,
 SCM_DEFINE (guile_ssh_message_auth_reply_public_key_success,
             "message-auth-reply-public-key-success", 1, 0, 0,
             (SCM msg),
-            "Answer OK to a public key auth request from message MSG.\n"
+            "Reply \"success\" on the public key auth request "
+            "message MSG.\n"
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_auth_reply_public_key_success
 {
@@ -98,7 +101,8 @@ SCM_DEFINE (guile_ssh_message_auth_reply_public_key_success,
 SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
             "message-channel-request-open-reply-accept", 1, 0, 0,
             (SCM msg),
-            "")
+            "Accept open-channel request.\n"
+            "Return a new SSH channel.")
 {
   SCM smob;
   struct message_data *msg_data = _scm_to_ssh_message (msg);
