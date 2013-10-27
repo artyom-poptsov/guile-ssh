@@ -1,7 +1,10 @@
 2013-10-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
-	* src/message-func.c (get_service_req): New procedure.
+	* src/message-func.c: Update comments.  Re-organize order of
+	procedures.
+	(get_service_req): New procedure.
 	(guile_ssh_message_get_req): Handle SSH_REQUEST_SERVICE.
+
 	* src/message.scm (service-req:service): New procedure.
 
 	* src/message-func.c (guile_ssh_message_service_reply_success)

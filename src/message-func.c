@@ -28,6 +28,9 @@
 #include "key-type.h"
 #include "error.h"
 
+
+/* Procedures that are used for replying on requests. */
+
 SCM_DEFINE (guile_ssh_message_reply_default,
             "message-reply-default", 1, 0, 0,
             (SCM msg),
@@ -44,7 +47,6 @@ SCM_DEFINE (guile_ssh_message_reply_default,
 }
 #undef FUNC_NAME
 
-
 SCM_DEFINE (guile_ssh_message_service_reply_success,
             "message-service-reply-success", 1, 0, 0,
             (SCM msg),
@@ -61,7 +63,6 @@ SCM_DEFINE (guile_ssh_message_service_reply_success,
 }
 #undef FUNC_NAME
 
-
 SCM_DEFINE (guile_ssh_message_auth_reply_success,
             "message-auth-reply-success", 2, 0, 0,
             (SCM msg, SCM partial_p),
@@ -97,7 +98,21 @@ SCM_DEFINE (guile_ssh_message_auth_reply_public_key_success,
 }
 #undef FUNC_NAME
 
-
+SCM_DEFINE (guile_ssh_message_channel_request_reply_success,
+            "message-channel-request-reply-success", 1, 0, 0,
+            (SCM msg),
+            "TODO: Add description.\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_message_channel_request_reply_success
+{
+  struct message_data *msg_data = _scm_to_ssh_message (msg);
+  int res = ssh_message_channel_request_reply_success (msg_data->message);
+  if (res != SSH_OK)
+    guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
             "message-channel-request-open-reply-accept", 1, 0, 0,
             (SCM msg),
@@ -118,22 +133,6 @@ SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
 
   return smob;
 }
-
-
-SCM_DEFINE (guile_ssh_message_channel_request_reply_success,
-            "message-channel-request-reply-success", 1, 0, 0,
-            (SCM msg),
-            "TODO: Add description.\n"
-            "Return value is undefined.")
-#define FUNC_NAME s_guile_ssh_message_channel_request_reply_success
-{
-  struct message_data *msg_data = _scm_to_ssh_message (msg);
-  int res = ssh_message_channel_request_reply_success (msg_data->message);
-  if (res != SSH_OK)
-    guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
-  return SCM_UNDEFINED;
-}
-#undef FUNC_NAME
 
 
 struct symbol_mapping {
@@ -249,11 +248,10 @@ SCM_DEFINE (guile_ssh_message_get_type,
 }
 
 
-/* These procedures return an object that represents a SSH request. */
+/* These procedures return a Scheme vector that represents a SSH
+   request.  The goal is to unify way of working with requests. */
 
-/* Get the content of authentication request as a vector of the
-   following format:
-     <result> = "#(" <user> <WSP> <password> <WSP> <key> ")" */
+/* <result> = "#(" <user> <WSP> <password> <WSP> <key> ")" */
 static SCM
 get_auth_req (ssh_message msg)
 {
@@ -286,10 +284,8 @@ get_auth_req (ssh_message msg)
   return result;
 }
 
-/* Get the content of a pty request as a vector of the following
-   format:
-     <result> = "#(" <term> <WSP> <width> <WSP> <height> <WSP>
-                <pxwidth> <WSP> <pxheight> ")" */
+/* <result> = "#(" <term> <WSP> <width> <WSP> <height> <WSP>
+              <pxwidth> <WSP> <pxheight> ")" */
 static SCM
 get_pty_req (ssh_message msg)
 {
@@ -309,9 +305,7 @@ get_pty_req (ssh_message msg)
   return result;
 }
 
-/* Get the content of an env request as a vector of the following
-   format:
-     <result> = "#(" <name> <WSP> <value> ")" */
+/* <result> = "#(" <name> <WSP> <value> ")" */
 static SCM
 get_env_req (ssh_message msg)
 {
@@ -325,9 +319,7 @@ get_env_req (ssh_message msg)
   return result;
 }
 
-/* Get the content of an exec request as a vector of the following
-   format:
-     <result> = "#(" <cmd> ")" */
+/* <result> = "#(" <cmd> ")" */
 static SCM
 get_exec_req (ssh_message msg)
 {
@@ -337,9 +329,7 @@ get_exec_req (ssh_message msg)
   return result;
 }
 
-/* Get the content of a global request as a vector of the following
-   format:
-     <result> = "#(" <addr> <WSP> <port> ")" */
+/* <result> = "#(" <addr> <WSP> <port> ")" */
 static SCM
 get_global_req (ssh_message msg)
 {
@@ -353,9 +343,7 @@ get_global_req (ssh_message msg)
   return result;
 }
 
-/* Get the content of a service request as a vector of the following
-   format:
-     <result> = "#(" <service-request> ")" */
+/* <result> = "#(" <service-request> ")" */
 static SCM
 get_service_req (ssh_message msg)
 {
