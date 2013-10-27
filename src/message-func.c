@@ -355,6 +355,30 @@ get_service_req (ssh_message msg)
   return result;
 }
 
+/* <result> = "#(" <orig> <WSP> <orig-port> <WSP>
+              <dest> <WSP> <dest-port> ")" */
+static SCM
+get_channel_open_req (ssh_message msg)
+{
+  char *orig    = ssh_message_channel_request_open_originator (msg);
+  int orig_port = ssh_message_channel_request_open_originator_port (msg);
+  char *dest    = ssh_message_channel_request_open_destination (msg);
+  int dest_port = ssh_message_channel_request_open_destination_port (msg);
+  SCM result;
+
+  if ((! orig) || (! dest))
+    return SCM_BOOL_F;
+
+  result = scm_c_make_vector (4, SCM_UNDEFINED);
+
+  SCM_SIMPLE_VECTOR_SET (result, 0, scm_from_locale_string (orig));
+  SCM_SIMPLE_VECTOR_SET (result, 1, scm_from_int (orig_port));
+  SCM_SIMPLE_VECTOR_SET (result, 2, scm_from_locale_string (dest));
+  SCM_SIMPLE_VECTOR_SET (result, 3, scm_from_int (dest_port));
+
+  return result;
+}
+
 SCM_DEFINE (guile_ssh_message_get_req,
             "message-get-req", 1, 0, 0,
             (SCM msg),
@@ -372,6 +396,15 @@ SCM_DEFINE (guile_ssh_message_get_req,
 
     case SSH_REQUEST_AUTH:
       return get_auth_req (ssh_msg);
+
+    case SSH_REQUEST_CHANNEL_OPEN:
+      {
+        SCM res = get_channel_open_req (ssh_msg);
+        if (scm_is_true (res))
+          return res;
+        else
+          guile_ssh_error1 (FUNC_NAME, "Wrong channel-open request", msg);
+      }
 
     case SSH_REQUEST_CHANNEL:
       {

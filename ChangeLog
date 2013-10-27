@@ -2,10 +2,13 @@
 
 	* src/message-func.c: Update comments.  Re-organize order of
 	procedures.
-	(get_service_req): New procedure.
-	(guile_ssh_message_get_req): Handle SSH_REQUEST_SERVICE.
+	(get_service_req, get_channel_open_req): New procedures.
+	(guile_ssh_message_get_req): Handle SSH_REQUEST_SERVICE and
+	SSH_REQUEST_CHANNEL_OPEN.
 
-	* src/message.scm (service-req:service): New procedure.
+	* src/message.scm (service-req:service, channel-open-req:orig)
+	(channel-open-req:orig-port, channel-open-req:dest)
+	(channel-open-req:dest-port): New procedures.
 
 	* src/message-func.c (guile_ssh_message_service_reply_success)
 	(guile_ssh_message_auth_reply_success)

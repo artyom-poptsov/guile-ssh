@@ -44,6 +44,9 @@
 
             service-req:service
 
+            channel-open-req:orig channel-open-req:orig-port
+            channel-open-req:dest channel-open-req:dest-port
+
             message-auth-reply-success
             message-auth-reply-public-key-success
             message-auth-set-methods!
@@ -65,6 +68,11 @@
 
 
 (define (service-req:service req) (vector-ref req 0))
+
+(define (channel-open-req:orig      req) (vector-ref req 0))
+(define (channel-open-req:orig-port req) (vector-ref req 1))
+(define (channel-open-req:dest      req) (vector-ref req 2))
+(define (channel-open-req:dest-port req) (vector-ref req 3))
 
 (define (auth-req:user req)     (vector-ref req 0))
 (define (auth-req:password req) (vector-ref req 1))
