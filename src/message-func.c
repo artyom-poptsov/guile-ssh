@@ -353,6 +353,20 @@ get_global_req (ssh_message msg)
   return result;
 }
 
+/* Get the content of a service request as a vector of the following
+   format:
+     <result> = "#(" <service-request> ")" */
+static SCM
+get_service_req (ssh_message msg)
+{
+  SCM result = scm_c_make_vector (1, SCM_UNDEFINED);
+  char *req  = ssh_message_service_service (msg);
+
+  SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (req));
+
+  return result;
+}
+
 SCM_DEFINE (guile_ssh_message_get_req,
             "message-get-req", 1, 0, 0,
             (SCM msg),
@@ -365,6 +379,9 @@ SCM_DEFINE (guile_ssh_message_get_req,
 
   switch (type)
     {
+    case SSH_REQUEST_SERVICE:
+      return get_service_req (ssh_msg);
+
     case SSH_REQUEST_AUTH:
       return get_auth_req (ssh_msg);
 

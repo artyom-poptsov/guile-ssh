@@ -42,6 +42,8 @@
             message-get-type
             message-get-req
 
+            service-req:service
+
             message-auth-reply-success
             message-auth-reply-public-key-success
             message-auth-set-methods!
@@ -62,6 +64,8 @@
             global-req:addr global-req:port))
 
 
+(define (service-req:service req) (vector-ref req 0))
+
 (define (auth-req:user req)     (vector-ref req 0))
 (define (auth-req:password req) (vector-ref req 1))
 (define (auth-req:pubkey req)   (vector-ref req 2))
