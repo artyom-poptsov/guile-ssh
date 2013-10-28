@@ -1,3 +1,9 @@
+2013-10-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/server.scm (server-set-message-callback!): Remove.
+	* src/server-func.c (callback)
+	(guile_ssh_server_set_message_callback_x): Remove.
+
 2013-10-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/message-func.c: Update comments.  Re-organize order of

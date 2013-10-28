@@ -31,7 +31,6 @@
 ;;   server-set!
 ;;   server-listen!
 ;;   server-handle-key-exchange
-;;   server-set-message-callback!
 ;;   server-message-get
 
 
@@ -46,7 +45,6 @@
             server-set!
             server-listen!
             server-handle-key-exchange
-            server-set-message-callback!
             server-message-get))
 
 ;; Set a SSH option if it is specified by the user
