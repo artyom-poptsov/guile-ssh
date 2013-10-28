@@ -49,7 +49,7 @@ AC_SUBST(LIBGUILE_SSH_INTERFACE)
 # Check for libssh
 AC_SEARCH_LIBS([ssh_new], [ssh], [], AC_MSG_ERROR([libssh is not found.], [1]))
 
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile])
 
 # Generate a Makefile, based on the results.
 AC_OUTPUT

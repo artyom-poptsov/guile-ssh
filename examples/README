@@ -1,0 +1,23 @@
+# -*- mode: outline; -*-
+
+* Overview
+
+This directory includes an examples of programs that use Guile-SSH
+library to access SSH protocol
+
+* Scheme Secure Shell (SSSH)
+
+SSSH is uses Guile-SSH API to implement basic SSH client
+functionality.
+
+** Usage
+
+Please see
+
+  ./sssh.scm --help
+
+for information about program usage.
+
+** Examples
+
+  ./sssh.scm --identity=~/.ssh/id_rsa --user=avp localhost "uname -a"

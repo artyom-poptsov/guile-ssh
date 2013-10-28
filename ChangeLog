@@ -1,3 +1,9 @@
+2013-10-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* Makefile.am (SUBDIRS): Add examples/
+	* configure.ac: Add examples/Makefile
+	* examples/: Add to the repository.
+
 2013-10-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	Improve printing of SSH keys.
