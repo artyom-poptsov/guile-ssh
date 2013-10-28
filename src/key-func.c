@@ -66,7 +66,7 @@ SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
   key_len = ssh_string_len (public_key);
 
   /* Convert the public key from binary representation to a base64. */
-  ret = scm_from_locale_string (bin_to_base64 (key_str, key_len));
+  ret = scm_from_locale_string ((char *) bin_to_base64 (key_str, key_len));
 
   scm_dynwind_end ();
 

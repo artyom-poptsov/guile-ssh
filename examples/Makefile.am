@@ -1,5 +1,3 @@
-## Config file for GNU Automake. 
-##
 ## Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of libguile-ssh.
@@ -15,7 +13,10 @@
 ## General Public License for more details.
 ##
 ## You should have received a copy of the GNU General Public License
-## along with libguile-ssh.  If not, see <http://www.gnu.org/licenses/>.
+## along with libguile-ssh.  If not, see
+## <http://www.gnu.org/licenses/>.
 
-SUBDIRS = src examples
+AM_CFLAGS = @GUILE_CFLAGS@ `pkg-config --cflags guile-1.8` -Wall -g
 
+examplesdir = $(pkgdatadir)/examples
+dist_examples_DATA = README sssh.scm
