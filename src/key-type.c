@@ -41,7 +41,7 @@ free_key_smob (SCM arg1)
   switch (data->key_type)
     {
     case KEY_TYPE_NONE:
-      ssh_key_free (data->ssh_key);
+      publickey_free (data->ssh_key);
       break;
 
     case KEY_TYPE_PUBLIC:
