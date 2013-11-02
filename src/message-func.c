@@ -186,6 +186,14 @@ static struct symbol_mapping req_global_subtypes[] = {
   { NULL,                                  -1                                      }
 };
 
+static struct symbol_mapping pubkey_state_type[] = {
+  { "error", SSH_PUBLICKEY_STATE_ERROR },
+  { "none",  SSH_PUBLICKEY_STATE_NONE  },
+  { "valid", SSH_PUBLICKEY_STATE_VALID },
+  { "wrong", SSH_PUBLICKEY_STATE_WRONG },
+  { NULL,    -1                        }
+};
+
 /* Convert the SSH constant VALUE to a Scheme symbol */
 static SCM
 _ssh_const_to_scm (const struct symbol_mapping *types, int value)
@@ -255,10 +263,11 @@ SCM_DEFINE (guile_ssh_message_get_type,
 static SCM
 get_auth_req (ssh_message msg)
 {
-  SCM result = scm_c_make_vector (3, SCM_UNDEFINED);
+  SCM result = scm_c_make_vector (4, SCM_UNDEFINED);
   char *user     = ssh_message_auth_user (msg);
   char *password = ssh_message_auth_password (msg);
   ssh_public_key public_key = ssh_message_auth_publickey (msg);
+  SCM pkey_state;
   SCM pkey_smob;
   struct key_data *pkey_data;
 
@@ -283,6 +292,10 @@ get_auth_req (ssh_message msg)
   SCM_NEWSMOB (pkey_smob, key_tag, pkey_data);
 
   SCM_SIMPLE_VECTOR_SET (result, 2, pkey_smob);
+
+  pkey_state = _ssh_const_to_scm (pubkey_state_type,
+                                  (int) ssh_message_auth_publickey_state (msg));
+  SCM_SIMPLE_VECTOR_SET (result, 3, pkey_state);
 
   return result;
 }

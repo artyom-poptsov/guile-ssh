@@ -1,5 +1,9 @@
 2013-11-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/message.scm (auth-req:pubkey-state): New procedure.
+	* src/message-func.c (get_auth_req): Store public key state in the
+	vector.
+
 	* examples/ssshd.scm: Add to the repository.
 	* examples/README: Update.
 

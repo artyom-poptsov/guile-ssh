@@ -51,6 +51,7 @@
             message-auth-reply-public-key-success
             message-auth-set-methods!
             auth-req:user auth-req:password auth-req:pubkey
+            auth-req:pubkey-state
 
             message-channel-request-open-reply-accept
             message-channel-request-reply-success
@@ -74,9 +75,10 @@
 (define (channel-open-req:dest      req) (vector-ref req 2))
 (define (channel-open-req:dest-port req) (vector-ref req 3))
 
-(define (auth-req:user req)     (vector-ref req 0))
-(define (auth-req:password req) (vector-ref req 1))
-(define (auth-req:pubkey req)   (vector-ref req 2))
+(define (auth-req:user         req) (vector-ref req 0))
+(define (auth-req:password     req) (vector-ref req 1))
+(define (auth-req:pubkey       req) (vector-ref req 2))
+(define (auth-req:pubkey-state req) (vector-ref req 3))
 
 (define (pty-req:term req)     (vector-ref req 0))
 (define (pty-req:width req)    (vector-ref req 1))

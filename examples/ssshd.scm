@@ -99,8 +99,11 @@
     (case subtype
       ((auth-method-publickey)
        (let ((req (message-get-req msg)))
-         (format #t "  User ~a wants to authenticate with a public key (~a)~%"
-                 (auth-req:user req) (get-key-type (auth-req:pubkey req)))
+         (format #t
+                 (string-append "  User ~a wants to authenticate with a public key (~a)~%"
+                                "  Public key state: ~a~%")
+                 (auth-req:user req) (get-key-type (auth-req:pubkey req))
+                 (auth-req:pubkey-state req))
 
          (message-auth-reply-success msg #f)))
 
