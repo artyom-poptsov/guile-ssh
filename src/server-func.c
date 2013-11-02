@@ -180,11 +180,11 @@ SCM_DEFINE (guile_ssh_server_set_x, "server-set!", 3, 0, 0,
 #undef FUNC_NAME
 
 
-SCM_DEFINE (guile_ssh_server_listen_x, "server-listen!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_server_listen, "server-listen", 1, 0, 0,
             (SCM server),
             "Start listening to the socket.\n"
             "Return value is undefined.")
-#define FUNC_NAME s_guile_ssh_server_listen_x
+#define FUNC_NAME s_guile_ssh_server_listen
 {
   struct server_data *server_data = _scm_to_ssh_server (server);
   int res = ssh_bind_listen (server_data->bind);

@@ -1,5 +1,9 @@
 2013-11-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/server-func.c (guile_ssh_server_listen_x): Rename to
+	`guile_ssh_server_listen'.
+	* server.scm (server-listen!): Rename to `server-listen'.
+
 	Fix a error with double free of memory.  The problem was that SSH
 	keys are usually freed along with the object that contains them.
 	For example, if a key is gotten from a SSH session it will be
