@@ -7,8 +7,7 @@ library to access SSH protocol
 
 * Scheme Secure Shell (SSSH)
 
-SSSH is uses Guile-SSH API to implement basic SSH client
-functionality.
+SSSH uses Guile-SSH API to implement basic SSH client functionality.
 
 ** Usage
 
@@ -21,3 +20,12 @@ for information about program usage.
 ** Examples
 
   ./sssh.scm --identity=~/.ssh/id_rsa --user=avp localhost "uname -a"
+
+* Scheme Secure Shell Daemon (SSSHD)
+
+SSSHD uses Guile-SSH API to implement basic SSH server functionality.
+
+** Usage
+
+  ./ssshd.scm
+

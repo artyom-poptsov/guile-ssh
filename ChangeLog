@@ -1,5 +1,8 @@
 2013-11-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/ssshd.scm: Add to the repository.
+	* examples/README: Update.
+
 	* src/server-func.c (guile_ssh_server_listen_x): Rename to
 	`guile_ssh_server_listen'.
 	* server.scm (server-listen!): Rename to `server-listen'.
