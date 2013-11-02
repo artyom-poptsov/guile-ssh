@@ -1,3 +1,19 @@
+2013-11-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Fix a error with double free of memory.  The problem was that SSH
+	keys are usually freed along with the object that contains them.
+	For example, if a key is gotten from a SSH session it will be
+	freed along with the session.  Not if we try to free the memory
+	taken by the key then we get "double free" error.  To prevent it
+	the new field in the key smob structure is introduced to track who
+	is responsible for freeing the key.
+	* src/key-type.h (key_data): Add "is_to_be_freed" field.
+	* src/key-type.c (free_key_smob): Check if the key must be freed.
+	* src/key-func.c (guile_ssh_private_key_from_file)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_public_key_from_file): Set "is_to_be_freed" field for
+	the key.
+
 2013-10-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/key-type.c (free_key_smob): Fix warnings.

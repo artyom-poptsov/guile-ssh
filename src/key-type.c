@@ -38,23 +38,26 @@ free_key_smob (SCM arg1)
 {
   struct key_data *data = _scm_to_ssh_key (arg1);
 
-  switch (data->key_type)
+  if (data->is_to_be_freed)
     {
-    case KEY_TYPE_NONE:
-      publickey_free ((ssh_public_key) data->ssh_key);
-      break;
+      switch (data->key_type)
+        {
+        case KEY_TYPE_NONE:
+          publickey_free ((ssh_public_key) data->ssh_key);
+          break;
 
-    case KEY_TYPE_PUBLIC:
-      publickey_free (data->ssh_public_key);
-      break;
+        case KEY_TYPE_PUBLIC:
+          publickey_free (data->ssh_public_key);
+          break;
 
-    case KEY_TYPE_PUBLIC_STR:
-      ssh_string_free (data->ssh_public_key_str.key);
-      break;
+        case KEY_TYPE_PUBLIC_STR:
+          ssh_string_free (data->ssh_public_key_str.key);
+          break;
 
-    case KEY_TYPE_PRIVATE:
-      privatekey_free (data->ssh_private_key);
-      break;
+        case KEY_TYPE_PRIVATE:
+          privatekey_free (data->ssh_private_key);
+          break;
+        }
     }
 
   return 0;

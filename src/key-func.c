@@ -103,6 +103,7 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 0, 0,
                                                     0, /* Detect key type
                                                           automatically */
                                                     passphrase);
+  key_data->is_to_be_freed = 0; /* Key will be freed along with its session. */
 
   if (key_data->ssh_private_key == NULL)
     return SCM_BOOL_F;;
@@ -135,6 +136,8 @@ SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
 
   public_key_data->ssh_public_key 
     = publickey_from_privatekey (private_key_data->ssh_private_key);
+
+  public_key_data->is_to_be_freed = 1; /* The key must be freed by GC. */
 
   if (public_key_data->ssh_public_key == NULL)
     return SCM_BOOL_F;
@@ -180,6 +183,9 @@ SCM_DEFINE (guile_ssh_public_key_from_file, "public-key-from-file", 2, 0, 0,
   public_key_data->key_type = KEY_TYPE_PUBLIC_STR;
   public_key_data->ssh_public_key_str.key      = public_key_str;
   public_key_data->ssh_public_key_str.key_type = key_type;
+
+  /* Key will be freed along with the session. */
+  public_key_data->is_to_be_freed = 0;
 
   SCM_NEWSMOB (key_smob, key_tag, public_key_data);
 

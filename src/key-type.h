@@ -42,6 +42,12 @@ struct public_key_str {
 /* Smob data. */
 struct key_data {
   uint8_t key_type;		/* Type of the key. */
+
+  /* If this key is gotten from some other libssh object such as
+     session or message -- it must not be freed by GC, because it will
+     be freed along with this object. */
+  uint8_t is_to_be_freed;
+
   union {
     ssh_private_key ssh_private_key;
     ssh_public_key  ssh_public_key;
