@@ -277,6 +277,9 @@ get_auth_req (ssh_message msg)
   pkey_data->key_type = KEY_TYPE_PUBLIC;
   pkey_data->ssh_public_key = public_key;
 
+  /* The key will be freed along with the message. */
+  pkey_data->is_to_be_freed = 0;
+
   SCM_NEWSMOB (pkey_smob, key_tag, pkey_data);
 
   SCM_SIMPLE_VECTOR_SET (result, 2, pkey_smob);

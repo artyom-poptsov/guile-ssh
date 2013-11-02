@@ -13,6 +13,8 @@
 	(guile_ssh_public_key_from_private_key)
 	(guile_ssh_public_key_from_file): Set "is_to_be_freed" field for
 	the key.
+	* src/message-func.c (get_auth_req): Mark a key that it must not
+	be freed by GC.
 
 2013-10-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
