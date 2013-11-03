@@ -1,5 +1,9 @@
 2013-11-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/message.scm (message-reply-success): New procedure.
+	* examples/ssshd.scm (handle-req-auth, handle-req-channel, main):
+	Use `message-reply-success'.
+
 	* examples/ssshd.scm (handle-req-auth): Handle public key state.
 
 	* src/message.scm (message-auth-reply-public-key-success): Rename

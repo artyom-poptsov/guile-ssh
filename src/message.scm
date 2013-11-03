@@ -39,9 +39,11 @@
   #:use-module (ssh key)
   #:export (message
             message-reply-default
+            message-reply-success
             message-get-type
             message-get-req
 
+            message-service-reply-success
             service-req:service
 
             channel-open-req:orig channel-open-req:orig-port
@@ -53,10 +55,8 @@
             auth-req:user auth-req:password auth-req:pubkey
             auth-req:pubkey-state
 
-            message-channel-request-open-reply-accept
             message-channel-request-reply-success
-
-            message-service-reply-success
+            message-channel-request-open-reply-accept
 
             pty-req:term pty-req:width pty-req:height pty-req:pxwidth
             pty-req:pxheight
@@ -93,6 +93,41 @@
 
 (define (global-req:addr req) (vector-ref req 0))
 (define (global-req:port req) (vector-ref req 1))
+
+
+(define (message-reply-success msg . args)
+  "Reply 'success' to the message MSG.  This procedure is a convenient
+wrapper for other '*-reply-success' procedures.  The right procedure
+to use will be selected depending on a type of the message MSG."
+  (let ((msg-type (message-get-type msg)))
+    (case (car msg-type)
+
+      ((request-auth)
+       (cond
+        ((= (length args) 0)
+         (message-auth-reply-success msg #f))
+        ((= (length args) 1)
+         (if (and (symbol? (car args)) (eq? (car args) 'partial))
+             (message-auth-reply-success msg #t)
+             (error
+              (string-append "message-reply-success: "
+                             "Wrong argument.  Expected: 'partial")
+              (car args))))
+        (else
+         (error "message-reply-success: Wrong number of arguments."
+                args))))
+
+      ((request-service)
+       (message-service-reply-success msg))
+
+      ((request-channel-open)
+       (message-channel-request-reply-success msg))
+
+      ((request-channel)
+       (message-channel-request-reply-success msg))
+
+      ((request-global)
+       (error "Not implemented yet" (cadr msg-type))))))
 
 
 (load-extension "libguile-ssh" "init_message")

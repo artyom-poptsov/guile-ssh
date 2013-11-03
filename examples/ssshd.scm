@@ -112,7 +112,7 @@
             (message-auth-reply-public-key-ok msg))
 
            ((valid)
-            (message-auth-reply-success msg #f))
+            (message-reply-success msg))
 
            (else
             (format #t "  Bad public key state: ~a~%" pubkey-state)
@@ -132,10 +132,10 @@
          ;; Check the password for the user.
          (case (userauth-password! session user pswd)
            ((success)
-            (message-auth-reply-success msg #f))
+            (message-reply-success msg #f))
 
            ((partial)
-            (message-auth-reply-success msg #t))
+            (message-reply-success msg #t))
 
            (else
             (message-reply-default msg)))))
@@ -182,7 +182,7 @@
 
       ((channel-request-exec)
        (handle-request-exec msg channel)
-       (message-channel-request-reply-success msg))
+       (message-reply-success msg))
 
       ((channel-request-pty)
        (let ((pty-req (message-get-req msg)))
@@ -194,10 +194,10 @@
                  (pty-req:term pty-req)
                  (pty-req:width pty-req)
                  (pty-req:height pty-req))
-         (message-channel-request-reply-success msg)))
+         (message-reply-success msg)))
 
       (else
-       (message-channel-request-reply-success msg)))))
+       (message-reply-success msg)))))
 
 
 ;;; Entry point of the program.
@@ -237,7 +237,7 @@
              (let ((srv-req (message-get-req msg)))
                (format #t "  Service requested: ~a~%"
                        (service-req:service srv-req))
-               (message-service-reply-success msg)))
+               (message-reply-success msg)))
 
             ((request-auth)
              (handle-req-auth session msg msg-type))
