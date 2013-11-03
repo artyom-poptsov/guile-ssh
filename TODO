@@ -1,4 +1,5 @@
 -*- Mode: Outline -*-
 
-* Implement SSH server API.
+* Use Guile ports for I/O on channels.
+* Write automated tests for the library.
   

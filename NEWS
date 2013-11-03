@@ -8,16 +8,50 @@ Guile-SSH News
    for a module on loading.  See the documentation for the GNU Guile
    module system.
 
-** channel-read
-   Fix a memory corruption.  The problem was seen on reading of an
-   output from "lsb_release -a" command.
+** Implement basic SSH server API.
 
-** session-set!
+** Fix a memory corruption in `channel-read'
+   The problem was seen on reading of an output from "lsb_release -a"
+   command.
+
+** Fix a memory corruption during GC'ing of SSH keys.
+
+** Fix a bug in `session-set!'
    Fix the bug that leads to an error if the user tried to set a
    correct boolean option.
 
+** New `channel-write' procedure.
+
+** Fix the name of `write-known-host!'
+   The procedure was called `authenticate-server' by mistake.  Rename
+   it to `write-known-host!'.
+
+** Change error handling in some procedures.
+   Now `write-known-host!', `channel-open-session',
+   `channel-request-exec', `channel-request-env', `close-channel!',
+   throw an exception on error.  The return value of these procedures
+   now is undefined.
+
+** `authenticate-server' now throws an exception on error.
+   Don't return the 'error symbol, throw an exception instead.
+
+** Rename `make-session' to `%make-session'.
+   See `make-session' below.
+
+** New `make-session' procedure.
+   This is a convenient wrapper for `%make-session' which allows to
+   set session options by passing them as keywords.
+
+** Rename `connect' to `connect!'.
+   
 ** Fix a typo in an option symbol
    'strcthostkeycheck -> 'stricthostkeycheck
+
+** Add examples to the repository.
+   See the "examples/" directory.
+
+** Improve printing of SSH keys.
+   Example: #<public rsa key>
 
 
 * Changes in version 0.3.1 (2013-07-14)

@@ -1,5 +1,7 @@
 2013-11-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS, TODO: Update.
+
 	Move common procedures for converting SCM values to SSH contants
 	and vice versa to common.c file.
 	* src/common.c, src/common.h: New files.
