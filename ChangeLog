@@ -1,5 +1,12 @@
 2013-11-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	Move common procedures for converting SCM values to SSH contants
+	and vice versa to common.c file.
+	* src/common.c, src/common.h: New files.
+	* src/message-func.c (_ssh_const_to_scm): Remove.
+	* src/server-func.c (guile_ssh_server_set_x): Use `_scm_to_ssh_const'.
+	* src/Makefile.am (libguile_ssh_la_SOURCES): Add common.{c,h}.
+
 	* src/message.scm (message-reply-success): New procedure.
 	* examples/ssshd.scm (handle-req-auth, handle-req-channel, main):
 	Use `message-reply-success'.

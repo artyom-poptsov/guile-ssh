@@ -22,6 +22,7 @@
 #include <libssh/libssh.h>
 #include <libssh/server.h>
 
+#include "common.h"
 #include "channel-type.h"
 #include "message-type.h"
 #include "message-func.h"
@@ -134,11 +135,6 @@ SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
 }
 
 
-struct symbol_mapping {
-  char* symbol;
-  int   value;
-};
-
 static struct symbol_mapping req_types[] = {
   { "request-auth",         SSH_REQUEST_AUTH         },
   { "request-channel-open", SSH_REQUEST_CHANNEL_OPEN },
@@ -192,19 +188,6 @@ static struct symbol_mapping pubkey_state_type[] = {
   { "wrong", SSH_PUBLICKEY_STATE_WRONG },
   { NULL,    -1                        }
 };
-
-/* Convert the SSH constant VALUE to a Scheme symbol */
-static SCM
-_ssh_const_to_scm (const struct symbol_mapping *types, int value)
-{
-  struct symbol_mapping *t;
-  for (t = types; t->symbol; ++t)
-    {
-      if (t->value == value)
-        return scm_from_locale_symbol (t->symbol);
-    }
-  return SCM_BOOL_F;
-}
 
 /* Get a type of the message MSG as a list.  car of the list is type
    of the message, cdr is a subtype.

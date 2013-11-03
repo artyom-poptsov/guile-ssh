@@ -22,6 +22,7 @@
 #include <libssh/libssh.h>
 #include <libssh/server.h>
 
+#include "common.h"
 #include "session-type.h"
 #include "server-type.h"
 #include "message-type.h"
@@ -34,15 +35,9 @@ enum gssh_server_options {
   GSSH_BIND_OPTIONS_BLOCKING_MODE = 100
 };
 
-/* SSH option mapping. */
-struct option {
-  char* symbol;
-  int   type;
-};
-
 
 /* SSH server options mapping to Guile symbols. */
-static struct option server_options[] = {
+static struct symbol_mapping server_options[] = {
   { "bindaddr",           SSH_BIND_OPTIONS_BINDADDR       },
   { "bindport",           SSH_BIND_OPTIONS_BINDPORT       },
   { "hostkey",            SSH_BIND_OPTIONS_HOSTKEY        },
@@ -145,28 +140,17 @@ SCM_DEFINE (guile_ssh_server_set_x, "server-set!", 3, 0, 0,
 #define FUNC_NAME s_guile_ssh_server_set_x
 {
   struct server_data *server_data = _scm_to_ssh_server (server);
-  char *c_option_name;                    /* Name of an option */
-  struct option *opt;                     /* Server option */
-  int is_found = 0;
+  struct symbol_mapping *opt;             /* Server option */
   int res;
 
   SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
 
-  c_option_name = scm_to_locale_string (scm_symbol_to_string (option));
+  opt = _scm_to_ssh_const (server_options, option);
 
-  for (opt = server_options; opt->symbol != NULL; ++opt)
-    {
-      if (! strcmp (c_option_name, opt->symbol))
-        {
-          is_found = 1;
-          break;
-        }
-    }
-
-  if (! is_found)
+  if (! opt)
     guile_ssh_error1 (FUNC_NAME, "No such option", option);
 
-  res = set_option (server_data->bind, opt->type, value);
+  res = set_option (server_data->bind, opt->value, value);
   if (res != SSH_OK)
     {
       guile_ssh_error1 (FUNC_NAME, "Unable to set the option",

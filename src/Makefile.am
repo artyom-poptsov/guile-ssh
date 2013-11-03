@@ -31,7 +31,8 @@ libguile_ssh_la_SOURCES = \
 	server-main.c server-func.c server-func.h server-type.c \
 	server-type.h message-type.c message-type.h message-func.c \
 	message-func.h message-main.c \
-	version.c base64.c threads.c threads.h
+	version.c base64.c threads.c threads.h \
+	common.c common.h
 
 BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 	key-func.x key-type.x session-func.x session-type.x \
