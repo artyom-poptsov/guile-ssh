@@ -1,3 +1,11 @@
+2013-11-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/message.scm (message-auth-reply-public-key-success): Rename
+	to `message-auth-reply-public-key-ok'.
+	* src/message-func.c
+	(guile_ssh_message_auth_reply_public_key_success): Rename to
+	`guile_ssh_message_auth_reply_public_key_ok'.
+
 2013-11-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/message.scm (auth-req:pubkey-state): New procedure.

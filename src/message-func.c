@@ -82,13 +82,12 @@ SCM_DEFINE (guile_ssh_message_auth_reply_success,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_message_auth_reply_public_key_success,
-            "message-auth-reply-public-key-success", 1, 0, 0,
+SCM_DEFINE (guile_ssh_message_auth_reply_public_key_ok,
+            "message-auth-reply-public-key-ok", 1, 0, 0,
             (SCM msg),
-            "Reply \"success\" on the public key auth request "
-            "message MSG.\n"
+            "Reply OK on the public key auth-request message MSG.\n"
             "Return value is undefined.")
-#define FUNC_NAME s_guile_ssh_message_auth_reply_public_key_success
+#define FUNC_NAME s_guile_ssh_message_auth_reply_public_key_ok
 {
   struct message_data *msg_data = _scm_to_ssh_message (msg);
   int res = ssh_message_auth_reply_pk_ok_simple (msg_data->message);

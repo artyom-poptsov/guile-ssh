@@ -48,7 +48,7 @@
             channel-open-req:dest channel-open-req:dest-port
 
             message-auth-reply-success
-            message-auth-reply-public-key-success
+            message-auth-reply-public-key-ok
             message-auth-set-methods!
             auth-req:user auth-req:password auth-req:pubkey
             auth-req:pubkey-state
