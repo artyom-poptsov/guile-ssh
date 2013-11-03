@@ -1,5 +1,9 @@
 2013-11-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/session-func.c (guile_ssh_session_set): Use
+	`_scm_to_ssh_const'.  Throw guile-ssh-error on error.  Make return
+	value undefined.
+
 	* NEWS, TODO: Update.
 
 	Move common procedures for converting SCM values to SSH contants

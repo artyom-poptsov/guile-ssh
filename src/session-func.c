@@ -21,6 +21,7 @@
 #include <libguile.h>
 #include <libssh/libssh.h>
 
+#include "common.h"
 #include "error.h"
 #include "session-type.h"
 
@@ -33,7 +34,7 @@ struct option {
 
 /* SSH options mapping to Guile symbols. */
 
-static struct option session_options[] = {
+static struct symbol_mapping session_options[] = {
   { "host",               SSH_OPTIONS_HOST               },
   { "port",               SSH_OPTIONS_PORT               },
   { "port-str",           SSH_OPTIONS_PORT_STR           },
@@ -234,37 +235,29 @@ set_option (ssh_session session, int type, SCM value)
 
 /* Set a SSH option.  Return #t on success, #f on error. */
 SCM_DEFINE (guile_ssh_session_set, "session-set!", 3, 0, 0,
-            (SCM session, SCM type, SCM value),
-            "Set a SSH option.  Return #t on success, #f on error.")
+            (SCM session, SCM option, SCM value),
+            "Set a SSH option OPTION.  Throw an guile-ssh-error on error.\n"
+            "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_session_set
 {
   struct session_data* data = _scm_to_ssh_session (session);
-  char *c_type_name;                    /* Name of an option */
-  struct option *option;                /* SSH option mapping */
-  int is_found = 0;                     /* Is a parameter found? */
+  struct symbol_mapping *opt;           /* Session option */
   int res;                              /* Result of a function call */
 
-  SCM_ASSERT (scm_is_symbol (type), type, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
 
-  c_type_name = scm_to_locale_string (scm_symbol_to_string (type));
+  opt = _scm_to_ssh_const (session_options, option);
 
-  for (option = session_options; option->symbol != NULL; ++option)
-    {
-      if (! strcmp (c_type_name, option->symbol))
-        {
-          is_found = 1;
-          break;
-        }
-    }
+  if(! opt)
+    guile_ssh_error1 (FUNC_NAME, "No such option", option);
 
-  if(! is_found)
-    return SCM_BOOL_F;
-
-  res = set_option (data->ssh_session, option->type, value);
+  res = set_option (data->ssh_session, opt->value, value);
+  if (res != SSH_OK)
+    guile_ssh_error1 (FUNC_NAME, "Unable to set the option", option);
 
   scm_remember_upto_here_1 (session);
 
-  return (res == 0) ? SCM_BOOL_T : SCM_BOOL_F;
+  return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
 
