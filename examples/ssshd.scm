@@ -98,14 +98,25 @@
 
     (case subtype
       ((auth-method-publickey)
-       (let ((req (message-get-req msg)))
+       (let* ((req          (message-get-req msg))
+              (user         (auth-req:user req))
+              (pubkey       (auth-req:pubkey req))
+              (pubkey-state (auth-req:pubkey-state req)))
          (format #t
                  (string-append "  User ~a wants to authenticate with a public key (~a)~%"
                                 "  Public key state: ~a~%")
-                 (auth-req:user req) (get-key-type (auth-req:pubkey req))
-                 (auth-req:pubkey-state req))
+                 user (get-key-type pubkey) pubkey-state)
 
-         (message-auth-reply-success msg #f)))
+         (case pubkey-state
+           ((none)
+            (message-auth-reply-public-key-ok msg))
+
+           ((valid)
+            (message-auth-reply-success msg #f))
+
+           (else
+            (format #t "  Bad public key state: ~a~%" pubkey-state)
+            (message-reply-default msg)))))
 
       ((auth-method-password)
        (let* ((req (message-get-req msg))

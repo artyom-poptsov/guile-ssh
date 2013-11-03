@@ -1,5 +1,7 @@
 2013-11-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/ssshd.scm (handle-req-auth): Handle public key state.
+
 	* src/message.scm (message-auth-reply-public-key-success): Rename
 	to `message-auth-reply-public-key-ok'.
 	* src/message-func.c
