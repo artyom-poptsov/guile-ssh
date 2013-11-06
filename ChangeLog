@@ -1,3 +1,9 @@
+2013-11-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* configure.ac: Use `PKG_CHECK_MODULES' macro instead of
+	`AC_SEARCH_LIBS' to check if the needed version of libssh is
+	installed.
+
 2013-11-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/session-func.c (guile_ssh_session_set): Use

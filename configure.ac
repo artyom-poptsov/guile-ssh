@@ -46,8 +46,8 @@ AC_SUBST([guilesitedir])
 LIBGUILE_SSH_INTERFACE="3:0:1"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
-# Check for libssh
-AC_SEARCH_LIBS([ssh_new], [ssh], [], AC_MSG_ERROR([libssh is not found.], [1]))
+# Check for needed libraries
+PKG_CHECK_MODULES([LIBSSH], [libssh >= 0.5.4])
 
 AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile])
 
