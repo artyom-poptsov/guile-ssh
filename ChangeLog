@@ -1,3 +1,7 @@
+2013-11-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* configure.ac: Use AC_COPYRIGHT to store copyright information.
+
 2013-11-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* configure.ac: Use `PKG_CHECK_MODULES' macro instead of
