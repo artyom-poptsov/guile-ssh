@@ -12,6 +12,10 @@
 	* configure.ac: Store auxiliary build files in `build_aux'
 	directory.  Add "build_aux/Makefile" to `AC_CONFIG_FILES'.
 
+2013-11-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* configure.ac: Add check for Guile-2.0.
+
 2013-11-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* configure.ac: Use AC_COPYRIGHT to store copyright information.
