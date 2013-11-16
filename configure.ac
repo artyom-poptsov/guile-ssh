@@ -59,7 +59,7 @@ AC_SUBST(LIBGUILE_SSH_INTERFACE)
 # Check for needed libraries
 PKG_CHECK_MODULES([LIBSSH], [libssh >= 0.5.4])
 
-AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile build_aux/Makefile])
 
 # Generate a Makefile, based on the results.
 AC_OUTPUT

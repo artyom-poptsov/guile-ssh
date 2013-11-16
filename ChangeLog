@@ -1,7 +1,8 @@
 2013-11-16  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* build_aux/Makefile.am: New file.
 	* configure.ac: Store auxiliary build files in `build_aux'
-	directory.
+	directory.  Add "build_aux/Makefile" to `AC_CONFIG_FILES'.
 
 2013-11-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
