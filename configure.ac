@@ -77,6 +77,7 @@ LIBGUILE_SSH_INTERFACE="3:0:1"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile build_aux/Makefile])
+AC_CONFIG_FILES([m4/Makefile])
 
 # Generate a Makefile, based on the results.
 AC_OUTPUT

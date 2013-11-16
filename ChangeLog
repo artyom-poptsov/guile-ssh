@@ -1,6 +1,9 @@
 2013-11-16  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* m4/Makefile.am, m4/guile.m4, m4/lib-link.m4: New files.
+	* Makefile.am: Add "build_aux" and "m4" to `SUBDIRS'.
 	* configure.ac: Use `AC_CONFIG_MACRO_DIR' to set m4 dir.
+	Add "m4/Makefile" to `AC_CONFIG_FILES'.
 
 	* Makefile.am (ACLOCAL_AMFLAGS): Set variable.
 	* src/Makefile.am (AM_CFLAGS): Remove.
