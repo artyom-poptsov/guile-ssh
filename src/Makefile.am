@@ -37,6 +37,8 @@ BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 	server-type.x server-func.x message-type.x message-func.x \
 	version.x
 
+libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
+
 libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
 	-version-info $(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)
 
@@ -49,7 +51,7 @@ dist_pkgguilesite_DATA = auth.scm channel.scm key.scm session.scm	\
 ETAGS_ARGS = auth.scm channel.scm key.scm session.scm server.scm \
 	message.scm version.scm
 
-snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(GUILE_CFLAGS)
 SUFFIXES = .x
 .c.x:
 	$(AM_V_SNARF)$(GUILE_SNARF) -o $@ $< $(snarfcppopts)

@@ -2,6 +2,8 @@
 
 	* Makefile.am (ACLOCAL_AMFLAGS): Set variable.
 	* src/Makefile.am (AM_CFLAGS): Remove.
+	(libguile_ssh_la_CPPFLAGS, snarfcppopts): Add `GUILE_CFLAGS'.
+
 	* INSTALL: Update.
 
 	* build_aux/Makefile.am: New file.
