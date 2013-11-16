@@ -1,5 +1,9 @@
 2013-11-16  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* Makefile.am (ACLOCAL_AMFLAGS): Set variable.
+	* src/Makefile.am (AM_CFLAGS): Remove.
+	* INSTALL: Update.
+
 	* build_aux/Makefile.am: New file.
 	* configure.ac: Store auxiliary build files in `build_aux'
 	directory.  Add "build_aux/Makefile" to `AC_CONFIG_FILES'.

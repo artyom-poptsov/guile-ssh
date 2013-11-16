@@ -18,8 +18,6 @@
 
 include $(top_srcdir)/am/snarf
 
-AM_CFLAGS = @GUILE_CFLAGS@ `pkg-config --cflags guile-1.8` -Wall -g
-
 lib_LTLIBRARIES = libguile-ssh.la
 
 libguile_ssh_la_SOURCES = \

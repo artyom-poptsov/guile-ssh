@@ -17,5 +17,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with libguile-ssh.  If not, see <http://www.gnu.org/licenses/>.
 
+ACLOCAL_AMFLAGS = -I m4 --install
+
 SUBDIRS = src examples
 
