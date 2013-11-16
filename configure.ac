@@ -25,6 +25,8 @@ AC_INIT([libguile-ssh], [0.3.1], [poptsov.artyom@gmail.com])
 
 AC_COPYRIGHT(GUILE_SSH_CONFIGURE_COPYRIGHT)
 
+AC_CONFIG_AUX_DIR([build_aux])
+
 AM_INIT_AUTOMAKE
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])], [AC_SUBST([AM_DEFAULT_VERBOSITY],1)])
 

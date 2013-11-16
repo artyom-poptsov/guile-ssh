@@ -1,3 +1,8 @@
+2013-11-16  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* configure.ac: Store auxiliary build files in `build_aux'
+	directory.
+
 2013-11-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* configure.ac: Use AC_COPYRIGHT to store copyright information.
