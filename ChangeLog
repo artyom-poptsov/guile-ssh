@@ -1,5 +1,7 @@
 2013-11-16  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* configure.ac: Use `AC_CONFIG_MACRO_DIR' to set m4 dir.
+
 	* Makefile.am (ACLOCAL_AMFLAGS): Set variable.
 	* src/Makefile.am (AM_CFLAGS): Remove.
 	(libguile_ssh_la_CPPFLAGS, snarfcppopts): Add `GUILE_CFLAGS'.
