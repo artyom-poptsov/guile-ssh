@@ -1,3 +1,9 @@
+2013-11-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-type.c (print_channel): New procedure.
+	(init_channel_type): Set the printer procedure for the smob.
+	* NEWS: Update.
+
 2013-11-17  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* TODO: Update.

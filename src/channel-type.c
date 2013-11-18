@@ -44,6 +44,18 @@ free_channel (SCM channel_smob)
   return 0;
 }
 
+static int
+print_channel (SCM smob,  SCM port, scm_print_state *pstate)
+{
+  struct channel_data *ch = _scm_to_ssh_channel (smob);
+  int is_open = ssh_channel_is_open (ch->ssh_channel);
+  scm_puts ("#<", port);
+  scm_puts (is_open ? "open" : "closed", port);
+  scm_puts (" ssh channel>", port);
+
+  return 1;
+}
+
 /* Allocate a new SSH channel. */
 SCM_DEFINE (guile_ssh_make_channel, "make-channel", 1, 0, 0,
             (SCM arg1),
@@ -108,6 +120,7 @@ init_channel_type (void)
                                     sizeof (struct channel_data));
   scm_set_smob_mark (channel_tag, mark_channel);
   scm_set_smob_free (channel_tag, free_channel);
+  scm_set_smob_print (channel_tag, print_channel);
   scm_set_smob_equalp (channel_tag, equalp_channel);
 
 #include "channel-type.x"

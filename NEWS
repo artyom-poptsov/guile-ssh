@@ -53,8 +53,8 @@ Guile-SSH News
 ** Add examples to the repository.
    See the "examples/" directory.
 
-** Improve printing of SSH keys.
-   Example: #<public rsa key>
+** Improve printing of SSH keys and channels.
+   Examples: #<public rsa key>, #<open ssh channel>
 
 
 * Changes in version 0.3.1 (2013-07-14)

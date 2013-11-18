@@ -171,6 +171,9 @@
             (if (not public-key)
                 (handle-error session))
 
+            (display public-key)
+            (newline)
+
             (print-debug "5. userauth-pubkey! (ssh_userauth_pubkey)\n")
             (if (eqv? (userauth-pubkey! session #f public-key private-key) 'error)
                 (handle-error session))))
@@ -178,11 +181,17 @@
         (print-debug "6. make-channel (ssh_channel_new)\n")
         (let ((channel (make-channel session)))
 
+          (display channel)
+          (newline)
+
           (if (not channel)
               (handle-error session))
 
           (print-debug "7. channel-open-session (ssh_channel_open_session)\n")
           (channel-open-session channel)
+
+          (display channel)
+          (newline)
 
           (print-debug "8. channel-request-exec (ssh_channel_request_exec)\n")
           (channel-request-exec channel cmd)
