@@ -1,5 +1,8 @@
 2013-11-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/sssh.scm (main): Separate libssh debug and the program
+	debug mode.  Print SSH channels.
+
 	* src/channel-type.c (print_channel): New procedure.
 	(init_channel_type): Set the printer procedure for the smob.
 	* NEWS: Update.

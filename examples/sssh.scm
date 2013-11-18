@@ -98,6 +98,7 @@
     "  --port=<port-number>, -p <port-number>  Port number\n"
     "  --identity-file=<file>, -i <file>       Path to private key\n"
     "  --debug, -d                             Debug mode\n"
+    "  --ssh-debug                             Debug libssh\n"
     "  --version, -v                           Print version\n")))
 
 
@@ -110,15 +111,16 @@
         (print-help)
         (exit 0)))
 
-  (let* ((options         (getopt-long args *option-spec*))
-         (user            (option-ref options 'user (getenv "USER")))
-         (port            (string->number (option-ref options 'port "22")))
-         (identity-file   (option-ref options 'identity-file
-                                      *default-identity-file*))
-         (debug-needed?   (option-ref options 'debug #f))
-         (help-needed?    (option-ref options 'help #f))
-         (version-needed? (option-ref options 'version #f))
-         (args            (option-ref options '() #f)))
+  (let* ((options           (getopt-long args *option-spec*))
+         (user              (option-ref options 'user (getenv "USER")))
+         (port              (string->number (option-ref options 'port "22")))
+         (identity-file     (option-ref options 'identity-file
+                                        *default-identity-file*))
+         (debug-needed?     (option-ref options 'debug #f))
+         (ssh-debug-needed? (option-ref options 'ssh-debug #f))
+         (help-needed?      (option-ref options 'help #f))
+         (version-needed?   (option-ref options 'version #f))
+         (args              (option-ref options '() #f)))
 
     (set! debug? debug-needed?)
 
@@ -144,7 +146,7 @@
       (let ((session (make-session #:user user
                                    #:host host
                                    #:port port
-                                   #:log-verbosity (if debug? 4 0))))
+                                   #:log-verbosity (if ssh-debug-needed? 4 0))))
 
         (print-debug "3. connect! (ssh_connect_x)\n")
         (connect! session)
@@ -171,9 +173,6 @@
             (if (not public-key)
                 (handle-error session))
 
-            (display public-key)
-            (newline)
-
             (print-debug "5. userauth-pubkey! (ssh_userauth_pubkey)\n")
             (if (eqv? (userauth-pubkey! session #f public-key private-key) 'error)
                 (handle-error session))))
@@ -181,8 +180,7 @@
         (print-debug "6. make-channel (ssh_channel_new)\n")
         (let ((channel (make-channel session)))
 
-          (display channel)
-          (newline)
+          (format-debug "   channel: ~a~%" channel)
 
           (if (not channel)
               (handle-error session))
@@ -190,8 +188,7 @@
           (print-debug "7. channel-open-session (ssh_channel_open_session)\n")
           (channel-open-session channel)
 
-          (display channel)
-          (newline)
+          (format-debug "   channel: ~a~%" channel)
 
           (print-debug "8. channel-request-exec (ssh_channel_request_exec)\n")
           (channel-request-exec channel cmd)
