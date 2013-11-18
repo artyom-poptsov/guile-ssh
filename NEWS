@@ -38,7 +38,7 @@ Guile-SSH News
 ** `authenticate-server' now throws guile-ssh-error exception on error.
    Don't return the 'error symbol, throw an exception instead.
 
-** `server-set!' not throws guile-ssh-error exception on error.
+** `server-set!' now throws guile-ssh-error exception on error.
    The return value now is undefined.
 
 ** Rename `make-session' to `%make-session'.
