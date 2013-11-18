@@ -3,6 +3,9 @@ Guile-SSH News
 
 * Unreleased
 
+** Port the library to GNU Guile version 2.0
+   Now the library works with GNU Guile version 2.0 as well as 1.8.
+
 ** Remove "ssh:" prefix from procedures names.
    If it is needed, an user's prefix can be added by setting a renamer
    for a module on loading.  See the documentation for the GNU Guile

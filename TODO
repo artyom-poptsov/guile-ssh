@@ -1,6 +1,5 @@
 -*- Mode: Outline -*-
 
-* Make sure that the library works with Guile 2.0
 * Use Guile ports for I/O on channels.
 * Write automated tests for the library.
   

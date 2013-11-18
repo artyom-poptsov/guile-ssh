@@ -1,3 +1,7 @@
+2013-11-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* NEWS, TODO: Update.
+
 2013-11-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/channel-func.c (guile_ssh_channel_read): Fix a memory
