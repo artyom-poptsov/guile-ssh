@@ -1,5 +1,9 @@
 2013-11-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-func.c (guile_ssh_channel_read): Fix a memory
+	freeing error: use `scm_from_locale_string' instead of
+	`scm_take_locale_string', call `scm_gc_free' on allocated buffer.
+
 	* examples/sssh.scm (main): Separate libssh debug and the program
 	debug mode.  Print SSH channels.
 

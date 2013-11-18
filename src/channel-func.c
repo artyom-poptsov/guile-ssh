@@ -149,7 +149,8 @@ SCM_DEFINE (guile_ssh_channel_read, "channel-read", 3, 0, 0,
   if (res > 0)
     {
       buffer[res] = 0;          /* Avoid getting garbage in a SCM string */
-      obtained_data = scm_take_locale_string (buffer);
+      obtained_data = scm_from_locale_string (buffer);
+      scm_gc_free (buffer, sizeof (char) + c_count + 1, "data buffer");
     }
   else if (res == 0)
     {
