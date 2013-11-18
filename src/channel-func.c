@@ -125,7 +125,10 @@ SCM_DEFINE (guile_ssh_channel_pool, "channel-poll", 2, 0, 0,
 }
 #undef FUNC_NAME
 
-/* Read data from the channel. */
+/* Read data from the channel. 
+
+   Return #f if no data is available.  Throw guile-ssh-error on
+   error. */
 SCM_DEFINE (guile_ssh_channel_read, "channel-read", 3, 0, 0,
             (SCM channel, SCM count, SCM is_stderr),
             "Read data from the channel CHANNEL.")
@@ -150,15 +153,14 @@ SCM_DEFINE (guile_ssh_channel_read, "channel-read", 3, 0, 0,
     {
       buffer[res] = 0;          /* Avoid getting garbage in a SCM string */
       obtained_data = scm_from_locale_string (buffer);
-      scm_gc_free (buffer, sizeof (char) + c_count + 1, "data buffer");
     }
-  else if (res == 0)
+
+  scm_gc_free (buffer, sizeof (char) + c_count + 1, "data buffer");
+
+  if (res < 0)
     {
-      obtained_data = SCM_BOOL_F;
-    }
-  else
-    {
-      /* TODO: Improve error handling. */
+      /* Throw the exception only if an error is occured (res < 0).
+         Return #t if res == 0 (no data is available). */
       guile_ssh_error1 (FUNC_NAME, "Couldn't read data from a channel.", 
                         SCM_BOOL_F);
     }
