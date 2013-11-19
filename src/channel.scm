@@ -33,6 +33,8 @@
 ;;   channel-open-session
 ;;   channel-request-env
 ;;   channel-request-exec
+;;   channel-request-pty
+;;   channel-request-shell
 ;;   channel-poll
 ;;   channel-read
 ;;   channel-write
@@ -52,6 +54,8 @@
             channel-open-session
             channel-request-env
             channel-request-exec
+            channel-request-pty
+            channel-request-shell
             channel-poll
             channel-read
             channel-write

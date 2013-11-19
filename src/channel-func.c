@@ -72,6 +72,42 @@ SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_request_pty, "channel-request-pty", 1, 0, 0,
+            (SCM channel),
+            "Request a PTY (pseudo terminal).\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_channel_request_pty
+{
+  struct channel_data *data = _scm_to_ssh_channel (channel);
+  int res = ssh_channel_request_pty (data->ssh_channel);
+  if (res != SSH_OK)
+    {
+      ssh_session session = ssh_channel_get_session (data->ssh_channel);
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+    }
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_channel_request_shell, "channel-request-shell", 1, 0, 0,
+            (SCM channel),
+            "Request a shell.\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_channel_request_shell
+{
+  struct channel_data *data = _scm_to_ssh_channel (channel);
+  int res = ssh_channel_request_shell (data->ssh_channel);
+  if (res != SSH_OK)
+    {
+      ssh_session session = ssh_channel_get_session (data->ssh_channel);
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+    }
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 /* Set an environment variable NAME to value VALUE 
    Return value is undefined. */
 SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,

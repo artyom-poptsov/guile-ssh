@@ -1,5 +1,10 @@
 2013-11-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-func.c (guile_ssh_channel_request_pty)
+	(guile_ssh_channel_request_shell): New procedures.
+	* src/channel.scm: Export `channel-request-pty' and
+	`channel-request-shell'.
+
 	* TODO, README, AUTHORS: Update.
 	* NEWS: Update.  Fix a typo.
 
