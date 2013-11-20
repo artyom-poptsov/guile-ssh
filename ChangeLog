@@ -1,5 +1,10 @@
 2013-11-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* build_aux/: Rename to `build-aux'.  Configuration files are
+	updated.
+	* configure.ac: Update.
+	* Makefile.am: Update.
+
 	* src/session-type.c (PRINT_DEBUG): Remove the macro.
 
 2013-11-19  Artyom Poptsov  <poptsov.artyom@gmail.com>

@@ -25,7 +25,7 @@ AC_INIT([libguile-ssh], [0.3.1], [poptsov.artyom@gmail.com])
 
 AC_COPYRIGHT(GUILE_SSH_CONFIGURE_COPYRIGHT)
 
-AC_CONFIG_AUX_DIR([build_aux])
+AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE
@@ -76,7 +76,7 @@ AC_SUBST([guilesitedir])
 LIBGUILE_SSH_INTERFACE="3:0:1"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
-AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile build_aux/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile build-aux/Makefile])
 AC_CONFIG_FILES([m4/Makefile])
 
 # Generate a Makefile, based on the results.
