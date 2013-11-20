@@ -26,9 +26,6 @@
 #include "channel-type.h"
 #include "error.h"
 
-#define PRINT_DEBUG(data)\
-  scm_display (data, scm_current_output_port ())
-
 scm_t_bits session_tag;	/* Smob tag. */
 
 SCM
