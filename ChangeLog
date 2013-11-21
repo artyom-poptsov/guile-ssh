@@ -1,3 +1,9 @@
+2013-11-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/message-type.c (print_message): New procedure.
+	(init_message_type): Set the printer procedure for the smob.
+	* NEWS: Update.
+
 2013-11-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* build_aux/: Rename to `build-aux'.  Configuration files are

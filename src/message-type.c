@@ -23,6 +23,7 @@
 #include <libssh/server.h>
 
 #include "message-type.h"
+#include "message-func.h"
 
 scm_t_bits message_tag;         /* Smob tag. */
 
@@ -41,6 +42,19 @@ free_message (SCM message)
   struct message_data *msg_data = _scm_to_ssh_message (message);
   ssh_message_free (msg_data->message);
   return 0;
+}
+
+
+/* Printing procedure. */
+
+static int
+print_message (SCM smob,  SCM port, scm_print_state *pstate)
+{
+  SCM msg_type = guile_ssh_message_get_type (smob);
+  scm_puts ("#<message: ", port);
+  scm_display (msg_type, port);
+  scm_puts (">", port);
+  return 1;
 }
 
 
@@ -87,6 +101,7 @@ init_message_type (void)
   message_tag = scm_make_smob_type ("message", sizeof (struct message_data));
   scm_set_smob_mark (message_tag, mark_message);
   scm_set_smob_free (message_tag, free_message);
+  scm_set_smob_print (message_tag, print_message);
   scm_set_smob_equalp (message_tag, equalp_message);
 
 #include "message-type.x"

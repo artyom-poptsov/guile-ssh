@@ -60,7 +60,7 @@ Guile-SSH News
 ** Add examples to the repository.
    See the "examples/" directory.
 
-** Improve printing of SSH keys and channels.
+** Improve printing of SSH keys, channels and messages.
    Examples: #<public rsa key>, #<open ssh channel>
 
 
