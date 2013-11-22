@@ -1,5 +1,7 @@
 2013-11-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Update.
+
 	* src/channel-func.h: Add `guile_ssh_set_set_pty_size_x'.
 	* src/channel-func.c (guile_ssh_channel_set_pty_size_x): New
 	procedure.

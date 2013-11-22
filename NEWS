@@ -25,9 +25,11 @@ Guile-SSH News
 
 ** New `channel-write' procedure.
 
-** New `guile_ssh_channel_request_pty' procedure.
+** New `channel-request-pty' procedure.
 
-** New `guile_ssh_channel_request_shell' procedure.
+** New `channel-request-shell' procedure.
+
+** New `channel-set-pty-size!' procedure.
 
 ** Fix the name of `write-known-host!'
    The procedure was called `authenticate-server' by mistake.  Rename
