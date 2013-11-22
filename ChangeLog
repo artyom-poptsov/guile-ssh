@@ -1,3 +1,10 @@
+2013-11-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-func.h: Add `guile_ssh_set_set_pty_size_x'.
+	* src/channel-func.c (guile_ssh_channel_set_pty_size_x): New
+	procedure.
+	* src/channel.scm: Export `channel-set-pty-size!'.
+
 2013-11-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/message-type.c (print_message): New procedure.

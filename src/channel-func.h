@@ -28,6 +28,8 @@ extern SCM guile_ssh_channel_close (SCM arg1);
 extern SCM guile_ssh_channel_is_open_p (SCM arg1);
 extern SCM guile_ssh_channel_is_eof_p (SCM arg1);
 
+extern SCM guile_ssh_channel_set_pty_size_x (SCM arg1, SCM arg2, SCM arg3);
+
 extern void init_channel_func (void);
 
 #endif /* ifndef __CHANNEL_FUNC_H__ */

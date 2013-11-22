@@ -137,6 +137,29 @@ SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_set_pty_size_x,
+            "channel-set-pty-size!", 3, 0, 0,
+            (SCM channel, SCM col, SCM row),
+            "Change size of the PTY to columns COL and rows ROW.\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_channel_set_pty_size_x
+{
+  struct channel_data *data = _scm_to_ssh_channel (channel);
+
+  SCM_ASSERT (scm_is_unsigned_integer (col, 0, UINT32_MAX), col,
+              SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_unsigned_integer (row, 0, UINT32_MAX), row,
+              SCM_ARG2, FUNC_NAME);
+
+  ssh_channel_change_pty_size (data->ssh_channel,
+                               scm_to_uint32 (col),
+                               scm_to_uint32 (row));
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
+
 /* Poll a channel for data to read.
  *
  * Return amount of data that can be read, or #f on error.
