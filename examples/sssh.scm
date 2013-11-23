@@ -53,7 +53,8 @@
     (identity-file (single-char #\i) (value #t))
     (help          (single-char #\h) (value #f))
     (version       (single-char #\v) (value #f))
-    (debug         (single-char #\d) (value #f))))
+    (debug         (single-char #\d) (value #f))
+    (ssh-debug                       (value #f))))
 
 
 ;;; Helper procedures
