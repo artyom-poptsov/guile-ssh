@@ -96,7 +96,7 @@ _bin_to_base64(unsigned char *dest,
 
    Return the converted string. */
 unsigned char *
-bin_to_base64(const unsigned char *source, size_t len)
+bin_to_base64(const unsigned char *source, int len)
 {
   unsigned char *base64;
   unsigned char *ptr;

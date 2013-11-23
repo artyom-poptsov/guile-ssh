@@ -49,7 +49,7 @@ SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
   struct key_data *key_data = _scm_to_ssh_key (arg1);
   ssh_string public_key;
   unsigned char *key_str;
-  size_t        key_len;
+  int           key_len;
   SCM ret;
 
   scm_dynwind_begin (0);

@@ -19,6 +19,6 @@
 #ifndef __BASE64_H__
 #define __BASE64_H__
 
-extern unsigned char *bin_to_base64(const unsigned char *source, size_t len);
+extern unsigned char *bin_to_base64(const unsigned char *source, int len);
 
 #endif  /* ifndef __BASE64_H__ */

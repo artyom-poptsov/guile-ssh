@@ -59,6 +59,9 @@ Guile-SSH News
 ** Fix a typo in an option symbol
    'strcthostkeycheck -> 'stricthostkeycheck
 
+** Fix an infinite loop in `public-key->string'.
+   The problem was observed on Ubuntu GNU/Linux 10.04 LTS.
+
 ** Add examples to the repository.
    See the "examples/" directory.
 
