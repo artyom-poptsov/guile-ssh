@@ -37,16 +37,13 @@ public_key_to_ssh_string (const struct key_data *public_key_data)
     return ssh_string_copy (public_key_data->ssh_public_key_str.key);
 }
 
-/* Convert SSH public key to a scheme string.
- *
- * TODO: Probably should be replaced with a simply print function.
- */
+/* Convert SSH public key KEY to a scheme string. */
 SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
-            (SCM arg1),
+            (SCM key),
             "Convert SSH public key to a scheme string.")
 #define FUNC_NAME s_guile_ssh_public_key_to_string
 {
-  struct key_data *key_data = _scm_to_ssh_key (arg1);
+  struct key_data *key_data = _scm_to_ssh_key (key);
   ssh_string public_key;
   unsigned char *key_str;
   int           key_len;
@@ -54,7 +51,7 @@ SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
 
   scm_dynwind_begin (0);
 
-  SCM_ASSERT (_public_key_p (key_data), arg1, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (_public_key_p (key_data), key, SCM_ARG1, FUNC_NAME);
 
   public_key = public_key_to_ssh_string (key_data);
   scm_dynwind_unwind_handler ((void (*)(void*)) ssh_string_free, public_key,

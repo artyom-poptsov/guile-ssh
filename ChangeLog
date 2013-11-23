@@ -5,7 +5,7 @@
 	value.
 	* src/base64.h: Update.
 	* src/key-func.c (guile_ssh_public_key_to_string): Change type of
-	`key_len'.
+	`key_len'.  Rename the argument.  Update comments.
 	* NEWS: Update.
 
 	* examples/sssh.scm (*option-spec*): Add `ssh-debug' switch.
