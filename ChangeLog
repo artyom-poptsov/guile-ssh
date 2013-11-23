@@ -1,5 +1,7 @@
 2013-11-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README: Update.
+
 	* examples/Makefile.am (dist_examples_DATA): Add missed
 	`ssshd.scm'.
 	(AM_CFLAGS): Remove.

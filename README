@@ -4,10 +4,57 @@ Guile-SSH is a library that provides access to the SSH protocol for
 programs written in GNU Guile interpreter.  It is a wrapper to the
 underlying libssh library.
 
-* Dependencies
+* Requirements
 
- - GNU Guile 1.8 or 2.0
+ - GNU Guile 1.8.x or 2.0.x
    <https://www.gnu.org/software/guile/>
 
  - libssh 0.5.4
    <http://www.libssh.org/>
+
+* Distribution
+
+Files:
+ - AUTHORS contains list of people who contributed to the library
+   development.
+ - COPYING contains the terms of GNU General Public License.
+ - INSTALL contains general instructions for building/installing of
+   Guile-SSH.
+ - NEWS describes user-visible changes.
+ - TODO contains plans for further development.
+
+Directories:
+ - examples -- Examples of Guile-SSH usage.
+ - src      -- Sources of the library.
+
+Files are usually installed according to the prefix specified to
+configure, /usr/local by default.  Building and installing gives you:
+
+Libraries, in ${prefix}/lib:
+ - libguile-ssh.so.<version>
+ - libguile-ssh.la
+ - libguile-ssh.a
+
+Guile modules, in ${GUILE_SITE}/ssh:
+ - auth.scm    -- User authentication.
+ - channel.scm -- Channel manipulation.
+ - key.scm     -- Keys management.
+ - message.scm -- Procedures for working with SSH messages.
+ - server.scm  -- Server API.
+ - session.scm -- Session management.
+ - version.scm -- Information about versions.
+
+Examples, in ${prefix}/share/libguile-ssh/examples
+ - ssshd.scm   -- SSH server example.
+ - sssh.scm    -- SSH client example.
+
+* Installation
+
+For a basic explanation of the installation of the package, see the
+INSTALL file.
+
+*important* You probably want to call configure with the
+"--with-guilesitedir" option so that this package is installed in
+Guile's default path.  But, if you don't know where your Guile site
+directory is, run "configure" without the option, and it will give you
+a suggestion.
