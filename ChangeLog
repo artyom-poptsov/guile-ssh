@@ -1,3 +1,9 @@
+2013-11-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/Makefile.am (dist_examples_DATA): Add missed
+	`ssshd.scm'.
+	(AM_CFLAGS): Remove.
+
 2013-11-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* NEWS: Update.

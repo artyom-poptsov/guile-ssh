@@ -16,7 +16,5 @@
 ## along with libguile-ssh.  If not, see
 ## <http://www.gnu.org/licenses/>.
 
-AM_CFLAGS = @GUILE_CFLAGS@ `pkg-config --cflags guile-1.8` -Wall -g
-
 examplesdir = $(pkgdatadir)/examples
-dist_examples_DATA = README sssh.scm
+dist_examples_DATA = README sssh.scm ssshd.scm
