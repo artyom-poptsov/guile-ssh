@@ -171,7 +171,6 @@
       (channel-write channel (string-length res) res)))
   (if (channel-open? channel)
       (shell-loop channel)))
-      
 
 (define (handle-req-channel msg msg-type channel)
   (let ((subtype (cadr msg-type)))
@@ -194,6 +193,18 @@
                  (pty-req:term pty-req)
                  (pty-req:width pty-req)
                  (pty-req:height pty-req))
+         (message-reply-success msg)))
+
+      ((channel-request-env)
+       (let* ((env-req (message-get-req msg))
+              (name    (env-req:name env-req))
+              (value   (env-req:value env-req)))
+         (format #t
+                 (string-append "  env requested:~%"
+                                "    name:  ~a~%"
+                                "    value: ~a~%")
+                 name value)
+         (setenv name value)
          (message-reply-success msg)))
 
       (else
@@ -249,7 +260,8 @@
              (handle-req-channel msg msg-type channel)
              ;; FIXME: We currently support only one exec request per
              ;; a session.
-             (disconnect! session))
+             (if (eq? (cadr msg-type) 'channel-request-exec)
+                 (disconnect! session)))
 
             (else
              (display "Send the default reply.\n")

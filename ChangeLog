@@ -1,3 +1,9 @@
+2013-11-25  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/ssshd.scm (handle-req-channel): Handle
+	`channel-request-env'.
+	(main): Improve handling of `request-channel'.
+
 2013-11-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/base64.c (bin_to_base64): Change type of the second argument
