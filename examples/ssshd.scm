@@ -221,6 +221,12 @@
                               #:banner        "Scheme Secure Shell Daemon"))
         (channel #f))
 
+    (format #t (string-append
+                "Using private key ~a~%"
+                "Listening on port ~a~%")
+            *default-rsakey*
+            *default-bindport*)
+
     ;; Start listen to incoming connections.
     (server-listen server)
 

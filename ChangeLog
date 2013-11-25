@@ -3,6 +3,7 @@
 	* examples/ssshd.scm (handle-req-channel): Handle
 	`channel-request-env'.
 	(main): Improve handling of `request-channel'.
+	Print path to a key and the port number on the start.
 
 2013-11-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
