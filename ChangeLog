@@ -1,3 +1,7 @@
+2013-11-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* configure.ac, NEWS: Bump version to 0.4.0
+
 2013-11-25  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* examples/ssshd.scm (handle-req-channel): Handle
