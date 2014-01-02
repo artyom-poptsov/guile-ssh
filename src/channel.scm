@@ -1,6 +1,6 @@
 ;;; channel.scm -- API for SSH channel manipulation.
 
-;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of libguile-ssh.
 ;;
