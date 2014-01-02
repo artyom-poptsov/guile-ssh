@@ -45,9 +45,11 @@ Guile modules, in ${GUILE_SITE}/ssh:
  - version.scm -- Information about versions.
 
 Examples, in ${prefix}/share/libguile-ssh/examples
- - ssshd.scm   -- SSH server example.
- - sssh.scm    -- SSH client example.
-
+ - ssshd.scm    -- SSH server example.
+ - sssh.scm     -- SSH client example.
+ + echo/
+   - client.scm -- Echo client example.
+   - server.scm -- Echo server example.
 * Installation
 
 For a basic explanation of the installation of the package, see the

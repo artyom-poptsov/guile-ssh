@@ -1,3 +1,25 @@
+2014-01-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Use Guile port API to implement Guile-SSH channels.
+	* src/channel-func.c (guile_ssh_channel_read)
+	(guile_ssh_channel_write): Remove.
+	* src/channel-func.h (guile_ssh_channel_read): Remove.
+	* src/channel-type.c (ptob_fill_input, ptob_write, ptob_flush)
+	(ptob_input_waiting, _ssh_channel_to_scm): New procedures.
+	(guile_ssh_make_channel): Use `_ssh_channel_to_scm'.
+	(_scm_to_ssh_channel): Use `SCM_STREAM' macro.
+	(init_channel_type): Register Guile port callbacks.
+	* src/channel-type.h (_ssh_channel_to_scm): Export.
+	* src/channel.scm (channel-read, channel-write): Remove.
+	* src/message-func.c
+	(guile_ssh_message_channel_request_open_reply_accept): Use
+	`_ssh_channel_to_scm'.
+	* examples/echo: Add to the repository.
+	* examples/Makefile.am: Add echo server/client example.
+	* examples/README: Update.
+	* examples/sssh.scm: Update.
+	* README: Update.
+
 2013-11-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* configure.ac, NEWS: Bump version to 0.4.0

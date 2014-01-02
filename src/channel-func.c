@@ -1,6 +1,6 @@
 /* channel-func.c -- SSH channel manipulation functions.
  *
- * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
  *
@@ -181,72 +181,6 @@ SCM_DEFINE (guile_ssh_channel_pool, "channel-poll", 2, 0, 0,
     return scm_from_int (res);
   else
     return SCM_BOOL_F;
-}
-#undef FUNC_NAME
-
-/* Read data from the channel. 
-
-   Return #f if no data is available.  Throw guile-ssh-error on
-   error. */
-SCM_DEFINE (guile_ssh_channel_read, "channel-read", 3, 0, 0,
-            (SCM channel, SCM count, SCM is_stderr),
-            "Read data from the channel CHANNEL.")
-#define FUNC_NAME s_guile_ssh_channel_read
-{
-  struct channel_data *data = _scm_to_ssh_channel (channel);
-  int res;
-  char *buffer;                 /* Buffer for data. */
-  uint32_t c_count;             /* Size of buffer. */
-  SCM obtained_data = SCM_BOOL_F; /* Obtained data from the channel. */
-
-  SCM_ASSERT (scm_is_unsigned_integer (count, 0, UINT32_MAX), count,
-              SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG3, FUNC_NAME);
-
-  c_count = scm_to_unsigned_integer (count, 0, UINT32_MAX);
-  buffer = scm_gc_calloc (sizeof (char) * c_count + 1, "data buffer");
-  res = ssh_channel_read (data->ssh_channel, buffer, c_count + 1,
-                          scm_is_true (is_stderr));
-
-  if (res > 0)
-    {
-      buffer[res] = 0;          /* Avoid getting garbage in a SCM string */
-      obtained_data = scm_from_locale_string (buffer);
-    }
-
-  scm_gc_free (buffer, sizeof (char) + c_count + 1, "data buffer");
-
-  if (res < 0)
-    {
-      /* Throw the exception only if an error is occured (res < 0).
-         Return #t if res == 0 (no data is available). */
-      guile_ssh_error1 (FUNC_NAME, "Couldn't read data from a channel.", 
-                        SCM_BOOL_F);
-    }
-
-  return obtained_data;
-}
-#undef FUNC_NAME
-
-SCM_DEFINE (guile_ssh_channel_write, "channel-write", 3, 0, 0,
-            (SCM channel, SCM len, SCM data),
-            "Write data DATA of the length LEN to the channel CHANNEL")
-#define FUNC_NAME s_guile_ssh_channel_write
-{
-  struct channel_data *channel_data = _scm_to_ssh_channel (channel);
-  int res;
-  uint32_t c_len;
-  char *c_data;
-
-  SCM_ASSERT (scm_is_unsigned_integer (len, 0, UINT32_MAX), len,
-              SCM_ARG2, FUNC_NAME);
-
-  c_len = scm_to_uint32 (len);
-  c_data = scm_to_locale_string (data);
-
-  res = ssh_channel_write (channel_data->ssh_channel, c_data, c_len);
-
-  return (res != SSH_ERROR) ? scm_from_int (res) : SCM_BOOL_F;
 }
 #undef FUNC_NAME
 

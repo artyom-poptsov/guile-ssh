@@ -1,6 +1,6 @@
 /* message-func.c -- Functions for working with SSH messages.
  *
- * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
  *
@@ -119,19 +119,14 @@ SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
             "Accept open-channel request.\n"
             "Return a new SSH channel.")
 {
-  SCM smob;
   struct message_data *msg_data = _scm_to_ssh_message (msg);
-  struct channel_data *channel_data
-    = (struct channel_data *) scm_gc_malloc (sizeof (struct channel_data),
-                                             "channel");
-  channel_data->ssh_channel
-    = ssh_message_channel_request_open_reply_accept (msg_data->message);
-  if (channel_data->ssh_channel == NULL)
+  ssh_channel *ch;
+
+  ch = ssh_message_channel_request_open_reply_accept (msg_data->message);
+  if (! ch)
     return SCM_BOOL_F;
 
-  SCM_NEWSMOB (smob, channel_tag, channel_data);
-
-  return smob;
+  return _ssh_channel_to_scm (ch);
 }
 
 

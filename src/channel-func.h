@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
  * 
@@ -22,7 +22,6 @@
 extern SCM guile_ssh_channel_open_session (SCM arg1);
 extern SCM guile_ssh_channel_request_exec (SCM arg1, SCM arg2);
 extern SCM guile_ssh_channel_pool (SCM arg1, SCM arg2);
-extern SCM guile_ssh_channel_read (SCM arg1, SCM arg2, SCM arg3);
 extern SCM guile_ssh_channel_close (SCM arg1);
 
 extern SCM guile_ssh_channel_is_open_p (SCM arg1);

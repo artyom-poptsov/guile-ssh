@@ -4,7 +4,7 @@
 
 ;;; sssh.scm -- Scheme Secure Shell.
 
-;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -30,6 +30,7 @@
 ;;; Code:
 
 (use-modules (ice-9 getopt-long)
+             (ice-9 rdelim)
              (ssh channel)
              (ssh session)
              (ssh auth)
@@ -200,11 +201,7 @@
                 (poll (channel-poll channel #f))
                 (begin
                   (print-debug "10. channel-read (ssh_channel_read)\n")
-                  (let ((result (channel-read channel count #f)))
-                    (if (not result)
-                        (handle-error session)
-                        (begin
-                          (display result)
-                          (newline))))))))))))
+                  (display (read-line channel))
+                  (newline)))))))))
 
 ;;; sssh.scm ends here

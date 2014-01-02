@@ -37,8 +37,6 @@
 ;;   channel-request-shell
 ;;   channel-set-pty-size!
 ;;   channel-poll
-;;   channel-read
-;;   channel-write
 ;;   channel-open?
 ;;   channel-eof?
 
@@ -59,8 +57,6 @@
             channel-request-shell
             channel-set-pty-size!
             channel-poll
-            channel-read
-            channel-write
             channel-open?
             channel-eof?))
 
