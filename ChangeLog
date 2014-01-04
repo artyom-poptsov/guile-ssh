@@ -1,11 +1,18 @@
 2014-01-04  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/echo/server.scm (main): Use `char-ready?' predicate
+	instead of the custom procedure `channel-poll'.
+
 	* src/channel-type.c (ptob_close): New procedure.
 	(print_channel): Don't try to get state of a channel if its port
 	is closed because it leads to segfaults.  Closed port means closed
 	channel.
 	(init_channel_type): Register `ptob_close' with
 	`scm_set_port_close'.
+	(ptob_input_waiting): Call `ssh_channel_poll'.
+	(init_channel_type): Register callback with
+	`scm_set_port_input_waiting' procedure.
+
 	* examples/echo/client.scm (main): Call `close' on a channel.
 	* examples/echo/server.scm (main): Likewise.
 

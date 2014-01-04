@@ -82,10 +82,16 @@ ptob_flush (SCM channel)
 
 static int
 ptob_input_waiting (SCM channel)
+#define FUNC_NAME "input-waiting"
 {
-  /* DEBUG */
-  scm_puts ("input_waiting: Called.\n", scm_current_output_port ());
+  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  int res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
+  if (res < 0)
+    guile_ssh_error1 (FUNC_NAME, "An error occured.", channel);
+
+  return res;
 }
+#undef FUNC_NAME
 
 static int
 ptob_close (SCM channel)
@@ -240,6 +246,7 @@ init_channel_type (void)
                                     &ptob_write);
   scm_set_port_close (channel_tag, ptob_close);
   scm_set_port_flush (channel_tag, ptob_flush);
+  scm_set_port_input_waiting (channel_tag, ptob_input_waiting);
   scm_set_port_mark (channel_tag, mark_channel);
   scm_set_port_free (channel_tag, free_channel);
   scm_set_port_print (channel_tag, print_channel);

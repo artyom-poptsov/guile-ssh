@@ -120,13 +120,13 @@
 
                 ((request-channel-open)
                  (set! channel (handle-req-channel-open msg msg-type))
-                 (let poll ((count #f))
-                   (if (or (not count) (zero? count))
-                       (poll (channel-poll channel #f))
+                 (let poll ((ready? #f))
+                   (if ready?
                        (let ((str (read-line channel)))
                          (format #t "Received message: ~a~%" str)
                          (display "Echoing back...\n")
-                         (display str channel))))
+                         (display str channel))
+                       (poll (char-ready? channel))))
                  (close channel))
 
                 ((request-channel)
