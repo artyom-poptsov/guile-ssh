@@ -126,7 +126,8 @@
                        (let ((str (read-line channel)))
                          (format #t "Received message: ~a~%" str)
                          (display "Echoing back...\n")
-                         (display str channel)))))
+                         (display str channel))))
+                 (close channel))
 
                 ((request-channel)
                  (handle-req-channel msg msg-type channel))
@@ -134,9 +135,6 @@
                 (else
                  (display "Reply default\n")
                  (message-reply-default msg)))))
-            ;; (if channel
-            ;;     (let ((str (read-line channel)))
-            ;;       (display str))))
         (if (connected? session)
             (session-loop (server-message-get session))))
       (disconnect! session)

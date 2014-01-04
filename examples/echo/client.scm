@@ -139,6 +139,9 @@
                 (poll (channel-poll channel #f))
                 (begin
                   (display (read-line channel))
-                  (newline)))))))))
+                  (newline))))
+
+          (close channel)
+          (display channel))))))
 
 ;;; echo.scm ends here.

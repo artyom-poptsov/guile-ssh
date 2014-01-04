@@ -87,6 +87,26 @@ ptob_input_waiting (SCM channel)
   scm_puts ("input_waiting: Called.\n", scm_current_output_port ());
 }
 
+static int
+ptob_close (SCM channel)
+{
+  /* DEBUG */
+  scm_puts ("close: Called.\n", scm_current_output_port ());
+
+  scm_port *pt = SCM_PTAB_ENTRY (channel);
+  struct channel_data *ch = _scm_to_ssh_channel (channel);
+
+  if (ch)
+    ssh_channel_close (ch->ssh_channel);
+
+  scm_gc_free (ch, sizeof (struct channel_data), "channel");
+  scm_gc_free (pt->write_buf, PORT_BUFSZ, "port write buffer");
+  scm_gc_free (pt->read_buf,  PORT_BUFSZ, "port read buffer");
+  SCM_SETSTREAM (channel, NULL);
+
+  return 0;
+}
+
 SCM
 mark_channel (SCM channel_smob)
 {
@@ -104,17 +124,20 @@ free_channel (SCM channel_smob)
 static int
 print_channel (SCM smob,  SCM port, scm_print_state *pstate)
 {
-  struct channel_data *ch = _scm_to_ssh_channel (smob);
-
-  assert (ch);
-  assert (ch->ssh_channel);
-
-  int is_open = ssh_channel_is_open (ch->ssh_channel);
-
-  scm_puts ("#<", port);
-  scm_puts (is_open ? "open" : "closed", port);
-  scm_puts (" ssh channel>", port);
-
+  /* DEBUG */
+  scm_puts ("print: Called.\n", scm_current_output_port ());
+  if (scm_is_false (scm_port_closed_p (smob)))
+    {
+      struct channel_data *ch = _scm_to_ssh_channel (smob);
+      int is_open = ssh_channel_is_open (ch->ssh_channel);
+      scm_puts ("#<", port);
+      scm_puts (is_open ? "open" : "closed", port);
+      scm_puts (" ssh channel>", port);
+    }
+  else
+    {
+      scm_puts ("#<closed ssh channel>", port);
+    }
   return 1;
 }
 
@@ -215,6 +238,7 @@ init_channel_type (void)
   channel_tag = scm_make_port_type ("channel",
                                     &ptob_fill_input,
                                     &ptob_write);
+  scm_set_port_close (channel_tag, ptob_close);
   scm_set_port_flush (channel_tag, ptob_flush);
   scm_set_port_mark (channel_tag, mark_channel);
   scm_set_port_free (channel_tag, free_channel);

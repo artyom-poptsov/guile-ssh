@@ -1,3 +1,14 @@
+2014-01-04  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-type.c (ptob_close): New procedure.
+	(print_channel): Don't try to get state of a channel if its port
+	is closed because it leads to segfaults.  Closed port means closed
+	channel.
+	(init_channel_type): Register `ptob_close' with
+	`scm_set_port_close'.
+	* examples/echo/client.scm (main): Call `close' on a channel.
+	* examples/echo/server.scm (main): Likewise.
+
 2014-01-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	Use Guile port API to implement Guile-SSH channels.
