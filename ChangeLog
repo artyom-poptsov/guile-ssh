@@ -1,3 +1,7 @@
+2014-01-05  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-type.c (ptob_fill_input): Improve.
+
 2014-01-04  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* examples/echo/server.scm (main): Use `char-ready?' predicate

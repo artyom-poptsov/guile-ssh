@@ -38,6 +38,7 @@ enum { PORT_BUFSZ = 256 };      /* Size of the port's buffer */
    Return EOF if no data is available or an error occured */
 static int
 ptob_fill_input (SCM port)
+#define FUNC_NAME "ptob_fill_input"
 {
   /* DEBUG */
   scm_puts ("fill_input: Called.\n", scm_current_output_port ());
@@ -47,14 +48,21 @@ ptob_fill_input (SCM port)
   int res;
 
   res = ssh_channel_read (cd->ssh_channel,
-                          pt->read_buf, PORT_BUFSZ,
+                          pt->read_buf, pt->read_buf_size,
                           cd->is_stderr);
 
-  if (res >= 0)
-    pt->read_end = pt->read_buf + res;
+  if (res < 0)
+    guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", port);
 
-  return (res > 0) ? 0 : EOF;
+  if (! res)
+    return EOF;
+
+  pt->read_pos = pt->read_buf;
+  pt->read_end = pt->read_buf + res;
+
+  return *pt->read_buf;
 }
+#undef FUNC_NAME
 
 static void
 ptob_write (SCM channel, const void *data, size_t sz)
