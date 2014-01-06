@@ -161,6 +161,35 @@ SCM_DEFINE (guile_ssh_channel_set_pty_size_x,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_set_stream_x,
+            "channel-set-stream!", 2, 0, 0,
+            (SCM channel, SCM stream_name),
+            "Set stream STREAM_NAME for channel CHANNEL.  STREAM_NAME must be "
+            "one of the following symbols: \"stdout\" (default), \"stderr\".\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_channel_set_stream_x
+{
+  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  SCM_ASSERT (scm_is_symbol (stream_name), stream_name, SCM_ARG2, FUNC_NAME);
+  if (scm_is_eq (stream_name, scm_from_locale_symbol ("stdout")))
+    {
+      cd->is_stderr = 0;
+    }
+  else if (scm_is_eq (stream_name, scm_from_locale_symbol ("stderr")))
+    {
+      cd->is_stderr = 1;
+    }
+  else
+    {
+      guile_ssh_error1 (FUNC_NAME,
+                        "Wrong stream name.  Possible names are: "
+                        "'stdout, 'stderr", stream_name);
+    }
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (guile_ssh_channel_free, "free-channel!", 1, 0, 0,
             (SCM channel),
             "Free resourses allocated by channel CHANNEL")

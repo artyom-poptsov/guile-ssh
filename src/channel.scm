@@ -55,6 +55,7 @@
             channel-request-pty
             channel-request-shell
             channel-set-pty-size!
+            channel-set-stream!
             channel-open?
             channel-eof?))
 

@@ -1,6 +1,9 @@
 2014-01-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-func.c (guile_ssh_channel_set_stream_x): New
+	procedure.
 	* src/channel.scm: Remove unneeded procedures.
+	Export `channel-set-stream!'.
 
 	* src/channel-type.c (_ssh_channel_to_scm): Don't set `SCM_OPN'
 	bit on the newly created channel.
