@@ -1,5 +1,7 @@
 2014-01-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel.scm: Remove unneeded procedures.
+
 	* src/channel-type.c (_ssh_channel_to_scm): Don't set `SCM_OPN'
 	bit on the newly created channel.
 	* src/channel-func.c (guile_ssh_channel_open_session): Set

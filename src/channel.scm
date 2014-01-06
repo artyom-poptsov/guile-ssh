@@ -48,7 +48,6 @@
   #:export (channel
             channel?
             make-channel
-            close-channel!
             free-channel!
             channel-open-session
             channel-request-env
@@ -56,7 +55,6 @@
             channel-request-pty
             channel-request-shell
             channel-set-pty-size!
-            channel-poll
             channel-open?
             channel-eof?))
 
