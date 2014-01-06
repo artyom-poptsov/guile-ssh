@@ -1,5 +1,10 @@
 2014-01-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-type.c (ptob_close): Free the underlying SSH
+	channel.
+	* src/channel.scm (free-channel!): Remove.
+	* src/channel-func.c (guile_ssh_channel_free): Remove.
+
 	* src/channel-func.c (guile_ssh_channel_set_stream_x): New
 	procedure.
 	* src/channel.scm: Remove unneeded procedures.

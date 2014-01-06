@@ -133,7 +133,10 @@ ptob_close (SCM channel)
   ptob_flush (channel);
 
   if (ch)
-    ssh_channel_close (ch->ssh_channel);
+    {
+      ssh_channel_close (ch->ssh_channel);
+      ssh_channel_free (ch->ssh_channel);
+    }
 
   scm_gc_free (ch, sizeof (struct channel_data), "channel");
   scm_gc_free (pt->write_buf, PORT_BUFSZ, "port write buffer");

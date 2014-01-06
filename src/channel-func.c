@@ -190,15 +190,6 @@ SCM_DEFINE (guile_ssh_channel_set_stream_x,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_free, "free-channel!", 1, 0, 0,
-            (SCM channel),
-            "Free resourses allocated by channel CHANNEL")
-{
-  struct channel_data *data = _scm_to_ssh_channel (channel);
-  ssh_channel_free (data->ssh_channel);
-  return SCM_UNDEFINED;
-}
-
 
 /* Predicates */
 

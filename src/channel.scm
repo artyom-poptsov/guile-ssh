@@ -48,7 +48,6 @@
   #:export (channel
             channel?
             make-channel
-            free-channel!
             channel-open-session
             channel-request-env
             channel-request-exec
