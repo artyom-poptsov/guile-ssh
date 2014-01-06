@@ -64,20 +64,25 @@ ptob_fill_input (SCM port)
 }
 #undef FUNC_NAME
 
+/* Write data to the channel.  Throw `guile-ssh-error' on a libssh
+   error, or signal a system error if amount of data written is
+   smaller than size SZ. */
 static void
 ptob_write (SCM channel, const void *data, size_t sz)
+#define FUNC_NAME "ptob_write"
 {
-  /* DEBUG */
-  scm_puts ("write: Called.\n", scm_current_output_port ());
-
   struct channel_data *channel_data = _scm_to_ssh_channel (channel);
   int res = ssh_channel_write (channel_data->ssh_channel, data, sz);
   if (res == SSH_ERROR)
     {
       ssh_session session = ssh_channel_get_session (channel_data->ssh_channel);
-      guile_ssh_error1 ("write", ssh_get_error (session), channel);
+      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
     }
+
+  if (res < sz)
+    scm_syserror (FUNC_NAME);
 }
+#undef FUNC_NAME
 
 static void
 ptob_flush (SCM channel)

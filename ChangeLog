@@ -1,5 +1,8 @@
 2014-01-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-type.c (ptob_write): Improve error handling.  Add a
+	comment.  Remove debug information.
+
 	* src/channel-func.c (guile_ssh_channel_pool)
 	(guile_ssh_channel_close): Remove.
 	* src/channel-func.h: Likewise.
