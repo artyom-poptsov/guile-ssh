@@ -1,5 +1,12 @@
 2014-01-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-type.c (_ssh_channel_to_scm): Don't set `SCM_OPN'
+	bit on the newly created channel.
+	* src/channel-func.c (guile_ssh_channel_open_session): Set
+	`SCM_OPN' bit on the channel.
+	* src/message-func.c
+	(guile_ssh_message_channel_request_open_reply_accept): Likewise.
+
 	* src/channel-type.c (ptob_write): Improve error handling.  Add a
 	comment.  Remove debug information.
 	(ptob_input_waiting): Change `FUNC_NAME' string.

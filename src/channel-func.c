@@ -42,6 +42,8 @@ SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
       guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
     }
 
+  SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
+
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
