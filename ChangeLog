@@ -2,6 +2,7 @@
 
 	* src/channel-type.c (ptob_write): Improve error handling.  Add a
 	comment.  Remove debug information.
+	(ptob_input_waiting): Change `FUNC_NAME' string.
 
 	* src/channel-func.c (guile_ssh_channel_pool)
 	(guile_ssh_channel_close): Remove.

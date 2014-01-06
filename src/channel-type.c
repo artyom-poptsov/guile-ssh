@@ -110,7 +110,7 @@ ptob_flush (SCM channel)
 
 static int
 ptob_input_waiting (SCM channel)
-#define FUNC_NAME "input-waiting"
+#define FUNC_NAME "ptob_input_waiting"
 {
   struct channel_data *cd = _scm_to_ssh_channel (channel);
   int res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
