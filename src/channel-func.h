@@ -21,8 +21,6 @@
 
 extern SCM guile_ssh_channel_open_session (SCM arg1);
 extern SCM guile_ssh_channel_request_exec (SCM arg1, SCM arg2);
-extern SCM guile_ssh_channel_pool (SCM arg1, SCM arg2);
-extern SCM guile_ssh_channel_close (SCM arg1);
 
 extern SCM guile_ssh_channel_is_open_p (SCM arg1);
 extern SCM guile_ssh_channel_is_eof_p (SCM arg1);

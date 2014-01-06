@@ -1,5 +1,9 @@
 2014-01-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-func.c (guile_ssh_channel_pool)
+	(guile_ssh_channel_close): Remove.
+	* src/channel-func.h: Likewise.
+
 	* src/channel-type.c (ptob_flush): Improve.
 	(ptob_close): Flush a port before closing its SSH channel.
 

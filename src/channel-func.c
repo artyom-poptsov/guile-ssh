@@ -159,49 +159,6 @@ SCM_DEFINE (guile_ssh_channel_set_pty_size_x,
 }
 #undef FUNC_NAME
 
-
-/* Poll a channel for data to read.
- *
- * Return amount of data that can be read, or #f on error.
- */
-SCM_DEFINE (guile_ssh_channel_pool, "channel-poll", 2, 0, 0,
-            (SCM channel, SCM is_stderr),
-            "Poll a channel for data to read.\n"
-            "Return amount of data that can be read, or #f on error.")
-#define FUNC_NAME s_guile_ssh_channel_pool
-{
-  struct channel_data *data = _scm_to_ssh_channel (channel);
-  int res;
-
-  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG2, FUNC_NAME);
-
-  res = ssh_channel_poll (data->ssh_channel, scm_is_true (is_stderr));
-
-  if (res >= 0)
-    return scm_from_int (res);
-  else
-    return SCM_BOOL_F;
-}
-#undef FUNC_NAME
-
-/* Close a channel. */
-SCM_DEFINE (guile_ssh_channel_close, "close-channel!", 1, 0, 0,
-            (SCM channel),
-            "Close a channel CHANNEL.  Return value is undefined.")
-#define FUNC_NAME s_guile_ssh_channel_close
-{
-  struct channel_data *data = _scm_to_ssh_channel (channel);
-  int res = ssh_channel_close (data->ssh_channel);
-  if (res != SSH_OK)
-    {
-      ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
-    }
-
-  return SCM_UNDEFINED;
-}
-#undef FUNC_NAME
-
 SCM_DEFINE (guile_ssh_channel_free, "free-channel!", 1, 0, 0,
             (SCM channel),
             "Free resourses allocated by channel CHANNEL")
