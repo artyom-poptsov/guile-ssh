@@ -81,12 +81,27 @@ ptob_write (SCM channel, const void *data, size_t sz)
 
 static void
 ptob_flush (SCM channel)
+#define FUNC_NAME "ptob_flush"
 {
-  /* DEBUG */
-  scm_puts ("flush: Called.\n", scm_current_output_port ());
+  scm_puts ("flush: Called.\n", scm_current_output_port ()); /* DEBUG */
+
   scm_port *pt = SCM_PTAB_ENTRY (channel);
-  pt->read_end = pt->read_buf;
+  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  size_t wrsize = pt->write_pos - pt->write_buf;
+
+  if (wrsize)
+    {
+      int res = ssh_channel_write (cd->ssh_channel, pt->write_buf, wrsize);
+      if (res == SSH_ERROR)
+        {
+          ssh_session session = ssh_channel_get_session (cd->ssh_channel);
+          guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+        }
+    }
+
+  pt->write_pos = pt->write_buf;
 }
+#undef FUNC_NAME
 
 static int
 ptob_input_waiting (SCM channel)
@@ -109,6 +124,8 @@ ptob_close (SCM channel)
 
   scm_port *pt = SCM_PTAB_ENTRY (channel);
   struct channel_data *ch = _scm_to_ssh_channel (channel);
+
+  ptob_flush (channel);
 
   if (ch)
     ssh_channel_close (ch->ssh_channel);

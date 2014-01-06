@@ -1,3 +1,8 @@
+2014-01-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-type.c (ptob_flush): Improve.
+	(ptob_close): Flush a port before closing its SSH channel.
+
 2014-01-05  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/channel-type.c (ptob_fill_input): Improve.
