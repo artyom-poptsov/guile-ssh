@@ -81,6 +81,14 @@
       (else
        (message-reply-success msg)))))
 
+(define (read-all port)
+  "Read all lines from the PORT."
+  (let r ((res "")
+          (str (read-line port 'concat)))
+    (if (and (not (eof-object? str)) (char-ready? port))
+        (r (string-append res str) (read-line port 'concat))
+        res)))
+
 (define (main args)
   (let ((server (make-server #:bindport      *default-bindport*
                              #:rsakey        *default-rsakey*
@@ -122,10 +130,15 @@
                  (set! channel (handle-req-channel-open msg msg-type))
                  (let poll ((ready? #f))
                    (if ready?
-                       (let ((str (read-line channel)))
-                         (format #t "Received message: ~a~%" str)
-                         (display "Echoing back...\n")
-                         (display str channel))
+                       (catch 'guile-ssh-error
+                         (lambda ()
+                           (let ((str (read-all channel)))
+                             (format #t "Received message: ~a~%" str)
+                             (display "Echoing back...\n")
+                             (write-line str channel)))
+                         (lambda (key . args)
+                           (display "error\n")
+                           (display (get-error session))))
                        (poll (char-ready? channel))))
                  (close channel))
 

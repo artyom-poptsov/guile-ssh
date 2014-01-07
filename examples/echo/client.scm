@@ -80,6 +80,14 @@
         (handle-error session))
     pubkey))
 
+(define (read-all port)
+  "Read all lines from the PORT."
+  (let r ((res "")
+          (str (read-line port 'concat)))
+    (if (not (eof-object? str))
+        (r (string-append res str) (read-line port 'concat))
+        res)))
+
 
 (define (main args)
   "Entry point of the program."
@@ -95,8 +103,6 @@
                                         *default-identity-file*))
          (help-needed?      (option-ref options 'help #f))
          (args              (option-ref options '() #f)))
-
-
 
     (if help-needed?
         (begin
@@ -116,6 +122,7 @@
                                   #:log-verbosity 0))) ;Be quiet
 
       (connect! session)
+
       (case (authenticate-server session)
         ((not-known) (display "   The server is unknown.  Please check MD5.\n")))
 
@@ -125,23 +132,20 @@
         (if (eqv? (userauth-pubkey! session #f public-key private-key) 'error)
             (handle-error session))
 
-        (let ((channel     (make-channel session)))
+        (let ((channel (make-channel session)))
 
           (if (not channel)
               (handle-error session))
 
           (channel-open-session channel)
 
-          (display str channel)
+          (write-line str channel)
 
-          (let poll ((count #f))
-            (if (or (not count) (zero? count))
-                (poll (channel-poll channel #f))
-                (begin
-                  (display (read-line channel))
-                  (newline))))
+          (let poll ((ready? #f))
+            (if ready?
+                (format #t "Response from server: ~a~%" (read-all channel))
+                (poll (char-ready? channel))))
 
-          (close channel)
-          (display channel))))))
+          (close channel))))))
 
 ;;; echo.scm ends here.
