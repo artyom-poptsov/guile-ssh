@@ -4,7 +4,7 @@
 
 ;;; client.scm -- Echo client example.
 
-;; Copyright (C) 2013-2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -22,6 +22,18 @@
 
 
 ;;; Commentary:
+
+;; Echo client example.
+;;
+;; Usage: client.scm [ options ] <host> <string>
+;;
+;; Options:
+;;   --user=<user>, -u <user>                User name
+;;   --port=<port-number>, -p <port-number>  Port number
+;;   --identity-file=<file>, -i <file>       Path to private key
+;;
+;; Examples:
+;;   $ ./client.scm -i ~/.ssh/id_rsa -p 12345 127.0.0.1 "`date`"
 
 
 ;;; Code:
@@ -54,7 +66,7 @@
     "Copyright (C) Artyom Poptsov <poptsov.artyom@gmail.com>\n"
     "Licensed under GNU GPLv3+\n"
     "\n"
-    "Usage: " *program-name* " [ -upidv ] <host> <string>\n"
+    "Usage: " *program-name* " [ -upi ] <host> <string>\n"
     "\n"
     "Options:\n"
     "  --user=<user>, -u <user>                User name\n"
@@ -69,12 +81,15 @@
   (exit 1))
 
 (define (get-prvkey session identity-file)
+  "Get a private SSH key.  Handle possible errors."
   (let ((prvkey (private-key-from-file session identity-file)))
     (if (not prvkey)
         (handle-error session))
     prvkey))
 
 (define (get-pubkey session prvkey)
+  "Get a public SSH key from private key PRVKEY.  Handle possible
+errors."
   (let ((pubkey (private-key->public-key prvkey)))
     (if (not pubkey)
         (handle-error session))

@@ -1,9 +1,11 @@
 2014-01-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
-	* examples/echo/server.scm (read-all): New procedure.
+	* examples/echo/server.scm: Update comments.
+	(read-all): New procedure.
 	(main): Update.  Catch exceptions.  Use `write-line' instead of
 	`display'.
-	* examples/echo/client.scm (read-all): New procedure.
+	* examples/echo/client.scm: Update comments.
+	(read-all): New procedure.
 	(main): Update.  Use `char-ready?' instead of `channel-poll'.  Use
 	`write-line' instead of `display'.
 
