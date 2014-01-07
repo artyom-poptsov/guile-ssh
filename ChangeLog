@@ -1,5 +1,10 @@
 2014-01-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-type.c (ptob_input_waiting): Improve error checking.
+	(ptob_fill_input): Call `ssh_channel_poll' to update underlying
+	SSH channel state and check whether we have data to read or not.
+	Check if the channel is open.
+
 	* examples/echo/server.scm: Update comments.
 	(read-all): New procedure.
 	(main): Update.  Catch exceptions.  Use `write-line' instead of
