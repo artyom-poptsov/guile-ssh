@@ -211,10 +211,7 @@ _ssh_channel_to_scm (ssh_channel ch)
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf;
 
-  SCM_SET_CELL_TYPE (ptob,
-                     (channel_tag
-                      | SCM_RDNG | SCM_WRTNG
-                      | SCM_BUFLINE));
+  SCM_SET_CELL_TYPE (ptob, channel_tag | SCM_RDNG | SCM_WRTNG);
   SCM_SETSTREAM (ptob, channel_data);
 
   return ptob;
