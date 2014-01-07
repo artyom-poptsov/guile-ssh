@@ -2,6 +2,8 @@
 
 	* src/channel-type.c (_ssh_channel_to_scm): Don't set
 	`SCM_BUFLINE' bit.
+	(ptob_fill_input, ptob_flush, ptob_close, print_channel): Remove
+	debug traces.
 
 2014-01-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 

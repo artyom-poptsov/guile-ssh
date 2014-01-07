@@ -40,9 +40,6 @@ static int
 ptob_fill_input (SCM port)
 #define FUNC_NAME "ptob_fill_input"
 {
-  /* DEBUG */
-  scm_puts ("fill_input: Called.\n", scm_current_output_port ());
-
   struct channel_data *cd = _scm_to_ssh_channel (port);
   scm_port *pt = SCM_PTAB_ENTRY (port);
   int res;
@@ -88,8 +85,6 @@ static void
 ptob_flush (SCM channel)
 #define FUNC_NAME "ptob_flush"
 {
-  scm_puts ("flush: Called.\n", scm_current_output_port ()); /* DEBUG */
-
   scm_port *pt = SCM_PTAB_ENTRY (channel);
   struct channel_data *cd = _scm_to_ssh_channel (channel);
   size_t wrsize = pt->write_pos - pt->write_buf;
@@ -124,9 +119,6 @@ ptob_input_waiting (SCM channel)
 static int
 ptob_close (SCM channel)
 {
-  /* DEBUG */
-  scm_puts ("close: Called.\n", scm_current_output_port ());
-
   scm_port *pt = SCM_PTAB_ENTRY (channel);
   struct channel_data *ch = _scm_to_ssh_channel (channel);
 
@@ -163,8 +155,6 @@ free_channel (SCM channel_smob)
 static int
 print_channel (SCM smob,  SCM port, scm_print_state *pstate)
 {
-  /* DEBUG */
-  scm_puts ("print: Called.\n", scm_current_output_port ());
   if (scm_is_false (scm_port_closed_p (smob)))
     {
       struct channel_data *ch = _scm_to_ssh_channel (smob);
