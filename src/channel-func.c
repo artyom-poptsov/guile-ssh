@@ -26,12 +26,12 @@
 #include "channel-type.h"
 
 
-/* Functions */
+/* Procedures */
 
-/* Open a new session.  Return value is undefined. */
 SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
             (SCM channel),
-            "Open a new session.  Return value is undefined.")
+            "Open a new session and mark the channel CHANNEL as opened port.\n"
+            "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_channel_open_session
 {
   struct channel_data *data = _scm_to_ssh_channel (channel);

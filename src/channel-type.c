@@ -81,6 +81,9 @@ ptob_write (SCM channel, const void *data, size_t sz)
 }
 #undef FUNC_NAME
 
+/* Complete the processing of buffered output data.  Currently this
+   callback makes no effect because the channel CHANNEL uses
+   unbuffered output. */
 static void
 ptob_flush (SCM channel)
 #define FUNC_NAME "ptob_flush"
@@ -103,6 +106,8 @@ ptob_flush (SCM channel)
 }
 #undef FUNC_NAME
 
+/* Poll the underlying SSH channel for data, return amount of data
+   available for reading.  Throw `guile-ssh-error' on error. */
 static int
 ptob_input_waiting (SCM channel)
 #define FUNC_NAME "ptob_input_waiting"
@@ -116,6 +121,7 @@ ptob_input_waiting (SCM channel)
 }
 #undef FUNC_NAME
 
+/* Close underlying SSH channel and free all allocated resources. */
 static int
 ptob_close (SCM channel)
 {
@@ -152,12 +158,13 @@ free_channel (SCM channel_smob)
   return 0;
 }
 
+/* Print the CHANNEL object to port PORT. */
 static int
-print_channel (SCM smob,  SCM port, scm_print_state *pstate)
+print_channel (SCM channel, SCM port, scm_print_state *pstate)
 {
-  if (scm_is_false (scm_port_closed_p (smob)))
+  if (scm_is_false (scm_port_closed_p (channel)))
     {
-      struct channel_data *ch = _scm_to_ssh_channel (smob);
+      struct channel_data *ch = _scm_to_ssh_channel (channel);
       int is_open = ssh_channel_is_open (ch->ssh_channel);
       scm_puts ("#<", port);
       scm_puts (is_open ? "open" : "closed", port);

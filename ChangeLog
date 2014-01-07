@@ -1,5 +1,10 @@
 2014-01-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-func.c (guile_ssh_channel_open_session): Update
+	the documentation string.
+	* src/channel-type.c: Update comments.
+	* src/channel.scm: Likewise.
+
 	* src/channel-type.c (_ssh_channel_to_scm): Don't set
 	`SCM_BUFLINE' bit.
 	(ptob_fill_input, ptob_flush, ptob_close, print_channel): Remove
