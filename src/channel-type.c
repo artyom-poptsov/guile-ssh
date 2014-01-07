@@ -48,10 +48,10 @@ ptob_fill_input (SCM port)
                           pt->read_buf, pt->read_buf_size,
                           cd->is_stderr);
 
-  if (res < 0)
+  if (res == SSH_ERROR)
     guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", port);
 
-  if (! res)
+  if ((! res) || (res == SSH_AGAIN))
     return EOF;
 
   pt->read_pos = pt->read_buf;
