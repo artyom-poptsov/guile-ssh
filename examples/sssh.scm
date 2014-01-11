@@ -76,6 +76,14 @@
   (if debug?
       (format #t fmt args)))
 
+(define (read-all port)
+  "Read all lines from the PORT."
+  (let r ((res "")
+          (str (read-line port 'concat)))
+    (if (not (eof-object? str))
+        (r (string-append res str) (read-line port 'concat))
+        res)))
+
 ;;; Printing of various information
 
 
@@ -196,12 +204,14 @@
           (channel-request-exec channel cmd)
 
           (print-debug "9. channel-poll (ssh_channel_poll)\n")
-          (let poll ((count #f))
-            (if (or (not count) (zero? count))
-                (poll (channel-poll channel #f))
+          (let poll ((ready? #f))
+            (if ready?
                 (begin
                   (print-debug "10. channel-read (ssh_channel_read)\n")
-                  (display (read-line channel))
-                  (newline)))))))))
+                  (display (read-all channel))
+                  (newline))
+                (poll (char-ready? channel))))
+          (close channel)
+          (disconnect! session))))))
 
 ;;; sssh.scm ends here

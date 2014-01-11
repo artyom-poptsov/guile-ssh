@@ -1,3 +1,15 @@
+2014-01-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/ssshd.scm (handle-channel): Use `read-all' instead of
+	`channel-read'.  Update.
+	(handle-request-exec): Use `display' instead of `channel-write'.
+	(shell-loop): Use `read-all' instead of `channel-read' and
+	`channel-poll'.   Use `display' instead of `channel-write'.
+	(main): Close a channel before disconnecting the session.
+	* examples/sssh.scm (read-all): New procedure.
+	(main): Use `read-all' instead of `read-line'.  Use `char-ready?'
+	instead of `channel-poll'.
+
 2014-01-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* TODO: Update.
