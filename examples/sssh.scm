@@ -30,6 +30,7 @@
 ;;; Code:
 
 (use-modules (ice-9 getopt-long)
+             (ice-9 rdelim)
              (ssh channel)
              (ssh session)
              (ssh auth)
@@ -162,7 +163,13 @@
 
         (format-debug "   MD5 hash: ~a~%" (get-public-key-hash session))
 
-        (let ((private-key (private-key-from-file session identity-file)))
+        (display
+         (string-append
+          "Enter a passphrase for the private key\n"
+          "(left it blank if the key does not protected with passphrase):\n"))
+        (display "> ")
+        (let* ((passphrase (read-line))
+               (private-key (private-key-from-file session identity-file passphrase)))
 
           (if (not private-key)
               (handle-error session))
@@ -175,8 +182,10 @@
                 (handle-error session))
 
             (print-debug "5. userauth-pubkey! (ssh_userauth_pubkey)\n")
-            (if (eqv? (userauth-pubkey! session #f public-key private-key) 'error)
-                (handle-error session))))
+            (let ((res (userauth-pubkey! session #f public-key private-key)))
+              (display res)
+            (if (eqv? res 'error)
+                (handle-error session)))))
 
         (print-debug "6. make-channel (ssh_channel_new)\n")
         (let ((channel (make-channel session)))
@@ -187,7 +196,11 @@
               (handle-error session))
 
           (print-debug "7. channel-open-session (ssh_channel_open_session)\n")
-          (channel-open-session channel)
+          (catch #t
+            (lambda () (channel-open-session channel))
+            (lambda (key . args)
+              (display args)
+              (newline)))
 
           (format-debug "   channel: ~a~%" channel)
 

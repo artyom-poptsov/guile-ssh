@@ -1,3 +1,9 @@
+2014-01-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/sssh.scm (main): Ask the user for a passphrase.
+	* src/key-func.c (guile_ssh_private_key_from_file): Change
+	argument list: add optional argument `passphrase'.
+
 2013-11-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* configure.ac, NEWS: Bump version to 0.4.0
