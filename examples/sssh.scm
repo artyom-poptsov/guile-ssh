@@ -4,7 +4,7 @@
 
 ;;; sssh.scm -- Scheme Secure Shell.
 
-;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -148,6 +148,7 @@
       (let ((session (make-session #:user user
                                    #:host host
                                    #:port port
+                                   #:identity identity-file
                                    #:log-verbosity (if ssh-debug-needed? 4 0))))
 
         (print-debug "3. connect! (ssh_connect_x)\n")
@@ -163,29 +164,10 @@
 
         (format-debug "   MD5 hash: ~a~%" (get-public-key-hash session))
 
-        (display
-         (string-append
-          "Enter a passphrase for the private key\n"
-          "(left it blank if the key does not protected with passphrase):\n"))
-        (display "> ")
-        (let* ((passphrase (read-line))
-               (private-key (private-key-from-file session identity-file passphrase)))
-
-          (if (not private-key)
-              (handle-error session))
-
-          (let ((public-key (private-key->public-key private-key)))
-
-            (format-debug "   Key: ~a~%" (public-key->string public-key))
-
-            (if (not public-key)
-                (handle-error session))
-
-            (print-debug "5. userauth-pubkey! (ssh_userauth_pubkey)\n")
-            (let ((res (userauth-pubkey! session #f public-key private-key)))
-              (display res)
-            (if (eqv? res 'error)
-                (handle-error session)))))
+        (print-debug "5. userauth-autopubkey!\n")
+        (let ((res (userauth-autopubkey! session)))
+          (if (eqv? res 'error)
+              (handle-error session)))
 
         (print-debug "6. make-channel (ssh_channel_new)\n")
         (let ((channel (make-channel session)))
