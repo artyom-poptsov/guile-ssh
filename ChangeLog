@@ -1,5 +1,7 @@
 2014-01-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/auth.c, src/auth.scm: Update copyright dates.
+
 	* examples/sssh.scm (main): Use `userauth-autopubkey!' for
 	authentication.
 
