@@ -1,3 +1,8 @@
+2014-01-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/auth.c (guile_ssh_userauth_autopubkey_x): New procedure.
+	* src/auth.scm (userauth-autopubkey!): Export.
+
 2014-01-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* examples/sssh.scm (main): Ask the user for a passphrase.
