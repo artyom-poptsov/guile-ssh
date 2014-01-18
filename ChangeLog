@@ -1,5 +1,9 @@
 2014-01-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/key-func.c: Update copyright dates.
+	(guile_ssh_private_key_from_file): Improve
+	assertion of passphrase.  Improve docstring and comments.
+
 	* src/auth.c, src/auth.scm: Update copyright dates.
 
 	* examples/sssh.scm (main): Use `userauth-autopubkey!' for

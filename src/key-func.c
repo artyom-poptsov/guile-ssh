@@ -1,6 +1,6 @@
 /* key-func.c -- SSH key manipulation functions.
  *
- * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
  *
@@ -74,23 +74,30 @@ SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
 /* Read private key from a file FILENAME */
 SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 1, 0,
             (SCM session, SCM filename, SCM passphrase),
-            "Read private key from a file FILENAME")
+            "Read private key from a file FILENAME.  The user can provide "
+            "a PASSPHRASE if she wants to use an encrypted private key for "
+            "authentication.  If passphrase is not provided it's assumed that "
+            "either the key does not protected or the user should be asked for "
+            "the passphrase interactively."
+            "\n"
+            "Return a new SSH key of #f on error.")
 #define FUNC_NAME s_guile_ssh_private_key_from_file
 {
   SCM key_smob;
   struct session_data *session_data = _scm_to_ssh_session (session);
   struct key_data *key_data;
   char *c_filename;
-  char *c_passphrase = NULL;    /* NULL means that the key is unencrypted. */
+  /* NULL means that either the public key is unprotected or the user
+     should be asked for the passphrase. */
+  char *c_passphrase = NULL;
 
   scm_dynwind_begin (0);
 
   SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT (scm_is_string (passphrase) || SCM_UNBNDP (passphrase),
-              passphrase, SCM_ARG3, FUNC_NAME);
 
   if (! SCM_UNBNDP (passphrase))
     {
+      SCM_ASSERT (scm_is_string (passphrase), passphrase, SCM_ARG3, FUNC_NAME);
       c_passphrase = scm_to_locale_string (passphrase);
       scm_dynwind_free (c_passphrase);
     }
