@@ -120,7 +120,7 @@ SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
             "Return a new SSH channel.")
 {
   struct message_data *msg_data = _scm_to_ssh_message (msg);
-  ssh_channel *ch;
+  ssh_channel ch;
 
   ch = ssh_message_channel_request_open_reply_accept (msg_data->message);
   if (! ch)
