@@ -1,5 +1,9 @@
 2014-01-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/echo/server.scm (read-all): Fix a bug: return the first
+	read line if there is no more data to read.
+	* examples/echo/client.scm (read-all): Likewise.
+
 	* examples/echo/server.scm (print-help): New procedure.
 	(main): Handle command-line options.
 

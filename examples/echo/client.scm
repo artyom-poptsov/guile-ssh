@@ -97,8 +97,8 @@ errors."
 
 (define (read-all port)
   "Read all lines from the PORT."
-  (let r ((res "")
-          (str (read-line port 'concat)))
+  (let r ((res (read-line port 'concat))
+          (str ""))
     (if (not (eof-object? str))
         (r (string-append res str) (read-line port 'concat))
         res)))

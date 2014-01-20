@@ -114,8 +114,8 @@
 
 (define (read-all port)
   "Read all lines from the PORT."
-  (let r ((res "")
-          (str (read-line port 'concat)))
+  (let r ((res (read-line port 'concat))
+          (str ""))
     (if (and (not (eof-object? str)) (char-ready? port))
         (r (string-append res str) (read-line port 'concat))
         res)))
