@@ -1,5 +1,9 @@
 2014-01-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/channel-type.c: Set default write buffer size to 1 byte.
+	(ptob_close): Get size of the buffers from ptab entry.
+	(_ssh_channel_to_scm): Likewise.
+
 	* examples/echo/client.scm: Improve.
 
 	* examples/echo/server.scm (print-help): Update.

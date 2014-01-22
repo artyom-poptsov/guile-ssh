@@ -28,7 +28,10 @@
 
 scm_t_bits channel_tag;         /* Smob tag. */
 
-enum { PORT_BUFSZ = 256 };      /* Size of the port's buffer */
+enum {
+  DEFAULT_PORT_R_BUFSZ = 256,      /* Default read buffer size */
+  DEFAULT_PORT_W_BUFSZ = 1         /* Default write buffer size */
+};
 
 
 /* Ptob specific procedures */
@@ -145,8 +148,8 @@ ptob_close (SCM channel)
     }
 
   scm_gc_free (ch, sizeof (struct channel_data), "channel");
-  scm_gc_free (pt->write_buf, PORT_BUFSZ, "port write buffer");
-  scm_gc_free (pt->read_buf,  PORT_BUFSZ, "port read buffer");
+  scm_gc_free (pt->write_buf, pt->write_buf_size, "port write buffer");
+  scm_gc_free (pt->read_buf,  pt->read_buf_size, "port read buffer");
   SCM_SETSTREAM (channel, NULL);
 
   return 0;
@@ -205,14 +208,14 @@ _ssh_channel_to_scm (ssh_channel ch)
   pt->rw_random = 0;
 
   /* Output init */
-  pt->write_buf = scm_gc_malloc (PORT_BUFSZ, "port write buffer");
-  pt->write_buf_size = PORT_BUFSZ;
+  pt->write_buf_size = DEFAULT_PORT_W_BUFSZ;
+  pt->write_buf = scm_gc_malloc (pt->write_buf_size, "port write buffer");
   pt->write_pos = pt->write_buf;
   pt->write_end = pt->write_buf;
 
   /* Input init */
-  pt->read_buf = scm_gc_malloc (PORT_BUFSZ, "port read buffer");
-  pt->read_buf_size = PORT_BUFSZ;
+  pt->read_buf_size = DEFAULT_PORT_R_BUFSZ;
+  pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf;
 
