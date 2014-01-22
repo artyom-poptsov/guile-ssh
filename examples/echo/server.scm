@@ -42,7 +42,7 @@
              (ssh key)
              (ssh auth))                ; userauth-*
 
-(define *default-bindport*      12345)
+(define *default-bindport*      "12345")
 (define *default-log-verbosity* 0)
 (define *default-rsakey*        (format #f "~a/.ssh/id_rsa" (getenv "HOME")))
 (define *default-dsakey*        (format #f "~a/.ssh/id_dsa" (getenv "HOME")))
@@ -128,6 +128,7 @@ Usage: server.scm [ options ]
 Options:
   --rsakey=<key>, -r <key>      Set host RSA key.
   --dsakey=<key>, -d <key>      Set host DSA key.
+  --port=<port>, -p <port>      Set bind port of the server.
   --help, -h                    Print this message and exit.
 "))
 
@@ -135,6 +136,7 @@ Options:
 (define *option-spec*
   '((dsakey (single-char #\d) (value #t))
     (rsakey (single-char #\r) (value #t))
+    (port   (single-char #\p) (value #t))
     (help   (single-char #\h) (value #f))))
 
 (define (main args)
@@ -142,6 +144,7 @@ Options:
   (let* ((options     (getopt-long args *option-spec*))
          (dsakey      (option-ref options 'dsakey *default-dsakey*))
          (rsakey      (option-ref options 'rsakey *default-rsakey*))
+         (port        (option-ref options 'port   *default-bindport*))
          (help-wanted (option-ref options 'help   #f)))
 
     (if help-wanted
@@ -149,7 +152,7 @@ Options:
           (print-help)
           (exit)))
 
-    (let ((server  (make-server #:bindport      *default-bindport*
+    (let ((server  (make-server #:bindport      (string->number port)
                                 #:rsakey        rsakey
                                 #:dsakey        dsakey
                                 #:log-verbosity *default-log-verbosity*
@@ -157,10 +160,12 @@ Options:
           (channel #f))
 
       (format #t (string-append
-                  "Using private key ~a~%"
+                  "Using RSA key ~a~%"
+                  "Using DSA key ~a~%"
                   "Listening on port ~a~%")
-              *default-rsakey*
-              *default-bindport*)
+              rsakey
+              dsakey
+              port)
 
       ;; Start listen to incoming connections.
       (server-listen server)
