@@ -1,5 +1,7 @@
 2014-01-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/echo/client.scm: Improve.
+
 	* examples/echo/server.scm (print-help): Update.
 	(main): Add `--port' option.  Print RSA/DSA key pathes and current
 	bind port on the start.

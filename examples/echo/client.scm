@@ -45,9 +45,10 @@
              (ssh auth)
              (ssh key))
 
-(define *program-name* "echo-client")
-(define *default-identity-file*
-  (string-append (getenv "HOME") "/.ssh/id_rsa"))
+(define *program-name* "client.scm")
+(define *default-identity-file* (format #f "~a/.ssh/id_rsa" (getenv "HOME")))
+(define *default-user* (getenv "USER"))
+(define *default-port* "22")
 
 
 ;; Command line options
@@ -60,19 +61,19 @@
 
 (define (print-help)
   "Print information about program usage."
-  (display
-   (string-append
-    *program-name* " -- Echo client example.\n"
-    "Copyright (C) Artyom Poptsov <poptsov.artyom@gmail.com>\n"
-    "Licensed under GNU GPLv3+\n"
-    "\n"
-    "Usage: " *program-name* " [ -upi ] <host> <string>\n"
-    "\n"
-    "Options:\n"
-    "  --user=<user>, -u <user>                User name\n"
-    "  --port=<port-number>, -p <port-number>  Port number\n"
-    "  --identity-file=<file>, -i <file>       Path to private key\n")))
+  (display (string-append "\
+" *program-name* " -- Echo client example.
 
+Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
+Licensed under GNU GPLv3+
+
+Usage: " *program-name* " [ options ] <host> <string>
+
+Options:
+  --user=<user>, -u <user>                User name
+  --port=<port-number>, -p <port-number>  Port number
+  --identity-file=<file>, -i <file>       Path to private key
+")))
 
 (define (handle-error session)
   "Handle a SSH error."
@@ -111,13 +112,13 @@ errors."
         (print-help)
         (exit 0)))
 
-  (let* ((options           (getopt-long args *option-spec*))
-         (user              (option-ref options 'user (getenv "USER")))
-         (port              (string->number (option-ref options 'port "22")))
-         (identity-file     (option-ref options 'identity-file
-                                        *default-identity-file*))
-         (help-needed?      (option-ref options 'help #f))
-         (args              (option-ref options '() #f)))
+  (let* ((options       (getopt-long args *option-spec*))
+         (user          (option-ref options 'user *default-user*))
+         (port          (option-ref options 'port *default-port*))
+         (identity-file (option-ref options 'identity-file
+                                    *default-identity-file*))
+         (help-needed?  (option-ref options 'help #f))
+         (args          (option-ref options '() #f)))
 
     (if help-needed?
         (begin
@@ -133,7 +134,7 @@ errors."
            (str  (cadr args))
            (session (make-session #:user user
                                   #:host host
-                                  #:port port
+                                  #:port (string->number port)
                                   #:log-verbosity 0))) ;Be quiet
 
       (connect! session)
