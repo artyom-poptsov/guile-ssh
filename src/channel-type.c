@@ -33,15 +33,14 @@ enum { PORT_BUFSZ = 256 };      /* Size of the port's buffer */
 
 /* Ptob specific procedures */
 
-/* Read data from the channel. 
-
-   Return EOF if no data is available or an error occured */
+/* Read data from the channel.  Return EOF if no data is available or
+   throw `guile-ssh-error' if an error occured. */
 static int
-ptob_fill_input (SCM port)
+ptob_fill_input (SCM channel)
 #define FUNC_NAME "ptob_fill_input"
 {
-  struct channel_data *cd = _scm_to_ssh_channel (port);
-  scm_port *pt = SCM_PTAB_ENTRY (port);
+  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  scm_port *pt = SCM_PTAB_ENTRY (channel);
   int res;
 
   /* Update state of the underlying channel and check whether we have
@@ -57,7 +56,7 @@ ptob_fill_input (SCM port)
                           cd->is_stderr);
 
   if (res == SSH_ERROR)
-    guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", port);
+    guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", channel);
 
   if ((! res) || (res == SSH_AGAIN))
     return EOF;

@@ -1,3 +1,8 @@
+2014-01-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-type.c (ptob_fill_input): Rename the argument.
+	Update comments.
+
 2014-01-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* examples/echo/server.scm (read-all): Fix a bug: return the first
