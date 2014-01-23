@@ -114,32 +114,25 @@ SCM_DEFINE (guile_ssh_userauth_pubkey, "userauth-pubkey!", 4, 0, 0,
 #undef FUNC_NAME
 
 SCM_DEFINE (guile_ssh_userauth_autopubkey_x,
-            "userauth-autopubkey!", 1, 1, 0,
-            (SCM session, SCM passphrase),
-            "Try to automatically authenticate with a public key or \"none\" "
-            "method.  The user can provide a PASSPHRASE if she wants to use "
-            "an encrypted private key for authentication.  If passphrase is "
-            "not provided it's assumed that either the key does not protected "
-            "or the user shoud be asked for the passphrase interactively.\n"
+            "userauth-autopubkey!", 1, 0, 0,
+            (SCM session),
+            "Try to automatically authenticate with \"none\" method first and "
+            "then with public keys.  The procedure will try to get a "
+            "cached private key from a SSH agent and if it fails it will try "
+            "to read a key from a file.  If the key is encrypted the user "
+            "will be asked for a passphrase."
             "\n"
             "Return one of the following symbols: error, denied, partial, "
             "success.")
 #define FUNC_NAME s_guile_ssh_userauth_autopubkey_x
 {
   struct session_data *sd = _scm_to_ssh_session (session);
+
   /* NULL means that either the public key is unprotected or the user
      should be asked for the passphrase. */
-  char *c_passphrase = NULL;
+  char *passphrase = NULL;
 
-  if (! SCM_UNBNDP (passphrase))
-    {
-      SCM_ASSERT (scm_is_string (passphrase), passphrase, SCM_ARG2, FUNC_NAME);
-      c_passphrase = scm_to_locale_string (passphrase);
-    }
-
-  int res = ssh_userauth_autopubkey (sd->ssh_session, c_passphrase);
-  free (c_passphrase);
-
+  int res = ssh_userauth_autopubkey (sd->ssh_session, passphrase);
   return ssh_auth_result_to_symbol (res);
 }
 #undef FUNC_NAME

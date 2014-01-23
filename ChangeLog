@@ -1,3 +1,21 @@
+2014-01-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/key-func.c (guile_ssh_private_key_from_file): Rollback to
+	the previous version of the procedure (which doesn't accept a
+	passphrase as an argument) due to security considerations.  The
+	problem is that the passphrase provided by the user will float
+	around in (possibly swapped) memory unless it will be collected by
+	the GC.
+
+	Thanks to Ludovic Courtès <ludo@gnu.org> for pointing this out.
+
+	Instead the user must use either a SSH agent (with
+	`userauth-autopubkey!' procedure) or privide the passphrase
+	interactively (the user will be asked for the passphrase by the
+	underlying libssh procedure if the provided key is encrypted).
+
+	* src/auth.c (guile_ssh_userauth_autopubkey_x): Likewise.
+
 2014-01-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/key-func.c: Update copyright dates.

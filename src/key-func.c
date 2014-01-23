@@ -71,14 +71,11 @@ SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
 }
 #undef FUNC_NAME
 
-/* Read private key from a file FILENAME */
-SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 1, 0,
-            (SCM session, SCM filename, SCM passphrase),
-            "Read private key from a file FILENAME.  The user can provide "
-            "a PASSPHRASE if she wants to use an encrypted private key for "
-            "authentication.  If passphrase is not provided it's assumed that "
-            "either the key does not protected or the user should be asked for "
-            "the passphrase interactively."
+SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 0, 0,
+            (SCM session, SCM filename),
+            "Read private key from a file FILENAME.  If the the key is "
+            "encrypted the user will be asked for passphrase to decrypt "
+            "the key.\n"
             "\n"
             "Return a new SSH key of #f on error.")
 #define FUNC_NAME s_guile_ssh_private_key_from_file
@@ -87,20 +84,13 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 1, 0,
   struct session_data *session_data = _scm_to_ssh_session (session);
   struct key_data *key_data;
   char *c_filename;
-  /* NULL means that either the public key is unprotected or the user
+  /* NULL means that either the public key is unecrypted or the user
      should be asked for the passphrase. */
-  char *c_passphrase = NULL;
+  char *passphrase = NULL;
 
   scm_dynwind_begin (0);
 
   SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, FUNC_NAME);
-
-  if (! SCM_UNBNDP (passphrase))
-    {
-      SCM_ASSERT (scm_is_string (passphrase), passphrase, SCM_ARG3, FUNC_NAME);
-      c_passphrase = scm_to_locale_string (passphrase);
-      scm_dynwind_free (c_passphrase);
-    }
 
   key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                 "ssh key");
@@ -113,7 +103,7 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 1, 0,
                                                     c_filename,
                                                     0, /* Detect key type
                                                           automatically */
-                                                    c_passphrase);
+                                                    passphrase);
   key_data->is_to_be_freed = 0; /* Key will be freed along with its session. */
 
   if (key_data->ssh_private_key == NULL)
