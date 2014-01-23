@@ -1,6 +1,14 @@
 Guile-SSH News
 --------------
 
+* Unreleased
+
+** New `userauth-autopubkey!' procedure.
+   The procedure can be used for public key authentication with a SSH
+   agent.
+
+** examples/sssh.scm now uses `userauth-autopubkey!'.
+
 * Changes in version 0.4.0 (2013-11-26)
 
 ** Port the library to GNU Guile version 2.0

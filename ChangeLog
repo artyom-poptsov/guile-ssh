@@ -1,5 +1,7 @@
 2014-01-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Update.
+
 	* src/key-func.c (guile_ssh_private_key_from_file): Rollback to
 	the previous version of the procedure (which doesn't accept a
 	passphrase as an argument) due to security considerations.  The
