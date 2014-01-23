@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
  * 
@@ -19,6 +19,7 @@
 #ifndef __AUTH_H__
 #define __AUTH_H__
 
+extern SCM guile_ssh_userauth_autopubkey_x (SCM arg1);
 extern SCM guile_ssh_userauth_pubkey (SCM arg1, SCM arg2, SCM arg3, SCM arg4);
 extern SCM guile_ssh_userauth_password (SCM arg1, SCM arg2, SCM arg3);
 extern SCM guile_ssh_userauth_none (SCM arg1);
@@ -27,3 +28,5 @@ extern SCM guile_ssh_userauth_get_list (SCM arg1);
 extern void init_auth_func (void);
 
 #endif /* ifndef __AUTH_H__ */
+
+/* auth.h ends here */
