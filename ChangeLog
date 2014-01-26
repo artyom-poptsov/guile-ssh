@@ -1,5 +1,7 @@
 2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/.gitignore: New file.
+
 	Add some unit tests for Guile-SSH server API.
 	* tests/server.scm: New file.
 	* tests/dsakey, tests/rsakey: : New files.
