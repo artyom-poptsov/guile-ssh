@@ -1,5 +1,10 @@
 2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	Add some unit tests for Guile-SSH server API.
+	* tests/server.scm: New file.
+	* tests/dsakey, tests/rsakey: : New files.
+	* Makefile.am (SCM_TESTS): Add `server.scm' test.
+
 	* tests/session.scm ("session?"): New test case.
 	("comparsion of sessions"): Use one test case instead of two
 	separated TCs (equal?/not equal? test).
