@@ -60,17 +60,6 @@ SCM_DEFINE (guile_ssh_make_server, "%make-server", 0, 0, 0,
 }
 
 
-SCM_DEFINE (guile_ssh_server_close_x, "server-close!", 1, 0, 0,
-            (SCM server),
-            "Close the SSH server SERVER.\n"
-            "Return value is undefined.")
-{
-  struct server_data *server_data = _scm_to_ssh_server (server);
-  ssh_bind_free (server_data->bind);
-  return SCM_UNDEFINED;
-}
-
-
 /* Predicates. */
 
 SCM_DEFINE (guile_ssh_is_server_p, "server?", 1, 0, 0,
