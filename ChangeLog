@@ -3,6 +3,8 @@
 	* tests/session.scm ("session?"): New test case.
 	("comparsion of sessions"): Use one test case instead of two
 	separated TCs (equal?/not equal? test).
+	("session-set!, valid values"): Fix bug in TC: try all valid
+	values for each option, not only the first one.
 
 	* src/session-type.c (guile_ssh_is_session_p): New procedure.
 	* src/session-type.h (guile_ssh_is_session_p): Export.

@@ -53,7 +53,7 @@
      (lambda (opt)
        (for-each
         (lambda (val)
-          (session-set! session (car opt) (cadr opt)))
+          (session-set! session (car opt) val))
         (cdr opt)))
      options)
     res))
