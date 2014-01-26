@@ -26,7 +26,8 @@ SUBDIRS = src examples build-aux m4
 SCM_TESTS = \
 	tests/server.scm \
 	tests/session.scm \
-	tests/auth.scm
+	tests/auth.scm \
+	tests/client-server.scm
 
 TESTS = SCM_TESTS
 
