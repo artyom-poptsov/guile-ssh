@@ -39,6 +39,7 @@
 (define-module (ssh server)
   #:use-module (ice-9 optargs)
   #:export (server
+            server?
 	    %make-server
             make-server
             server-accept

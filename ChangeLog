@@ -1,5 +1,8 @@
 2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/server-type.c (guile_ssh_is_server_p): New procedure.
+	* src/server-type.h (guile_ssh_is_server_p): Export.
+	* src/server.scm (server?): Export.
 	* src/session-type.c (guile_ssh_is_session_p): New procedure.
 	* src/session-type.h (guile_ssh_is_session_p): Export.
 	* src/session.scm (session?): Export.

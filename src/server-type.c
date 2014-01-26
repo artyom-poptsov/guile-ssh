@@ -73,6 +73,13 @@ SCM_DEFINE (guile_ssh_server_close_x, "server-close!", 1, 0, 0,
 
 /* Predicates. */
 
+SCM_DEFINE (guile_ssh_is_server_p, "server?", 1, 0, 0,
+            (SCM x),
+            "Return #t if X is a SSH server, #f otherwise.")
+{
+  return scm_from_bool (SCM_SMOB_PREDICATE (server_tag, x));
+}
+
 SCM
 equalp_server (SCM x1, SCM x2)
 {

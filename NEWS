@@ -11,6 +11,8 @@ Guile-SSH News
 
 ** New `session?' procedure.
 
+** New `server?' procedure.
+
 * Changes in version 0.4.0 (2013-11-26)
 
 ** Port the library to GNU Guile version 2.0
