@@ -30,6 +30,7 @@ struct server_data {
   ssh_bind bind;
 };
 
+extern SCM guile_ssh_is_server_p (SCM arg1);
 extern void init_server_type (void);
 
 

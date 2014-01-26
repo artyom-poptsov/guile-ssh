@@ -13,6 +13,9 @@
 	("session-set!, valid values"): Fix bug in TC: try all valid
 	values for each option, not only the first one.
 
+	* src/server-type.c (guile_ssh_is_server_p): New procedure.
+	* src/server-type.h (guile_ssh_is_server_p): Export.
+	* src/server.scm (server?): Export.
 	* src/session-type.c (guile_ssh_is_session_p): New procedure.
 	* src/session-type.h (guile_ssh_is_session_p): Export.
 	* src/session.scm (session?): Export.
