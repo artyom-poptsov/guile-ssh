@@ -1,6 +1,6 @@
 ## Config file for GNU Automake. 
 ##
-## Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of libguile-ssh.
 ## 
@@ -21,3 +21,23 @@ ACLOCAL_AMFLAGS = -I m4 --install
 
 SUBDIRS = src examples build-aux m4
 
+# Tests.
+
+SCM_TESTS = \
+	tests/session.scm \
+	tests/auth.scm
+
+TESTS = SCM_TESTS
+
+TEST_EXTENSIONS = .scm
+
+AM_TESTS_ENVIRONMENT = abs_top_srcdir="$(abs_top_srcdir)"
+
+SCM_LOG_COMPILER = $(GUILE)
+AM_SCM_LOG_FLAGS = -L "$(abs_top_srcdir)" --no-auto-compile
+
+.PHONY: tests
+
+tests: $(SCM_TESTS:%.scm=%.log)
+
+CLEANFILES = tests/*.log

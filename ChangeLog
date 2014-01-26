@@ -1,3 +1,17 @@
+2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Add some unit tests.
+	* srfi/srfi-64.upstream.scm, srfi/srfi-64.scm: New files.
+	* tests/session.scm, tests/auth.scm: New files.
+	* Makefile.am (SCM_TESTS): New variable.
+	(TESTS): Likewise.
+	(TEST_EXTENSIONS): Likewise.
+	(AM_TESTS_ENVIRONMENT): Likewise.
+	(SCM_LOG_COMPILER): Likewise.
+	(AM_SCM_LOG_FLAGS): Likewise.
+	(tests): New target.
+	(CLEANFILES): Add .log-files produced by tests.
+
 2014-01-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/auth.h (guile_ssh_userauth_autopubkey_x): Export.
