@@ -1,5 +1,8 @@
 2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/server.scm ("server-set!, invalid values", "make-server")
+	("server-listen"): New TCs.
+
 	* tests/session.scm ("comparison of sessions"): Fix a typo in TC
 	name.
 

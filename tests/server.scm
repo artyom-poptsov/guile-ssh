@@ -66,6 +66,53 @@
      options)
     res))
 
+(test-assert "server-set!, invalid values"
+  (let ((server  (%make-server))
+        (options '((bindaddr       "I'm not a IP address" 42)
+                   (bindport       "I'm not a port" -42)
+                   (rsakey         "I'm not a RSA key" 42)
+                   (dsakey         "I'm not a DSA key" 42)
+                   (banner         12345)
+                   (log-verbosity  -1 5)
+                   (blocking-mode  42 "string")))
+        (log (test-runner-aux-value (test-runner-current)))
+        (res #t))
+
+    (for-each
+     (lambda (opt)
+       (for-each
+        (lambda (val)
+          (catch #t
+            (lambda ()
+              (server-set! server (car opt) val)
+              (format log "  opt: ~a, val: ~a -- passed mistakenly~%"
+                      (car opt) val)
+              (set! res #f))
+            (lambda (key . args)
+              #t)))
+        (cdr opt)))
+     options)
+    res))
+
+(test-assert "make-server"
+  (let ((topdir  (getenv "abs_top_srcdir")))
+    (make-server #:bindaddr      "127.0.0.1"
+                 #:bindport      123456
+                 #:rsakey        (format #f "~a/tests/rsakey" topdir)
+                 #:dsakey        (format #f "~a/tests/dsakey" topdir)
+                 #:banner        "banner"
+                 #:log-verbosity 1
+                 #:blocking-mode #f)))
+
+(test-assert "server-listen"
+  (let* ((topdir  (getenv "abs_top_srcdir"))
+         (server  (make-server #:bindaddr "127.0.0.1"
+                               #:bindport 123456
+                               #:rsakey   (format #f "~a/tests/rsakey" topdir)
+                               #:log-verbosity 1)))
+    (server-listen server)
+    #t))
+
 (test-end "server")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))
