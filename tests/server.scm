@@ -23,6 +23,18 @@
 (test-assert "%make-server"
   (%make-server))
 
+(test-assert "server?"
+  (let ((server (%make-server))
+        (x      "I'm not a server"))
+    (and (server? server)
+         (not (server? x)))))
+
+(test-assert "comparison of servers"
+  (let ((s1 (%make-server))
+        (s2 (%make-server)))
+    (and (equal? s1 s1)
+         (not (equal? s1 s2)))))
+
 (test-assert "server-set!, valid values"
   (let* ((server  (%make-server))
          (topdir  (getenv "abs_top_srcdir"))
