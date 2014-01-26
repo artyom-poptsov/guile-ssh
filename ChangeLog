@@ -1,5 +1,8 @@
 2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/session.scm ("comparison of sessions"): Fix a typo in TC
+	name.
+
 	* tests/server.scm ("server?", "comparison of servers"): New TCs.
 
 	* tests/.gitignore: New file.

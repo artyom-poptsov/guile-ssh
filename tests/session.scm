@@ -29,7 +29,7 @@
     (and (session? session)
          (not (session? x)))))
 
-(test-assert "comparsion of sessions"
+(test-assert "comparison of sessions"
   (let ((s1 (%make-session))
         (s2 (%make-session)))
     (and (equal? s1 s1)
