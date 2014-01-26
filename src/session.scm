@@ -44,6 +44,7 @@
 (define-module (ssh session)
   #:use-module (ice-9 optargs)
   #:export (session
+            session?
             %make-session
             make-session
 	    blocking-flush!

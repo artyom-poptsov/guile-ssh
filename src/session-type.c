@@ -73,6 +73,13 @@ SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
 
 
 /* Predicates */
+SCM_DEFINE (guile_ssh_is_session_p, "session?", 1, 0, 0,
+            (SCM x),
+            "Return #t if X is a SSH session, #f otherwise.")
+{
+  return scm_from_bool (SCM_SMOB_PREDICATE (session_tag, x));
+}
+
 SCM
 equalp_session (SCM x1, SCM x2)
 {
