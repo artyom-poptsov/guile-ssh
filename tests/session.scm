@@ -29,14 +29,11 @@
     (and (session? session)
          (not (session? x)))))
 
-(test-assert "equal?, check that a session equals to itself"
-  (let ((session (%make-session)))
-    (equal? session session)))
-
-(test-assert "equal?, check that two sessions aren't equal"
-  (let ((session1 (%make-session))
-        (session2 (%make-session)))
-    (not (equal? session1 session2))))
+(test-assert "comparsion of sessions"
+  (let ((s1 (%make-session))
+        (s2 (%make-session)))
+    (and (equal? s1 s1)
+         (not (equal? s1 s2)))))
 
 (test-assert "session-set!, valid values"
   (let ((session (%make-session))
