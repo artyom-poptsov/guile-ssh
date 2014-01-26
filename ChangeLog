@@ -19,6 +19,8 @@
 	values for each option, not only the first one.
 
 	* src/server-type.c (guile_ssh_is_server_p): New procedure.
+	(guile_ssh_server_close_x): Remove.
+
 	* src/server-type.h (guile_ssh_is_server_p): Export.
 	* src/server.scm (server?): Export.
 	* src/session-type.c (guile_ssh_is_session_p): New procedure.
