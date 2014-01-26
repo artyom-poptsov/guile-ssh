@@ -23,6 +23,12 @@
 (test-assert "%make-session"
   (%make-session))
 
+(test-assert "session?"
+  (let ((session (%make-session))
+        (x       "string"))
+    (and (session? session)
+         (not (session? x)))))
+
 (test-assert "equal?, check that a session equals to itself"
   (let ((session (%make-session)))
     (equal? session session)))

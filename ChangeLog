@@ -1,5 +1,7 @@
 2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/session.scm ("session?"): New test case.
+
 	* src/session-type.c (guile_ssh_is_session_p): New procedure.
 	* src/session-type.h (guile_ssh_is_session_p): Export.
 	* src/session.scm (session?): Export.
