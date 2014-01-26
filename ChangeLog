@@ -1,3 +1,10 @@
+2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/session-type.c (guile_ssh_is_session_p): New procedure.
+	* src/session-type.h (guile_ssh_is_session_p): Export.
+	* src/session.scm (session?): Export.
+	* NEWS: Update.
+
 2014-01-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/auth.h (guile_ssh_userauth_autopubkey_x): Export.

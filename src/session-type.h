@@ -38,6 +38,7 @@ struct session_data {
 
 
 extern SCM guile_ssh_make_session (void);
+extern SCM guile_ssh_is_session_p (SCM arg1);
 
 extern void init_session_type (void);
 
