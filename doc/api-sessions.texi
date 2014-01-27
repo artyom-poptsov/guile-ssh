@@ -22,9 +22,23 @@ Create a new Guile-SSH session.
 Create a new Guile-SSH session and set its options.  Options can be
 passed as keywords.
 
+Return a new Guile-SSH session.
+
 This procedure is more convenient than primitive @code{%make-session},
 but on other hand it should be a bit slower because of additional
 checks.
+
+Example:
+
+@lisp
+(let ((s (make-session #:user          "alice"
+                       #:host          "example.com"
+                       #:port          12345
+                       #:identity      "/home/alice/.ssh/id_rsa"
+                       #:log-verbosity 'nolog)))
+  ...)
+@end lisp
+
 @end deffn
 
 @deffn {Scheme Procedure} blocking-flush! session timeout
@@ -166,6 +180,7 @@ Set the compression level to use for zlib functions.  The @var{value}
 is expected to be a number from 1 to 9, 9 being the most efficient but
 slower.
 @end table
+
 
 @end deffn
 

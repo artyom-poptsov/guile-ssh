@@ -15,7 +15,7 @@ otherwise.
 @end deffn
 
 @deffn {Scheme Procedure} make-channel session
-Allocate a new SSH channel.
+Allocate a new Guile-SSH channel.
 @end deffn
 
 @deffn {Scheme Procedure} channel-open-session channel
@@ -49,7 +49,8 @@ Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} channel-eof? channel
-Return @code{#t} if remote has sent EOF, @code{#f} otherwise.
+Return @code{#t} if remote has sent @acronym{EOF}, @code{#f}
+otherwise.
 @end deffn
 
 @c Local Variables:

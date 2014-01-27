@@ -43,7 +43,7 @@ Documentation License.''
 @headings double
 
 @ifnottex
-@node Top, API Reference, (dir), (dir)
+@node Top, Preface, (dir), (dir)
 @top The Guile-SSH Reference Manual
 
 @insertcopying
@@ -51,6 +51,8 @@ Documentation License.''
 @end ifnottex
 
 @menu
+* Preface::
+* Introduction::
 * API Reference::
 * Examples::
 
@@ -63,6 +65,25 @@ Indices
 * Type Index::
 
 @end menu
+
+@contents
+
+@node Preface
+@chapter Preface
+
+This manual describes Guile-SSH library which is aimed to provide
+access to @acronym{SSH} protocol for GNU Guile programs.
+
+The manual is partly based on libssh documentation.
+
+@node Introduction
+@chapter Introduction
+
+Guile-SSH is a library that provides access to the @acronym{SSH}
+protocol for programs written in
+@url{https://www.gnu.org/software/guile/, GNU Guile} interpreter.  It
+is a wrapper to the underlying @url{http://www.libssh.org/, libssh}
+library.
 
 @node API Reference
 @chapter API Reference

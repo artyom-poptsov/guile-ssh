@@ -15,7 +15,9 @@ about current versions.
 Get version of the libssh.  Returns libssh version as a string in the
 follwing format:
 
-@code{<version> ::= <major> "." <minor> "." <micro>}
+@example
+<version> ::= <major> "." <minor> "." <micro>
+@end example
 
 For example, @samp{0.5.2}.
 @end deffn

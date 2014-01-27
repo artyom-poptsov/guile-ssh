@@ -15,6 +15,20 @@ otherwise.
 Make a new Guile-SSH server.
 @end deffn
 
+@deffn {Scheme Procedure} make-server [keywords]
+Make a new Guile-SSH server with the specified configuration specified
+by keywords.  Return a new Guile-SSH server.
+
+Example:
+
+@lisp
+(let ((s (make-server #:bindport      12345
+                      #:rsakey        "/home/bob/.ssh/id_rsa"
+                      #:log-verbosity 'nolog)))
+  ...)
+@end lisp
+@end deffn
+
 @deffn {Scheme Procedure} server-set! server option value
 Set a @var{option} to @var{value} for Guile-SSH @var{server}.  Throw
 @code{guile-ssh-error} on error.  Return value is undefined.
