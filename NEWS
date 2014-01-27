@@ -3,16 +3,32 @@ Guile-SSH News
 
 * Unreleased
 
+** Implement Guile-SSH channels as GNU Guile ports.
+   Now channels can be used with regular procedures such as `display',
+   `write' and `read-line'.
+
 ** New `userauth-autopubkey!' procedure.
    The procedure can be used for public key authentication with a SSH
    agent.
 
 ** examples/sssh.scm now uses `userauth-autopubkey!'.
 
-** New `session?' procedure.
+** New procedures.
+   `channel-set-stream!', `channel-get-stream', `session?', `server?'.
 
-** New `server?' procedure.
+** Remove procedures.
+   These procedures are removed due to changes in Guile-SSH channel
+   API: `close-channel!', `channel-poll' `free-channel!',
+   `channel-read`, `channel-write'.
 
+** Update sssh/ssshd example.
+   `examples/sssh.scm' and `examples/ssshd.scm' are updated to use the
+   new Guile-SSH channel API.
+
+** Add echo server/client example.
+   See `examples/echo' directory.
+
+
 * Changes in version 0.4.0 (2013-11-26)
 
 ** Port the library to GNU Guile version 2.0
