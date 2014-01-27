@@ -1,0 +1,73 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Auth
+@section Auth
+
+@cindex authentication
+
+@deffn {Scheme Procedure} userauth-pubkey! session username publickey privatekey
+Try to authenticate with a public key @var{publickey}.
+
+@var{username} can be either string or @code{#f}, If @var{username} is
+@code{#f} it's assumed that the @var{username} was set though
+@code{option-set!}  call.
+@end deffn
+
+@deffn {Scheme Procedure} userauth-autopubkey! session
+Try to automatically authenticate with @code{none} method first and
+then with public keys.  The procedure will try to get a cached private
+key from a SSH agent and if it fails it will try to read a key from a
+file.  If the key is encrypted the user will be asked for a
+passphrase.
+
+Return one of the following symbols:
+
+@table @samp
+@item success
+@item partial
+@item denied
+@item error
+@end table
+
+@end deffn
+
+@deffn {Scheme Procedure} userauth-password! session username password
+Try to authenticate by password.
+@end deffn
+
+@deffn {Scheme Procedure} userauth-none! session
+Try to authenticate through the @code{none} method.
+
+Return one of the following symbols: 
+
+@table @samp
+@item success
+@item partial
+@item again
+@item denied
+@item error
+@end table
+
+@end deffn
+
+@deffn {Scheme Procedure} userauth-get-list session
+Get available authentication methods for a @var{session}.  Return list
+of available methods.
+
+Possible methods:
+
+@table @samp
+@item password
+@item public-key
+@item host-based
+@item interactive
+@end table
+
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:

@@ -1,0 +1,57 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Channels
+@section Channels
+
+@cindex channels
+@tindex channel
+
+@deffn {Scheme Procedure} channel? x
+Return @code{#t} if @var{x} is a Guile-SSH channel, @code{#f}
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} make-channel session
+Allocate a new SSH channel.
+@end deffn
+
+@deffn {Scheme Procedure} channel-open-session channel
+Open a new session.  Throw @code{guile-ssh-error} on error.  Return
+value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} channel-request-exec channel command
+Run a shell @var{command} without an interactive shell.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} channel-request-pty channel
+Request a @acronym{PTY} (pseudo terminal).  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} channel-request-shell channel
+Request a shell.  Throw @code{guile-ssh-error} on error.  Return value
+is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} channel-request-env channel variable value
+Set an environment @var{variable} to @var{value}.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} channel-set-pty-size! channel columns rows
+Change size of the @acronym{PTY} to @var{columns} and @var{rows}.
+Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} channel-eof? channel
+Return @code{#t} if remote has sent EOF, @code{#f} otherwise.
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:

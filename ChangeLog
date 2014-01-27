@@ -1,3 +1,14 @@
+2014-01-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Add documentation in Texinfo format.
+	* configure.ac: Add `doc/Makefile' to `AC_CONFIG_FILES'.
+	* Makefile.am (SUBDIRS): Add `doc' directory.
+	* doc/Makefile.am: New file.
+	* doc/api-auth.texi, doc/api-channels.texi, doc/api-keys.texi,
+	doc/api-messages.texi, doc/api-servers.texi,
+	doc/api-sessions.texi, doc/api-version.texi, doc/fdl.texi,
+	doc/guile-ssh.texi, doc/indices.texi, doc/version.texi: New files.
+
 2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/server-type.c (guile_ssh_is_server_p): New procedure.

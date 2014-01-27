@@ -1,0 +1,118 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Messages
+@section Messages
+
+@cindex messages
+@tindex message
+
+@menu
+* Message Handling::
+* Parsing of Requests::
+@end menu
+
+@node Message Handling
+@subsection Messages Handling
+
+@deffn {Scheme Procedure} message? x
+Return @code{#t} if @var{x} a Guile-SSH message, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} message-reply-default message
+Reply with @var{SSH_MSG_UNIMPLEMENTED}.  Throw @code{guile-ssh-error}
+on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} message-service-reply-success message
+Reply with ``success'' status on the service-request @var{message}.
+Throw @code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} message-auth-reply-success message partial?
+Reply with ``success'' on the auth-request @var{message}.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} message-auth-reply-public-key-ok message
+Reply ``OK'' on the public key auth-request @var{message}.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} message-channel-request-reply-success message
+TODO: Add description.
+Throw @code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} message-channel-request-open-reply-accept message
+Accept open-channel request.  Return a new Guile-SSH channel, or
+@code{#f} on error.
+@end deffn
+
+@deffn {Scheme Procedure} message-get-type message
+Get type of the @var{message}.
+@end deffn
+
+@deffn {Scheme Procedure} message-get-req message
+Get a request object from the @var{message}.  Returns a new request
+object.  Throw @code{guile-ssh-error} on error.
+@end deffn
+
+@deffn {Scheme Procedure} message-auth-set-methods! message methods-list
+Set authentication methods to @var{methods-list}.  Possible methods
+are: @code{password}, @code{public-key}, @code{interactive},
+@code{host-based}.  Throw @code{guile-ssh-error} on error.  Return
+value is undefined.
+@end deffn
+
+@node Parsing of Requests
+@subsection Parsing of Requests
+
+@cindex request
+@tindex request
+
+@deffn {Scheme Procedure} service-req:service req
+TODO: Add description.
+@end deffn
+
+@deffn {Scheme Procedure} channel-open-req:orig req
+@deffnx {Scheme Procedure} channel-open-req:orig-port req
+@deffnx {Scheme Procedure} channel-open-req:dest req
+@deffnx {Scheme Procedure} channel-open-req:dest-port
+TODO: Add description.
+@end deffn
+
+@deffn {Scheme Procedure} auth-req:user req
+@deffnx {Scheme Procedure} auth-req:password req
+@deffnx {Scheme Procedure} auth-req:pubkey req
+@deffnx {Scheme Procedure} auth-req:pubkey-state req
+TODO: Add description.
+@end deffn
+
+@deffn {Scheme Procedure} pty-req:term req
+@deffnx {Scheme Procedure} pty-req:width req
+@deffnx {Scheme Procedure} pty-req:height req
+@deffnx {Scheme Procedure} pty-req:pxwidth req
+@deffnx {Scheme Procedure} pty-req:pxheight req
+TODO: Add description.
+@end deffn
+
+@deffn {Scheme Procedure} env-req:name req
+@deffnx {Scheme Procedure} env-req:value req
+TODO: Add description.
+@end deffn
+
+@deffn {Scheme Procedure} exec-req:cmd req
+TODO: Add description.
+@end deffn
+
+@deffn {Scheme Procedure} global-req:addr req
+@deffnx {Scheme Procedure} global-req:port req
+TODO: Add description.
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:

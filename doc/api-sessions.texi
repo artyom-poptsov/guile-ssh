@@ -1,0 +1,109 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Sessions
+@section Sessions
+
+@cindex sessions
+@tindex session
+
+@deffn {Scheme Procedure} session? x
+Returns @code{#t} if @var{x} is a Guile-SSH session, @code{#f}
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} %make-session
+Create a new Guile-SSH session.
+@end deffn
+
+@deffn {Scheme Procedure} make-session [keywords]
+Create a new Guile-SSH session and set its options.  Options can be
+passed as keywords.
+
+This procedure is more convenient than primitive @code{%make-session},
+but on other hand it should be a bit slower because of additional
+checks.
+@end deffn
+
+@deffn {Scheme Procedure} blocking-flush! session timeout
+Blocking flush of the outgoing buffer of @var{session}.  Return on of
+the following symbols:
+
+@table @samp
+@item ok
+Success.
+@item again
+@var{timeout} occured.
+@item error
+An error occured.
+@end table
+@end deffn
+
+@deffn {Scheme Procedure} session-set! session option value
+Set a @var{option} to @code{value} for the given Guile-SSH
+@var{session}.  Throw a @code{guile-ssh-error} on error.  Return value
+is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} connect! session
+Connect @var{session} to a SSH server.  Return one of the following
+symbols: @code{ok}, @code{again}.
+@end deffn
+
+@deffn {Scheme Procedure} disconnect! session
+Disconnect the @var{session}.  This procedure can be used by a client
+as well as by a server.
+@end deffn
+
+@deffn {Scheme Procedure} authenticate-server session
+Authenticate the server.  Return one of the following symbols:
+
+@table @samp
+@item ok
+The server is known and has not changed.
+@item known-changed
+The server key has changed. Either you are under attack or the
+administrator changed the key. You @emph{have} to warn the user about
+a possible attack.
+@item found-other
+The server gave use a key of a type while we had an other type
+recorded. It is a possible attack.
+@item not-known
+The server is unknown. User should confirm the MD5 is correct.
+@item file-not-found
+The known host file does not exist. The host is thus unknown. File
+will be created if host key is accepted.
+@end table
+
+@end deffn
+
+@deffn {Scheme Procedure} get-public-key-hash session
+Get MD5 hash of a public key.  Return MD5 hash on success, @code{#f}
+on error.
+@end deffn
+
+@deffn {Scheme Procedure} write-known-host! session
+Write the current server as known in the known hosts file.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} connected? session
+Check if we are connected.  Return @code{#f} if we are connected to a
+server, @code{#f} if we aren't.
+@end deffn
+
+@deffn {Scheme Procedure} get-error session
+Retrieve the error text message from the last error related to
+@var{session}.
+@end deffn
+
+@deffn {Scheme Procedure} get-protocol-version session
+Get version of SSH protocol.  Return 1 for SSH1, 2 for SSH2 or
+@code{#f} on error.
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:

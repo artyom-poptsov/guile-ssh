@@ -19,5 +19,5 @@
 
 ACLOCAL_AMFLAGS = -I m4 --install
 
-SUBDIRS = src examples build-aux m4
+SUBDIRS = src examples build-aux m4 doc
 

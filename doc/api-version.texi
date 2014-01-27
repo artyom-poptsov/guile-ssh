@@ -1,0 +1,29 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Version
+@section Version
+
+@cindex version
+
+This module provides functions that is used for getting information
+about current versions.
+
+@deffn {Scheme Procedure} get-libssh-version
+Get version of the libssh.  Returns libssh version as a string in the
+follwing format:
+
+@code{<version> ::= <major> "." <minor> "." <micro>}
+
+For example, @samp{0.5.2}.
+@end deffn
+
+@deffn {Scheme Procedure} get-library-version
+Get version of the Guile-SSH.
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:
