@@ -45,6 +45,128 @@ An error occured.
 Set a @var{option} to @code{value} for the given Guile-SSH
 @var{session}.  Throw a @code{guile-ssh-error} on error.  Return value
 is undefined.
+
+Here is the description of available options.  The description is
+based on libssh documentation:
+
+@table @samp
+@item host
+The hostname or @acronym{IP} address to connect to.
+
+Expected type of @var{value}: string.
+@item port
+The port to connect to.
+
+Expected type of @var{value}: number.
+@item fd
+The file descriptor to use.
+
+If you wish to open the socket yourself for a reason or another, set
+the file descriptor.  Don't forget to set the hostname as the hostname
+is used as a key in the known_host mechanism.
+
+Expected type of @var{value}: number.
+@item bindaddr
+The address to bind the client to.
+
+Expected type of @var{value}: string.
+@item user
+The username for authentication.
+
+Expected type of @var{value}: string.
+@item ssh-dir
+Set the SSH directory.
+
+The ssh directory is used for files like known_hosts and identity
+(private and public key).  It may include @code{%s} which will be
+replaced by the user home directory.
+
+Expected type of @var{value}: string.
+@item identity
+Set the identity file name.  By default identity, @file{id_dsa} and
+@file{id_rsa} are checked.
+
+The identity file used authenticate with public key.  It may include
+@code{%s} which will be replaced by the user home directory.
+
+@item knownhosts
+Set the known hosts file name.  Default value is @file{~/.ssh/known_hosts}.
+
+The known hosts file is used to certify remote hosts are genuine.  The
+string may include @code{%s} which will be replaced by the user home
+directory.
+
+Expected type of @var{value}: string.
+@item timeout
+Set a timeout for the connection in seconds.
+
+Expected type of @var{value}: number.
+@item timeout-usec
+Set a timeout for the connection in micro seconds.
+
+Expected type of @var{value}: number.
+@item ssh1
+Allow or deny the connection to SSH1 servers.
+
+Expected type of @var{value}: boolean.
+@item ssh2
+Allow or deny the connection to SSH2 servers
+
+Expected type of @var{value}: boolean.
+@item log-verbosity
+Set the session logging verbosity.  Possible values:
+
+@table @samp
+@item nolog
+No logging at all
+@item rare
+Only rare and noteworthy events
+@item protocol
+High level protocol information
+@item packet
+Lower level protocol infomations, packet level
+@item functions
+Every function path
+@end table
+
+Expected type of @var{value}: symbol.
+@item ciphers-c-s
+Set the symmetric cipher client to server.  The @var{value} must be a
+string of comma-separated values.
+@item ciphers-s-c
+Set the symmetric cipher server to client.  The @var{value} must be a
+string of comma-separated values.
+@item compression-c-s
+Set the compression to use for client to server.  The @var{value} must
+be ``yes'', ``no'' or a specific algorithm name if needed ("zlib",
+@verb{|"zlib@openssh.com"|}, "none").
+
+Expected type of @var{value}: string.
+@item compression-s-c
+Set the compression to use for server to client.  The @var{value} must
+be ``yes'', ``no'' or a specific algorithm name if needed ("zlib",
+@verb{|"zlib@openssh.com"|}, "none").
+
+Expected type of @var{value}: string.
+@item proxycommand
+Set the command to be executed in order to connect to server.
+
+Expected type of @var{value}: string.
+@item stricthostkeycheck
+Set the parameter @code{StrictHostKeyChecking} to avoid asking about a
+fingerprint.
+@item compression
+Set the compression to use for both directions communication.  The
+@var{value} must be ``yes'', ``no'' or a specific algorithm name if
+needed ("zlib", @verb{|"zlib@openssh.com"|}, "none").
+
+Expected type of @var{value}: string.
+@item compression-level
+Set the compression level to use for zlib functions.  The @var{value}
+is expected to be a number from 1 to 9, 9 being the most efficient but
+slower.
+@end table
+
 @end deffn
 
 @deffn {Scheme Procedure} connect! session

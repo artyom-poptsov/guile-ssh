@@ -1,5 +1,11 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/api-sessions.texi (Sessions): Improve description of
+	`session-set!' procedure.
+	* doc/api-servers.texi (Servers): Improve description of
+	`server-set!' procedure.
+	* doc/version.texi: Update.
+
 	* src/server-func.c (set_option) [SSH_BIND_OPTIONS_LOG_VERBOSITY]:
 	Use symbols to represent log levels instead of numbers.  All
 	callers updated.
