@@ -1,3 +1,25 @@
+2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/server-func.c (set_option) [SSH_BIND_OPTIONS_LOG_VERBOSITY]:
+	Use symbols to represent log levels instead of numbers.  All
+	callers updated.
+	(set_sym_opt): New procedure.
+	* src/session-func.c: Move `log_verbosity' to `common.c' file.
+	* src/common.c, src/common.h: Update.
+	* examples/echo/server.scm (*default-log-verbosity*): Set to 'nolog.
+	* examples/ssshd.scm (*default-log-verbosity*): Likewise.
+	* NEWS: Update.
+
+	* src/session-func.c (set_option)[SSH_OPTIONS_LOG_VERBOSITY]: Use
+	symbols to represent log levels instead of numbers.  All callers
+	updated.
+	(set_sym_opt): New procedure.
+	* examples/echo/client.scm (main): Set log verbosity to `nolog'.
+	* examples/sssh.scm (main): Update.
+
+	* NEWS: Update.  Update format.  Use org-mode by default.  Add
+	copyright notice.
+
 2014-01-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	Add documentation in Texinfo format.
@@ -8,6 +30,14 @@
 	doc/api-messages.texi, doc/api-servers.texi,
 	doc/api-sessions.texi, doc/api-version.texi, doc/fdl.texi,
 	doc/guile-ssh.texi, doc/indices.texi, doc/version.texi: New files.
+
+	* NEWS: Update.
+
+	* src/channel-func.c (guile_ssh_channel_get_stream): New procedure.
+	* src/channel.scm (channel-get-stream): Export.
+
+	* examples/echo/client.scm (main): Print MD5 sum if the server is
+	not known.
 
 2014-01-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
@@ -43,6 +73,37 @@
 
 	* src/auth.c (guile_ssh_userauth_autopubkey_x): Likewise.
 
+2014-01-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-type.c: Set default write buffer size to 1 byte.
+	(ptob_close): Get size of the buffers from ptab entry.
+	(_ssh_channel_to_scm): Likewise.
+
+	* examples/echo/client.scm: Improve.
+
+	* examples/echo/server.scm (print-help): Update.
+	(main): Add `--port' option.  Print RSA/DSA key pathes and current
+	bind port on the start.
+
+	* src/channel-type.c (ptob_fill_input): Rename the argument.
+	Update comments.
+
+2014-01-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/echo/server.scm (read-all): Fix a bug: return the first
+	read line if there is no more data to read.
+	* examples/echo/client.scm (read-all): Likewise.
+
+	* examples/echo/server.scm (print-help): New procedure.
+	(main): Handle command-line options.
+
+2014-01-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/message-func.c
+	(guile_ssh_message_channel_request_open_reply_accept): Fix a bug:
+	pass a `ssh_channel' instance to `_ssh_channel_to_scm' procedure
+	instead of pointer to the instance.
+
 2014-01-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/key-func.c: Update copyright dates.
@@ -62,6 +123,121 @@
 	* examples/sssh.scm (main): Ask the user for a passphrase.
 	* src/key-func.c (guile_ssh_private_key_from_file): Change
 	argument list: add optional argument `passphrase'.
+
+2014-01-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/ssshd.scm (handle-channel): Use `read-all' instead of
+	`channel-read'.  Update.
+	(handle-request-exec): Use `display' instead of `channel-write'.
+	(shell-loop): Use `read-all' instead of `channel-read' and
+	`channel-poll'.   Use `display' instead of `channel-write'.
+	(main): Close a channel before disconnecting the session.
+	* examples/sssh.scm (read-all): New procedure.
+	(main): Use `read-all' instead of `read-line'.  Use `char-ready?'
+	instead of `channel-poll'.
+
+2014-01-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* TODO: Update.
+
+	* src/channel-type.c (ptob_input_waiting): Improve error checking.
+	(ptob_fill_input): Call `ssh_channel_poll' to update underlying
+	SSH channel state and check whether we have data to read or not.
+	Check if the channel is open.
+
+	* examples/echo/server.scm: Update comments.
+	(read-all): New procedure.
+	(main): Update.  Catch exceptions.  Use `write-line' instead of
+	`display'.
+	* examples/echo/client.scm: Update comments.
+	(read-all): New procedure.
+	(main): Update.  Use `char-ready?' instead of `channel-poll'.  Use
+	`write-line' instead of `display'.
+
+	* src/channel-func.c (guile_ssh_channel_open_session): Update
+	the documentation string.
+	* src/channel-type.c: Update comments.
+	* src/channel.scm: Likewise.
+
+	* src/channel-type.c (_ssh_channel_to_scm): Don't set
+	`SCM_BUFLINE' bit.
+	(ptob_fill_input, ptob_flush, ptob_close, print_channel): Remove
+	debug traces.
+	(ptob_fill_input): Return EOF on `SSH_AGAIN'.
+
+2014-01-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-type.c (ptob_close): Free the underlying SSH
+	channel.
+	* src/channel.scm (free-channel!): Remove.
+	* src/channel-func.c (guile_ssh_channel_free): Remove.
+
+	* src/channel-func.c (guile_ssh_channel_set_stream_x): New
+	procedure.
+	* src/channel.scm: Remove unneeded procedures.
+	Export `channel-set-stream!'.
+
+	* src/channel-type.c (_ssh_channel_to_scm): Don't set `SCM_OPN'
+	bit on the newly created channel.
+	* src/channel-func.c (guile_ssh_channel_open_session): Set
+	`SCM_OPN' bit on the channel.
+	* src/message-func.c
+	(guile_ssh_message_channel_request_open_reply_accept): Likewise.
+
+	* src/channel-type.c (ptob_write): Improve error handling.  Add a
+	comment.  Remove debug information.
+	(ptob_input_waiting): Change `FUNC_NAME' string.
+
+	* src/channel-func.c (guile_ssh_channel_pool)
+	(guile_ssh_channel_close): Remove.
+	* src/channel-func.h: Likewise.
+
+	* src/channel-type.c (ptob_flush): Improve.
+	(ptob_close): Flush a port before closing its SSH channel.
+
+2014-01-05  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* src/channel-type.c (ptob_fill_input): Improve.
+
+2014-01-04  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/echo/server.scm (main): Use `char-ready?' predicate
+	instead of the custom procedure `channel-poll'.
+
+	* src/channel-type.c (ptob_close): New procedure.
+	(print_channel): Don't try to get state of a channel if its port
+	is closed because it leads to segfaults.  Closed port means closed
+	channel.
+	(init_channel_type): Register `ptob_close' with
+	`scm_set_port_close'.
+	(ptob_input_waiting): Call `ssh_channel_poll'.
+	(init_channel_type): Register callback with
+	`scm_set_port_input_waiting' procedure.
+
+	* examples/echo/client.scm (main): Call `close' on a channel.
+	* examples/echo/server.scm (main): Likewise.
+
+2014-01-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Use Guile port API to implement Guile-SSH channels.
+	* src/channel-func.c (guile_ssh_channel_read)
+	(guile_ssh_channel_write): Remove.
+	* src/channel-func.h (guile_ssh_channel_read): Remove.
+	* src/channel-type.c (ptob_fill_input, ptob_write, ptob_flush)
+	(ptob_input_waiting, _ssh_channel_to_scm): New procedures.
+	(guile_ssh_make_channel): Use `_ssh_channel_to_scm'.
+	(_scm_to_ssh_channel): Use `SCM_STREAM' macro.
+	(init_channel_type): Register Guile port callbacks.
+	* src/channel-type.h (_ssh_channel_to_scm): Export.
+	* src/channel.scm (channel-read, channel-write): Remove.
+	* src/message-func.c
+	(guile_ssh_message_channel_request_open_reply_accept): Use
+	`_ssh_channel_to_scm'.
+	* examples/echo: Add to the repository.
+	* examples/Makefile.am: Add echo server/client example.
+	* examples/README: Update.
+	* examples/sssh.scm: Update.
+	* README: Update.
 
 2013-11-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 

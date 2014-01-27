@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
  *
@@ -28,6 +28,7 @@ extern scm_t_bits channel_tag;
 /* Smob data. */
 struct channel_data {
   ssh_channel ssh_channel;
+  uint8_t is_stderr;
 };
 
 
@@ -40,6 +41,7 @@ extern void init_channel_type (void);
 
 
 /* Helper procedures */
-struct channel_data *_scm_to_ssh_channel (SCM x);
+extern struct channel_data *_scm_to_ssh_channel (SCM x);
+extern SCM _ssh_channel_to_scm (ssh_channel ch);
 
 #endif /* ifndef __CHANNEL_TYPE_H__ */

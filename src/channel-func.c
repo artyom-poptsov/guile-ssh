@@ -1,6 +1,6 @@
 /* channel-func.c -- SSH channel manipulation functions.
  *
- * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of libguile-ssh
  *
@@ -26,12 +26,12 @@
 #include "channel-type.h"
 
 
-/* Functions */
+/* Procedures */
 
-/* Open a new session.  Return value is undefined. */
 SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
             (SCM channel),
-            "Open a new session.  Return value is undefined.")
+            "Open a new session and mark the channel CHANNEL as opened port.\n"
+            "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_channel_open_session
 {
   struct channel_data *data = _scm_to_ssh_channel (channel);
@@ -41,6 +41,8 @@ SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
       guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
     }
+
+  SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
 
   return SCM_UNDEFINED;
 }
@@ -159,123 +161,53 @@ SCM_DEFINE (guile_ssh_channel_set_pty_size_x,
 }
 #undef FUNC_NAME
 
-
-/* Poll a channel for data to read.
- *
- * Return amount of data that can be read, or #f on error.
- */
-SCM_DEFINE (guile_ssh_channel_pool, "channel-poll", 2, 0, 0,
-            (SCM channel, SCM is_stderr),
-            "Poll a channel for data to read.\n"
-            "Return amount of data that can be read, or #f on error.")
-#define FUNC_NAME s_guile_ssh_channel_pool
+SCM_DEFINE (guile_ssh_channel_set_stream_x,
+            "channel-set-stream!", 2, 0, 0,
+            (SCM channel, SCM stream_name),
+            "Set stream STREAM_NAME for channel CHANNEL.  STREAM_NAME must be "
+            "one of the following symbols: \"stdout\" (default), \"stderr\".\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_channel_set_stream_x
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
-  int res;
-
-  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG2, FUNC_NAME);
-
-  res = ssh_channel_poll (data->ssh_channel, scm_is_true (is_stderr));
-
-  if (res >= 0)
-    return scm_from_int (res);
+  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  SCM_ASSERT (scm_is_symbol (stream_name), stream_name, SCM_ARG2, FUNC_NAME);
+  if (scm_is_eq (stream_name, scm_from_locale_symbol ("stdout")))
+    {
+      cd->is_stderr = 0;
+    }
+  else if (scm_is_eq (stream_name, scm_from_locale_symbol ("stderr")))
+    {
+      cd->is_stderr = 1;
+    }
   else
-    return SCM_BOOL_F;
-}
-#undef FUNC_NAME
-
-/* Read data from the channel. 
-
-   Return #f if no data is available.  Throw guile-ssh-error on
-   error. */
-SCM_DEFINE (guile_ssh_channel_read, "channel-read", 3, 0, 0,
-            (SCM channel, SCM count, SCM is_stderr),
-            "Read data from the channel CHANNEL.")
-#define FUNC_NAME s_guile_ssh_channel_read
-{
-  struct channel_data *data = _scm_to_ssh_channel (channel);
-  int res;
-  char *buffer;                 /* Buffer for data. */
-  uint32_t c_count;             /* Size of buffer. */
-  SCM obtained_data = SCM_BOOL_F; /* Obtained data from the channel. */
-
-  SCM_ASSERT (scm_is_unsigned_integer (count, 0, UINT32_MAX), count,
-              SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT (scm_is_bool (is_stderr), is_stderr, SCM_ARG3, FUNC_NAME);
-
-  c_count = scm_to_unsigned_integer (count, 0, UINT32_MAX);
-  buffer = scm_gc_calloc (sizeof (char) * c_count + 1, "data buffer");
-  res = ssh_channel_read (data->ssh_channel, buffer, c_count + 1,
-                          scm_is_true (is_stderr));
-
-  if (res > 0)
     {
-      buffer[res] = 0;          /* Avoid getting garbage in a SCM string */
-      obtained_data = scm_from_locale_string (buffer);
-    }
-
-  scm_gc_free (buffer, sizeof (char) + c_count + 1, "data buffer");
-
-  if (res < 0)
-    {
-      /* Throw the exception only if an error is occured (res < 0).
-         Return #t if res == 0 (no data is available). */
-      guile_ssh_error1 (FUNC_NAME, "Couldn't read data from a channel.", 
-                        SCM_BOOL_F);
-    }
-
-  return obtained_data;
-}
-#undef FUNC_NAME
-
-SCM_DEFINE (guile_ssh_channel_write, "channel-write", 3, 0, 0,
-            (SCM channel, SCM len, SCM data),
-            "Write data DATA of the length LEN to the channel CHANNEL")
-#define FUNC_NAME s_guile_ssh_channel_write
-{
-  struct channel_data *channel_data = _scm_to_ssh_channel (channel);
-  int res;
-  uint32_t c_len;
-  char *c_data;
-
-  SCM_ASSERT (scm_is_unsigned_integer (len, 0, UINT32_MAX), len,
-              SCM_ARG2, FUNC_NAME);
-
-  c_len = scm_to_uint32 (len);
-  c_data = scm_to_locale_string (data);
-
-  res = ssh_channel_write (channel_data->ssh_channel, c_data, c_len);
-
-  return (res != SSH_ERROR) ? scm_from_int (res) : SCM_BOOL_F;
-}
-#undef FUNC_NAME
-
-/* Close a channel. */
-SCM_DEFINE (guile_ssh_channel_close, "close-channel!", 1, 0, 0,
-            (SCM channel),
-            "Close a channel CHANNEL.  Return value is undefined.")
-#define FUNC_NAME s_guile_ssh_channel_close
-{
-  struct channel_data *data = _scm_to_ssh_channel (channel);
-  int res = ssh_channel_close (data->ssh_channel);
-  if (res != SSH_OK)
-    {
-      ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_error1 (FUNC_NAME,
+                        "Wrong stream name.  Possible names are: "
+                        "'stdout, 'stderr", stream_name);
     }
 
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_free, "free-channel!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_channel_get_stream,
+            "channel-get-stream", 1, 0, 0,
             (SCM channel),
-            "Free resourses allocated by channel CHANNEL")
+            "Get current stream name from CHANNEL.  Throw `guile-ssh-error' on "
+            "error.  Return one of the following symbols: \"stdout\", "
+            "\"stderr\".")
+#define FUNC_NAME s_guile_ssh_channel_get_stream
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
-  ssh_channel_free (data->ssh_channel);
-  return SCM_UNDEFINED;
+  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  if (cd->is_stderr == 0)
+    return scm_from_locale_symbol ("stdout");
+  if (cd->is_stderr == 1)
+    return scm_from_locale_symbol ("stderr");
+
+  guile_ssh_error1 (FUNC_NAME, "Wrong stream.",
+                    scm_from_int (cd->is_stderr));
 }
+#undef FUNC_NAME
 
 
 /* Predicates */

@@ -42,7 +42,7 @@
 ;;; Variables and constants
 
 (define *default-bindport*      12345)
-(define *default-log-verbosity* 0)
+(define *default-log-verbosity* 'nolog)
 (define *default-rsakey*        (string-append (getenv "HOME")
                                                "/.ssh/id_rsa"))
 
@@ -75,10 +75,8 @@
 ;;; Handlers
 
 (define (handle-channel channel)
-  (let* ((count (poll channel))
-         (data  (channel-read channel count #f)))
-    (format #t "  data: ~a~%" data)
-    (channel-read channel 10 #f)))
+  (let* ((data (read-all channel)))
+    (format #t "  data: ~a~%" data)))
 
 (define (handle-request-exec msg channel)
   "Handle a non-interactive SSH session"
@@ -86,7 +84,7 @@
     (format #t "  cmd: ~a~%" cmd)
     (let* ((port (open-input-pipe cmd))
            (res  (read-all port)))
-      (channel-write channel (string-length res) res))))
+      (display res channel))))
 
 (define (handle-req-auth session msg msg-type)
   (let ((subtype (cadr msg-type)))
@@ -163,12 +161,11 @@
        #f))))
 
 (define (shell-loop channel)
-  (let* ((cnt (channel-poll channel #f))
-         (cmd (channel-read channel cnt #f)))
+  (let ((cmd (read-all channel)))
     (format #t "  ~a~%" cmd)
     (let* ((port (open-input-pipe cmd))
            (res  (read-all port)))
-      (channel-write channel (string-length res) res)))
+      (display channel res)))
   (if (channel-open? channel)
       (shell-loop channel)))
 
@@ -267,7 +264,9 @@
              ;; FIXME: We currently support only one exec request per
              ;; a session.
              (if (eq? (cadr msg-type) 'channel-request-exec)
-                 (disconnect! session)))
+                 (begin
+                   (close channel)
+                   (disconnect! session))))
 
             (else
              (display "Send the default reply.\n")
