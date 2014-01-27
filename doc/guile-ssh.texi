@@ -1,8 +1,10 @@
 \input texinfo
 @c -*-texinfo-*-
+@c %**start of header
 @setfilename guile-ssh.info
 @documentencoding UTF-8
-@settitle Guile-SSH
+@settitle Guile-SSH Reference Manual
+@c %**end of header
 @include version.texi
 
 @copying
@@ -20,7 +22,7 @@ Documentation License.''
 
 @dircategory The Algorithmic Language Scheme
 @direntry
-* Guile-SSH:      Guile-SSH reference manual.
+* Guile-SSH: (guile-ssh).      Guile bindings to libssh.
 @end direntry
 
 @setchapternewpage odd
