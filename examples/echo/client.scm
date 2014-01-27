@@ -140,7 +140,9 @@ errors."
       (connect! session)
 
       (case (authenticate-server session)
-        ((not-known) (display "   The server is unknown.  Please check MD5.\n")))
+        ((not-known)
+         (display "The server is unknown.  Please check MD5 sum:\n")
+         (format #t "  ~a~%" (get-public-key-hash session))))
 
       (let* ((private-key (get-prvkey session identity-file))
              (public-key  (get-pubkey session private-key)))

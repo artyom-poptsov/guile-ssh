@@ -1,3 +1,8 @@
+2014-01-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/echo/client.scm (main): Print MD5 sum if the server is
+	not known.
+
 2014-01-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* src/channel-type.c: Set default write buffer size to 1 byte.
