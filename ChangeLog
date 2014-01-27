@@ -1,7 +1,14 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
-	* NEWS: Update format.  Use org-mode by default.  Add copyright
-	notice.
+	* src/session-func.c (set_option)[SSH_OPTIONS_LOG_VERBOSITY]: Use
+	symbols to represent log levels instead of numbers.  All callers
+	updated.
+	(set_sym_opt): New procedure.
+	* examples/echo/client.scm (main): Set log verbosity to `nolog'.
+	* examples/sssh.scm (main): Update.
+
+	* NEWS: Update.  Update format.  Use org-mode by default.  Add
+	copyright notice.
 
 2014-01-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
 

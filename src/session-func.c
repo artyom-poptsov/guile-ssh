@@ -62,6 +62,20 @@ static struct symbol_mapping session_options[] = {
   { NULL,                 -1 }
 };
 
+static struct symbol_mapping log_verbosity[] = {
+  /* 0, No logging at all */
+  { "nolog",              SSH_LOG_NOLOG     },
+  /* 1, Only rare and noteworthy events */
+  { "rare",               SSH_LOG_RARE      },
+  /* 2, High level protocol information */
+  { "protocol",           SSH_LOG_PROTOCOL  },
+  /* 3, Lower level protocol infomations, packet level */
+  { "packet",             SSH_LOG_PACKET    },
+  /* 4, Every function path */
+  { "functions",          SSH_LOG_FUNCTIONS },
+  { NULL,                 -1                }
+};
+
 /* Blocking flush of the outgoing buffer.
 
    Return on of the following symbols: 'ok, 'error. 'again. */
@@ -182,6 +196,17 @@ set_port_opt (ssh_session session, int type, SCM value)
   return ssh_options_set (session, type, &sfd);
 }
 
+/* Convert Scheme symbol to libssh constant and set the corresponding
+   option to the value of the constant. */
+static inline int
+set_sym_opt (ssh_session session, int type, struct symbol_mapping *sm, SCM value)
+{
+  struct symbol_mapping *opt = _scm_to_ssh_const (sm, value);
+  if (! opt)
+    guile_ssh_error1 ("session-set!", "Wrong value", value);
+  return ssh_options_set (session, type, &opt->value);
+}
+
 /* Set an SSH session option. */
 static int
 set_option (ssh_session session, int type, SCM value)
@@ -209,6 +234,8 @@ set_option (ssh_session session, int type, SCM value)
       return set_string_opt (session, type, value);
 
     case SSH_OPTIONS_LOG_VERBOSITY:
+      return set_sym_opt (session, type, log_verbosity, value);
+
     case SSH_OPTIONS_COMPRESSION_LEVEL:
       return set_int32_opt (session, type, value);
 
