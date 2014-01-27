@@ -62,20 +62,6 @@ static struct symbol_mapping session_options[] = {
   { NULL,                 -1 }
 };
 
-static struct symbol_mapping log_verbosity[] = {
-  /* 0, No logging at all */
-  { "nolog",              SSH_LOG_NOLOG     },
-  /* 1, Only rare and noteworthy events */
-  { "rare",               SSH_LOG_RARE      },
-  /* 2, High level protocol information */
-  { "protocol",           SSH_LOG_PROTOCOL  },
-  /* 3, Lower level protocol infomations, packet level */
-  { "packet",             SSH_LOG_PACKET    },
-  /* 4, Every function path */
-  { "functions",          SSH_LOG_FUNCTIONS },
-  { NULL,                 -1                }
-};
-
 /* Blocking flush of the outgoing buffer.
 
    Return on of the following symbols: 'ok, 'error. 'again. */

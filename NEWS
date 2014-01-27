@@ -11,7 +11,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Implement Guile-SSH channels as GNU Guile ports.
    Now channels can be used with regular procedures such as `display',
    `write' and `read-line'.
-** `session-set!' now takes log-verbosity as a symbol
+** `session-set!' and `server-set!' now take log-verbosity as a symbol
    Use symbols to represent log levels instead of numbers.
 ** New `userauth-autopubkey!' procedure.
    The procedure can be used for public key authentication with a SSH
