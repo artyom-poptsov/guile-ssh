@@ -35,6 +35,7 @@
 ;;   channel-request-shell
 ;;   channel-set-pty-size!
 ;;   channel-set-stream!
+;;   channel-get-stream
 ;;   channel-open?
 ;;   channel-eof?
 
@@ -53,6 +54,7 @@
             channel-request-shell
             channel-set-pty-size!
             channel-set-stream!
+            channel-get-stream
             channel-open?
             channel-eof?))
 

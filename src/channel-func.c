@@ -190,6 +190,25 @@ SCM_DEFINE (guile_ssh_channel_set_stream_x,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_get_stream,
+            "channel-get-stream", 1, 0, 0,
+            (SCM channel),
+            "Get current stream name from CHANNEL.  Throw `guile-ssh-error' on "
+            "error.  Return one of the following symbols: \"stdout\", "
+            "\"stderr\".")
+#define FUNC_NAME s_guile_ssh_channel_get_stream
+{
+  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  if (cd->is_stderr == 0)
+    return scm_from_locale_symbol ("stdout");
+  if (cd->is_stderr == 1)
+    return scm_from_locale_symbol ("stderr");
+
+  guile_ssh_error1 (FUNC_NAME, "Wrong stream.",
+                    scm_from_int (cd->is_stderr));
+}
+#undef FUNC_NAME
+
 
 /* Predicates */
 
