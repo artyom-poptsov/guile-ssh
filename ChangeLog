@@ -1,5 +1,7 @@
 2014-01-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Update.
+
 	* src/channel-func.c (guile_ssh_channel_get_stream): New procedure.
 	* src/channel.scm (channel-get-stream): Export.
 
