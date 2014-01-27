@@ -1,3 +1,8 @@
+2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* NEWS: Update format.  Use org-mode by default.  Add copyright
+	notice.
+
 2014-01-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* NEWS: Update.
