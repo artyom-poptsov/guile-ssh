@@ -1,88 +1,79 @@
-Guile-SSH News
---------------
+#+TITLE: Guile-SSH News -- history of user-visible changes.
+#+STARTUP: content hidestars
+
+Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
 
 * Unreleased
-
+** Implement Guile-SSH channels as GNU Guile ports.
+   Now channels can be used with regular procedures such as `display',
+   `write' and `read-line'.
 ** New `userauth-autopubkey!' procedure.
    The procedure can be used for public key authentication with a SSH
    agent.
-
 ** examples/sssh.scm now uses `userauth-autopubkey!'.
-
-** New `session?' procedure.
-
-** New `server?' procedure.
-
+** New procedures.
+   `channel-set-stream!', `channel-get-stream', `session?', `server?'.
+** Remove procedures.
+   These procedures are removed due to changes in Guile-SSH channel
+   API: `close-channel!', `channel-poll' `free-channel!',
+   `channel-read`, `channel-write'.
+** Update sssh/ssshd example.
+   `examples/sssh.scm' and `examples/ssshd.scm' are updated to use the
+   new Guile-SSH channel API.
+** Add echo server/client example.
+   See `examples/echo' directory.
+
 * Changes in version 0.4.0 (2013-11-26)
-
 ** Port the library to GNU Guile version 2.0
    Now the library works with GNU Guile version 2.0 as well as 1.8.
-
 ** Remove "ssh:" prefix from procedures names.
    If it is needed, an user's prefix can be added by setting a renamer
    for a module on loading.  See the documentation for the GNU Guile
    module system.
-
 ** Implement basic SSH server API.
-
 ** Fix a memory corruption in `channel-read'
    The problem was seen on reading of an output from "lsb_release -a"
    command.
-
 ** Fix a memory corruption during GC'ing of SSH keys.
-
 ** Fix a bug in `session-set!'
    Fix the bug that leads to an error if the user tried to set a
    correct boolean option.
-
 ** New `channel-write' procedure.
-
 ** New `channel-request-pty' procedure.
-
 ** New `channel-request-shell' procedure.
-
 ** New `channel-set-pty-size!' procedure.
-
 ** Fix the name of `write-known-host!'
    The procedure was called `authenticate-server' by mistake.  Rename
    it to `write-known-host!'.
-
 ** Change error handling in some procedures.
    Now `write-known-host!', `channel-open-session',
    `channel-request-exec', `channel-request-env', `close-channel!',
    throw an exception on error.  The return value of these procedures
    now is undefined.
-
 ** `authenticate-server' now throws guile-ssh-error exception on error.
    Don't return the 'error symbol, throw an exception instead.
-
 ** `server-set!' now throws guile-ssh-error exception on error.
    The return value now is undefined.
-
 ** Rename `make-session' to `%make-session'.
    See `make-session' below.
-
 ** New `make-session' procedure.
    This is a convenient wrapper for `%make-session' which allows to
    set session options by passing them as keywords.
-
 ** Rename `connect' to `connect!'.
-   
 ** Fix a typo in an option symbol
    'strcthostkeycheck -> 'stricthostkeycheck
-
 ** Fix an infinite loop in `public-key->string'.
    The problem was observed on Ubuntu GNU/Linux 10.04 LTS.
-
 ** Add examples to the repository.
    See the "examples/" directory.
-
 ** Improve printing of SSH keys, channels and messages.
    Examples: #<public rsa key>, #<open ssh channel>
-
 
 * Changes in version 0.3.1 (2013-07-14)
-
 ** Use a simpler method to GC'ing of SSH channels.
    The idea is that we don't have to free resources allocated by a
    channel during its GC'ing, because these resources will be freed
@@ -90,62 +81,45 @@ Guile-SSH News
    to control allocating of resources more precisely, introduce new
    procedure ssh:free-channel! that can be used for freeing resources
    allocated by a channel.
-
 ** ssh:free-channel!
    New procedure.
-
 ** Make the library thread-safe.
-
 
 * Changes in version 0.3 (2013-07-13)
-
 ** Improve working with public keys.
    Because some libssh functions are working with public keys
    represented as a ssh_string instead of a ssh_public_key, we try to
    hide this peculiarity so all kinds of keys are look like a <key>
    class from the Scheme perspective.
-
 ** Fix segmentation faults on GC'ing of SSH objects.
    The program doesn't crashes anymore during GC'ing of SSH objecs.
-
 ** ssh:public-key-from-file
    Make it work.  Return newly created <key> instance or #f on error.
-
 ** ssh:public-key->string
    Take a key as a <key> instance.
-
 ** ssh:private-key-from-file
    Fix call to an undefined procedure.  Return #f on error.
-
 ** ssh:get-key-type
    New procedure.  The procedure returns type for a passed <key>
    instance.  Possible types are: 'dss, 'rsa, 'rsa1, 'unknown
-
 ** ssh:userauth-get-list
    New procedure.  The procedure returns a list of available
    authentication methods for a given SSH session
-
 ** ssh:channel-read
    Fix call to an undefined procedure.  Throw guile-ssh-error
    exception on error.
-
 ** ssh:close-channel!
    Fix return value: return #t if channel is closed successfully, #f
    otherwise.
-
 ** ssh:blocking-flush!
    Return 'error by default.
-
 ** ssh:session-set!
    Fix a bug with uint32 options setting.
-
 ** SSH objects now comparable.
-
 
 * Changes in version 0.2 (2013-05-25)
-
 ** Release of the first stable version of Guile-SSH.
 
 Local Variables:
-mode: outline
+mode: org
 End:

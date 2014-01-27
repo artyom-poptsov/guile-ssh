@@ -1,4 +1,4 @@
-## Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of libguile-ssh.
 ## 
@@ -17,4 +17,6 @@
 ## <http://www.gnu.org/licenses/>.
 
 examplesdir = $(pkgdatadir)/examples
+examples_echodir = $(pkgdatadir)/examples/echo
 dist_examples_DATA = README sssh.scm ssshd.scm
+dist_examples_echo_DATA = echo/*.scm

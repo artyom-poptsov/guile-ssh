@@ -1,6 +1,6 @@
 ;;; channel.scm -- API for SSH channel manipulation.
 
-;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of libguile-ssh.
 ;;
@@ -24,21 +24,18 @@
 ;; This module contains API that is used for working with SSH
 ;; channels.
 ;;
-;; These methods are exported:
+;; These procedures are exported:
 ;;
 ;;   channel?
 ;;   make-channel
-;;   close-channel!
-;;   free-channel!
 ;;   channel-open-session
 ;;   channel-request-env
 ;;   channel-request-exec
 ;;   channel-request-pty
 ;;   channel-request-shell
 ;;   channel-set-pty-size!
-;;   channel-poll
-;;   channel-read
-;;   channel-write
+;;   channel-set-stream!
+;;   channel-get-stream
 ;;   channel-open?
 ;;   channel-eof?
 
@@ -50,17 +47,14 @@
   #:export (channel
             channel?
             make-channel
-            close-channel!
-            free-channel!
             channel-open-session
             channel-request-env
             channel-request-exec
             channel-request-pty
             channel-request-shell
             channel-set-pty-size!
-            channel-poll
-            channel-read
-            channel-write
+            channel-set-stream!
+            channel-get-stream
             channel-open?
             channel-eof?))
 

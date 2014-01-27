@@ -1,0 +1,221 @@
+#!/usr/bin/guile \
+--debug -e main -s
+!#
+
+;;; client.scm -- Echo server example.
+
+;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;;
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see
+;; <http://www.gnu.org/licenses/>.
+
+
+;;; Commentary:
+
+;; Echo server example.
+;;
+;; Usage: server.scm
+;;
+;; Server listens incoming connections on the port 12345.
+
+
+;;; Code:
+
+(use-modules (ice-9 rdelim)
+             (ice-9 popen)
+             (ice-9 getopt-long)
+             (ssh server)
+             (ssh message)
+             (ssh session)
+             (ssh channel)
+             (ssh key)
+             (ssh auth))                ; userauth-*
+
+(define *default-bindport*      "12345")
+(define *default-log-verbosity* 0)
+(define *default-rsakey*        (format #f "~a/.ssh/id_rsa" (getenv "HOME")))
+(define *default-dsakey*        (format #f "~a/.ssh/id_dsa" (getenv "HOME")))
+
+(define (handle-req-auth session msg msg-type)
+  (let ((subtype (cadr msg-type)))
+
+    (format #t "  subtype: ~a~%" subtype)
+
+    ;; Allowed authentication methods
+    (message-auth-set-methods! msg '(public-key))
+
+    (case subtype
+      ((auth-method-publickey)
+       (let* ((req          (message-get-req msg))
+              (user         (auth-req:user req))
+              (pubkey       (auth-req:pubkey req))
+              (pubkey-state (auth-req:pubkey-state req)))
+         (format #t
+                 (string-append "  User ~a wants to authenticate with a public key (~a)~%"
+                                "  Public key state: ~a~%")
+                 user (get-key-type pubkey) pubkey-state)
+
+         (case pubkey-state
+           ((none)
+            (message-auth-reply-public-key-ok msg))
+
+           ((valid)
+            (message-reply-success msg))
+
+           (else
+            (format #t "  Bad public key state: ~a~%" pubkey-state)
+            (message-reply-default msg)))))
+
+      (else
+       (message-reply-default msg)))))
+
+(define (handle-req-channel-open msg msg-type)
+  (let ((subtype (cadr msg-type)))
+    (format #t "  subtype: ~a~%" subtype)
+    (case subtype
+      ((channel-session)
+       (message-channel-request-open-reply-accept msg))
+      (else
+       (message-reply-default msg)
+       #f))))
+
+(define (handle-req-channel msg msg-type channel)
+  (let ((subtype (cadr msg-type)))
+
+    (format #t "  subtype: ~a~%" subtype)
+
+    (case subtype
+
+      ((channel-request-env)
+       (let* ((env-req (message-get-req msg))
+              (name    (env-req:name env-req))
+              (value   (env-req:value env-req)))
+         (format #t
+                 (string-append "  env requested:~%"
+                                "    name:  ~a~%"
+                                "    value: ~a~%")
+                 name value)
+         (setenv name value)
+         (message-reply-success msg)))
+
+      (else
+       (message-reply-success msg)))))
+
+(define (read-all port)
+  "Read all lines from the PORT."
+  (let r ((res (read-line port 'concat))
+          (str ""))
+    (if (and (not (eof-object? str)) (char-ready? port))
+        (r (string-append res str) (read-line port 'concat))
+        res)))
+
+(define (print-help)
+  "Print help message and exit."
+  (display "\
+Usage: server.scm [ options ]
+
+Options:
+  --rsakey=<key>, -r <key>      Set host RSA key.
+  --dsakey=<key>, -d <key>      Set host DSA key.
+  --port=<port>, -p <port>      Set bind port of the server.
+  --help, -h                    Print this message and exit.
+"))
+
+
+(define *option-spec*
+  '((dsakey (single-char #\d) (value #t))
+    (rsakey (single-char #\r) (value #t))
+    (port   (single-char #\p) (value #t))
+    (help   (single-char #\h) (value #f))))
+
+(define (main args)
+  "Entry point of the program."
+  (let* ((options     (getopt-long args *option-spec*))
+         (dsakey      (option-ref options 'dsakey *default-dsakey*))
+         (rsakey      (option-ref options 'rsakey *default-rsakey*))
+         (port        (option-ref options 'port   *default-bindport*))
+         (help-wanted (option-ref options 'help   #f)))
+
+    (if help-wanted
+        (begin
+          (print-help)
+          (exit)))
+
+    (let ((server  (make-server #:bindport      (string->number port)
+                                #:rsakey        rsakey
+                                #:dsakey        dsakey
+                                #:log-verbosity *default-log-verbosity*
+                                #:banner        "Scheme Secure Shell Daemon"))
+          (channel #f))
+
+      (format #t (string-append
+                  "Using RSA key ~a~%"
+                  "Using DSA key ~a~%"
+                  "Listening on port ~a~%")
+              rsakey
+              dsakey
+              port)
+
+      ;; Start listen to incoming connections.
+      (server-listen server)
+
+      ;; Accept new connections from clients.  Every connection is
+      ;; handled in its own SSH session.
+      (let main-loop ((session (server-accept server)))
+        (display "Client accepted.\n")
+        (server-handle-key-exchange session)
+        ;; Handle messages from the connected SSH client.
+        (let session-loop ((msg (server-message-get session)))
+          (if msg
+              (let ((msg-type (message-get-type msg)))
+                (format #t "Message: ~a~%" msg-type)
+                ;; Check the type of the message
+                (case (car msg-type)
+                  ((request-service)
+                   (let ((srv-req (message-get-req msg)))
+                     (format #t "  Service requested: ~a~%"
+                             (service-req:service srv-req))
+                     (message-reply-success msg)))
+
+                  ((request-auth)
+                   (handle-req-auth session msg msg-type))
+
+                  ((request-channel-open)
+                   (set! channel (handle-req-channel-open msg msg-type))
+                   (let poll ((ready? #f))
+                     (if ready?
+                         (catch 'guile-ssh-error
+                           (lambda ()
+                             (let ((str (read-all channel)))
+                               (format #t "Received message: ~a~%" str)
+                               (display "Echoing back...\n")
+                               (write-line str channel)))
+                           (lambda (key . args)
+                             (display "error\n")
+                             (display (get-error session))))
+                         (poll (char-ready? channel))))
+                   (close channel))
+
+                  ((request-channel)
+                   (handle-req-channel msg msg-type channel))
+
+                  (else
+                   (display "Reply default\n")
+                   (message-reply-default msg)))))
+          (if (connected? session)
+              (session-loop (server-message-get session))))
+        (disconnect! session)
+        (main-loop (server-accept server))))))
+
+;;; server.scm ends here.

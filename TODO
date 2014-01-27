@@ -1,5 +1,6 @@
 -*- Mode: Outline -*-
 
-* Use Guile ports for I/O on channels.
+* Make channel buffers configurable.
+* Make use of libssh callbacks to track asynchronous events on channels
 * Write automated tests for the library.
   
