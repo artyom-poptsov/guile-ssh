@@ -68,11 +68,18 @@
 
 (test-assert "server-set!, invalid values"
   (let ((server  (%make-server))
-        (options '((bindaddr       "I'm not a IP address" 42)
+        (options '(;; Errors with wrong IP address format will be
+                   ;; caught on `server-listen' call, so that's the
+                   ;; reason that we don't check `bindaddr' with
+                   ;; garbage strings here.
+                   (bindaddr       #f 42)
+                   ;; The same situation with rsa/dsa keys -- errors
+                   ;; will be caught on `server-accept' call.
+                   (rsakey         #f 42)
+                   (dsakey         #f 42)
+
                    (bindport       "I'm not a port" -42)
                    (hostkey        "invalid value" 1 'invalid-value)
-                   (rsakey         "I'm not a RSA key" 42)
-                   (dsakey         "I'm not a DSA key" 42)
                    (banner         12345)
                    (log-verbosity  -1 0 1 2 3 4 5)
                    (blocking-mode  42 "string")))
