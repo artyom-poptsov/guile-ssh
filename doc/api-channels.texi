@@ -9,6 +9,11 @@
 @cindex data transferring
 @tindex channel
 
+Channels are implemented as GNU Guile ports.  Therefore they can be
+used with regular I/O procedures such as @code{display}, @code{write},
+@code{read-line} and friends.  This section describes operations that
+are specific for the channels.
+
 @deffn {Scheme Procedure} channel? x
 Return @code{#t} if @var{x} is a Guile-SSH channel, @code{#f}
 otherwise.
@@ -28,6 +33,17 @@ value is undefined.
 @cindex command execution
 Run a shell @var{command} without an interactive shell.  Throw
 @code{guile-ssh-error} on error.  Return value is undefined.
+
+Example:
+
+@lisp
+(let ((channel (make-channel session)))
+  (channel-open-session channel)
+  (channel-request-exec channel "uname")
+  (read-line channel))
+@result{} "Linux"
+@end lisp
+
 @end deffn
 
 @deffn {Scheme Procedure} channel-request-pty channel
@@ -49,6 +65,31 @@ Set an environment @var{variable} to @var{value}.  Throw
 @deffn {Scheme Procedure} channel-set-pty-size! channel columns rows
 Change size of the @acronym{PTY} to @var{columns} and @var{rows}.
 Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} channel-set-stream! channel stream
+Set default @var{stream} for @var{channel}.  @var{stream} must be one
+of the following symbols: @code{stdout} (default), @code{stderr}.
+Throw @code{guile-ssh-error} on error.  Return value is undefined.
+
+Example:
+
+@lisp
+(channel-set-stream! channel 'stderr)
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} channel-get-stream channel
+Get current stream name from @var{channel}.  Throw
+@code{guile-ssh-error} on error.  Return one of the following symbols:
+@code{stdout}, @code{stderr}.
+
+Example:
+
+@lisp
+(channel-get-stream channel)
+@result{} 'stderr
+@end lisp
 @end deffn
 
 @deffn {Scheme Procedure} channel-eof? channel
