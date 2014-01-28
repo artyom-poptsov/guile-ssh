@@ -29,7 +29,7 @@ SCM_TESTS = \
 	tests/auth.scm \
 	tests/client-server.scm
 
-TESTS = SCM_TESTS
+TESTS = ${SCM_TESTS}
 
 TEST_EXTENSIONS = .scm
 
@@ -38,8 +38,4 @@ AM_TESTS_ENVIRONMENT = abs_top_srcdir="$(abs_top_srcdir)"
 SCM_LOG_COMPILER = $(GUILE)
 AM_SCM_LOG_FLAGS = -L "$(abs_top_srcdir)" --no-auto-compile
 
-.PHONY: tests
-
-tests: $(SCM_TESTS:%.scm=%.log)
-
-CLEANFILES = tests/*.log
+CLEANFILES = $(SCM_TESTS:tests/%.scm=%.log)

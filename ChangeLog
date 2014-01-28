@@ -1,5 +1,11 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* configure.ac (AM_INIT_AUTOMAKE): Add `color-tests' option.
+	* Makefile.am (TESTS): Fix a bug: use value of `SCM_TESTS'
+	variable, not its name.
+	(tests): Remove target.  Use `make check' instead.
+	(CLEANFILES): Add auxiliary logs produced by tests.
+
 	* tests/server.scm ("server-set!, valid values"): Check `hostkey'
 	option.
 	("server-set!, invalid values"): Likewise.
