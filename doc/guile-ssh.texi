@@ -45,7 +45,7 @@ Documentation License.''
 @headings double
 
 @ifnottex
-@node Top, Preface, (dir), (dir)
+@node Top, Introduction, (dir), (dir)
 @top The Guile-SSH Reference Manual
 
 @insertcopying
@@ -53,8 +53,8 @@ Documentation License.''
 @end ifnottex
 
 @menu
-* Preface::
 * Introduction::
+* Installation::
 * API Reference::
 * Examples::
 
@@ -72,22 +72,59 @@ Indices
 
 @contents
 
-@node Preface
-@chapter Preface
-
-This manual describes Guile-SSH library which is aimed to provide
-access to @acronym{SSH} protocol for GNU Guile programs.
-
-The manual is partly based on libssh documentation.
-
 @node Introduction
 @chapter Introduction
 
 Guile-SSH is a library that provides access to the @acronym{SSH}
 protocol for programs written in
-@url{https://www.gnu.org/software/guile/, GNU Guile} interpreter.  It
-is a wrapper to the underlying @url{http://www.libssh.org/, libssh}
-library.
+@url{https://www.gnu.org/software/guile/, GNU Guile}.  It is a wrapper
+to the underlying @url{http://www.libssh.org/, libssh} library.  This
+manual is partly based on libssh documentation.
+
+@node Installation
+@chapter Installation
+
+Guile-SSH sources are available from GitHub at
+@url{https://github.com/artyom-poptsov/libguile-ssh/}.  This section
+describes requirements of Guile-SSH and installation process.
+
+Guile-SSH depends on the following packages:
+
+@itemize
+@item @url{https://www.gnu.org/software/guile/, GNU Guile}, 1.8.x or 2.0.x
+@item @url{http://www.libssh.org/, libssh}, 0.5.4
+@end itemize
+
+
+Get the sources of Guile-SSH from GitHub:
+
+@example
+$ git clone git@@github.com:artyom-poptsov/libguile-ssh.git
+@end example
+
+Configure the sources:
+
+@example
+$ cd libguile-ssh/
+$ autoreconf -if
+$ ./configure
+@end example
+
+Build and install the library:
+
+@example
+$ make
+$ make install
+@end example
+
+For a basic explanation of the installation of the package, see the
+@file{INSTALL} file.
+
+@strong{important} You probably want to call @command{configure} with
+the @option{--with-guilesitedir} option so that this package is
+installed in Guile's default path.  But, if you don't know where your
+Guile site directory is, run @command{configure} without the option,
+and it will give you a suggestion.
 
 @node API Reference
 @chapter API Reference
