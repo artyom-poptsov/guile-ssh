@@ -1,3 +1,5 @@
+;;; client-server.scm -- Guile-SSH client is SUT.
+
 ;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of libguile-ssh.
@@ -22,54 +24,82 @@
 
 (test-begin "client-server")
 
-(test-assert "connect"
-  (let* ((addr      "127.0.0.1")
-         (port      12345)
-         (topdir    (getenv "abs_top_srcdir"))
-         (rsakey    (format #f "~a/tests/rsakey" topdir))
-         (tries-max 10)
-         (log       (test-runner-aux-value (test-runner-current)))
-         (mtx       (make-mutex))
-         (server-thread (lambda (srv)
-                          (let ((s (server-accept srv)))
-                            (lock-mutex mtx)
-                            (session? s)
-                            (unlock-mutex mtx)))))
+
+;;; Global symbols
 
-    (let ((session (make-session
-                    #:host    addr
-                    #:port    port
-                    #:timeout 10        ;seconds
-                    #:user    "Random J. User"
-                    #:log-verbosity 'nolog))
-          (server  (make-server
-                    #:bindaddr addr
-                    #:bindport port
-                    #:rsakey   rsakey
-                    #:log-verbosity 'nolog)))
+(define addr   "127.0.0.1")
+(define port   12345)
+(define topdir (getenv "abs_top_srcdir"))
+(define rsakey (format #f "~a/tests/rsakey" topdir))
+(define log    (test-runner-aux-value (test-runner-current)))
 
+(define (make-session-for-test)
+  "Make a session with predefined parameters for a test."
+  (make-session
+   #:host    addr
+   #:port    port
+   #:timeout 10        ;seconds
+   #:user    "bob"
+   #:log-verbosity 'nolog))
+
+(define (srvmsg message)
+  "Print a server MESSAGE to the test log."
+  (format log "    server: ~a~%" message))
+
+
+;;; Create a Guile-SSH server
+
+(define pid (primitive-fork))
+
+(if (zero? pid)
+    (let ((server (make-server
+                   #:bindaddr addr
+                   #:bindport port
+                   #:rsakey   rsakey
+                   #:log-verbosity 'nolog)))
+      (srvmsg "created")
       (server-listen server)
+      (srvmsg "listening")
+      (while #t
+        (let ((s (server-accept server)))
+          (srvmsg "client accepted")
+          (server-handle-key-exchange s)
+          (srvmsg "key exchange handled")
+          (sleep 1)
+          (session? s)))))
 
-      (lock-mutex mtx)
+
+;;; Test Cases
 
-      (make-thread server-thread server)
+(test-assert "connect-disconnect"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (connected? session)))
+      (disconnect! session)
+      res)))
 
-      (do ((try 1 (1+ try)))
-          ((or (> try tries-max)
-               (connected? session)))
-        (sleep 1)
-        (catch #t
-          (lambda ()
-            (connect! session)
-            (format log "  connected on ~a try~%" try))
-          (lambda (key . args)
-            #f)))
-      (let ((res (connected? session)))
-        (unlock-mutex mtx)
-        res))))
+(test-assert "get-protocol-version"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (get-protocol-version session)))
+      (disconnect! session)
+      res)))
+
+(test-assert "get-public-key-hash"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (get-public-key-hash session)))
+      (disconnect! session)
+      res)))
+
+;; Stop the server
+(kill pid SIGINT)
 
 (test-end "client-server")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))
 
-
+;;; client-server.scm ends here.
