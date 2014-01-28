@@ -1,6 +1,7 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/client-server.scm: Improve.
+	("connect-disconnect"): Rename TC to "connect!, disconnect!".
 
 	* tests/server.scm ("server-set!, invalid values"): Don't check
 	`bindaddr' with garbage strings because errors will be caught only

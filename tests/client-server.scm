@@ -71,7 +71,7 @@
 
 ;;; Test Cases
 
-(test-assert "connect-disconnect"
+(test-assert "connect!, disconnect!"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
