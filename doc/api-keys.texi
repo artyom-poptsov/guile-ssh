@@ -1,0 +1,54 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Keys
+@section Keys
+
+@cindex public keys
+@cindex private keys
+@tindex key
+
+@deffn {Scheme Procedure} key? x
+Return @code{#t} if @var{x} is a Guile-SSH key, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} public-key? x
+Return @code{#t} if @var{x} is a Guile-SSH public key, @code{#f}
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} private-key? x
+Return @code{#t} if @var{x} is a Guile-SSH private key, @code{#f}
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} public-key->string public-key
+Convert @var{public-key} to a string.
+@end deffn
+
+@deffn {Scheme Procedure} private-key-from-file session file
+Read private key from a @var{file}.  If the the key is encrypted the
+user will be asked for passphrase to decrypt the key.
+
+Return a new Guile-SSH key of @code{#f} on error.
+@end deffn
+
+@deffn {Scheme Procedure} private-key->public-key private-key
+Get a public key from the @var{private-key}.
+@end deffn
+
+@deffn {Scheme Procedure} public-key-from-file session file
+Read public key from a @var{file}.  Return a public key or @code{#f}
+on error.
+@end deffn
+
+@deffn {Scheme Procedure} get-key-type key
+Get a symbol that represents the type of the Guile-SSH @var{key}.
+Possible types are: @code{dss}, @code{rsa}, @code{rsa1}, @code{unknown}.
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:

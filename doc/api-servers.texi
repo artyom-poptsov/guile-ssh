@@ -1,0 +1,116 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Servers
+@section Servers
+
+@cindex servers
+@tindex server
+
+@deffn {Scheme Procedure} server? x
+Return @code{#t} if @var{x} is a Guile-SSH server, @code{#f}
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} %make-server
+Make a new Guile-SSH server.
+@end deffn
+
+@deffn {Scheme Procedure} make-server [keywords]
+Make a new Guile-SSH server with the specified configuration specified
+by keywords.  Return a new Guile-SSH server.
+
+Example:
+
+@lisp
+(let ((s (make-server #:bindport      12345
+                      #:rsakey        "/home/bob/.ssh/id_rsa"
+                      #:log-verbosity 'nolog)))
+  ...)
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} server-set! server option value
+Set a @var{option} to @var{value} for Guile-SSH @var{server}.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+
+Here is the description of available options.  The description is
+based on libssh documentation:
+
+@table @samp
+@item bindaddr
+Set the bind address for the @var{server}.
+
+Expected type of @var{value}: string.
+@item bindport
+Set the bind port for the @var{server}, default is 22.
+
+Expected type of @var{value}: number.
+@item hostkey
+Set the @var{server} public key type: ``ssh-rsa'' or ``ssh-dss''.
+
+Expected type of @var{value}: string.
+@item dsakey
+Set the path to the @acronym{SSH} host @acronym{DSA} key.
+
+Expected type of @var{value}: string.
+@item rsakey
+Set the path to the @acronym{SSH} host @acronym{RSA} key.
+
+Expected type of @var{value}: string.
+@item banner
+Set the @var{server} banner sent to clients.
+
+Expected type of @var{value}: string.
+@item log-verbosity
+Set the logging verbosity.  Possible values:
+
+@table @samp
+@item nolog
+No logging at all
+@item rare
+Only rare and noteworthy events
+@item protocol
+High level protocol information
+@item packet
+Lower level protocol infomations, packet level
+@item functions
+Every function path
+@end table
+
+Expected type of @var{value}: symbol.
+@item blocking-mode
+Set the @var{server} to blocking/nonblocking mode according to
+@var{value}.  The @var{value} is expected to be @code{#t} or
+@code{#f}.
+
+Expected type of @var{value}: boolean.
+@end table
+
+@end deffn
+
+@deffn {Scheme Procedure} server-listen server
+Start listening to the socket.  Throw @code{guile-ssh-error} on error.
+Return value undefined.
+@end deffn
+
+@deffn {Scheme Procedure} server-accept server
+Accept an incoming @acronym{SSH} connection to the @var{server}.
+Return a new Guile-SSH session or @code{#f} on error.
+@end deffn
+
+@deffn {Scheme Procedure} server-handle-key-exchange session
+Handle key exchange for a @var{session} and setup encryption.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} server-message-get session
+Get a message from a SSH client (@pxref{Messages}).  Return a new
+Guile-SSH message, or @code{#f} on error.
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:

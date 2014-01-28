@@ -1,14 +1,49 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
-	* tests/client-server.scm ("connect"): Update test to use symbols
-	for setting log levels.
-	* tests/server.scm ("server-set!, valid values"): Likewise.
-	("server-set!, invalid values"): Likewise.
-	("make-server"): Likewise.
-	("server-listen"): Likewise.
-	* tests/session.scm ("session-set!, valid values"): Likewise.
-	("session-set!, invalid values"): Update `log-verbosity' data set
-	for the test.
+	* src/session-func.c (session_options): Remove duplicates that are
+	existed for some options: `port-str', `log-verbosity-str',
+	`add-identity'.
+	(set_option): Likewise.
+	* NEWS: Update.
+
+	* doc/api-servers.texi: Add copyright notice.
+
+	* doc/api-channels.texi (Channels): Add brief description of the
+	channel type.  Add example of `channel-request-exec' usage.  Add
+	description of `channel-set-stream!' and `channel-get-stream'
+	procedure.
+
+	* doc/api-version.texi (Version): Update concepts.
+	* doc/api-sessions.texi (Sessions): Likewise.
+	* doc/api-messages.texi (Messages, Parsing of Requests): Likewise.
+	* doc/api-channels.texi (Channels): Likewise.
+	* doc/api-auth.texi (Auth): Likewise.
+	* doc/guile-ssh.texi (Top): Add `Concept Index'.
+	* doc/indices.texi (Concept Index): New node.
+
+	* doc/guile-ssh.texi: Remove `Preface' node.
+	(Installation): New node.
+	(Acknowledgments): Add new node.
+	(Top): Add `Acknowledgments'.
+	(Examples): Add information about installed examples.
+
+	* doc/api-servers.texi (Servers): Add reference to `Messages' node.
+	* doc/api-messages.texi (Message Handling): Add reference to
+	`Parsing of Requests' node.
+	(Parsing of Requests): Improve documentation for request parsers.
+
+	* doc/guile-ssh.texi: Fix the top-level node of the documentation
+	so now it integrates nicely into Info system.
+
+	* doc/api-auth.texi, api-channels.texi, api-keys.texi,
+	api-servers.texi, api-sessions.texi, api-version.texi,
+	guile-ssh.texi: Improve.
+
+	* doc/api-sessions.texi (Sessions): Improve description of
+	`session-set!' procedure.
+	* doc/api-servers.texi (Servers): Improve description of
+	`server-set!' procedure.
+	* doc/version.texi: Update.
 
 	* src/server-func.c (set_option) [SSH_BIND_OPTIONS_LOG_VERBOSITY]:
 	Use symbols to represent log levels instead of numbers.  All
@@ -19,6 +54,16 @@
 	* examples/echo/server.scm (*default-log-verbosity*): Set to 'nolog.
 	* examples/ssshd.scm (*default-log-verbosity*): Likewise.
 	* NEWS: Update.
+
+	* tests/client-server.scm ("connect"): Update test to use symbols
+	for setting log levels.
+	* tests/server.scm ("server-set!, valid values"): Likewise.
+	("server-set!, invalid values"): Likewise.
+	("make-server"): Likewise.
+	("server-listen"): Likewise.
+	* tests/session.scm ("session-set!, valid values"): Likewise.
+	("session-set!, invalid values"): Update `log-verbosity' data set
+	for the test.
 
 	* src/session-func.c (set_option)[SSH_OPTIONS_LOG_VERBOSITY]: Use
 	symbols to represent log levels instead of numbers.  All callers
@@ -31,6 +76,15 @@
 	copyright notice.
 
 2014-01-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Add documentation in Texinfo format.
+	* configure.ac: Add `doc/Makefile' to `AC_CONFIG_FILES'.
+	* Makefile.am (SUBDIRS): Add `doc' directory.
+	* doc/Makefile.am: New file.
+	* doc/api-auth.texi, doc/api-channels.texi, doc/api-keys.texi,
+	doc/api-messages.texi, doc/api-servers.texi,
+	doc/api-sessions.texi, doc/api-version.texi, doc/fdl.texi,
+	doc/guile-ssh.texi, doc/indices.texi, doc/version.texi: New files.
 
 	* NEWS: Update.
 

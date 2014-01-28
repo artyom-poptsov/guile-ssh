@@ -1,0 +1,248 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Sessions
+@section Sessions
+
+@cindex sessions
+@tindex session
+
+@deffn {Scheme Procedure} session? x
+Returns @code{#t} if @var{x} is a Guile-SSH session, @code{#f}
+otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} %make-session
+Create a new Guile-SSH session.
+@end deffn
+
+@deffn {Scheme Procedure} make-session [keywords]
+Create a new Guile-SSH session and set its options.  Options can be
+passed as keywords.
+
+Return a new Guile-SSH session.
+
+This procedure is more convenient than primitive @code{%make-session},
+but on other hand it should be a bit slower because of additional
+checks.
+
+Example:
+
+@lisp
+(let ((s (make-session #:user          "alice"
+                       #:host          "example.com"
+                       #:port          12345
+                       #:identity      "/home/alice/.ssh/id_rsa"
+                       #:log-verbosity 'nolog)))
+  ...)
+@end lisp
+
+@end deffn
+
+@deffn {Scheme Procedure} blocking-flush! session timeout
+Blocking flush of the outgoing buffer of @var{session}.  Return on of
+the following symbols:
+
+@table @samp
+@item ok
+Success.
+@item again
+@var{timeout} occured.
+@item error
+An error occured.
+@end table
+@end deffn
+
+@deffn {Scheme Procedure} session-set! session option value
+Set a @var{option} to @code{value} for the given Guile-SSH
+@var{session}.  Throw a @code{guile-ssh-error} on error.  Return value
+is undefined.
+
+Here is the description of available options.  The description is
+based on libssh documentation:
+
+@table @samp
+@item host
+The hostname or @acronym{IP} address to connect to.
+
+Expected type of @var{value}: string.
+@item port
+The port to connect to.
+
+Expected type of @var{value}: number.
+@item fd
+The file descriptor to use.
+
+If you wish to open the socket yourself for a reason or another, set
+the file descriptor.  Don't forget to set the hostname as the hostname
+is used as a key in the known_host mechanism.
+
+Expected type of @var{value}: number.
+@item bindaddr
+The address to bind the client to.
+
+Expected type of @var{value}: string.
+@item user
+The username for authentication.
+
+Expected type of @var{value}: string.
+@item ssh-dir
+Set the SSH directory.
+
+The ssh directory is used for files like known_hosts and identity
+(private and public key).  It may include @code{%s} which will be
+replaced by the user home directory.
+
+Expected type of @var{value}: string.
+@item identity
+Set the identity file name.  By default identity, @file{id_dsa} and
+@file{id_rsa} are checked.
+
+The identity file used authenticate with public key.  It may include
+@code{%s} which will be replaced by the user home directory.
+
+@item knownhosts
+Set the known hosts file name.  Default value is @file{~/.ssh/known_hosts}.
+
+The known hosts file is used to certify remote hosts are genuine.  The
+string may include @code{%s} which will be replaced by the user home
+directory.
+
+Expected type of @var{value}: string.
+@item timeout
+Set a timeout for the connection in seconds.
+
+Expected type of @var{value}: number.
+@item timeout-usec
+Set a timeout for the connection in micro seconds.
+
+Expected type of @var{value}: number.
+@item ssh1
+Allow or deny the connection to SSH1 servers.
+
+Expected type of @var{value}: boolean.
+@item ssh2
+Allow or deny the connection to SSH2 servers
+
+Expected type of @var{value}: boolean.
+@item log-verbosity
+Set the session logging verbosity.  Possible values:
+
+@table @samp
+@item nolog
+No logging at all
+@item rare
+Only rare and noteworthy events
+@item protocol
+High level protocol information
+@item packet
+Lower level protocol infomations, packet level
+@item functions
+Every function path
+@end table
+
+Expected type of @var{value}: symbol.
+@item ciphers-c-s
+Set the symmetric cipher client to server.  The @var{value} must be a
+string of comma-separated values.
+@item ciphers-s-c
+Set the symmetric cipher server to client.  The @var{value} must be a
+string of comma-separated values.
+@item compression-c-s
+Set the compression to use for client to server.  The @var{value} must
+be ``yes'', ``no'' or a specific algorithm name if needed ("zlib",
+@verb{|"zlib@openssh.com"|}, "none").
+
+Expected type of @var{value}: string.
+@item compression-s-c
+Set the compression to use for server to client.  The @var{value} must
+be ``yes'', ``no'' or a specific algorithm name if needed ("zlib",
+@verb{|"zlib@openssh.com"|}, "none").
+
+Expected type of @var{value}: string.
+@item proxycommand
+Set the command to be executed in order to connect to server.
+
+Expected type of @var{value}: string.
+@item stricthostkeycheck
+Set the parameter @code{StrictHostKeyChecking} to avoid asking about a
+fingerprint.
+@item compression
+Set the compression to use for both directions communication.  The
+@var{value} must be ``yes'', ``no'' or a specific algorithm name if
+needed ("zlib", @verb{|"zlib@openssh.com"|}, "none").
+
+Expected type of @var{value}: string.
+@item compression-level
+Set the compression level to use for zlib functions.  The @var{value}
+is expected to be a number from 1 to 9, 9 being the most efficient but
+slower.
+@end table
+
+
+@end deffn
+
+@deffn {Scheme Procedure} connect! session
+Connect @var{session} to a SSH server.  Return one of the following
+symbols: @code{ok}, @code{again}.
+@end deffn
+
+@deffn {Scheme Procedure} disconnect! session
+Disconnect the @var{session}.  This procedure can be used by a client
+as well as by a server.
+@end deffn
+
+@deffn {Scheme Procedure} authenticate-server session
+Authenticate the server.  Return one of the following symbols:
+
+@table @samp
+@item ok
+The server is known and has not changed.
+@item known-changed
+The server key has changed. Either you are under attack or the
+administrator changed the key. You @emph{have} to warn the user about
+a possible attack.
+@item found-other
+The server gave use a key of a type while we had an other type
+recorded. It is a possible attack.
+@item not-known
+The server is unknown. User should confirm the MD5 is correct.
+@item file-not-found
+The known host file does not exist. The host is thus unknown. File
+will be created if host key is accepted.
+@end table
+
+@end deffn
+
+@deffn {Scheme Procedure} get-public-key-hash session
+@cindex MD5 hash
+Get MD5 hash of a public key.  Return MD5 hash on success, @code{#f}
+on error.
+@end deffn
+
+@deffn {Scheme Procedure} write-known-host! session
+Write the current server as known in the known hosts file.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} connected? session
+Check if we are connected.  Return @code{#f} if we are connected to a
+server, @code{#f} if we aren't.
+@end deffn
+
+@deffn {Scheme Procedure} get-error session
+@cindex handling session errors
+Retrieve the error text message from the last error related to
+@var{session}.
+@end deffn
+
+@deffn {Scheme Procedure} get-protocol-version session
+Get version of SSH protocol.  Return 1 for SSH1, 2 for SSH2 or
+@code{#f} on error.
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:
