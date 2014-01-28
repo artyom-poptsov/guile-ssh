@@ -20,7 +20,9 @@
 (use-modules (srfi srfi-64)
              (ice-9 threads)
              (ssh server)
-             (ssh session))
+             (ssh session)
+             (ssh auth)
+             (ssh message))
 
 (test-begin "client-server")
 
@@ -32,6 +34,10 @@
 (define topdir (getenv "abs_top_srcdir"))
 (define rsakey (format #f "~a/tests/rsakey" topdir))
 (define log    (test-runner-aux-value (test-runner-current)))
+(define server-thread #f)
+
+
+;;; Helper procedures and macros
 
 (define (make-session-for-test)
   "Make a session with predefined parameters for a test."
@@ -42,34 +48,49 @@
    #:user    "bob"
    #:log-verbosity 'nolog))
 
+(define (make-server-for-test)
+  "Make a server with predefined parameters for a test."
+
+  ;; FIXME: This hack is aimed to give every server its own unique
+  ;; port to listen to.  Clients will pick up new port number
+  ;; automatically through global `port' symbol as well.
+  (set! port (1+ port))
+
+  (make-server
+   #:bindaddr addr
+   #:bindport port
+   #:rsakey   rsakey
+   #:log-verbosity 'nolog))
+
 (define (srvmsg message)
   "Print a server MESSAGE to the test log."
   (format log "    server: ~a~%" message))
 
-
-;;; Create a Guile-SSH server
+(define-macro (spawn-server-thread . body)
+  `(set! server-thread
+      (make-thread
+       (lambda ()
+         ,@body))))
 
-(define pid (primitive-fork))
-
-(if (zero? pid)
-    (let ((server (make-server
-                   #:bindaddr addr
-                   #:bindport port
-                   #:rsakey   rsakey
-                   #:log-verbosity 'nolog)))
-      (srvmsg "created")
-      (server-listen server)
-      (srvmsg "listening")
-      (while #t
-        (let ((s (server-accept server)))
-          (srvmsg "client accepted")
-          (server-handle-key-exchange s)
-          (srvmsg "key exchange handled")
-          (sleep 1)
-          (session? s)))))
+(define (cancel-server-thread)
+  (cancel-thread server-thread))
 
 
 ;;; Test Cases
+
+
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (srvmsg "created")
+   (server-listen server)
+   (srvmsg "listening")
+   (while #t
+     (let ((s (server-accept server)))
+       (srvmsg "client accepted")
+       (server-handle-key-exchange s)
+       (srvmsg "key exchange handled")
+       (sleep 1)
+       (session? s)))))
 
 (test-assert "connect!, disconnect!"
   (let ((session (make-session-for-test)))
@@ -95,9 +116,170 @@
       (disconnect! session)
       res)))
 
-;; Stop the server
-(kill pid SIGINT)
+(cancel-server-thread)
 
+
+;; Server replies "default" with the list of allowed authentication
+;; methods.  Client receives the list.
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)
+       (let session-loop ((msg (server-message-get s)))
+         (message-auth-set-methods! msg '(password public-key))
+         (message-reply-default msg)
+         (session-loop (server-message-get s)))))))
+
+(test-assert "userauth-get-list"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (userauth-get-list session)))
+      (equal? res '(password public-key)))))
+
+(cancel-server-thread)
+
+
+;; userauth-none!
+
+;; Server replies with "success", client receives 'success.
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)
+       (let session-loop ((msg (server-message-get s)))
+         (message-auth-set-methods! msg '(none))
+         (message-reply-success msg)
+         (session-loop (server-message-get s)))))))
+
+(test-assert "userauth-none!, success"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (userauth-none! session)))
+      (disconnect! session)
+      (eq? res 'success))))
+
+(cancel-server-thread)
+
+
+;; Server replies with "default", client receives 'denied.
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)
+       (let session-loop ((msg (server-message-get s)))
+         (message-auth-set-methods! msg '(public-key))
+         (message-reply-default msg)
+         (session-loop (server-message-get s)))))))
+
+(test-assert "userauth-none!, denied"
+  (let ((session (make-session-for-test)))
+    (sleep 2)
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (userauth-none! session)))
+      (disconnect! session)
+      (eq? res 'denied))))
+
+(cancel-server-thread)
+
+
+;; Server replies with "partial success", client receives 'partial.
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)
+       (let session-loop ((msg (server-message-get s)))
+         (message-auth-set-methods! msg '(none))
+         (message-reply-success msg 'partial)
+         (session-loop (server-message-get s)))))))
+
+(test-assert "userauth-none!, partial"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (userauth-none! session)))
+      (disconnect! session)
+      (eq? res 'partial))))
+
+(cancel-server-thread)
+
+
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)
+       (let session-loop ((msg (server-message-get s)))
+         (message-auth-set-methods! msg '(password))
+         (message-reply-success msg)
+         (session-loop (server-message-get s)))))))
+
+(test-assert "userauth-password!, success"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (userauth-password! session "alice" "password")))
+      (disconnect! session)
+      (eq? res 'success))))
+
+(cancel-server-thread)
+
+
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)
+       (let session-loop ((msg (server-message-get s)))
+         (message-auth-set-methods! msg '(password))
+         (message-reply-default msg)
+         (session-loop (server-message-get s)))))))
+
+(test-assert "userauth-password!, denied"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (userauth-password! session "alice" "password")))
+      (disconnect! session)
+      (eq? res 'denied))))
+
+(cancel-server-thread)
+
+
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)
+       (let session-loop ((msg (server-message-get s)))
+         (message-auth-set-methods! msg '(password))
+         (message-reply-success msg 'partial)
+         (session-loop (server-message-get s)))))))
+
+(test-assert "userauth-password!, partial"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let ((res (userauth-password! session "alice" "password")))
+      (disconnect! session)
+      (eq? res 'partial))))
+
+(cancel-server-thread)
+
+
 (test-end "client-server")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))

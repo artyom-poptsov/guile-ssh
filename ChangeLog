@@ -1,3 +1,13 @@
+2014-01-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/client-server.scm (make-server-for-test): New procedure.
+	(spawn-server-thread): New macro.
+	(cancel-server-thread): New procedure.
+	("userauth-get-list", "userauth-none!, success")
+	("userauth-none!, denied", "userauth-none!, partial")
+	("userauth-password!, success", "userauth-password!, denied")
+	("userauth-password!, partial"): New TCs.
+
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/client-server.scm: Improve.
