@@ -1,5 +1,7 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/api-servers.texi: Add copyright notice.
+
 	* doc/api-channels.texi (Channels): Add brief description of the
 	channel type.  Add example of `channel-request-exec' usage.  Add
 	description of `channel-set-stream!' and `channel-get-stream'
