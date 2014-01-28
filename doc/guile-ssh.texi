@@ -115,6 +115,18 @@ Guile-SSH Server API
 
 @node Examples
 @chapter Examples
+There are examples that come with Guile-SSH.  These examples are
+normally installed in @file{$prefix/share/libguile-ssh/examples}
+directory.
+
+@table @samp
+@item sssh.scm
+@itemx ssshd.scm
+Guile-SSH client and server example.
+@item echo/client.scm
+@itemx echo/server.scm
+Echo client and server example.
+@end table 
 
 @node Acknowledgments
 @chapter Acknowledgments

@@ -2,6 +2,7 @@
 
 	* doc/guile-ssh.texi (Acknowledgments): Add new node.
 	(Top): Add `Acknowledgments'.
+	(Examples): Add information about installed examples.
 
 	* doc/api-servers.texi (Servers): Add reference to `Messages' node.
 	* doc/api-messages.texi (Message Handling): Add reference to
