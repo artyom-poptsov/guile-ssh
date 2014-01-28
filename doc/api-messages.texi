@@ -57,7 +57,8 @@ Get type of the @var{message}.
 
 @deffn {Scheme Procedure} message-get-req message
 Get a request object from the @var{message}.  Returns a new request
-object.  Throw @code{guile-ssh-error} on error.
+object (@pxref{Parsing of Requests}).  Throw @code{guile-ssh-error} on
+error.
 @end deffn
 
 @deffn {Scheme Procedure} message-auth-set-methods! message methods-list
@@ -73,44 +74,48 @@ value is undefined.
 @cindex request
 @tindex request
 
-@deffn {Scheme Procedure} service-req:service req
-TODO: Add description.
+@deffn {Scheme Procedure} service-req:service request
+Get service name from a service @var{request}.
 @end deffn
 
-@deffn {Scheme Procedure} channel-open-req:orig req
-@deffnx {Scheme Procedure} channel-open-req:orig-port req
-@deffnx {Scheme Procedure} channel-open-req:dest req
-@deffnx {Scheme Procedure} channel-open-req:dest-port
-TODO: Add description.
+@deffn {Scheme Procedure} channel-open-req:orig request
+@deffnx {Scheme Procedure} channel-open-req:orig-port request
+@deffnx {Scheme Procedure} channel-open-req:dest request
+@deffnx {Scheme Procedure} channel-open-req:dest-port request
+Get originator, originator-port, destination and destination-port from
+the channel-open @var{request}.
 @end deffn
 
-@deffn {Scheme Procedure} auth-req:user req
-@deffnx {Scheme Procedure} auth-req:password req
-@deffnx {Scheme Procedure} auth-req:pubkey req
-@deffnx {Scheme Procedure} auth-req:pubkey-state req
-TODO: Add description.
+@deffn {Scheme Procedure} auth-req:user request
+@deffnx {Scheme Procedure} auth-req:password request
+@deffnx {Scheme Procedure} auth-req:pubkey request
+@deffnx {Scheme Procedure} auth-req:pubkey-state request
+Get user, password, public key and public key state from the auth
+@var{request}.
 @end deffn
 
-@deffn {Scheme Procedure} pty-req:term req
-@deffnx {Scheme Procedure} pty-req:width req
-@deffnx {Scheme Procedure} pty-req:height req
-@deffnx {Scheme Procedure} pty-req:pxwidth req
-@deffnx {Scheme Procedure} pty-req:pxheight req
-TODO: Add description.
+@deffn {Scheme Procedure} pty-req:term request
+@deffnx {Scheme Procedure} pty-req:width request
+@deffnx {Scheme Procedure} pty-req:height request
+@deffnx {Scheme Procedure} pty-req:pxwidth request
+@deffnx {Scheme Procedure} pty-req:pxheight request
+Get terminal, terminal width, terminal height, terminal pxwidth and
+terminal pxheight from the @acronym{PTY} @var{request}.
 @end deffn
 
-@deffn {Scheme Procedure} env-req:name req
-@deffnx {Scheme Procedure} env-req:value req
-TODO: Add description.
+@deffn {Scheme Procedure} env-req:name request
+@deffnx {Scheme Procedure} env-req:value request
+Get environment variable name and its value from the environment
+@var{request}.
 @end deffn
 
-@deffn {Scheme Procedure} exec-req:cmd req
-TODO: Add description.
+@deffn {Scheme Procedure} exec-req:cmd request
+Get a command from the exec @var{request}.
 @end deffn
 
-@deffn {Scheme Procedure} global-req:addr req
-@deffnx {Scheme Procedure} global-req:port req
-TODO: Add description.
+@deffn {Scheme Procedure} global-req:addr request
+@deffnx {Scheme Procedure} global-req:port request
+Get address and port from the global @var{request}.
 @end deffn
 
 @c Local Variables:

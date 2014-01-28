@@ -1,5 +1,10 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/api-servers.texi (Servers): Add reference to `Messages' node.
+	* doc/api-messages.texi (Message Handling): Add reference to
+	`Parsing of Requests' node.
+	(Parsing of Requests): Improve documentation for request parsers.
+
 	* doc/guile-ssh.texi: Fix the top-level node of the documentation
 	so now it integrates nicely into Info system.
 

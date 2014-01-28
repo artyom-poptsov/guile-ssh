@@ -104,8 +104,8 @@ Handle key exchange for a @var{session} and setup encryption.  Throw
 @end deffn
 
 @deffn {Scheme Procedure} server-message-get session
-Get a message from a SSH client.  Return a new Guile-SSH message, or
-@code{#f} on error.
+Get a message from a SSH client (@pxref{Messages}).  Return a new
+Guile-SSH message, or @code{#f} on error.
 @end deffn
 
 @c Local Variables:
