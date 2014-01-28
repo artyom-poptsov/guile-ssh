@@ -41,12 +41,12 @@
                     #:port    port
                     #:timeout 10        ;seconds
                     #:user    "Random J. User"
-                    #:log-verbosity 4))
+                    #:log-verbosity 'nolog))
           (server  (make-server
                     #:bindaddr addr
                     #:bindport port
                     #:rsakey   rsakey
-                    #:log-verbosity 4)))
+                    #:log-verbosity 'nolog)))
 
       (server-listen server)
 

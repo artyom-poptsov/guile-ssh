@@ -44,7 +44,7 @@
                     (rsakey        ,(format #f "~a/tests/rsakey" topdir))
                     (dsakey        ,(format #f "~a/tests/dsakey" topdir))
                     (banner        "string")
-                    (log-verbosity 0 1 2 3 4 0)
+                    (log-verbosity nolog rare protocol packet functions)
                     (blocking-mode #f #t)))
          (log (test-runner-aux-value (test-runner-current)))
          (res #t))
@@ -73,7 +73,7 @@
                    (rsakey         "I'm not a RSA key" 42)
                    (dsakey         "I'm not a DSA key" 42)
                    (banner         12345)
-                   (log-verbosity  -1 5)
+                   (log-verbosity  -1 0 1 2 3 4 5)
                    (blocking-mode  42 "string")))
         (log (test-runner-aux-value (test-runner-current)))
         (res #t))
@@ -101,7 +101,7 @@
                  #:rsakey        (format #f "~a/tests/rsakey" topdir)
                  #:dsakey        (format #f "~a/tests/dsakey" topdir)
                  #:banner        "banner"
-                 #:log-verbosity 1
+                 #:log-verbosity 'nolog
                  #:blocking-mode #f)))
 
 (test-assert "server-listen"
@@ -109,7 +109,7 @@
          (server  (make-server #:bindaddr "127.0.0.1"
                                #:bindport 123456
                                #:rsakey   (format #f "~a/tests/rsakey" topdir)
-                               #:log-verbosity 1)))
+                               #:log-verbosity 'nolog)))
     (server-listen server)
     #t))
 

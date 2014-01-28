@@ -1,5 +1,15 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm ("connect"): Update test to use symbols
+	for setting log levels.
+	* tests/server.scm ("server-set!, valid values"): Likewise.
+	("server-set!, invalid values"): Likewise.
+	("make-server"): Likewise.
+	("server-listen"): Likewise.
+	* tests/session.scm ("session-set!, valid values"): Likewise.
+	("session-set!, invalid values"): Update `log-verbosity' data set
+	for the test.
+
 	* src/server-func.c (set_option) [SSH_BIND_OPTIONS_LOG_VERBOSITY]:
 	Use symbols to represent log levels instead of numbers.  All
 	callers updated.

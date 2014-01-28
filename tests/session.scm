@@ -45,7 +45,8 @@
                    (timeout-usec 15000) ;milliseconds
                    (ssh1         #f #t)
                    (ssh2         #f #t)
-                   (log-verbosity 0 1 2 3 4 0)
+                   (log-verbosity nolog rare protocol packet functions
+                                  nolog)
                    (compression   "yes" "no")
                    (compression-level 1 2 3 4 5 6 7 8 9)))
         (res #t))
@@ -68,7 +69,7 @@
                    (timeout-usec      "string" -15000)
                    (ssh1              12345 "string")
                    (ssh2              12345 "string")
-                   (log-verbosity     "string" -1 5)
+                   (log-verbosity     "string" -1 0 1 2 3 4 5)
                    (compression       12345)
                    (compression-level -1 0 10)))
         (res #t))
