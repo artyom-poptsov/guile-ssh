@@ -1,5 +1,9 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/server.scm ("server-set!, valid values"): Check `hostkey'
+	option.
+	("server-set!, invalid values"): Likewise.
+
 	* src/session-func.c (session_options): Remove duplicates that are
 	existed for some options: `port-str', `log-verbosity-str',
 	`add-identity'.
