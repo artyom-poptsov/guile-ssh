@@ -1,5 +1,11 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/session-func.c (session_options): Remove duplicates that are
+	existed for some options: `port-str', `log-verbosity-str',
+	`add-identity'.
+	(set_option): Likewise.
+	* NEWS: Update.
+
 	* doc/api-servers.texi: Add copyright notice.
 
 	* doc/api-channels.texi (Channels): Add brief description of the

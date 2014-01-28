@@ -13,6 +13,12 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    `write' and `read-line'.
 ** `session-set!' and `server-set!' now take log-verbosity as a symbol
    Use symbols to represent log levels instead of numbers.
+** Remove duplicates of some session options
+   Remove duplicates that are existed for some Guile-SSH session
+   options: `port-str' (duplicates `port', differs only in expected
+   type of value), `log-verbosity-str' (duplicates `log-verbosity',
+   differs only in expected type of value), `add-identity' (duplicates
+   `identity', no differences).
 ** New `userauth-autopubkey!' procedure.
    The procedure can be used for public key authentication with a SSH
    agent.

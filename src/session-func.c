@@ -37,20 +37,17 @@ struct option {
 static struct symbol_mapping session_options[] = {
   { "host",               SSH_OPTIONS_HOST               },
   { "port",               SSH_OPTIONS_PORT               },
-  { "port-str",           SSH_OPTIONS_PORT_STR           },
   { "fd",                 SSH_OPTIONS_FD                 },
   { "bindaddr",           SSH_OPTIONS_BINDADDR           },
   { "user",               SSH_OPTIONS_USER               },
   { "ssh-dir",            SSH_OPTIONS_SSH_DIR            },
   { "identity",           SSH_OPTIONS_IDENTITY           },
-  { "add-identity",       SSH_OPTIONS_ADD_IDENTITY       },
   { "knownhosts",         SSH_OPTIONS_KNOWNHOSTS         },
   { "timeout",            SSH_OPTIONS_TIMEOUT            },
   { "timeout-usec",       SSH_OPTIONS_TIMEOUT_USEC       },
   { "ssh1",               SSH_OPTIONS_SSH1               },
   { "ssh2",               SSH_OPTIONS_SSH2               },
   { "log-verbosity",      SSH_OPTIONS_LOG_VERBOSITY      },
-  { "log-verbosity-str",  SSH_OPTIONS_LOG_VERBOSITY_STR  },
   { "ciphers-c-s",        SSH_OPTIONS_CIPHERS_C_S        },
   { "ciphers-s-c",        SSH_OPTIONS_CIPHERS_S_C        },
   { "compression-c-s",    SSH_OPTIONS_COMPRESSION_C_S    },
@@ -203,15 +200,12 @@ set_option (ssh_session session, int type, SCM value)
       return set_uint32_opt (session, type, value);
 
     case SSH_OPTIONS_HOST:
-    case SSH_OPTIONS_PORT_STR:
     case SSH_OPTIONS_BINDADDR:
     case SSH_OPTIONS_USER:
     case SSH_OPTIONS_COMPRESSION:
-    case SSH_OPTIONS_LOG_VERBOSITY_STR:
     case SSH_OPTIONS_SSH_DIR:
     case SSH_OPTIONS_KNOWNHOSTS:
     case SSH_OPTIONS_IDENTITY:
-    case SSH_OPTIONS_ADD_IDENTITY: /* Same as IDENTITY */
     case SSH_OPTIONS_CIPHERS_C_S:
     case SSH_OPTIONS_CIPHERS_S_C:
     case SSH_OPTIONS_COMPRESSION_C_S:
