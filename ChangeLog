@@ -1,5 +1,13 @@
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/api-version.texi (Version): Update concepts.
+	* doc/api-sessions.texi (Sessions): Likewise.
+	* doc/api-messages.texi (Messages, Parsing of Requests): Likewise.
+	* doc/api-channels.texi (Channels): Likewise.
+	* doc/api-auth.texi (Auth): Likewise.
+	* doc/guile-ssh.texi (Top): Add `Concept Index'.
+	* doc/indices.texi (Concept Index): New node.
+
 	* doc/guile-ssh.texi: Remove `Preface' node.
 	(Installation): New node.
 	(Acknowledgments): Add new node.

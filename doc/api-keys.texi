@@ -6,7 +6,8 @@
 @node Keys
 @section Keys
 
-@cindex key
+@cindex public keys
+@cindex private keys
 @tindex key
 
 @deffn {Scheme Procedure} key? x

@@ -8,3 +8,8 @@
 @unnumbered Type Index
 
 @printindex tp
+
+@node Concept Index
+@unnumbered Concept Index
+
+@printindex cp

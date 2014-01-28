@@ -6,7 +6,7 @@
 @node Channels
 @section Channels
 
-@cindex channels
+@cindex data transferring
 @tindex channel
 
 @deffn {Scheme Procedure} channel? x
@@ -24,6 +24,8 @@ value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} channel-request-exec channel command
+@cindex non-interactive SSH session
+@cindex command execution
 Run a shell @var{command} without an interactive shell.  Throw
 @code{guile-ssh-error} on error.  Return value is undefined.
 @end deffn
@@ -39,6 +41,7 @@ is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} channel-request-env channel variable value
+@cindex setting of environment variables
 Set an environment @var{variable} to @var{value}.  Throw
 @code{guile-ssh-error} on error.  Return value is undefined.
 @end deffn

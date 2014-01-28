@@ -6,7 +6,7 @@
 @node Messages
 @section Messages
 
-@cindex messages
+@cindex talking to a SSH client
 @tindex message
 
 @menu
@@ -71,7 +71,7 @@ value is undefined.
 @node Parsing of Requests
 @subsection Parsing of Requests
 
-@cindex request
+@cindex handling of requests
 @tindex request
 
 @deffn {Scheme Procedure} service-req:service request

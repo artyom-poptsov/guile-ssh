@@ -6,7 +6,7 @@
 @node Version
 @section Version
 
-@cindex version
+@cindex versions
 
 This module provides functions that is used for getting information
 about current versions.

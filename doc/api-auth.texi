@@ -17,6 +17,7 @@ Try to authenticate with a public key @var{publickey}.
 @end deffn
 
 @deffn {Scheme Procedure} userauth-autopubkey! session
+@cindex authentication with a SSH agent
 Try to automatically authenticate with @code{none} method first and
 then with public keys.  The procedure will try to get a cached private
 key from a @acronym{SSH} agent and if it fails it will try to read a

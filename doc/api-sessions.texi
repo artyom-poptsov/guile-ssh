@@ -217,6 +217,7 @@ will be created if host key is accepted.
 @end deffn
 
 @deffn {Scheme Procedure} get-public-key-hash session
+@cindex MD5 hash
 Get MD5 hash of a public key.  Return MD5 hash on success, @code{#f}
 on error.
 @end deffn
@@ -232,6 +233,7 @@ server, @code{#f} if we aren't.
 @end deffn
 
 @deffn {Scheme Procedure} get-error session
+@cindex handling session errors
 Retrieve the error text message from the last error related to
 @var{session}.
 @end deffn
