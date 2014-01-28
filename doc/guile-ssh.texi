@@ -58,6 +58,8 @@ Documentation License.''
 * API Reference::
 * Examples::
 
+* Acknowledgments::
+
 Appendices
 
 * GNU Free Documentation License::  The license of this manual.
@@ -113,6 +115,16 @@ Guile-SSH Server API
 
 @node Examples
 @chapter Examples
+
+@node Acknowledgments
+@chapter Acknowledgments
+
+The @url{http://www.libssh.org/, libssh} that is used by Guile-SSH is
+initially written by Aris Adamantiadis and being developed by the
+developer community.  See AUTHORS file that comes along with libssh
+distribution for full authors list.
+
+Thank you.
 
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License
