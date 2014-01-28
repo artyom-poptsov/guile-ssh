@@ -26,6 +26,8 @@ struct symbol_mapping {
   int   value;
 };
 
+extern struct symbol_mapping log_verbosity[];
+
 extern SCM
 _ssh_const_to_scm (struct symbol_mapping *types, int value);
 

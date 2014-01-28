@@ -42,7 +42,7 @@
 ;;; Variables and constants
 
 (define *default-bindport*      12345)
-(define *default-log-verbosity* 0)
+(define *default-log-verbosity* 'nolog)
 (define *default-rsakey*        (string-append (getenv "HOME")
                                                "/.ssh/id_rsa"))
 

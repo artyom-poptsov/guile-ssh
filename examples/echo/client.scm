@@ -135,7 +135,7 @@ errors."
            (session (make-session #:user user
                                   #:host host
                                   #:port (string->number port)
-                                  #:log-verbosity 0))) ;Be quiet
+                                  #:log-verbosity 'nolog))) ;Be quiet
 
       (connect! session)
 

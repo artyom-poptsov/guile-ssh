@@ -102,6 +102,17 @@ set_blocking_mode (ssh_bind bind, SCM value)
   return SSH_OK;
 }
 
+/* Convert Scheme symbol to libssh constant and set the corresponding
+   option to the value of the constant. */
+static inline int
+set_sym_opt (ssh_bind bind, int type, struct symbol_mapping *sm, SCM value)
+{
+  struct symbol_mapping *opt = _scm_to_ssh_const (sm, value);
+  if (! opt)
+    guile_ssh_error1 ("server-set!", "Wrong value", value);
+  return ssh_bind_options_set (bind, type, &opt->value);
+}
+
 static int
 set_option (ssh_bind bind, int type, SCM value)
 {
@@ -118,7 +129,7 @@ set_option (ssh_bind bind, int type, SCM value)
       return set_uint32_opt (bind, type, value);
 
     case SSH_BIND_OPTIONS_LOG_VERBOSITY:
-      return set_int32_opt (bind, type, value);
+      return set_sym_opt (bind, type, log_verbosity, value);
 
     case GSSH_BIND_OPTIONS_BLOCKING_MODE:
       return set_blocking_mode (bind, value);

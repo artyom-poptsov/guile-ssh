@@ -43,7 +43,7 @@
              (ssh auth))                ; userauth-*
 
 (define *default-bindport*      "12345")
-(define *default-log-verbosity* 0)
+(define *default-log-verbosity* 'nolog)
 (define *default-rsakey*        (format #f "~a/.ssh/id_rsa" (getenv "HOME")))
 (define *default-dsakey*        (format #f "~a/.ssh/id_dsa" (getenv "HOME")))
 

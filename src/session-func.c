@@ -182,6 +182,17 @@ set_port_opt (ssh_session session, int type, SCM value)
   return ssh_options_set (session, type, &sfd);
 }
 
+/* Convert Scheme symbol to libssh constant and set the corresponding
+   option to the value of the constant. */
+static inline int
+set_sym_opt (ssh_session session, int type, struct symbol_mapping *sm, SCM value)
+{
+  struct symbol_mapping *opt = _scm_to_ssh_const (sm, value);
+  if (! opt)
+    guile_ssh_error1 ("session-set!", "Wrong value", value);
+  return ssh_options_set (session, type, &opt->value);
+}
+
 /* Set an SSH session option. */
 static int
 set_option (ssh_session session, int type, SCM value)
@@ -209,6 +220,8 @@ set_option (ssh_session session, int type, SCM value)
       return set_string_opt (session, type, value);
 
     case SSH_OPTIONS_LOG_VERBOSITY:
+      return set_sym_opt (session, type, log_verbosity, value);
+
     case SSH_OPTIONS_COMPRESSION_LEVEL:
       return set_int32_opt (session, type, value);
 

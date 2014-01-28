@@ -157,7 +157,9 @@
                                    #:host host
                                    #:port port
                                    #:identity identity-file
-                                   #:log-verbosity (if ssh-debug-needed? 4 0))))
+                                   #:log-verbosity (if ssh-debug-needed?
+                                                       'functions
+                                                       'nolog))))
 
         (print-debug "3. connect! (ssh_connect_x)\n")
         (connect! session)
