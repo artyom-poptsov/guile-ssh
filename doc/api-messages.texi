@@ -26,6 +26,15 @@ Reply with @var{SSH_MSG_UNIMPLEMENTED}.  Throw @code{guile-ssh-error}
 on error.  Return value is undefined.
 @end deffn
 
+@deffn {Scheme Procedure} message-reply-success message [args]
+Reply ``success'' to the @var{message}.  This procedure is a
+convenient wrapper for other @code{*-reply-success} procedures (see
+below).  The right procedure to use will be selected depending on a
+type of the @code{message}.  The procedure may take additional
+argument @code{'partial} for that changes reply to authentication
+request.
+@end deffn
+
 @deffn {Scheme Procedure} message-service-reply-success message
 Reply with ``success'' status on the service-request @var{message}.
 Throw @code{guile-ssh-error} on error.  Return value is undefined.
@@ -36,14 +45,14 @@ Reply with ``success'' on the auth-request @var{message}.  Throw
 @code{guile-ssh-error} on error.  Return value is undefined.
 @end deffn
 
+@deffn {Scheme Procedure} message-channel-request-reply-success message
+Reply ``success'' on a channel-request @var{message}.
+Throw @code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
 @deffn {Scheme Procedure} message-auth-reply-public-key-ok message
 Reply ``OK'' on the public key auth-request @var{message}.  Throw
 @code{guile-ssh-error} on error.  Return value is undefined.
-@end deffn
-
-@deffn {Scheme Procedure} message-channel-request-reply-success message
-TODO: Add description.
-Throw @code{guile-ssh-error} on error.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} message-channel-request-open-reply-accept message
