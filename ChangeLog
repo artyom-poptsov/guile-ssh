@@ -1,5 +1,8 @@
 2014-01-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm ("make-channel")
+	("channel-open-session", "channel-request-exec"): New TCs.
+
 	* tests/session.scm, tests/server.scm: Update comments.
 
 	* tests/auth.scm: Remove.

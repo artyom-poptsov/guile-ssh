@@ -19,11 +19,13 @@
 
 (use-modules (srfi srfi-64)
              (ice-9 threads)
+             (ice-9 rdelim)
              (ssh server)
              (ssh session)
              (ssh auth)
              (ssh message)
-             (ssh key))
+             (ssh key)
+             (ssh channel))
 
 (test-begin "client-server")
 
@@ -77,7 +79,7 @@
   (cancel-thread server-thread))
 
 
-;;; Test Cases
+;;; Testing of basic procedures.
 
 
 (spawn-server-thread
@@ -143,7 +145,7 @@
 (cancel-server-thread)
 
 
-;; userauth-none!
+;;; Authentication
 
 ;; Server replies with "success", client receives 'success.
 (spawn-server-thread
@@ -300,6 +302,61 @@
       (let ((res (userauth-pubkey! session #f pubkey prvkey)))
         (disconnect! session)
         (eq? res 'success)))))
+
+(cancel-server-thread)
+
+
+;;; Channel test
+
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((s (server-accept server))
+           (channel #f))
+       (server-handle-key-exchange s)
+       (let session-loop ((msg (server-message-get s)))
+         (let ((msg-type (message-get-type msg)))
+           (srvmsg msg-type)
+           (case (car msg-type)
+             ((request-channel-open)
+              (set! channel (message-channel-request-open-reply-accept msg)))
+             ((request-channel)
+              (if (equal? (cadr msg-type) 'channel-request-exec)
+                  (write-line "pong" channel))
+              (message-reply-success msg))
+             (else
+               (message-reply-success msg))))
+         (session-loop (server-message-get s)))))))
+
+(define session
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (userauth-none! session)
+    session))
+
+(define channel #f)
+
+(test-assert "make-channel"
+  (begin
+    (set! channel (make-channel session))
+    channel))
+
+(test-assert "channel-open-session"
+  (begin
+    (channel-open-session channel)
+    (not (port-closed? channel))))
+
+(test-assert "channel-request-exec"
+  (begin
+    (channel-request-exec channel "hello")
+    (let ((res (read-line channel)))
+      (and res
+           (string=? "pong" res)))))
+
+(disconnect! session)
+(set! session #f)
 
 (cancel-server-thread)
 
