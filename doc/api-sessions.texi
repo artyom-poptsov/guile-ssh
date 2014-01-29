@@ -9,6 +9,36 @@
 @cindex sessions
 @tindex session
 
+A session is an object that holds all the information about connection
+to a specified server or a client.  This information includes server's
+port and address, name of the user, compression level, private keys
+and so on.
+
+A session may contain zero or more channels (@pxref{Channels}).
+Channels are ``pipes'' that link the client and the server together
+and that can be used for transferring of data in both directions.
+
+So the overall picture can be thought like this:
+
+@example
+[client]                      [server]
+
+    \____________________________/  SSH session
+
+     ============================
+     ============================   SSH channels
+     ============================
+     ____________________________
+    /                            \
+@end example
+
+
+libssh docs say that there is no limit to number of channels for a
+single session in theory.
+
+This chapter describes session management.
+
+
 @deffn {Scheme Procedure} session? x
 Returns @code{#t} if @var{x} is a Guile-SSH session, @code{#f}
 otherwise.
