@@ -1,5 +1,12 @@
 2014-01-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/api-sessions.texi (Sessions): Add general description of a
+	session and its relationships with channels.
+
+	* doc/api-messages.texi (Message Handling): Add description for
+	`message-reply-success' and for
+	`message-channel-request-reply-success' procedure.
+
 	* tests/client-server.scm (make-server-for-test): New procedure.
 	(spawn-server-thread): New macro.
 	(cancel-server-thread): New procedure.
