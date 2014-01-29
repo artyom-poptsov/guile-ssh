@@ -6,7 +6,8 @@
 	("userauth-get-list", "userauth-none!, success")
 	("userauth-none!, denied", "userauth-none!, partial")
 	("userauth-password!, success", "userauth-password!, denied")
-	("userauth-password!, partial"): New TCs.
+	("userauth-password!, partial", "userauth-pubkey!, success"): New
+	TCs.
 
 2014-01-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
 

@@ -22,7 +22,8 @@
              (ssh server)
              (ssh session)
              (ssh auth)
-             (ssh message))
+             (ssh message)
+             (ssh key))
 
 (test-begin "client-server")
 
@@ -276,6 +277,29 @@
     (let ((res (userauth-password! session "alice" "password")))
       (disconnect! session)
       (eq? res 'partial))))
+
+(cancel-server-thread)
+
+
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)
+       (let session-loop ((msg (server-message-get s)))
+         (message-reply-success msg)
+         (session-loop (server-message-get s)))))))
+
+(test-assert "userauth-pubkey!, success"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (let* ((prvkey (private-key-from-file session rsakey))
+           (pubkey (private-key->public-key prvkey)))
+      (let ((res (userauth-pubkey! session #f pubkey prvkey)))
+        (disconnect! session)
+        (eq? res 'success)))))
 
 (cancel-server-thread)
 
