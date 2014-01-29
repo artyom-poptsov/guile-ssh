@@ -1,3 +1,5 @@
+;;; server.scm -- Testing of server procedures without a client.
+
 ;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of libguile-ssh.
@@ -124,3 +126,6 @@
 (test-end "server")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))
+
+;;; server.scm ends here.
+

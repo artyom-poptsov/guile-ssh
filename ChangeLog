@@ -1,5 +1,7 @@
 2014-01-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/session.scm, tests/server.scm: Update comments.
+
 	* tests/auth.scm: Remove.
 	* Makefile.am: Likewise.
 

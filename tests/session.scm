@@ -1,3 +1,5 @@
+;;; session.scm -- Testing of session procedures without a connection.
+
 ;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of libguile-ssh.
@@ -112,3 +114,5 @@
 (test-end "session")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))
+
+;;; session.scm ends here.
