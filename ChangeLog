@@ -1,5 +1,8 @@
 2014-01-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/auth.scm: Remove.
+	* Makefile.am: Likewise.
+
 	* doc/api-sessions.texi (Sessions): Add general description of a
 	session and its relationships with channels.
 
