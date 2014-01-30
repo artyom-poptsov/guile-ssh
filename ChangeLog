@@ -1,3 +1,10 @@
+2014-01-30  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/client-server.scm: Add data transferring TCs.
+	(spawn-server-thread-for-dt-test)
+	(make-session-for-dt-test, make-channel-for-dt-test): New procedures.
+	("data transferring, string", "data transferring, bytevector"): New TCs.
+
 2014-01-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/client-server.scm ("make-channel")

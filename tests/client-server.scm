@@ -25,7 +25,8 @@
              (ssh auth)
              (ssh message)
              (ssh key)
-             (ssh channel))
+             (ssh channel)
+             (srfi srfi-4))
 
 (test-begin "client-server")
 
@@ -308,6 +309,8 @@
 
 ;;; Channel test
 
+;; make, open, exec
+
 (spawn-server-thread
  (let ((server (make-server-for-test)))
    (server-listen server)
@@ -359,6 +362,92 @@
 (set! session #f)
 
 (cancel-server-thread)
+
+
+;; data transferring
+;; FIXME: Probably these TCs can be implemented more elegantly.
+
+(define (spawn-server-thread-for-dt-test rwproc)
+  "Special form of `spawn-server-thread' for data a transfer TC that
+takes RWPROC procedure that handles I/O operation."
+  (spawn-server-thread
+   (let ((server (make-server-for-test)))
+     (server-listen server)
+     (while #t
+       (let ((s (server-accept server))
+             (channel #f))
+         (server-handle-key-exchange s)
+         (let session-loop ((msg (server-message-get s)))
+           (if (and msg (not (eof-object? msg)))
+               (let ((msg-type (message-get-type msg)))
+                 (case (car msg-type)
+                   ((request-channel-open)
+                    (set! channel (message-channel-request-open-reply-accept msg))
+                    (let poll ((ready? #f))
+                      (if ready?
+                          (rwproc channel))
+                      (poll (char-ready? channel))))
+                   ((request-channel)
+                    (message-reply-success msg))
+                   (else
+                    (message-reply-success msg)))))
+           (session-loop (server-message-get s))))))))
+
+(define (make-session-for-dt-test)
+  (let ((s (make-session-for-test)))
+    (connect! s)
+    (authenticate-server s)
+    (userauth-none! s)
+    s))
+
+(define (make-channel-for-dt-test session)
+  (let ((c (make-channel session)))
+    (channel-open-session c)
+    c))
+
+
+(spawn-server-thread-for-dt-test
+ (lambda (channel)
+   (let ((str (read-line channel)))
+     (write-line str channel))))
+
+(test-assert "data transferring, string"
+  (let* ((session (make-session-for-dt-test))
+         (channel (make-channel-for-dt-test session))
+         (str "Hello Scheme World!"))
+    (write-line str channel)
+    (let poll ((ready? #f))
+      (if ready?
+          (let ((res (read-line channel)))
+            (disconnect! session)
+            (equal? res str))
+          (poll (char-ready? channel))))))
+
+(cancel-server-thread)
+
+
+(define *vect-size* 10)
+(define *vect-fill* 10)
+
+(spawn-server-thread-for-dt-test
+ (lambda (channel)
+   (let ((v (make-u8vector *vect-size* 0)))
+     (uniform-array-read! v channel)
+     (uniform-array-write v channel))))
+
+(test-assert "data transferring, bytevector"
+  (let* ((session (make-session-for-dt-test))
+         (channel (make-channel-for-dt-test session))
+         (vect (make-u8vector *vect-size* *vect-fill*)))
+    (uniform-array-write vect channel)
+    (let poll ((ready? #f))
+      (if ready?
+          (let ((res (make-u8vector *vect-size* 0)))
+            (uniform-array-read! res channel)
+            (equal? res vect))
+          (poll (char-ready? channel))))))
+
+(cancel-server-thread)    
 
 
 (test-end "client-server")
