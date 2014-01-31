@@ -17,6 +17,15 @@
 @node Message Handling
 @subsection Messages Handling
 
+A message is an object that represents a single request to a Guile-SSH
+server.  Basically the server handles requests in some loop in which
+it accepts messages with @code{server-message-get} procedure
+(@pxref{Servers}), handles the received request and replies to the
+message.
+
+The @code{(ssh message)} module provides procedures for handling of
+Guile-SSH messages.
+
 @deffn {Scheme Procedure} message? x
 Return @code{#t} if @var{x} a Guile-SSH message, @code{#f} otherwise.
 @end deffn
@@ -33,6 +42,8 @@ below).  The right procedure to use will be selected depending on a
 type of the @code{message}.  The procedure may take additional
 argument @code{'partial} for that changes reply to authentication
 request.
+
+Throw an exception on error.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} message-service-reply-success message
