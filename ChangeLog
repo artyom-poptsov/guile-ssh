@@ -1,5 +1,8 @@
 2014-01-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/api-auth.texi (Auth): Add general description of `(ssh
+	auth)' module.
+
 	* doc/api-messages.texi (Message Handling): Add general
 	description of a message.  Improve description of
 	`message-reply-success' procedure.
