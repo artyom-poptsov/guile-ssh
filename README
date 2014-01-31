@@ -21,7 +21,7 @@ Files:
  - INSTALL contains general instructions for building/installing of
    Guile-SSH.
  - NEWS describes user-visible changes.
- - TODO contains plans for further development.
+ - TODO contains plans for the further development.
 
 Directories:
  - examples -- Examples of Guile-SSH usage.
@@ -43,6 +43,9 @@ Guile modules, in ${GUILE_SITE}/ssh:
  - server.scm  -- Server API.
  - session.scm -- Session management.
  - version.scm -- Information about versions.
+
+Documentation in Info format, in ${prefix}/share/info/:
+ - guile-ssh.info
 
 Examples, in ${prefix}/share/libguile-ssh/examples
  - ssshd.scm    -- SSH server example.

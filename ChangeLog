@@ -1,5 +1,8 @@
 2014-01-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README (Distribution): Add information about documentation.  Fix
+	a typo.
+
 	* doc/api-messages.texi (Messages): Improve documentation of the
 	module.
 	* doc/api-servers.texi (Servers): Likewise.
