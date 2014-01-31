@@ -10,6 +10,9 @@
 @cindex private keys
 @tindex key
 
+The @code{(ssh key)} module provides procedures for handling of
+Guile-SSH keys.
+
 @deffn {Scheme Procedure} key? x
 Return @code{#t} if @var{x} is a Guile-SSH key, @code{#f} otherwise.
 @end deffn

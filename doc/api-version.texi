@@ -8,8 +8,8 @@
 
 @cindex versions
 
-This module provides functions that is used for getting information
-about current versions.
+The @code{(ssh version)} module provides functions that is used for
+getting information about current versions.
 
 @deffn {Scheme Procedure} get-libssh-version
 Get version of the libssh.  Returns libssh version as a string in the

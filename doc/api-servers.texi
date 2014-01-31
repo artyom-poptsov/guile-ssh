@@ -9,6 +9,9 @@
 @cindex servers
 @tindex server
 
+The @code{(ssh server)} module provides facilities for creation and
+managing of Guile-SSH servers.
+
 @deffn {Scheme Procedure} server? x
 Return @code{#t} if @var{x} is a Guile-SSH server, @code{#f}
 otherwise.

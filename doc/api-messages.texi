@@ -9,6 +9,9 @@
 @cindex talking to a SSH client
 @tindex message
 
+The @code{(ssh message)} module provides procedures for handling of
+Guile-SSH messages.
+
 @menu
 * Message Handling::
 * Parsing of Requests::
@@ -22,9 +25,6 @@ server.  Basically the server handles requests in some loop in which
 it accepts messages with @code{server-message-get} procedure
 (@pxref{Servers}), handles the received request and replies to the
 message.
-
-The @code{(ssh message)} module provides procedures for handling of
-Guile-SSH messages.
 
 @deffn {Scheme Procedure} message? x
 Return @code{#t} if @var{x} a Guile-SSH message, @code{#f} otherwise.

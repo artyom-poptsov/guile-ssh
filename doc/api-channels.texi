@@ -9,9 +9,13 @@
 @cindex data transferring
 @tindex channel
 
+The @code{(ssh channel)} module provides facilities to create
+Guile-SSH channels and manipulating of them.
+
 Channels are implemented as GNU Guile ports.  Therefore they can be
 used with regular I/O procedures such as @code{display}, @code{write},
-@code{read-line} and friends.  This section describes operations that
+@code{read-line} and friends (@pxref{Input and Output,,, guile, The
+GNU Guile Reference Manual}).  This section describes operations that
 are specific for the channels.
 
 @deffn {Scheme Procedure} channel? x
@@ -20,12 +24,14 @@ otherwise.
 @end deffn
 
 @deffn {Scheme Procedure} make-channel session
-Allocate a new Guile-SSH channel.
+Allocate a new Guile-SSH channel for the @var{session}
+(@pxref{Sessions}).
 @end deffn
 
 @deffn {Scheme Procedure} channel-open-session channel
-Open a new session.  Throw @code{guile-ssh-error} on error.  Return
-value is undefined.
+Open a session channel.  This procedure actually turn the
+@var{channel} into an open port available for I/O operations.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} channel-request-exec channel command
