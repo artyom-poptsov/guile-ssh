@@ -1,5 +1,7 @@
 2014-02-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/server-client.scm ("server-message-get"): Improve TC.
+
 	* src/message.scm (message?): Export.
 	* NEWS: Update.
 

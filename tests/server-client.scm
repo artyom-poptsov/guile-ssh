@@ -122,8 +122,7 @@
         (message-auth-set-methods! msg '(none))
         (message-reply-success msg)
         (disconnect! session)
-        ;; We consider the test passed if no exceptions were thrown.
-        #t))))
+        (message? msg)))))
 
 (cancel-client-thread)
 
