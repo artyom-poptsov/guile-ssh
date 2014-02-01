@@ -60,6 +60,10 @@ Examples, in ${prefix}/share/libguile-ssh/examples
 For a basic explanation of the installation of the package, see the
 INSTALL file.
 
+Please *note* that you will need Automake 1.12 or later to run
+self-tests with `make check' (but the library itself can be built with
+older Automake version such as 1.11).
+
 *important* You probably want to call configure with the
 "--with-guilesitedir" option so that this package is installed in
 Guile's default path.  But, if you don't know where your Guile site

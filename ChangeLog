@@ -1,5 +1,10 @@
 2014-02-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README (Installation): Add information about running of
+	self-tests.
+	* doc/guile-ssh.texi (Installation): Likewise.
+	* doc/version.texi: Update.
+
 	* examples/ssshd.scm (poll): Remove.
 	(format-debug): Remove.
 

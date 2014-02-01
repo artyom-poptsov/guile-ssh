@@ -121,6 +121,11 @@ $ make install
 For a basic explanation of the installation of the package, see the
 @file{INSTALL} file.
 
+Please @strong{note} that you will need
+@url{https://www.gnu.org/software/automake/, Automake} version 1.12 or
+later to run self-tests with @command{make check} (but the library
+itself can be built with older Automake version such as 1.11).
+
 @strong{important} You probably want to call @command{configure} with
 the @option{--with-guilesitedir} option so that this package is
 installed in Guile's default path.  But, if you don't know where your
