@@ -51,11 +51,6 @@
 
 ;;; Helper procedures
 
-
-(define (format-debug . args)
-  (if debug?
-      (format args)))
-
 (define (read-all port)
   "Read all lines from the PORT."
   (let r ((res "")

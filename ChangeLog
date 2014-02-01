@@ -1,6 +1,7 @@
 2014-02-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* examples/ssshd.scm (poll): Remove.
+	(format-debug): Remove.
 
 	* src/: Rename to `ssh/'.
 	* Makefile.am (SUBDIRS): Update.
