@@ -1,5 +1,7 @@
 2014-02-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/server-client.scm ("message-get-type"): New TC.
+
 	* tests/Makefile.am: Use pre-built files from the repository for
 	tests instead of installed ones.
 	(AM_TESTS_ENVIRONMENT, SCM_LOG_COMPILER): Update.

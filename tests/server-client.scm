@@ -128,6 +128,36 @@
 (cancel-client-thread)
 
 
+(spawn-client-thread
+ (let ((session (make-session-for-test)))
+   (while (not (connected? session))
+     (sleep 1)
+     (catch #t
+       (lambda () (connect! session))
+       (lambda (key . args) #f)))
+   (clnmsg "connected")
+   (authenticate-server session)
+   (clnmsg "server authenticated")
+   (userauth-none! session)
+   (clnmsg "client authenticated")
+   (disconnect! session)))
+
+(test-assert "message-get-type"
+  (let ((server (make-server-for-test)))
+    (server-listen server)
+    (let ((session (server-accept server)))
+      (server-handle-key-exchange session)
+      (let ((msg (server-message-get session)))
+        (let ((msg-type (message-get-type msg))
+              (expected-type '(request-service)))
+          (message-auth-set-methods! msg '(none))
+          (message-reply-success msg)
+          (disconnect! session)
+          (equal? msg-type expected-type))))))
+
+(cancel-client-thread)
+
+
 (test-end "server-client")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))
