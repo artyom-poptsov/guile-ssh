@@ -34,7 +34,7 @@ AM_TESTS_ENVIRONMENT = abs_top_srcdir="$(abs_top_srcdir)" \
 
 SCM_LOG_COMPILER = ${top_builddir}/libtool \
 	-dlopen ${top_builddir}/src/libguile-ssh.la \
-	--mode=execute $(GUILE) --debug -L "$(abs_top_srcdir)" \
+	--mode=execute $(GUILE) -L "$(abs_top_srcdir)" \
 	-l "$(abs_top_srcdir)/src/auth.scm" \
 	-l "$(abs_top_srcdir)/src/channel.scm" \
 	-l "$(abs_top_srcdir)/src/key.scm" \
