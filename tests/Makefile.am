@@ -27,9 +27,21 @@ TESTS = ${SCM_TESTS}
 
 TEST_EXTENSIONS = .scm
 
-AM_TESTS_ENVIRONMENT = abs_top_srcdir="$(abs_top_srcdir)"
+AM_TESTS_ENVIRONMENT = abs_top_srcdir="$(abs_top_srcdir)" \
+	ORIGTERM=${TERM} \
+	TERM=xterm \
+	GUILE_AUTO_COMPILE=0
 
-SCM_LOG_COMPILER = $(GUILE)
-AM_SCM_LOG_FLAGS = -L "$(abs_top_srcdir)" --no-auto-compile
+SCM_LOG_COMPILER = ${top_builddir}/libtool \
+	-dlopen ${top_builddir}/src/libguile-ssh.la \
+	--mode=execute $(GUILE) --debug -L "$(abs_top_srcdir)" \
+	-l "$(abs_top_srcdir)/src/auth.scm" \
+	-l "$(abs_top_srcdir)/src/channel.scm" \
+	-l "$(abs_top_srcdir)/src/key.scm" \
+	-l "$(abs_top_srcdir)/src/message.scm" \
+	-l "$(abs_top_srcdir)/src/session.scm" \
+	-l "$(abs_top_srcdir)/src/server.scm" \
+	-l "$(abs_top_srcdir)/src/version.scm" \
+	-s
 
-CLEANFILES = $(SCM_TESTS:tests/%.scm=%.log)
+EXTRA_DIST = ${SCM_TESTS}
