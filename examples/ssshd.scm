@@ -56,13 +56,6 @@
   (if debug?
       (format args)))
 
-(define (poll channel)
-  "Poll a channel CHANNEL for data.  Return available data size."
-  (let f ((count #f))
-    (if (or (not count) (zero? count))
-        (f (channel-poll channel #f))
-        count)))
-
 (define (read-all port)
   "Read all lines from the PORT."
   (let r ((res "")
