@@ -24,7 +24,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    agent.
 ** examples/sssh.scm now uses `userauth-autopubkey!'.
 ** New procedures.
-   `channel-set-stream!', `channel-get-stream', `session?', `server?'.
+   `channel-set-stream!', `channel-get-stream', `session?', `server?',
+   `message?'.
 ** Remove procedures.
    These procedures are removed due to changes in Guile-SSH channel
    API: `close-channel!', `channel-poll' `free-channel!',

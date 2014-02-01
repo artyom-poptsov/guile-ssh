@@ -36,7 +36,8 @@ So the overall picture can be thought like this:
 libssh docs say that there is no limit to number of channels for a
 single session in theory.
 
-This chapter describes session management.
+This chapter describes session management.  The code is in the
+@code{(ssh session)} module.
 
 
 @deffn {Scheme Procedure} session? x

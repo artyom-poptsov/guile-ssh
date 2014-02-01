@@ -8,6 +8,9 @@
 
 @cindex authentication
 
+The @code{(ssh auth)} module provides authentication procedures for a
+Guile-SSH client.
+
 @deffn {Scheme Procedure} userauth-pubkey! session username publickey privatekey
 Try to authenticate with a public key @var{publickey}.
 

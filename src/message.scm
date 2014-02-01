@@ -38,6 +38,7 @@
 (define-module (ssh message)
   #:use-module (ssh key)
   #:export (message
+            message?
             message-reply-default
             message-reply-success
             message-get-type

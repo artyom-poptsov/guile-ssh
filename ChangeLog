@@ -1,5 +1,8 @@
 2014-02-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/message.scm (message?): Export.
+	* NEWS: Update.
+
 	* tests/server-client.scm ("message-get-type"): New TC.
 
 	* tests/Makefile.am: Use pre-built files from the repository for
@@ -16,6 +19,24 @@
 
 	* tests/server-client.scm: New test suite.
 	* Makefile.am (SCM_TESTS): Add `server-client' TS.
+
+	* README (Distribution): Add information about documentation.  Fix
+	a typo.
+
+	* doc/api-messages.texi (Messages): Improve documentation of the
+	module.
+	* doc/api-servers.texi (Servers): Likewise.
+	* doc/api-sessions.texi (Sessions): Likewise.
+	* doc/api-keys.texi (Keys): Likewise.
+	* doc/api-version.texi (Version): Likewise.
+	* doc/api-channels.texi (Channels): Likewise.  Add references.
+	Improve documentation of `make-channel' and `channel-open-session'
+	procedure.
+	* doc/api-auth.texi (Auth): Add general description of `(ssh
+	auth)' module.
+	* doc/api-messages.texi (Message Handling): Add general
+	description of a message.  Improve description of
+	`message-reply-success' procedure.
 
 2014-01-30  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
