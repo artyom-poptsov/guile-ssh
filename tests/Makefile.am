@@ -33,16 +33,22 @@ AM_TESTS_ENVIRONMENT = \
 	TERM=xterm; export TERM; \
 	GUILE_AUTO_COMPILE=0; export GUILE_AUTO_COMPILE;
 
-SCM_LOG_COMPILER = ${top_builddir}/libtool \
+# LOG_COMPILER was introduced in Automake 1.12; don't expect "make
+# check" or "make distcheck" to work with earlier versions.
+SCM_LOG_COMPILER = \
+	${top_builddir}/libtool \
 	-dlopen ${top_builddir}/src/libguile-ssh.la \
-	--mode=execute $(GUILE) -L "$(abs_top_srcdir)" \
-	-l "$(abs_top_srcdir)/src/auth.scm" \
-	-l "$(abs_top_srcdir)/src/channel.scm" \
-	-l "$(abs_top_srcdir)/src/key.scm" \
-	-l "$(abs_top_srcdir)/src/message.scm" \
-	-l "$(abs_top_srcdir)/src/session.scm" \
-	-l "$(abs_top_srcdir)/src/server.scm" \
-	-l "$(abs_top_srcdir)/src/version.scm" \
+	--mode=execute $(GUILE)
+
+AM_SCM_LOG_FLAGS = \
+	-L "$(top_builddir)" \
+	-l "$(top_builddir)/src/auth.scm" \
+	-l "$(top_builddir)/src/channel.scm" \
+	-l "$(top_builddir)/src/key.scm" \
+	-l "$(top_builddir)/src/message.scm" \
+	-l "$(top_builddir)/src/session.scm" \
+	-l "$(top_builddir)/src/server.scm" \
+	-l "$(top_builddir)/src/version.scm" \
 	-s
 
 EXTRA_DIST = ${SCM_TESTS}

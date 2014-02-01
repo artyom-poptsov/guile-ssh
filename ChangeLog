@@ -2,6 +2,9 @@
 
 	* tests/Makefile.am (SCM_LOG_COMPILER): Remove `--debug' option.
 	(AM_TESTS_ENVIRONMENT): Fix setting up of environment variables.
+	(SCM_LOG_COMPILER): Move compiler's options to `AM_SCM_LOG_FLAGS'
+	variable.
+	(AM_SCM_LOG_FLAGS): New variable.
 
 	* tests/server-client.scm ("server-message-get"): Improve TC.
 
