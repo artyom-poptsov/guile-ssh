@@ -37,18 +37,11 @@ AM_TESTS_ENVIRONMENT = \
 # check" or "make distcheck" to work with earlier versions.
 SCM_LOG_COMPILER = \
 	${top_builddir}/libtool \
-	-dlopen ${top_builddir}/src/libguile-ssh.la \
+	-dlopen ${top_builddir}/ssh/libguile-ssh.la \
 	--mode=execute $(GUILE)
 
 AM_SCM_LOG_FLAGS = \
 	-L "$(top_builddir)" \
-	-l "$(top_builddir)/src/auth.scm" \
-	-l "$(top_builddir)/src/channel.scm" \
-	-l "$(top_builddir)/src/key.scm" \
-	-l "$(top_builddir)/src/message.scm" \
-	-l "$(top_builddir)/src/session.scm" \
-	-l "$(top_builddir)/src/server.scm" \
-	-l "$(top_builddir)/src/version.scm" \
 	-s
 
 EXTRA_DIST = ${SCM_TESTS}

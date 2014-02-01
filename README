@@ -25,8 +25,9 @@ Files:
 
 Directories:
  - examples -- Examples of Guile-SSH usage.
- - src      -- Sources of the library.
+ - ssh      -- Sources of the Guile-SSH library.
  - doc      -- Documentation in Texinfo format.
+ - tests    -- Unit tests.
 
 Files are usually installed according to the prefix specified to
 configure, /usr/local by default.  Building and installing gives you:

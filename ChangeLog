@@ -1,5 +1,12 @@
 2014-02-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* src/: Rename to `ssh/'.
+	* Makefile.am (SUBDIRS): Update.
+	* configure.ac (LIBGUILE_SSH_INTERFACE): Update.
+	* tests/Makefile.am: Update.
+	(AM_SCM_LOG_FLAGS): Remove extra options.
+	* README: Update.
+
 	* tests/Makefile.am (SCM_LOG_COMPILER): Remove `--debug' option.
 	(AM_TESTS_ENVIRONMENT): Fix setting up of environment variables.
 	(SCM_LOG_COMPILER): Move compiler's options to `AM_SCM_LOG_FLAGS'

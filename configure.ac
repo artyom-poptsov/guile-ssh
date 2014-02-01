@@ -76,7 +76,7 @@ AC_SUBST([guilesitedir])
 LIBGUILE_SSH_INTERFACE="4:0:0"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
-AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile build-aux/Makefile])
+AC_CONFIG_FILES([Makefile ssh/Makefile examples/Makefile build-aux/Makefile])
 AC_CONFIG_FILES([m4/Makefile doc/Makefile tests/Makefile])
 
 # Generate a Makefile, based on the results.
