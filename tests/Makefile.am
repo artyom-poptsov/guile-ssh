@@ -27,10 +27,11 @@ TESTS = ${SCM_TESTS}
 
 TEST_EXTENSIONS = .scm
 
-AM_TESTS_ENVIRONMENT = abs_top_srcdir="$(abs_top_srcdir)" \
-	ORIGTERM=${TERM} \
-	TERM=xterm \
-	GUILE_AUTO_COMPILE=0
+AM_TESTS_ENVIRONMENT = \
+	abs_top_srcdir="$(abs_top_srcdir)"; export abs_top_srcdir; \
+	ORIGTERM=${TERM}; export ORIGTERM; \
+	TERM=xterm; export TERM; \
+	GUILE_AUTO_COMPILE=0; export GUILE_AUTO_COMPILE;
 
 SCM_LOG_COMPILER = ${top_builddir}/libtool \
 	-dlopen ${top_builddir}/src/libguile-ssh.la \

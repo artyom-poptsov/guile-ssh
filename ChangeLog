@@ -1,6 +1,7 @@
 2014-02-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/Makefile.am (SCM_LOG_COMPILER): Remove `--debug' option.
+	(AM_TESTS_ENVIRONMENT): Fix setting up of environment variables.
 
 	* tests/server-client.scm ("server-message-get"): Improve TC.
 
