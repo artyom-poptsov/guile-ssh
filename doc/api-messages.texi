@@ -72,7 +72,71 @@ Accept open-channel request.  Return a new Guile-SSH channel, or
 @end deffn
 
 @deffn {Scheme Procedure} message-get-type message
-Get type of the @var{message}.
+Get type of the @var{message} in the following format:
+
+@example
+<msg-type> = "'(" <type> [<WSP> <subtype>] ")"
+@end example
+
+The procedure returns @code{#f} on error.
+
+Example:
+
+@lisp
+(message-get-type msg)
+@result{} '(request-auth auth-method-none)
+@end lisp
+
+Possible types:
+
+@table @samp
+@item request-auth
+Subtypes:
+
+@table @samp
+@item auth-method-unknown
+@item auth-method-none
+@item auth-method-password
+@item auth-method-publickey
+@item auth-method-hostbased
+@item auth-method-interactive
+@end table
+
+@item request-channel-open
+Subtypes:
+
+@table @samp
+@item channel-unknown
+@item channel-session
+@item channel-direct-tcpip
+@item channel-forwarded-tcpip
+@item channel-x11
+@end table
+
+@item request-channel
+Subtypes:
+
+@table @samp
+@item channel-request-unknown
+@item channel-request-pty
+@item channel-request-exec
+@item channel-request-shell
+@item channel-request-env
+@item channel-request-subsystem
+@item channel-request-window-change
+@end table
+
+@item request-service
+@item request-global
+Subtypes:
+
+@table @samp
+@item global-request-unknown
+@item global-request-tcpip-forward
+@item global-request-cancel-tcpip-forward
+@end table
+
+@end table
 @end deffn
 
 @deffn {Scheme Procedure} message-get-req message
