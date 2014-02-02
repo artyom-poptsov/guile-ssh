@@ -1,5 +1,9 @@
 2014-02-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/ssshd.scm (main): Add command-line options: `--rsakey',
+	`--dsakey', `--help'.
+	(print-help-and-exit): New procedure.
+
 	* NEWS: Update.
 
 	* doc/api-messages.texi (Message Handling): Improve description of

@@ -22,7 +22,6 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New `userauth-autopubkey!' procedure.
    The procedure can be used for public key authentication with a SSH
    agent.
-** examples/sssh.scm now uses `userauth-autopubkey!'.
 ** New procedures.
    `channel-set-stream!', `channel-get-stream', `session?', `server?',
    `message?'.
@@ -34,8 +33,11 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    The Guile-SSH reference manual in Info format will be installed on
    `make install' into `${prefix}/share/info' directory.
 ** Update sssh/ssshd example.
-   `examples/sssh.scm' and `examples/ssshd.scm' are updated to use the
-   new Guile-SSH channel API.
+*** `examples/sssh.scm' and `examples/ssshd.scm' are updated
+    to use the new Guile-SSH channel API.
+*** `sssh.scm` now uses `userauth-autopubkey!'
+*** `ssshd.scm' now parses command-line options
+    See `ssshd.scm --help'.
 ** Add echo server/client example.
    See `examples/echo' directory.
 

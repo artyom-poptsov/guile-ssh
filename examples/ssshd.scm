@@ -31,6 +31,7 @@
 
 (use-modules (ice-9 rdelim)
              (ice-9 popen)
+             (ice-9 getopt-long)
              (ssh server)
              (ssh message)
              (ssh session)
@@ -43,8 +44,8 @@
 
 (define *default-bindport*      12345)
 (define *default-log-verbosity* 'nolog)
-(define *default-rsakey*        (string-append (getenv "HOME")
-                                               "/.ssh/id_rsa"))
+(define *default-rsakey*        (format #f "~a/.ssh/id_rsa" (getenv "HOME")))
+(define *default-dsakey*        (format #f "~a/.ssh/id_dsa" (getenv "HOME")))
 
 (define debug? #t)
 
@@ -195,16 +196,43 @@
       (else
        (message-reply-success msg)))))
 
+(define (print-help-and-exit)
+  "Print help message and exit."
+  (display "\
+Usage: ssshd.scm [ options ]
+
+Options:
+  --rsakey=<key>, -r <key>      Set host RSA key.
+  --dsakey=<key>, -d <key>      Set host DSA key.
+  --help, -h                    Print this message and exit.
+")
+  (exit))
+
 
 ;;; Entry point of the program.
 
-(define (main . args)
+(define *option-spec*
+  '((rsakey (single-char #\r) (value #t))
+    (dsakey (single-char #\d) (value #t))
+    (help   (single-char #\h) (value #f))))
+
+(define (main args)
+  "Entry point of the program."
   (display "---------- ssshd ----------\n")
-  (let ((server  (make-server #:bindport      *default-bindport*
-                              #:rsakey        *default-rsakey*
-                              #:log-verbosity *default-log-verbosity*
-                              #:banner        "Scheme Secure Shell Daemon"))
-        (channel #f))
+  (let* ((options     (getopt-long args *option-spec*))
+         (rsakey      (option-ref options 'rsakey *default-rsakey*))
+         (dsakey      (option-ref options 'dsakey *default-dsakey*))
+         (help-wanted (option-ref options 'help    #f)))
+
+    (if help-wanted
+        (print-help-and-exit))
+
+    (let ((server (make-server #:bindport      *default-bindport*
+                               #:rsakey        rsakey
+                               #:dsakey        dsakey
+                               #:log-verbosity *default-log-verbosity*
+                               #:banner        "Scheme Secure Shell Daemon"))
+          (channel #f))
 
     (format #t (string-append
                 "Using private key ~a~%"
@@ -268,6 +296,6 @@
       (disconnect! session)
 
       (display "Waiting for the next connection...\n")
-      (main-loop (server-accept server)))))
+      (main-loop (server-accept server))))))
 
 ;;; ssshd.scm ends here
