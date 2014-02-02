@@ -9,7 +9,7 @@ underlying libssh library.
  - GNU Guile 1.8.x or 2.0.x
    <https://www.gnu.org/software/guile/>
 
- - libssh 0.5.4
+ - libssh 0.5.4 or 0.5.5
    <http://www.libssh.org/>
 
 * Distribution

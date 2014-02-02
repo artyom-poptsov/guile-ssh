@@ -1,5 +1,11 @@
 2014-02-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	Update requirements.
+	* doc/guile-ssh.texi (Installation): Require libssh 0.5.4 or
+	0.5.5.
+	* README (Requirements): Update.
+	* doc/version.texi: Update.
+
 	* examples/ssshd.scm (main): Add command-line options: `--rsakey',
 	`--dsakey', `--help'.
 	(print-help-and-exit): New procedure.
