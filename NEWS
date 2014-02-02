@@ -30,6 +30,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    These procedures are removed due to changes in Guile-SSH channel
    API: `close-channel!', `channel-poll' `free-channel!',
    `channel-read`, `channel-write'.
+** Add documentation in Texinfo format
+   The Guile-SSH reference manual in Info format will be installed on
+   `make install' into `${prefix}/share/info' directory.
 ** Update sssh/ssshd example.
    `examples/sssh.scm' and `examples/ssshd.scm' are updated to use the
    new Guile-SSH channel API.

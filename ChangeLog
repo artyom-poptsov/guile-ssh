@@ -1,5 +1,7 @@
 2014-02-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Update.
+
 	* doc/api-messages.texi (Message Handling): Improve description of
 	`message-get-type' procedure.  Add information about possible
 	types and subtypes of a message.
