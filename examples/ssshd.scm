@@ -196,6 +196,15 @@
       (else
        (message-reply-success msg)))))
 
+(define (close-ports)
+  "Close default ports."
+  (close-port (current-input-port))
+  (close-port (current-output-port))
+
+  (let ((p (open-output-file "/dev/null")))
+    (set-current-output-port p)
+    (set-current-error-port  p)))
+
 (define (print-help-and-exit)
   "Print help message and exit."
   (display "\
@@ -204,6 +213,7 @@ Usage: ssshd.scm [ options ]
 Options:
   --rsakey=<key>, -r <key>      Set host RSA key.
   --dsakey=<key>, -d <key>      Set host DSA key.
+  --detach                      Detach mode
   --help, -h                    Print this message and exit.
 ")
   (exit))
@@ -214,18 +224,39 @@ Options:
 (define *option-spec*
   '((rsakey (single-char #\r) (value #t))
     (dsakey (single-char #\d) (value #t))
+    (detach                   (value #f))
     (help   (single-char #\h) (value #f))))
 
 (define (main args)
   "Entry point of the program."
   (display "---------- ssshd ----------\n")
-  (let* ((options     (getopt-long args *option-spec*))
-         (rsakey      (option-ref options 'rsakey *default-rsakey*))
-         (dsakey      (option-ref options 'dsakey *default-dsakey*))
-         (help-wanted (option-ref options 'help    #f)))
+  (let* ((options       (getopt-long args *option-spec*))
+         (rsakey        (option-ref options 'rsakey *default-rsakey*))
+         (dsakey        (option-ref options 'dsakey *default-dsakey*))
+         (detach-wanted (option-ref options 'detach #f))
+         (help-wanted   (option-ref options 'help    #f)))
 
     (if help-wanted
         (print-help-and-exit))
+
+    (format #t (string-append
+                "Using private key ~a~%"
+                "Listening on port ~a~%")
+            *default-rsakey*
+            *default-bindport*)    
+
+    (if detach-wanted
+        (let ((pid (primitive-fork)))
+          (cond
+           ((zero? pid)
+            (close-ports)
+            (setsid))
+           ((> pid 0)
+            (format #t "PID: ~a~%" pid)
+            (exit))
+           (#t
+            (display "Could not fork the processs\n")
+            (exit 1)))))
 
     (let ((server (make-server #:bindport      *default-bindport*
                                #:rsakey        rsakey
@@ -233,12 +264,6 @@ Options:
                                #:log-verbosity *default-log-verbosity*
                                #:banner        "Scheme Secure Shell Daemon"))
           (channel #f))
-
-    (format #t (string-append
-                "Using private key ~a~%"
-                "Listening on port ~a~%")
-            *default-rsakey*
-            *default-bindport*)
 
     ;; Start listen to incoming connections.
     (server-listen server)
