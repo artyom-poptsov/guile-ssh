@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.5.0 (2014-02-05)
 ** Implement Guile-SSH channels as GNU Guile ports.
    Now channels can be used with regular procedures such as `display',
    `write' and `read-line'.
