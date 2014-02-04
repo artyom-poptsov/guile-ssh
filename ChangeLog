@@ -1,5 +1,7 @@
 2014-02-05  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/Makefile.am (libguile_ssh_la_SOURCES): Add `base64.h'.
+
 	* configure.ac, doc/version.texi, NEWS: Bump version to 0.5.0
 
 	* tests/sssh-ssshd.scm: Fix a bug: set `GUILE_LOAD_PATH' so the TC
