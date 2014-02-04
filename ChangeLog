@@ -1,5 +1,7 @@
 2014-02-05  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS, TODO: Update.
+
 	* tests/Makefile.am (SCM_TESTS): Add `sssh-ssshd.scm' TC.
 	* tests/sssh-ssshd.scm: New file.
 

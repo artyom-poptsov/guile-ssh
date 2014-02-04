@@ -41,6 +41,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Add echo server/client example.
    See `examples/echo' directory.
 
+** Add automated tests.
+   See `tests/' directory.
 * Changes in version 0.4.0 (2013-11-26)
 ** Port the library to GNU Guile version 2.0
    Now the library works with GNU Guile version 2.0 as well as 1.8.
