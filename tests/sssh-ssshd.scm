@@ -36,6 +36,8 @@
 (define *sssh-cmd*  (format #f "~a/examples/sssh.scm -i ~a -p 12345 127.0.0.1 '~a'"
                             *topdir* *rsakey* *test-cmd*))
 
+(setenv "GUILE_LOAD_PATH" *topdir*)
+
 (define pid #f)
 
 

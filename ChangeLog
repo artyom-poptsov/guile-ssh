@@ -1,5 +1,8 @@
 2014-02-05  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/sssh-ssshd.scm: Fix a bug: set `GUILE_LOAD_PATH' so the TC
+	will use built files instead of installed ones.
+
 	* configure.ac (AC_INIT): Update information about the package.
 
 	* NEWS, TODO: Update.
