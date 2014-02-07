@@ -1,16 +1,13 @@
 # -*- mode: org; -*-
 
 Guile-SSH is a library that provides access to the SSH protocol for
-programs written in GNU Guile interpreter.  It is a wrapper to the
-underlying libssh library.
+programs written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It is a wrapper to the
+underlying [[http://www.libssh.org/][libssh]] library.
 
 * Requirements
 
- - GNU Guile 1.8.x or 2.0.x
-   <https://www.gnu.org/software/guile/>
-
- - libssh 0.5.4 or 0.5.5
-   <http://www.libssh.org/>
+ - [[https://www.gnu.org/software/guile/][GNU Guile]] 1.8.x or 2.0.x
+ - [[http://www.libssh.org/][libssh]] 0.5.4 or 0.5.5
 
 * Distribution
 
@@ -30,14 +27,15 @@ Directories:
  - tests    -- Unit tests.
 
 Files are usually installed according to the prefix specified to
-configure, /usr/local by default.  Building and installing gives you:
+=configure= script, =/usr/local= by default.  Building and installing
+gives you:
 
-Libraries, in ${prefix}/lib:
+Libraries, in =${prefix}/lib=:
  - libguile-ssh.so.<version>
  - libguile-ssh.la
  - libguile-ssh.a
 
-Guile modules, in ${GUILE_SITE}/ssh:
+Guile modules, in =${GUILE_SITE}/ssh=:
  - auth.scm    -- User authentication.
  - channel.scm -- Channel manipulation.
  - key.scm     -- Keys management.
@@ -46,10 +44,10 @@ Guile modules, in ${GUILE_SITE}/ssh:
  - session.scm -- Session management.
  - version.scm -- Information about versions.
 
-Documentation in Info format, in ${prefix}/share/info/:
+Documentation in Info format, in =${prefix}/share/info/=:
  - guile-ssh.info
 
-Examples, in ${prefix}/share/libguile-ssh/examples
+Examples, in =${prefix}/share/libguile-ssh/examples=:
  - ssshd.scm    -- SSH server example.
  - sssh.scm     -- SSH client example.
  + echo/
@@ -65,7 +63,7 @@ self-tests with `make check' (but the library itself can be built with
 older Automake version such as 1.11).
 
 *important* You probably want to call configure with the
-"--with-guilesitedir" option so that this package is installed in
+`--with-guilesitedir' option so that this package is installed in
 Guile's default path.  But, if you don't know where your Guile site
 directory is, run "configure" without the option, and it will give you
 a suggestion.

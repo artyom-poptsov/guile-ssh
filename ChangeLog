@@ -1,3 +1,9 @@
+2014-02-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* README: Update.
+	* README.org: Add the symlink to `README' to help the GitHub
+	recognize the org-mode markup.
+
 2014-02-05  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* NEWS: Fix formatting a bit.
