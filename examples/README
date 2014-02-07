@@ -2,27 +2,39 @@
 
 * Overview
 This directory includes an examples of programs that use Guile-SSH
-library to access SSH protocol
+library to access SSH protocol.
 
 * Scheme Secure Shell (SSSH)
 SSSH uses Guile-SSH API to implement basic SSH client functionality.
 ** Usage
 Please see
-  ./sssh.scm --help
-
+#+BEGIN_EXAMPLE
+  $ ./sssh.scm --help
+#+END_EXAMPLE
 for information about program usage.
 
 ** Examples
-  ./sssh.scm --identity=~/.ssh/id_rsa --user=avp localhost "uname -a"
+#+BEGIN_EXAMPLE
+  $ ./sssh.scm --identity=~/.ssh/id_rsa --user=avp localhost "uname -a"
+#+END_EXAMPLE
 
 * Scheme Secure Shell Daemon (SSSHD)
 SSSHD uses Guile-SSH API to implement basic SSH server functionality.
 ** Usage
-  ./ssshd.scm
+Please see
+#+BEGIN_EXAMPLE
+  ./ssshd.scm --help
+#+END_EXAMPLE
+for information about program usage.
+
+** Examples
+#+BEGIN_EXAMPLE
+  $ ./ssshd.scm -r ~/.ssh/id_rsa
+#+END_EXAMPLE
 
 * Echo server and client
 Implementation of an SSH based echo protocol ([[https://tools.ietf.org/html/rfc862][RFC862]]) with Guile-SSH.
-Please find sources in `echo/' directory:
+Please find sources in =echo/= directory:
  - echo/client.scm
  - echo/server.scm
 
