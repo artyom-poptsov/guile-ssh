@@ -4,4 +4,4 @@ GUILE_SNARF = `which guile-snarf`
 
 AM_V_SNARF = $(AM_V_SNARF_$(V))
 AM_V_SNARF_ = $(AM_V_SNARF_$(AM_DEFAULT_VERBOSITY))
-AM_V_SNARF_0 = @echo "  SNARF " $@;
+AM_V_SNARF_0 = @echo "  SNARF   " $@;

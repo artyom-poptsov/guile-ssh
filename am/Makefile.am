@@ -1,6 +1,6 @@
 ## Config file for GNU Automake. 
 ##
-## Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of libguile-ssh.
 ## 
@@ -17,6 +17,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with libguile-ssh.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4 --install
+AUTOMAKE_OPTIONS = gnu
 
-SUBDIRS = am ssh examples build-aux m4 doc tests
+am_frags = guilec
+
+EXTRA_DIST = $(am_frags)
+
+## Makefile.am ends here

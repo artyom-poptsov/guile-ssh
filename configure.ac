@@ -67,6 +67,10 @@ GUILE_PROGS
 GUILE_FLAGS
 GUILE_SITE_DIR
 
+# Guile-VM's compiler (aka. Guile 2.0.x).
+AM_CONDITIONAL([HAVE_GUILE_VM],
+  [$GUILE_TOOLS compile --help 2>&1 >/dev/null])
+
 LT_INIT()
 
 pkgdatadir="$datadir/$PACKAGE"
@@ -79,7 +83,7 @@ LIBGUILE_SSH_INTERFACE="5:0:0"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 AC_CONFIG_FILES([Makefile ssh/Makefile examples/Makefile build-aux/Makefile])
-AC_CONFIG_FILES([m4/Makefile doc/Makefile tests/Makefile])
+AC_CONFIG_FILES([m4/Makefile doc/Makefile tests/Makefile am/Makefile])
 
 # Generate a Makefile, based on the results.
 AC_OUTPUT

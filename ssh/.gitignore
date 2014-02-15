@@ -1,0 +1,4 @@
+# -*- shell-script -*-
+
+# Compiled Scheme files
+*.go

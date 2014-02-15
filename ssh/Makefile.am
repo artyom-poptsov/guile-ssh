@@ -17,6 +17,7 @@
 ## <http://www.gnu.org/licenses/>.
 
 include $(top_srcdir)/am/snarf
+include $(top_srcdir)/am/guilec
 
 lib_LTLIBRARIES = libguile-ssh.la
 
@@ -37,6 +38,10 @@ BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 	server-type.x server-func.x message-type.x message-func.x \
 	version.x
 
+SCM_SOURCES = \
+	auth.scm channel.scm key.scm session.scm	\
+	server.scm message.scm version.scm
+
 libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
 
 libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
@@ -45,8 +50,7 @@ libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
 ## Scheme files
 pkgguilesitedir = $(guilesitedir)/ssh
 
-dist_pkgguilesite_DATA = auth.scm channel.scm key.scm session.scm	\
-	server.scm message.scm version.scm
+dist_pkgguilesite_DATA = $(SCM_SOURCES)
 
 ETAGS_ARGS = auth.scm channel.scm key.scm session.scm server.scm \
 	message.scm version.scm
@@ -57,3 +61,31 @@ SUFFIXES = .x
 	$(AM_V_SNARF)$(GUILE_SNARF) -o $@ $< $(snarfcppopts)
 
 CLEANFILES = *.x
+
+if HAVE_GUILE_VM
+
+GOBJECTS = $(SCM_SOURCES:%.scm=%.go)
+nobase_nodist_pkgguilesite_DATA = $(GOBJECTS)
+
+guilec_warnings =				\
+  -Wunbound-variable -Warity-mismatch		\
+  -Wunused-variable -Wunused-toplevel
+
+guilec_opts = 					\
+	--load-path=$(srcdir) 			\
+	--target=$(host)			\
+	$(guilec_warnings)
+
+guilec_env  = 					\
+	GUILE_AUTO_COMPILE=0 			\
+	GUILE_LOAD_COMPILED_PATH="$(builddir):$$GUILE_LOAD_COMPILED_PATH"
+
+.scm.go:
+	$(AM_V_GUILEC)$(guilec_env) $(GUILEC) $(guilec_opts) \
+	--output=$@ $<
+
+CLEANFILES += $(GOBJECTS)
+
+endif HAVE_GUILE_VM
+
+## Makefile.am ends here

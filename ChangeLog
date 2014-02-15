@@ -1,3 +1,15 @@
+2014-02-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* configure.ac: Add check for Guile VM's compiler.
+	(AC_CONFIG_FILES): Add `am/Makefile'.
+	* Makefile.am (SUBDIRS): Add `am' directory.
+	* ssh/Makefile.am [HAVE_GUILE_VM]: Compile Guile modules and
+	install produced *.go files.
+	* am/guilec: New file.
+	* am/snarf (AM_V_SNARF_0): Improve formatting.
+	* ssh/.gitignore: New file.
+	* NEWS: Update.
+
 2014-02-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* examples/README: Update.
