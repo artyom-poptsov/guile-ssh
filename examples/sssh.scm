@@ -87,29 +87,32 @@
 ;;; Printing of various information
 
 
-(define (print-version)
+(define (print-version-and-exit)
   "Print information about versions."
   (format #t "libssh version:       ~a~%" (get-libssh-version))
-  (format #t "libguile-ssh version: ~a~%" (get-library-version)))
+  (format #t "libguile-ssh version: ~a~%" (get-library-version))
+  (exit))
 
 
-(define (print-help)
+(define (print-help-and-exit)
   "Print information about program usage."
   (display
    (string-append
-    *program-name* " -- Scheme Secure Shell\n"
-    "Copyright (C) Artyom Poptsov <poptsov.artyom@gmail.com>\n"
-    "Licensed under GNU GPLv3+\n"
-    "\n"
-    "Usage: " *program-name* " [ -upidv ] <host> <command>\n"
-    "\n"
-    "Options:\n"
-    "  --user=<user>, -u <user>                User name\n"
-    "  --port=<port-number>, -p <port-number>  Port number\n"
-    "  --identity-file=<file>, -i <file>       Path to private key\n"
-    "  --debug, -d                             Debug mode\n"
-    "  --ssh-debug                             Debug libssh\n"
-    "  --version, -v                           Print version\n")))
+    *program-name* " -- Scheme Secure Shell
+Copyright (C) Artyom Poptsov <poptsov.artyom@gmail.com>
+Licensed under GNU GPLv3+
+
+Usage: " *program-name* " [ -upidv ] <host> <command>
+
+Options:
+  --user=<user>, -u <user>                User name
+  --port=<port-number>, -p <port-number>  Port number
+  --identity-file=<file>, -i <file>       Path to private key
+  --debug, -d                             Debug mode
+  --ssh-debug                             Debug libssh
+  --version, -v                           Print version
+"))
+  (exit))
 
 
 ;;; Entry point of the program
@@ -117,9 +120,7 @@
 (define (main args)
 
   (if (null? (cdr args))
-      (begin
-        (print-help)
-        (exit 0)))
+      (print-help-and-exit))
 
   (let* ((options           (getopt-long args *option-spec*))
          (user              (option-ref options 'user (getenv "USER")))
@@ -135,19 +136,13 @@
     (set! debug? debug-needed?)
 
     (if help-needed?
-        (begin
-          (print-help)
-          (exit 0)))
+        (print-help-and-exit))
 
     (if version-needed?
-        (begin
-          (print-version)
-          (exit 0)))
+        (print-version-and-exit))
 
     (if (or (null? args) (null? (cdr args)))
-        (begin
-          (print-help)
-          (exit 0)))
+        (print-help-and-exit))
 
     (let ((host (car args))
           (cmd  (cadr args)))

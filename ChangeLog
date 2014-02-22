@@ -1,5 +1,11 @@
 2014-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/sssh.scm (print-help): Rename to `print-help-and-exit'.
+	Call `exit'.  All callers updated.
+	(print-version): Rename to `print-version-and-exit'.  Call `exit'.
+	All callers updated.
+	(main): Update.
+
 	* examples/ssshd.scm (main): Add `--ssh-debug' option.
 	(print-help-and-exit): Likewise.
 	* NEWS: Update.
