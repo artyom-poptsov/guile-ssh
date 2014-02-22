@@ -1,5 +1,8 @@
 2014-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/sssh-ssshd.scm ("ssshd, start"): Wait for a PID file to
+	appear instead of reading the PID from stdout.  Improve.
+
 	* examples/ssshd.scm (main): Add `--pid-file' option.  Store the
 	PID in a file instead of printing it to stdout.
 	(print-help-and-exit): Update.

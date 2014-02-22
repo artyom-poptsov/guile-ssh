@@ -31,27 +31,50 @@
 (define *rsakey* (format #f "~a/tests/rsakey" *topdir*))
 (define *test-cmd* "uname --all")
 
-(define *ssshd-cmd* (format #f "~a/examples/ssshd.scm --detach -r ~a"
-                            *topdir* *rsakey*))
-(define *sssh-cmd*  (format #f "~a/examples/sssh.scm -i ~a -p 12345 127.0.0.1 '~a'"
-                            *topdir* *rsakey* *test-cmd*))
+(define *srv-address* INADDR_LOOPBACK)
+(define *srv-port*    12345)
+(define *srv-pid-file* "ssshd.pid")
+
+(define *ssshd-cmd*
+  (string-append
+   *topdir* "/examples/ssshd.scm --detach"
+   " --pid-file=" *srv-pid-file*
+   " --rsakey=" *rsakey*))
+
+(define *sssh-cmd*
+  (string-append
+   *topdir* "/examples/sssh.scm"
+   " --identity-file=" *rsakey*
+   " --port=" (number->string *srv-port*)
+   " " (inet-ntoa *srv-address*)
+   " '" *test-cmd* "'"))
 
 (setenv "GUILE_LOAD_PATH" *topdir*)
 
-(define pid #f)
+(define ssshd-pid #f)
 
 
 ;;; Tests
 
 (test-assert "ssshd, start"
-  (let ((p (open-input-pipe *ssshd-cmd*)))
-    (let r ((l (read-line p)))
-      (if (not (eof-object? l))
-          (let ((m (string-match "PID: ([0-9]+)" l)))
-            (if (regexp-match? m)
-                (set! pid (string->number (match:substring m 1)))
-                (r (read-line p))))))
-    pid))
+  (let ((*max-tries* 10))
+    (system *ssshd-cmd*)
+    (let wait-pid-file ((exists?    #f)
+                        (sleep-time 1)  ;s
+                        (try        1))
+      (if exists?
+          (let* ((p   (open-input-file *srv-pid-file*))
+                 (pid (read-line p)))
+            (set! ssshd-pid (string->number pid)))
+          (if (<= try *max-tries*)
+              (begin
+                (sleep sleep-time)
+                (wait-pid-file (file-exists? *srv-pid-file*)
+                               (1+ sleep-time)
+                               (1+ try)))
+              (format #t "Couldn't read a PID file ~a in ~a tries.~%"
+                      *srv-pid-file* try))))
+    ssshd-pid))
 
 (define output (read-line (open-input-pipe *test-cmd*)))
 
@@ -66,10 +89,13 @@
     res))
 
 
-;;; Stop the ssshd server
+;;; Cleanup
 
-(if pid
-    (kill pid SIGTERM))
+(if ssshd-pid
+    (kill ssshd-pid SIGTERM))
+
+(if (file-exists? *srv-pid-file*)
+    (delete-file *srv-pid-file*))
 
 
 (test-end "sssh-ssshd")
