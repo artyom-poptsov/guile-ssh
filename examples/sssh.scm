@@ -43,6 +43,7 @@
 (define *program-name* "sssh")
 (define *default-identity-file*
   (string-append (getenv "HOME") "/.ssh/id_rsa"))
+(define *default-log-verbosity* "nolog")
 
 (define debug? #f)
 
@@ -55,7 +56,7 @@
     (help          (single-char #\h) (value #f))
     (version       (single-char #\v) (value #f))
     (debug         (single-char #\d) (value #f))
-    (ssh-debug                       (value #f))))
+    (ssh-debug                       (value #t))))
 
 
 ;;; Helper procedures
@@ -109,7 +110,7 @@ Options:
   --port=<port-number>, -p <port-number>  Port number
   --identity-file=<file>, -i <file>       Path to private key
   --debug, -d                             Debug mode
-  --ssh-debug                             Debug libssh
+  --ssh-debug=<verbosity>                 Debug libssh
   --version, -v                           Print version
 "))
   (exit))
@@ -128,7 +129,8 @@ Options:
          (identity-file     (option-ref options 'identity-file
                                         *default-identity-file*))
          (debug-needed?     (option-ref options 'debug #f))
-         (ssh-debug-needed? (option-ref options 'ssh-debug #f))
+         (ssh-debug         (option-ref options 'ssh-debug
+                                        *default-log-verbosity*))
          (help-needed?      (option-ref options 'help #f))
          (version-needed?   (option-ref options 'version #f))
          (args              (option-ref options '() #f)))
@@ -152,9 +154,7 @@ Options:
                                    #:host host
                                    #:port port
                                    #:identity identity-file
-                                   #:log-verbosity (if ssh-debug-needed?
-                                                       'functions
-                                                       'nolog))))
+                                   #:log-verbosity (string->symbol ssh-debug))))
 
         (print-debug "3. connect! (ssh_connect_x)\n")
         (connect! session)

@@ -1,5 +1,10 @@
 2014-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/sssh.scm (main): Make `ssh-debug' take the log
+	verbosity as an argument.
+	(print-help-and-exit): Update.
+	* NEWS: Update.
+
 	* examples/sssh.scm (print-help): Rename to `print-help-and-exit'.
 	Call `exit'.  All callers updated.
 	(print-version): Rename to `print-version-and-exit'.  Call `exit'.
