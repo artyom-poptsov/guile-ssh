@@ -11,8 +11,11 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Compile Guile modules
    Compile Guile modules and install compiled files if GNU Guile 2.0.x
    is available.
-** Update ssshd example
-*** `examples/ssshd.scm' now takes `--ssh-debug' option
+** Update sssh/ssshd example
+*** Add new command line options for `examples/ssshd.scm'.
+    ssshd now takes `--ssh-debug' and `--pid-file' option.
+*** ssshd now stores the PID in a file
+    instead of printing it to stdout.
 *** `examples/sssh.scm' now allows to set log verbosity
     by passing it as an argument of `--ssh-debug' option.
 

@@ -46,6 +46,7 @@
 (define *default-log-verbosity* "nolog")
 (define *default-rsakey*        (format #f "~a/.ssh/id_rsa" (getenv "HOME")))
 (define *default-dsakey*        (format #f "~a/.ssh/id_dsa" (getenv "HOME")))
+(define *default-pid-file*      "ssshd.pid")
 
 (define debug? #t)
 
@@ -207,16 +208,21 @@
 
 (define (print-help-and-exit)
   "Print help message and exit."
-  (display "\
+  (display (string-append "\
 Usage: ssshd.scm [ options ]
 
 Options:
   --rsakey=<key>, -r <key>      Set host RSA key.
+                                Default: " *default-rsakey* "
   --dsakey=<key>, -d <key>      Set host DSA key.
+                                Default: " *default-dsakey* "
   --detach                      Detach mode
   --ssh-debug=<verbosity>       Debug libssh
+  --pid-file=<file-name>        File to store PID after the server starts to
+                                listen to the socket.
+                                Default: " *default-pid-file* "
   --help, -h                    Print this message and exit.
-")
+"))
   (exit))
 
 
@@ -227,6 +233,7 @@ Options:
     (dsakey (single-char #\d) (value #t))
     (detach                   (value #f))
     (ssh-debug                (value #t))
+    (pid-file                 (value #t))
     (help   (single-char #\h) (value #f))))
 
 (define (main args)
@@ -237,16 +244,17 @@ Options:
          (dsakey        (option-ref options 'dsakey *default-dsakey*))
          (detach-wanted (option-ref options 'detach #f))
          (ssh-debug     (option-ref options 'ssh-debug *default-log-verbosity*))
+         (pid-file      (option-ref options 'pid-file *default-pid-file*))
          (help-wanted   (option-ref options 'help    #f)))
 
     (if help-wanted
         (print-help-and-exit))
 
-    (format #t (string-append
-                "Using private key ~a~%"
-                "Listening on port ~a~%")
-            *default-rsakey*
-            *default-bindport*)    
+    (let ((f format))
+      (f #t "Using private RSA key: ~a~%" rsakey)
+      (f #t "Using private DSA key: ~a~%" dsakey)
+      (f #t "Listening on port:     ~a~%" *default-bindport*)
+      (f #t "PID file:              ~a~%" pid-file))
 
     (if detach-wanted
         (let ((pid (primitive-fork)))
@@ -255,7 +263,6 @@ Options:
             (close-ports)
             (setsid))
            ((> pid 0)
-            (format #t "PID: ~a~%" pid)
             (exit))
            (#t
             (display "Could not fork the processs\n")
@@ -270,6 +277,11 @@ Options:
 
     ;; Start listen to incoming connections.
     (server-listen server)
+
+    ;; Write the PID to a file.
+    (let ((p (open-output-file pid-file)))
+      (write (getpid) p)
+      (close p))
 
     ;; Accept new connections from clients.  Every connection is
     ;; handled in its own SSH session.
