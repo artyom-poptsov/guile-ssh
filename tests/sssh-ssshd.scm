@@ -29,6 +29,7 @@
 
 (define *topdir* (getenv "abs_top_srcdir"))
 (define *rsakey* (format #f "~a/tests/rsakey" *topdir*))
+(define *dsakey* (format #f "~a/tests/dsakey" *topdir*))
 (define *test-cmd* "uname --all")
 
 (define *srv-address* INADDR_LOOPBACK)
@@ -39,7 +40,8 @@
   (string-append
    *topdir* "/examples/ssshd.scm --detach"
    " --pid-file=" *srv-pid-file*
-   " --rsakey=" *rsakey*))
+   " --rsakey=" *rsakey*
+   " --dsakey=" *dsakey*))
 
 (define *sssh-cmd*
   (string-append
