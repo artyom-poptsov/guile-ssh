@@ -43,7 +43,7 @@
 ;;; Variables and constants
 
 (define *default-bindport*      12345)
-(define *default-log-verbosity* 'nolog)
+(define *default-log-verbosity* "nolog")
 (define *default-rsakey*        (format #f "~a/.ssh/id_rsa" (getenv "HOME")))
 (define *default-dsakey*        (format #f "~a/.ssh/id_dsa" (getenv "HOME")))
 
@@ -214,6 +214,7 @@ Options:
   --rsakey=<key>, -r <key>      Set host RSA key.
   --dsakey=<key>, -d <key>      Set host DSA key.
   --detach                      Detach mode
+  --ssh-debug=<verbosity>       Debug libssh
   --help, -h                    Print this message and exit.
 ")
   (exit))
@@ -225,6 +226,7 @@ Options:
   '((rsakey (single-char #\r) (value #t))
     (dsakey (single-char #\d) (value #t))
     (detach                   (value #f))
+    (ssh-debug                (value #t))
     (help   (single-char #\h) (value #f))))
 
 (define (main args)
@@ -234,6 +236,7 @@ Options:
          (rsakey        (option-ref options 'rsakey *default-rsakey*))
          (dsakey        (option-ref options 'dsakey *default-dsakey*))
          (detach-wanted (option-ref options 'detach #f))
+         (ssh-debug     (option-ref options 'ssh-debug *default-log-verbosity*))
          (help-wanted   (option-ref options 'help    #f)))
 
     (if help-wanted
@@ -261,7 +264,7 @@ Options:
     (let ((server (make-server #:bindport      *default-bindport*
                                #:rsakey        rsakey
                                #:dsakey        dsakey
-                               #:log-verbosity *default-log-verbosity*
+                               #:log-verbosity (string->symbol ssh-debug)
                                #:banner        "Scheme Secure Shell Daemon"))
           (channel #f))
 

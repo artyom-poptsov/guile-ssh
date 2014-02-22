@@ -1,3 +1,9 @@
+2014-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/ssshd.scm (main): Add `--ssh-debug' option.
+	(print-help-and-exit): Likewise.
+	* NEWS: Update.
+
 2014-02-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* configure.ac: Add check for Guile VM's compiler.
