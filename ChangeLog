@@ -1,3 +1,14 @@
+2014-03-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/server-func.c (server-accept): Throw `guile-ssh-error' on
+	error.
+	* examples/ssshd.scm (main): Handle `guile-ssh-error' on
+	`server-accept'.
+	* examples/echo/server.scm (main): Likewise.
+	* doc/api-servers.texi (Servers): Update `server-accept'
+	documentation.  Add an example.
+	* NEWS: Update.
+
 2014-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/sssh-ssshd.scm ("ssshd, start"): Wait for a PID file to

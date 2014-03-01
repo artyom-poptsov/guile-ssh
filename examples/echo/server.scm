@@ -170,52 +170,62 @@ Options:
       ;; Start listen to incoming connections.
       (server-listen server)
 
-      ;; Accept new connections from clients.  Every connection is
-      ;; handled in its own SSH session.
-      (let main-loop ((session (server-accept server)))
-        (display "Client accepted.\n")
-        (server-handle-key-exchange session)
-        ;; Handle messages from the connected SSH client.
-        (let session-loop ((msg (server-message-get session)))
-          (if msg
-              (let ((msg-type (message-get-type msg)))
-                (format #t "Message: ~a~%" msg-type)
-                ;; Check the type of the message
-                (case (car msg-type)
-                  ((request-service)
-                   (let ((srv-req (message-get-req msg)))
-                     (format #t "  Service requested: ~a~%"
-                             (service-req:service srv-req))
-                     (message-reply-success msg)))
+      (while #t
+        ;; Accept new connections from clients.  Every connection is
+        ;; handled in its own SSH session.
+        (let ((session (catch 'guile-ssh-error
+                         (lambda ()
+                           (server-accept server))
+                         (lambda (key . args)
+                           (format #t "~a~%" args)
+                           #f))))
 
-                  ((request-auth)
-                   (handle-req-auth session msg msg-type))
+          (if (not session)
+              (continue))
 
-                  ((request-channel-open)
-                   (set! channel (handle-req-channel-open msg msg-type))
-                   (let poll ((ready? #f))
-                     (if ready?
-                         (catch 'guile-ssh-error
-                           (lambda ()
-                             (let ((str (read-all channel)))
-                               (format #t "Received message: ~a~%" str)
-                               (display "Echoing back...\n")
-                               (write-line str channel)))
-                           (lambda (key . args)
-                             (display "error\n")
-                             (display (get-error session))))
-                         (poll (char-ready? channel))))
-                   (close channel))
+          (display "Client accepted.\n")
+          (server-handle-key-exchange session)
 
-                  ((request-channel)
-                   (handle-req-channel msg msg-type channel))
+          ;; Handle messages from the connected SSH client.
+          (let session-loop ((msg (server-message-get session)))
+            (if msg
+                (let ((msg-type (message-get-type msg)))
+                  (format #t "Message: ~a~%" msg-type)
+                  ;; Check the type of the message
+                  (case (car msg-type)
+                    ((request-service)
+                     (let ((srv-req (message-get-req msg)))
+                       (format #t "  Service requested: ~a~%"
+                               (service-req:service srv-req))
+                       (message-reply-success msg)))
 
-                  (else
-                   (display "Reply default\n")
-                   (message-reply-default msg)))))
-          (if (connected? session)
-              (session-loop (server-message-get session))))
-        (disconnect! session)
-        (main-loop (server-accept server))))))
+                    ((request-auth)
+                     (handle-req-auth session msg msg-type))
+
+                    ((request-channel-open)
+                     (set! channel (handle-req-channel-open msg msg-type))
+                     (let poll ((ready? #f))
+                       (if ready?
+                           (catch 'guile-ssh-error
+                             (lambda ()
+                               (let ((str (read-all channel)))
+                                 (format #t "Received message: ~a~%" str)
+                                 (display "Echoing back...\n")
+                                 (write-line str channel)))
+                             (lambda (key . args)
+                               (display "error\n")
+                               (display (get-error session))))
+                           (poll (char-ready? channel))))
+                     (close channel))
+
+                    ((request-channel)
+                     (handle-req-channel msg msg-type channel))
+
+                    (else
+                     (display "Reply default\n")
+                     (message-reply-default msg)))))
+            (if (connected? session)
+                (session-loop (server-message-get session))))
+          (disconnect! session))))))
 
 ;;; server.scm ends here.

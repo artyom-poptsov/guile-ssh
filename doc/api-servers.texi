@@ -101,7 +101,20 @@ Return value undefined.
 
 @deffn {Scheme Procedure} server-accept server
 Accept an incoming @acronym{SSH} connection to the @var{server}.
-Return a new Guile-SSH session or @code{#f} on error.
+Return a new Guile-SSH session.  Throw @code{guile-ssh-error} on error.
+
+Example:
+
+@lisp
+(let ((session (catch 'guile-ssh-error
+                 (lambda ()
+                   (server-accept server))
+                 (lambda (key . args)
+                   ;; Handle error
+                   #f))))
+  ...)
+@end lisp
+
 @end deffn
 
 @deffn {Scheme Procedure} server-handle-key-exchange session

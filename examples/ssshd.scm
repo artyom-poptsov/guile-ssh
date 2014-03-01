@@ -283,59 +283,67 @@ Options:
       (write (getpid) p)
       (close p))
 
-    ;; Accept new connections from clients.  Every connection is
-    ;; handled in its own SSH session.
-    (let main-loop ((session (server-accept server)))
+    (while #t
+      ;; Accept new connections from clients.  Every connection is
+      ;; handled in its own SSH session.
+      (let ((session (catch 'guile-ssh-error
+                       (lambda ()
+                         (server-accept server))
+                       (lambda (key . args)
+                         (format #t "~a~%" args)
+                         #f))))
 
-      (server-handle-key-exchange session)
+        (if (not session)
+            (continue))
 
-      ;; Handle messages from the connected SSH client.
-      (let session-loop ((msg (server-message-get session)))
-        (display "Message received.\n")
+        (server-handle-key-exchange session)
 
-        (if (not msg)
-            (error (get-error session)))
+        ;; Handle messages from the connected SSH client.
+        (let session-loop ((msg (server-message-get session)))
+          (display "Message received.\n")
 
-        (let ((msg-type (message-get-type msg)))
+          (if (not msg)
+              (error (get-error session)))
 
-          (format #t "Message type: ~a~%" msg-type)
+          (let ((msg-type (message-get-type msg)))
 
-          ;; Check the type of the message
-          (case (car msg-type)
+            (format #t "Message type: ~a~%" msg-type)
 
-            ((request-service)
-             (let ((srv-req (message-get-req msg)))
-               (format #t "  Service requested: ~a~%"
-                       (service-req:service srv-req))
-               (message-reply-success msg)))
+            ;; Check the type of the message
+            (case (car msg-type)
 
-            ((request-auth)
-             (handle-req-auth session msg msg-type))
+              ((request-service)
+               (let ((srv-req (message-get-req msg)))
+                 (format #t "  Service requested: ~a~%"
+                         (service-req:service srv-req))
+                 (message-reply-success msg)))
 
-            ((request-channel-open)
-             (set! channel (handle-req-channel-open msg msg-type)))
+              ((request-auth)
+               (handle-req-auth session msg msg-type))
 
-            ((request-channel)
-             (handle-req-channel msg msg-type channel)
-             ;; FIXME: We currently support only one exec request per
-             ;; a session.
-             (if (eq? (cadr msg-type) 'channel-request-exec)
-                 (begin
-                   (close channel)
-                   (disconnect! session))))
+              ((request-channel-open)
+               (set! channel (handle-req-channel-open msg msg-type)))
 
-            (else
-             (display "Send the default reply.\n")
-             (message-reply-default msg))))
+              ((request-channel)
+               (handle-req-channel msg msg-type channel)
+               ;; FIXME: We currently support only one exec request per
+               ;; a session.
+               (if (eq? (cadr msg-type) 'channel-request-exec)
+                   (begin
+                     (close channel)
+                     (disconnect! session))))
 
-        (display "Message is handled.\n")
-        (if (connected? session)
-            (session-loop (server-message-get session))))
+              (else
+               (display "Send the default reply.\n")
+               (message-reply-default msg))))
 
-      (display "Disconnect the current session.\n")
-      (disconnect! session)
+          (display "Message is handled.\n")
+          (if (connected? session)
+              (session-loop (server-message-get session))))
 
-      (display "Waiting for the next connection...\n")
-      (main-loop (server-accept server))))))
+        (display "Disconnect the current session.\n")
+        (disconnect! session)
+
+        (display "Waiting for the next connection...\n"))))))
 
 ;;; ssshd.scm ends here
