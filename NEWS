@@ -12,6 +12,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    Compile Guile modules and install compiled files if GNU Guile 2.0.x
    is available.
 ** Update examples
+*** Use actual path to Guile interpreter in the shebang
+    Executables will be produced during building of the Guile-SSH.
 *** Add new command line options for `examples/ssshd.scm'.
     ssshd now takes `--ssh-debug' and `--pid-file' option.
 *** ssshd now stores the PID in a file

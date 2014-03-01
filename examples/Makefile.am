@@ -19,4 +19,17 @@
 examplesdir = $(pkgdatadir)/examples
 examples_echodir = $(pkgdatadir)/examples/echo
 dist_examples_DATA = README sssh.scm ssshd.scm
-dist_examples_echo_DATA = echo/*.scm
+dist_examples_echo_DATA = echo/server.scm echo/client.scm
+
+substitute = sed -e 's,[@]GUILE[@],$(GUILE),g'
+
+SUFFIXES = .in
+
+.in:
+	$(substitute) "$^" > "$@.tmp" && 	\
+	chmod +x "$@.tmp" &&			\
+	mv "$@.tmp" "$@"
+
+CLEANFILES = \
+	sssh.scm ssshd.scm			\
+	echo/server.scm echo/client.scm

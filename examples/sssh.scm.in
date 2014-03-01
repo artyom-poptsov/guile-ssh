@@ -1,5 +1,6 @@
-#!/usr/bin/guile \
+#!@GUILE@ \
 --debug -e main
+# aside from this initial boilerplate, this is actually -*- scheme -*- code
 !#
 
 ;;; sssh.scm -- Scheme Secure Shell.

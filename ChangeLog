@@ -1,5 +1,15 @@
 2014-03-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/ssshd.scm: Rename to `examples/ssshd.scm.in'.
+	* examples/sssh.scm: Rename to `examples/sssh.scm.in'.
+	* examples/echo/client.scm: Rename to
+	`examples/echo/client.scm.in'.
+	* examples/echo/server.scm: Rename to
+	`examples/echo/server.scm.in'.
+	* examples/Makefile.am: Substitute `@GUILE@' with the actual path
+	to Guile interpreter in *.in files.
+	* NEWS: Update.
+
 	* ssh/server-func.c (server-accept): Throw `guile-ssh-error' on
 	error.
 	* examples/ssshd.scm (main): Handle `guile-ssh-error' on

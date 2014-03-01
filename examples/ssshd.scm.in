@@ -1,5 +1,6 @@
-#!/usr/bin/guile \
+#!@GUILE@ \
 --debug -e main -s
+# aside from this initial boilerplate, this is actually -*- scheme -*- code
 !#
 
 ;;; ssshd.scm -- Scheme Secure Shell Daemon.
