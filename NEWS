@@ -22,6 +22,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     by passing it as an argument of `--ssh-debug' option.
 *** Handle `guile-ssh-error' on `server-accept'
 ** `server-accept' now throws `guile-ssh-error' on error
+** Improve automated tests
+*** Prevent sssh-ssshd from asking of a SSH agent for keys
 
 * Changes in version 0.5.0 (2014-02-05)
 ** Implement Guile-SSH channels as GNU Guile ports.

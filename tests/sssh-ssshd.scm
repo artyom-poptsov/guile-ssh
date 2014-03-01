@@ -53,6 +53,10 @@
 
 (setenv "GUILE_LOAD_PATH" *topdir*)
 
+;; We must unset `SSH_AUTH_SOCK' to prevent sssh from asking SSH agent
+;; (if it is present) for keys.
+(unsetenv "SSH_AUTH_SOCK")
+
 (define ssshd-pid #f)
 
 

@@ -1,5 +1,9 @@
 2014-03-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/sssh-ssshd.scm: Unset `SSH_AUTH_SOCK' environment variable
+	to prevent sssh from asking SSH agent for keys.
+	* NEWS: Update.
+
 	* examples/ssshd.scm: Rename to `examples/ssshd.scm.in'.
 	* examples/sssh.scm: Rename to `examples/sssh.scm.in'.
 	* examples/echo/client.scm: Rename to
