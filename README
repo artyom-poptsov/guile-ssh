@@ -1,6 +1,6 @@
 # -*- mode: org; -*-
 
-Guile-SSH is a library that provides access to the SSH protocol for
+Guile-SSH is a library that provides access to the [[https://en.wikipedia.org/wiki/Secure_Shell][SSH protocol]] for
 programs written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It is a wrapper to the
 underlying [[http://www.libssh.org/][libssh]] library.
 
@@ -44,6 +44,9 @@ Guile modules, in =${GUILE_SITE}/ssh=:
  - session.scm -- Session management.
  - version.scm -- Information about versions.
 
+If you use GNU Guile 2.0.x, then all the modules will be compiled and
+produced .go files will be installed along with .scm files.
+
 Documentation in Info format, in =${prefix}/share/info/=:
  - guile-ssh.info
 
@@ -53,17 +56,18 @@ Examples, in =${prefix}/share/libguile-ssh/examples=:
  + echo/
    - client.scm -- Echo client example.
    - server.scm -- Echo server example.
+
 * Installation
 
 For a basic explanation of the installation of the package, see the
 INSTALL file.
 
-Please *note* that you will need Automake 1.12 or later to run
-self-tests with `make check' (but the library itself can be built with
+Please *note* that you will need [[https://www.gnu.org/software/automake/][Automake]] 1.12 or later to run
+self-tests with =make check= (but the library itself can be built with
 older Automake version such as 1.11).
 
 *important* You probably want to call configure with the
-`--with-guilesitedir' option so that this package is installed in
+=--with-guilesitedir= option so that this package is installed in
 Guile's default path.  But, if you don't know where your Guile site
-directory is, run "configure" without the option, and it will give you
+directory is, run =configure= without the option, and it will give you
 a suggestion.
