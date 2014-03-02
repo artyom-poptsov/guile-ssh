@@ -46,12 +46,15 @@ ptob_fill_input (SCM channel)
   scm_port *pt = SCM_PTAB_ENTRY (channel);
   int res;
 
-  /* Update state of the underlying channel and check whether we have
-     data to read or not. */
-  if (! ssh_channel_poll (cd->ssh_channel, cd->is_stderr))
+  if (! ssh_channel_is_open (cd->ssh_channel))
     return EOF;
 
-  if (! ssh_channel_is_open (cd->ssh_channel))
+  /* Update state of the underlying channel and check whether we have
+     data to read or not. */
+  res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
+  if (res == SSH_ERROR)
+    guile_ssh_error1 (FUNC_NAME, "Error polling channel", channel);
+  else if (res == SSH_EOF)
     return EOF;
 
   res = ssh_channel_read (cd->ssh_channel,
@@ -61,7 +64,7 @@ ptob_fill_input (SCM channel)
   if (res == SSH_ERROR)
     guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", channel);
 
-  if ((! res) || (res == SSH_AGAIN))
+  if (res == SSH_AGAIN)
     return EOF;
 
   pt->read_pos = pt->read_buf;
