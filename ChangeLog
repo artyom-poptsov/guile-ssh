@@ -1,5 +1,8 @@
 2014-03-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* THANKS: Add to the repository.  Thank Ludovic.
+	* AUTHORS: Update.
+
 	* examples/sssh.scm.in (read-all): Improve error handling: Catch
 	`guile-ssh-error'.
 	* examples/ssshd.scm.in (read-all): Likewise.

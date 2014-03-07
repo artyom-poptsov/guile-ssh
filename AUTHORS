@@ -1,10 +1,12 @@
 Authors of Guile-SSH
 
+See also files THANKS and ChangeLog.
+
 * Artyom V. Poptsov <poptsov.artyom@gmail.com>
+* Ludovic Courtès <ludo@gnu.org>
+  In subdirectory ssh, changes to:
+    channel-type.c
 
-The libssh that is used by Guile-SSH is initially written by Aris
-Adamantiadis and being developed by the developer community.  See
-AUTHORS file that comes along with libssh distribution for full
-authors list.
+  Bug reports, various comments and suggestions.
 
-Thank you.
+
