@@ -21,6 +21,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 *** `examples/sssh.scm' now allows to set log verbosity
     by passing it as an argument of `--ssh-debug' option.
 *** Handle `guile-ssh-error' on `server-accept'
+*** Catch `guile-ssh-error' on reading from a port.
 ** `server-accept' now throws `guile-ssh-error' on error
 ** Improve automated tests
 *** Prevent sssh-ssshd from asking of a SSH agent for keys

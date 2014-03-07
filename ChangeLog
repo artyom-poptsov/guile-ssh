@@ -1,3 +1,10 @@
+2014-03-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/sssh.scm.in (read-all): Improve error handling: Catch
+	`guile-ssh-error'.
+	* examples/ssshd.scm.in (read-all): Likewise.
+ 	* NEWS: Update.
+
 2014-03-02  Ludovic Courtès  <ludo@gnu.org>
 
 	* ssh/channel-type.c (ptob_fill_input): Check

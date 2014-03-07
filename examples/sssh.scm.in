@@ -80,10 +80,17 @@
 
 (define (read-all port)
   "Read all lines from the PORT."
+  (define (read-and-catch)
+    (catch 'guile-ssh-error
+      (lambda ()
+        (read-line port 'concat))
+      (lambda (key . args)
+        (format (current-error-port) "~a: ~a~%" key args)
+        #f)))
   (let r ((res "")
-          (str (read-line port 'concat)))
-    (if (not (eof-object? str))
-        (r (string-append res str) (read-line port 'concat))
+          (str (read-and-catch)))
+    (if (and str (not (eof-object? str)))
+        (r (string-append res str) (read-and-catch))
         res)))
 
 ;;; Printing of various information
