@@ -1,5 +1,8 @@
 2014-03-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* Makefile.am (clean-go): New target.
+	* ssh/Makefile.am (clean-go): Likewise.
+
 	* ssh/Makefile.am (dist_noinst_HEADERS): Add snarfed *.x files.
 
 	* tests/Makefile.am (EXTRA_DIST): Add `dsakey' and `rsakey'.

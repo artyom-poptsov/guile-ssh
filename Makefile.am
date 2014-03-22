@@ -24,3 +24,11 @@ SUBDIRS = am ssh examples build-aux m4 doc tests
 EXTRA_DIST = \
 	srfi/srfi-64.scm		\
 	srfi/srfi-64.upstream.scm
+
+if HAVE_GUILE_VM
+clean-go:
+	@cd ssh; make clean-go
+.PHONY: clean-go
+endif HAVE_GUILE_VM
+
+## Makefile.am ends here

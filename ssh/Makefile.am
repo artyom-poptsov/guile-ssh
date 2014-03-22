@@ -88,6 +88,11 @@ guilec_env  = 					\
 
 CLEANFILES += $(GOBJECTS)
 
+# Handy way to remove the .go files without removing all the rest.
+clean-go:
+	-$(RM) -f $(GOBJECTS)
+.PHONY: clean-go
+
 endif HAVE_GUILE_VM
 
 ## Makefile.am ends here
