@@ -45,4 +45,7 @@ AM_SCM_LOG_FLAGS = \
 	-L "$(top_srcdir)" \
 	-s
 
-EXTRA_DIST = ${SCM_TESTS}
+EXTRA_DIST = \
+	${SCM_TESTS}		\
+	dsakey			\
+	rsakey

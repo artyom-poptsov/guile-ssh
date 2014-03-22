@@ -1,5 +1,7 @@
 2014-03-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/Makefile.am (EXTRA_DIST): Add `dsakey' and `rsakey'.
+
 	* Makefile.am (EXTRA_DIST): Add srfi-64.
 
 	* tests/Makefile.am (AM_SCM_LOG_FLAGS): Use `top_srcdir' instead
