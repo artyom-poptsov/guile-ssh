@@ -20,3 +20,7 @@
 ACLOCAL_AMFLAGS = -I m4 --install
 
 SUBDIRS = am ssh examples build-aux m4 doc tests
+
+EXTRA_DIST = \
+	srfi/srfi-64.scm		\
+	srfi/srfi-64.upstream.scm
