@@ -233,7 +233,7 @@
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
-    (let ((res (userauth-password! session "alice" "password")))
+    (let ((res (userauth-password! session "password")))
       (disconnect! session)
       (eq? res 'success))))
 
@@ -255,7 +255,7 @@
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
-    (let ((res (userauth-password! session "alice" "password")))
+    (let ((res (userauth-password! session "password")))
       (disconnect! session)
       (eq? res 'denied))))
 
@@ -277,7 +277,7 @@
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
-    (let ((res (userauth-password! session "alice" "password")))
+    (let ((res (userauth-password! session "password")))
       (disconnect! session)
       (eq? res 'partial))))
 
@@ -300,7 +300,7 @@
     (authenticate-server session)
     (let* ((prvkey (private-key-from-file session rsakey))
            (pubkey (private-key->public-key prvkey)))
-      (let ((res (userauth-pubkey! session #f pubkey prvkey)))
+      (let ((res (userauth-pubkey! session pubkey prvkey)))
         (disconnect! session)
         (eq? res 'success)))))
 

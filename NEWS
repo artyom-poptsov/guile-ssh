@@ -8,6 +8,18 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
+** Remove username from parameter list of auth procedures
+   `userauth-password!' and `userauth-pubkey!' don't take a username
+   as a parameter anymore.  Rationale: According to libssh 0.6 docs,
+   most server implementations do not permit changing the username
+   during authentication.  Moreover, the parameter was deprecated in
+   libssh 0.5.3.
+
+   Elimination of username makes Guile-SSH Auth API clearer and
+   simpler.  Username can be set either on creation of a session or by
+   calling of `session-set!' procedure.
+** Update documentation
+*** Update Guile-SSH Auth API description
 ** Compile Guile modules
    Compile Guile modules and install compiled files if GNU Guile 2.0.x
    is available.

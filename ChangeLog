@@ -1,3 +1,18 @@
+2014-03-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/auth.c (guile_ssh_userauth_pubkey): Don't take a username as
+	an parameter.  All callers updated.
+	(guile_ssh_userauth_password): Likewise.
+	* examples/ssshd.scm.in (handle-req-auth): Update.
+	* examples/echo/client.scm.in (main): Update.
+	* tests/client-server.scm ("userauth-password!, success")
+	("userauth-password!, denied", "userauth-password!, partial")
+	("userauth-pubkey!, success"): Update TCs.
+	* doc/api-auth.texi (Auth): Update documentation for
+	`userauth-pubkey!' and `userauth-password!'.  Add a general note
+	about setting of a username.
+	* doc/version.texi: Update.
+
 2014-03-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* THANKS: Add to the repository.  Thank Ludovic.
@@ -6,7 +21,7 @@
 	* examples/sssh.scm.in (read-all): Improve error handling: Catch
 	`guile-ssh-error'.
 	* examples/ssshd.scm.in (read-all): Likewise.
- 	* NEWS: Update.
+	* NEWS: Update.
 
 2014-03-02  Ludovic Courtès  <ludo@gnu.org>
 

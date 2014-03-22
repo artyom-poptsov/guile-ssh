@@ -148,7 +148,7 @@ errors."
       (let* ((private-key (get-prvkey session identity-file))
              (public-key  (get-pubkey session private-key)))
 
-        (if (eqv? (userauth-pubkey! session #f public-key private-key) 'error)
+        (if (eqv? (userauth-pubkey! session public-key private-key) 'error)
             (handle-error session))
 
         (let ((channel (make-channel session)))

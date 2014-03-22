@@ -126,7 +126,7 @@
          (format #t "  User ~a wants to authenticate with a password~%" user)
 
          ;; Check the password for the user.
-         (case (userauth-password! session user pswd)
+         (case (userauth-password! session pswd)
            ((success)
             (message-reply-success msg #f))
 

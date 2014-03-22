@@ -27,6 +27,18 @@
 #include "key-func.h"
 
 
+/* On the username:
+
+   Some libssh functions (such as `ssh_userauth_password') expect
+   username as one of the parameters.  But according to libssh 0.6
+   docs, most server implementations do not permit changing the
+   username during authentication.  Moreover, in some cases username
+   parameter is already marked as deprecated in libssh 0.5.3.  So I
+   decided to simplify the Guile-SSH Auth API and eliminate username
+   from parameter list of functions of this module.  The username must
+   be set by `session-set!' call.  - avp */
+
+
 /* Convert SSH authentication result to a Scheme symbol 
 
    Return a symbol, or #f on error. */
@@ -55,24 +67,19 @@ ssh_auth_result_to_symbol (const int res)
     }
 }
 
-/* Try to authenticate with a public key.
- *
- * USERNAME can be either string or #f.  If USERNAME is #f it's assumed that
- * the USERNAME was set through ssh:option-set! call.
- */
-SCM_DEFINE (guile_ssh_userauth_pubkey, "userauth-pubkey!", 4, 0, 0,
-            (SCM session_smob, SCM username,
+SCM_DEFINE (guile_ssh_userauth_pubkey, "userauth-pubkey!", 3, 0, 0,
+            (SCM session_smob,
              SCM public_key_smob, SCM private_key_smob),
-            "Try to authenticate with a public key.\n"
-            "\n"
-            "USERNAME can be either string or #f,  If USERNAME is #f it's\n"
-            "assumed that the USERNAME was set though `option-set!' call.")
+            "Try to authenticate with a public key.")
 #define FUNC_NAME s_guile_ssh_userauth_pubkey
 {
   struct session_data *session_data = _scm_to_ssh_session (session_smob);
   struct key_data *public_key_data  = _scm_to_ssh_key (public_key_smob);
   struct key_data *private_key_data = _scm_to_ssh_key (private_key_smob);
-  char *c_username = NULL;
+
+  /* See "On the username" commentary above. */
+  char *username = NULL;
+
   ssh_string public_key;
   int res;
 
@@ -80,30 +87,16 @@ SCM_DEFINE (guile_ssh_userauth_pubkey, "userauth-pubkey!", 4, 0, 0,
 
   /* Check types. */
 
-  /* username can be either a string or SCM_BOOL_F */
-  SCM_ASSERT (scm_is_string (username)
-              || (scm_is_bool (username) && (! scm_to_bool (username))),
-              username, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (_public_key_p (public_key_data),
-              public_key_smob, SCM_ARG3, FUNC_NAME);
+              public_key_smob, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (_private_key_p (private_key_data),
-              private_key_smob, SCM_ARG4, FUNC_NAME);
-
-  if (scm_is_string (username))
-    {
-      c_username = scm_to_locale_string (username);
-      scm_dynwind_free (c_username);
-    }
-  else                          /* username was set to SCM_BOOL_F */
-    {
-      c_username = NULL;
-    }
+              private_key_smob, SCM_ARG3, FUNC_NAME);
 
   public_key = public_key_to_ssh_string (public_key_data);
   scm_dynwind_unwind_handler ((void (*)(void*)) ssh_string_free, public_key,
                                   SCM_F_WIND_EXPLICITLY);
 
-  res = ssh_userauth_pubkey (session_data->ssh_session, c_username,
+  res = ssh_userauth_pubkey (session_data->ssh_session, username,
                              public_key,
                              private_key_data->ssh_private_key);
 
@@ -137,45 +130,30 @@ SCM_DEFINE (guile_ssh_userauth_autopubkey_x,
 }
 #undef FUNC_NAME
 
-/* Try to authenticate by password.
- *
- * USERNAME can be either string or #f.  If USERNAME is #f it's assumed that
- * the USERNAME was set through ssh:option-set! call.
- *
- */
-SCM_DEFINE (guile_ssh_userauth_password, "userauth-password!", 3, 0, 0,
-            (SCM session, SCM username, SCM password),
+/* Try to authenticate by password. */
+SCM_DEFINE (guile_ssh_userauth_password, "userauth-password!", 2, 0, 0,
+            (SCM session, SCM password),
             "Try to authenticate by password.")
 #define FUNC_NAME s_guile_ssh_userauth_password
 {
   struct session_data* session_data = _scm_to_ssh_session (session);
-  char *c_username;
+
+  /* See "On the username" commentary above. */
+  char *username = NULL;
+
   char *c_password;
   int res;
 
   scm_dynwind_begin (0);
 
   /* Check types. */
-  SCM_ASSERT ((scm_is_string (username) || scm_is_bool (username)),
-              password, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT (scm_is_string (password), password, SCM_ARG3, FUNC_NAME);
-
-  if (scm_is_true (username))
-    {
-      c_username = scm_to_locale_string (username);
-      scm_dynwind_free (c_username);
-    }
-  else
-    {
-      /* Username was set by calling ssh_options_set */
-      c_username = NULL;
-    }
+  SCM_ASSERT (scm_is_string (password), password, SCM_ARG2, FUNC_NAME);
 
   c_password = scm_to_locale_string (password);
   scm_dynwind_free (c_password);
 
   res = ssh_userauth_password (session_data->ssh_session,
-                               c_username,
+                               username,
                                c_password);
 
   scm_dynwind_end ();
