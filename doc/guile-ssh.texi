@@ -179,6 +179,14 @@ initially written by Aris Adamantiadis and being developed by the
 developer community.  See AUTHORS file that comes along with libssh
 distribution for full authors list.
 
+Thanks to the following people who contributed to Guile-SSH
+through bug reports or patches:
+
+@itemize @bullet
+@item Ludovic Courtès @email{ludo@@gnu.org}
+@end itemize
+
+
 Thank you.
 
 @node GNU Free Documentation License

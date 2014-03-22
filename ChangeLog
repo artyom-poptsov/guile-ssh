@@ -1,5 +1,7 @@
 2014-03-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/guile-ssh.texi (Acknowledgments): Thank Ludovic.
+
 	* ssh/auth.scm: Update module commentary.
 
 	* .gitignore: Move rules related to object files, libraries
