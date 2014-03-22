@@ -1,5 +1,13 @@
 2014-03-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* .gitignore: Move rules related to object files, libraries
+	etc. to `ssh/.gitignore'.  Update.
+	* ssh/.gitignore: Update.
+	* build-aux/.gitignore: New file.
+	* doc/.gitignore: New file.
+	* examples/.gitignore: New file.
+	* m4/.gitignore: New file.
+
 	* ssh/auth.c (guile_ssh_userauth_pubkey): Don't take a username as
 	an parameter.  All callers updated.
 	(guile_ssh_userauth_password): Likewise.

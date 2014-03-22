@@ -1,0 +1,8 @@
+# -*- shell-script -*-
+
+# Ignore automatically generated files:
+sssh.scm
+ssshd.scm
+echo/client.scm
+echo/server.scm
+Makefile.in

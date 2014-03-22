@@ -3,14 +3,10 @@
 # Backup files
 *\~
 
-# Object files and static libraries
-*.o
-*.lo
-*.la
-src/.libs
-
-# Auto-generated Makefile
+# Auto-generated files
 Makefile
+Makefile.in
+configure
 
 # Ignore files produced by the magic snarfer
 *.x
@@ -19,6 +15,9 @@ config.log
 config.status
 .deps
 autom4te.cache
+
+aclocal.m4
+libtool
 
 TAGS
 tags
