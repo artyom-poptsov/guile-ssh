@@ -1,5 +1,8 @@
 2014-03-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/Makefile.am (AM_SCM_LOG_FLAGS): Use `top_srcdir' instead
+	of `top_builddir'.
+
 	* doc/guile-ssh.texi (Acknowledgments): Thank Ludovic.
 
 	* ssh/auth.scm: Update module commentary.

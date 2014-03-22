@@ -42,7 +42,7 @@ SCM_LOG_COMPILER = \
 	--mode=execute $(GUILE)
 
 AM_SCM_LOG_FLAGS = \
-	-L "$(top_builddir)" \
+	-L "$(top_srcdir)" \
 	-s
 
 EXTRA_DIST = ${SCM_TESTS}
