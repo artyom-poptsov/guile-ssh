@@ -1,5 +1,7 @@
 2014-03-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/Makefile.am (dist_noinst_HEADERS): Add snarfed *.x files.
+
 	* tests/Makefile.am (EXTRA_DIST): Add `dsakey' and `rsakey'.
 
 	* Makefile.am (EXTRA_DIST): Add srfi-64.

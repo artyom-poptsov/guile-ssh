@@ -42,6 +42,8 @@ SCM_SOURCES = \
 	auth.scm channel.scm key.scm session.scm	\
 	server.scm message.scm version.scm
 
+dist_noinst_HEADERS = $(BUILT_SOURCES)
+
 libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
 
 libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
