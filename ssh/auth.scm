@@ -29,6 +29,7 @@
 ;;   userauth-autopubkey!
 ;;   userauth-password!
 ;;   userauth-none!
+;;   userauth-get-list
 
 
 ;;; Code:
