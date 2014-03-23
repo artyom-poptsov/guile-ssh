@@ -16,6 +16,12 @@
 ## along with libguile-ssh.  If not, see
 ## <http://www.gnu.org/licenses/>.
 
+EXTRA_DIST = \
+	sssh.scm.in		\
+	ssshd.scm.in		\
+	echo/server.scm.in	\
+	echo/client.scm.in
+
 examplesdir = $(pkgdatadir)/examples
 examples_echodir = $(pkgdatadir)/examples/echo
 dist_examples_DATA = README sssh.scm ssshd.scm
