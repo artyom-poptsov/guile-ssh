@@ -1,5 +1,11 @@
 2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	Fix parallel tests: Use port numbers from different ranges for
+	each test case.
+	* tests/client-server.scm, tests/server-client.scm: Update.
+	* tests/sssh-ssshd.scm: Update.  Set port for ssshd.
+	* NEWS: Update.
+
 	* examples/ssshd.scm.in: Add `--port' option.
 	(print-help-and-exit): Update.
 	(main): Update.

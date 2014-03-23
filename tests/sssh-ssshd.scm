@@ -33,13 +33,14 @@
 (define *test-cmd* "uname --all")
 
 (define *srv-address* INADDR_LOOPBACK)
-(define *srv-port*    12345)
+(define *srv-port*    12600)
 (define *srv-pid-file* "ssshd.pid")
 
 (define *ssshd-cmd*
   (string-append
    *topdir* "/examples/ssshd.scm --detach"
    " --pid-file=" *srv-pid-file*
+   " --port=" (number->string *srv-port*)
    " --rsakey=" *rsakey*
    " --dsakey=" *dsakey*))
 
