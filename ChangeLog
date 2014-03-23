@@ -1,5 +1,10 @@
 2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	Don't include .x files in the distribution.
+	* ssh/Makefile.am (AM_CPPFLAGS): Add pathes to includes.
+	(snarfcppopts): Add `AM_CPPFLAGS'.
+	(nodist_noinst_HEADERS): Remove.
+
 	Fix parallel tests: Use port numbers from different ranges for
 	each test case.
 	* tests/client-server.scm, tests/server-client.scm: Update.

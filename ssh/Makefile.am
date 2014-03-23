@@ -42,8 +42,6 @@ SCM_SOURCES = \
 	auth.scm channel.scm key.scm session.scm	\
 	server.scm message.scm version.scm
 
-dist_noinst_HEADERS = $(BUILT_SOURCES)
-
 libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
 
 libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
@@ -57,7 +55,11 @@ nobase_dist_pkgguilesite_DATA = $(SCM_SOURCES)
 ETAGS_ARGS = auth.scm channel.scm key.scm session.scm server.scm \
 	message.scm version.scm
 
-snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(GUILE_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/ssh -I$(top_builddir)/ssh
+
+snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(GUILE_CFLAGS) \
+	$(AM_CPPFLAGS)
+
 SUFFIXES = .x
 .c.x:
 	$(AM_V_SNARF)$(GUILE_SNARF) -o $@ $< $(snarfcppopts)
