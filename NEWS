@@ -18,11 +18,16 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    Elimination of username makes Guile-SSH Auth API clearer and
    simpler.  Username can be set either on creation of a session or by
    calling of `session-set!' procedure.
-** Update documentation
-*** Update Guile-SSH Auth API description
+** `server-accept' now throws `guile-ssh-error' on error
+** Improve reads from channels
+   Return EOF immediately if the channel is closed instead of polling
+   it for data (which causes notable latency on the first read).
+   Thanks Ludovic Courtès for the patch.
 ** Compile Guile modules
    Compile Guile modules and install compiled files if GNU Guile 2.0.x
    is available.
+** Update documentation
+*** Update Guile-SSH Auth API description
 ** Update examples
 *** Use actual path to Guile interpreter in the shebang
     Executables will be produced during building of the Guile-SSH.
@@ -34,7 +39,6 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     by passing it as an argument of `--ssh-debug' option.
 *** Handle `guile-ssh-error' on `server-accept'
 *** Catch `guile-ssh-error' on reading from a port.
-** `server-accept' now throws `guile-ssh-error' on error
 ** Improve automated tests
 *** Prevent sssh-ssshd from asking of a SSH agent for keys
 
