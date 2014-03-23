@@ -44,8 +44,9 @@ Guile modules, in =${GUILE_SITE}/ssh=:
  - session.scm -- Session management.
  - version.scm -- Information about versions.
 
-If you use GNU Guile 2.0.x, then all the modules will be compiled and
-produced .go files will be installed along with .scm files.
+If you use GNU Guile 2.0.x then all the modules will be compiled and
+produced .go files will be installed to =site-ccache= directory which
+is something like this: =${libdir}/guile/2.0/site-ccache/ssh/=.
 
 Documentation in Info format, in =${prefix}/share/info/=:
  - guile-ssh.info

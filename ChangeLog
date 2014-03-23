@@ -1,5 +1,8 @@
 2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README (Distribution): Update information about compilation of
+	Scheme modules.
+
 	Don't include .x files in the distribution.
 	* ssh/Makefile.am (AM_CPPFLAGS): Add pathes to includes.
 	(snarfcppopts): Add `AM_CPPFLAGS'.
