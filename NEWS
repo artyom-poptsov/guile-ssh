@@ -35,6 +35,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     ssshd now takes `--ssh-debug' and `--pid-file' option.
 *** ssshd now stores the PID in a file
     instead of printing it to stdout.
+*** ssshd now accepts `--port' option
 *** `examples/sssh.scm' now allows to set log verbosity
     by passing it as an argument of `--ssh-debug' option.
 *** Handle `guile-ssh-error' on `server-accept'

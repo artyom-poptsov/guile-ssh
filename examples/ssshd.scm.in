@@ -43,7 +43,7 @@
 
 ;;; Variables and constants
 
-(define *default-bindport*      12345)
+(define *default-bindport*      "12345")
 (define *default-log-verbosity* "nolog")
 (define *default-rsakey*        (format #f "~a/.ssh/id_rsa" (getenv "HOME")))
 (define *default-dsakey*        (format #f "~a/.ssh/id_dsa" (getenv "HOME")))
@@ -229,6 +229,7 @@ Options:
   --pid-file=<file-name>        File to store PID after the server starts to
                                 listen to the socket.
                                 Default: " *default-pid-file* "
+  --port=<number>, -p <number>  Port number
   --help, -h                    Print this message and exit.
 "))
   (exit))
@@ -242,6 +243,7 @@ Options:
     (detach                   (value #f))
     (ssh-debug                (value #t))
     (pid-file                 (value #t))
+    (port   (single-char #\p) (value #t))
     (help   (single-char #\h) (value #f))))
 
 (define (main args)
@@ -253,6 +255,8 @@ Options:
          (detach-wanted (option-ref options 'detach #f))
          (ssh-debug     (option-ref options 'ssh-debug *default-log-verbosity*))
          (pid-file      (option-ref options 'pid-file *default-pid-file*))
+         (bindport      (string->number
+                         (option-ref options 'port *default-bindport*)))
          (help-wanted   (option-ref options 'help    #f)))
 
     (if help-wanted
@@ -261,7 +265,7 @@ Options:
     (let ((f format))
       (f #t "Using private RSA key: ~a~%" rsakey)
       (f #t "Using private DSA key: ~a~%" dsakey)
-      (f #t "Listening on port:     ~a~%" *default-bindport*)
+      (f #t "Listening on port:     ~a~%" bindport)
       (f #t "PID file:              ~a~%" pid-file))
 
     (if detach-wanted
@@ -276,7 +280,7 @@ Options:
             (display "Could not fork the processs\n")
             (exit 1)))))
 
-    (let ((server (make-server #:bindport      *default-bindport*
+    (let ((server (make-server #:bindport      bindport
                                #:rsakey        rsakey
                                #:dsakey        dsakey
                                #:log-verbosity (string->symbol ssh-debug)

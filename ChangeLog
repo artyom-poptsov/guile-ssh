@@ -1,5 +1,9 @@
 2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/ssshd.scm.in: Add `--port' option.
+	(print-help-and-exit): Update.
+	(main): Update.
+
 	* ssh/session.scm: Update the module commentary.
 
 	* NEWS: Update.
