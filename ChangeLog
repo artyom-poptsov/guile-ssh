@@ -1,5 +1,24 @@
 2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* Makefile.am, am/Makefile.am, ssh/Makefile.am, ssh/auth.c,
+	ssh/auth.h, ssh/auth.scm, ssh/base64.c, ssh/base64.h,
+	ssh/channel-func.c, ssh/channel-func.h, ssh/channel-main.c,
+	ssh/channel-type.c, ssh/channel-type.h, ssh/channel.scm,
+	ssh/common.c, ssh/common.h, ssh/error.c, ssh/error.h,
+	ssh/key-func.c, ssh/key-func.h, ssh/key-main.c, ssh/key-type.c,
+	ssh/key-type.h, ssh/key.scm, ssh/message-func.c,
+	ssh/message-func.h, ssh/message-main.c, ssh/message-type.c,
+	ssh/message-type.h, ssh/message.scm, ssh/server-func.c,
+	ssh/server-func.h, ssh/server-main.c, ssh/server-type.c,
+	ssh/server-type.h, ssh/server.scm, ssh/session-func.c,
+	ssh/session-func.h, ssh/session-main.c, ssh/session-type.c,
+	ssh/session-type.h, ssh/session.scm, ssh/threads.c, ssh/threads.h,
+	ssh/version.c, ssh/version.scm, tests/Makefile.am,
+	tests/client-server.scm, tests/server-client.scm,
+	tests/server.scm, tests/session.scm, tests/sssh-ssshd.scm,
+	configure.ac: Replace `libguile-ssh' with `Guile-SSH' in
+	commentaries.
+
 	* examples/ssshd.scm.in (handle-req-auth): Fix handling of
 	password authentication.
 
