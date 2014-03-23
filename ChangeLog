@@ -1,9 +1,13 @@
 2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/ssshd.scm.in (handle-req-auth): Fix handling of
+	password authentication.
+
 	* examples/ssshd.scm.in (main): Improve error handling on
 	`server-accept': Print exception key on exception, wait 1 second
 	before the second try to prevent flooding of the terminal with
 	errors.
+
 	* examples/echo/server.scm.in (main): Likewise.
 	* doc/api-servers.texi (Servers): Update description of
 	`server-accept'.

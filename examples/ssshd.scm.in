@@ -119,22 +119,12 @@
               (user (auth-req:user     req))
               (pswd (auth-req:password req)))
 
-         (newline)
-         (display req)
-         (newline)
-
          (format #t "  User ~a wants to authenticate with a password~%" user)
 
-         ;; Check the password for the user.
-         (case (userauth-password! session pswd)
-           ((success)
-            (message-reply-success msg #f))
+         (if (string=? pswd "guile")
+            (message-reply-success msg)
+            (message-reply-default msg))))
 
-           ((partial)
-            (message-reply-success msg #t))
-
-           (else
-            (message-reply-default msg)))))
 
       ;; To enable authentication through the "none" method, we have
       ;; to call `message-auth-reply-success' procedure.
