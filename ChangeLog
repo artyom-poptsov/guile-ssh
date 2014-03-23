@@ -1,3 +1,16 @@
+2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Fix compiling of Scheme modules.  Install .go files to the
+	standard `site-ccache' directory.
+	* configure.ac: Substitute `GUILE_EFFECTIVE_VERSION'.
+	* ssh/Makefile.am (dist_pkgguilesite_DATA): Rename to
+	`nobase_dist_pkgguilesite_DATA'.
+	(ccachedir): Set Guile ccache path.
+	(nobase_nodist_pkgguilesite_DATA): Rename to
+	`nobase_dist_ccache_DATA'.
+	(guilec_opts): Use absolute pathes.
+	(guilec_env): Adjust `LD_LIBRARY_PATH' and `GUILE_LOAD_PATH'.
+
 2014-03-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* Makefile.am (clean-go): New target.

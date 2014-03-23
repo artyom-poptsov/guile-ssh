@@ -82,6 +82,9 @@ AC_SUBST([guilesitedir])
 LIBGUILE_SSH_INTERFACE="5:0:0"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
+GUILE_EFFECTIVE_VERSION=`$GUILE -c '(display (effective-version))'`
+AC_SUBST(GUILE_EFFECTIVE_VERSION)
+
 AC_CONFIG_FILES([Makefile ssh/Makefile examples/Makefile build-aux/Makefile])
 AC_CONFIG_FILES([m4/Makefile doc/Makefile tests/Makefile am/Makefile])
 
