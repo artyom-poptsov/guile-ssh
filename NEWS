@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.6.0 (2014-03-23)
 ** Remove username from parameter list of auth procedures
    `userauth-password!' and `userauth-pubkey!' don't take a username
    as a parameter anymore.  Rationale: According to libssh 0.6 docs,
@@ -15,7 +15,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    during authentication.  Moreover, the parameter was deprecated in
    libssh 0.5.3.
 
-   Elimination of username makes Guile-SSH Auth API clearer and
+   Elimination of the username makes Guile-SSH Auth API clearer and
    simpler.  Username can be set either on creation of a session or by
    calling of `session-set!' procedure.
 ** `server-accept' now throws `guile-ssh-error' on error
@@ -26,24 +26,26 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Compile Guile modules
    Compile Guile modules and install compiled files if GNU Guile 2.0.x
    is available.
-** Update documentation
-*** Update Guile-SSH Auth API description
+** Update Texinfo documentation
+*** Update Auth API description
+*** Update Server API description
+*** Update Acknowledgments
 ** Update examples
 *** Use actual path to Guile interpreter in the shebang
     Executables will be produced during building of the Guile-SSH.
-*** Add new command line options for `examples/ssshd.scm'.
-    ssshd now takes `--ssh-debug' and `--pid-file' option.
-*** ssshd now stores the PID in a file
-    instead of printing it to stdout.
-*** ssshd now accepts `--port' option
-*** `examples/sssh.scm' now allows to set log verbosity
-    by passing it as an argument of `--ssh-debug' option.
 *** Handle `guile-ssh-error' on `server-accept'
-*** Catch `guile-ssh-error' on reading from a port.
+*** Catch `guile-ssh-error' on reading from a port
+*** ssshd
+**** Add `--port', `--ssh-debug' and `--pid-file' option
+**** Store the PID in a file
+     instead of printing it to stdout.
+**** Handle password authentication correctly
+*** sssh
+**** Add `--ssh-debug' option
 ** Improve automated tests
 *** Prevent sssh-ssshd from asking of a SSH agent for keys
-
 *** Make parallel tests work
+
 * Changes in version 0.5.0 (2014-02-05)
 ** Implement Guile-SSH channels as GNU Guile ports.
    Now channels can be used with regular procedures such as `display',

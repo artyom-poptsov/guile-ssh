@@ -1,5 +1,9 @@
 2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Bump version to 0.6.0
+	* doc/version.texi: Likewise.
+	* configure.ac: Likewise.  Change URL of the project.
+
 	* Makefile.am, am/Makefile.am, ssh/Makefile.am, ssh/auth.c,
 	ssh/auth.h, ssh/auth.scm, ssh/base64.c, ssh/base64.h,
 	ssh/channel-func.c, ssh/channel-func.h, ssh/channel-main.c,
