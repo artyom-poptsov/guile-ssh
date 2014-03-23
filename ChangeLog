@@ -1,5 +1,7 @@
 2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/session.scm: Update the module commentary.
+
 	* NEWS: Update.
 
 	* examples/Makefile.am (EXTRA_DIST): Add .in files.

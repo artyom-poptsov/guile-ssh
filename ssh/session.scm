@@ -1,6 +1,6 @@
 ;;; session.scm -- SSH session management.
 
-;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of libguile-ssh.
 ;;
@@ -25,17 +25,18 @@
 ;;
 ;; These methods are exported:
 ;;
+;;   session?
 ;;   %make-session
 ;;   make-session
 ;;   blocking-flush!
 ;;   session-set!
-;;   get-version
+;;   get-protocol-version
 ;;   connect!
 ;;   disconnect!
 ;;   connected?
 ;;   authenticate-server
 ;;   get-public-key-hash
-;;   write-known-host))
+;;   write-known-host!
 ;;   get-error
 
 
