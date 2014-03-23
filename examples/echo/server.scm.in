@@ -178,11 +178,13 @@ Options:
                          (lambda ()
                            (server-accept server))
                          (lambda (key . args)
-                           (format #t "~a~%" args)
+                           (format #t "~a: ~a~%" key args)
                            #f))))
 
           (if (not session)
-              (continue))
+              (begin
+                (sleep 1)
+                (continue)))
 
           (display "Client accepted.\n")
           (server-handle-key-exchange session)

@@ -115,6 +115,13 @@ Example:
   ...)
 @end lisp
 
+One of the possible causes of errors might be that your server has no
+access to host keys.
+
+If you get an exception and it shows no cause of the error then try to
+set @code{log-verbosity} to a value other than @code{nolog} (e.g. to
+@code{rare}, see @code{server-set!} above) and check printouts from
+the libssh.
 @end deffn
 
 @deffn {Scheme Procedure} server-handle-key-exchange session
