@@ -1,3 +1,8 @@
+2014-05-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/Makefile.am: Build the library before compiling of Guile
+	modules.
+
 2014-03-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* NEWS: Bump version to 0.6.0

@@ -68,6 +68,7 @@ CLEANFILES = *.x
 if HAVE_GUILE_VM
 
 GOBJECTS = $(SCM_SOURCES:%.scm=%.go)
+$(GOBJECTS): $(lib_LTLIBRARIES)	# Build the library first
 
 ccachedir=$(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/site-ccache/ssh
 nobase_dist_ccache_DATA = $(GOBJECTS)
