@@ -300,7 +300,7 @@
     (authenticate-server session)
     (let* ((prvkey (private-key-from-file session rsakey))
            (pubkey (private-key->public-key prvkey)))
-      (let ((res (userauth-pubkey! session pubkey prvkey)))
+      (let ((res (userauth-pubkey! session prvkey)))
         (disconnect! session)
         (eq? res 'success)))))
 

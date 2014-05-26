@@ -36,7 +36,8 @@
 (define-module (ssh auth)
   #:use-module (ssh session)
   #:export (userauth-pubkey!
-            userauth-autopubkey!
+            userauth-pubkey-auto!
+            userauth-agent!
             userauth-password!
             userauth-none!
             userauth-get-list))

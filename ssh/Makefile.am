@@ -43,7 +43,7 @@ SCM_SOURCES = \
 
 libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
 
-libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads \
+libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads -lssh \
 	-version-info $(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)
 
 ## Scheme files

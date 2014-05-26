@@ -1,3 +1,30 @@
+2014-05-27  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Perform basic work on porting of Guile-SSH on libssh 0.6.3.
+	Currently it compiles with 0.6.3 and 4 of 5 tests pass.  There is
+	some work that should be done.
+	* ssh/auth.c (guile_ssh_userauth_pubkey): Update.  Change argument
+	list.  All callers updated.
+	(guile_ssh_userauth_autopubkey_x): Update.  Rename to
+	`guile_ssh_userauth_pubkey_auto_x'.  Change argument list.  All
+	callers updated.
+	(guile_ssh_userauth_agent_x): New procedure.
+	* ssh/auth.scm: Update.
+	* ssh/key-func.c (public_key_to_ssh_string): Remove.
+	(guile_ssh_public_key_to_string): Update.
+	(guile_ssh_private_key_from_file): Update.
+	(guile_ssh_public_key_from_private_key): Update.
+	(guile_ssh_public_key_from_file): Update.  Change argument list.
+	* ssh/key-type.c (free_key_smob): Update.
+	(scm_from_ssh_key_type): Add ECDSA.
+	(guile_ssh_key_get_type): Update.
+	(_private_key_p, _public_key_p): Update.
+	* ssh/key-type.h: Update.
+	* ssh/message-func.c (get_auth_req): Update.
+	* ssh/Makefile.am (libguile_ssh_la_LDFLAGS): Add `-lssh'.
+	* tests/client-server.scm ("userauth-pubkey!, success"): Update.
+	* examples/sssh.scm.in (main): Update.
+
 2014-05-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/Makefile.am: Build the library before compiling of Guile

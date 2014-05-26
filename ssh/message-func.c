@@ -246,7 +246,7 @@ get_auth_req (ssh_message msg)
   SCM result = scm_c_make_vector (4, SCM_UNDEFINED);
   char *user     = ssh_message_auth_user (msg);
   char *password = ssh_message_auth_password (msg);
-  ssh_public_key public_key = ssh_message_auth_publickey (msg);
+  ssh_key public_key = ssh_message_auth_publickey (msg);
   SCM pkey_state;
   SCM pkey_smob;
   struct key_data *pkey_data;
@@ -264,7 +264,7 @@ get_auth_req (ssh_message msg)
   pkey_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                  "ssh key");
   pkey_data->key_type = KEY_TYPE_PUBLIC;
-  pkey_data->ssh_public_key = public_key;
+  pkey_data->ssh_key = public_key;
 
   /* The key will be freed along with the message. */
   pkey_data->is_to_be_freed = 0;

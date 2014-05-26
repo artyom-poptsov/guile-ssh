@@ -25,18 +25,6 @@
 #include "session-type.h"
 #include "base64.h"
 
-/* Convert a public key to SSH string.  Return newly allocated SSH
-   string.  NOTE that a) the string should be freed after usage, and
-   b) the function doesn't do any checks for the key type. */
-inline ssh_string
-public_key_to_ssh_string (const struct key_data *public_key_data)
-{
-  if (public_key_data->key_type == KEY_TYPE_PUBLIC)
-    return publickey_to_string (public_key_data->ssh_public_key);
-  else                          /* key_type == KEY_TYPE_PUBLIC_STR */
-    return ssh_string_copy (public_key_data->ssh_public_key_str.key);
-}
-
 /* Convert SSH public key KEY to a scheme string. */
 SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
             (SCM key),
@@ -44,30 +32,15 @@ SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
 #define FUNC_NAME s_guile_ssh_public_key_to_string
 {
   struct key_data *key_data = _scm_to_ssh_key (key);
-  ssh_string public_key;
-  unsigned char *key_str;
-  int           key_len;
-  SCM ret;
-
-  scm_dynwind_begin (0);
+  char *key_str;
 
   SCM_ASSERT (_public_key_p (key_data), key, SCM_ARG1, FUNC_NAME);
 
-  public_key = public_key_to_ssh_string (key_data);
-  scm_dynwind_unwind_handler ((void (*)(void*)) ssh_string_free, public_key,
-                              SCM_F_WIND_EXPLICITLY);
+  int res = ssh_pki_export_pubkey_base64 (key_data->ssh_key, &key_str);
+  if (res != SSH_OK)
+    guile_ssh_error1 (FUNC_NAME, "Unable to convert the key to a string", key);
 
-  key_str = (unsigned char *) ssh_string_to_char (public_key);
-  scm_dynwind_free (key_str);
-
-  key_len = ssh_string_len (public_key);
-
-  /* Convert the public key from binary representation to a base64. */
-  ret = scm_from_locale_string ((char *) bin_to_base64 (key_str, key_len));
-
-  scm_dynwind_end ();
-
-  return ret;
+  return scm_take_locale_string (key_str);
 }
 #undef FUNC_NAME
 
@@ -87,6 +60,7 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 0, 0,
   /* NULL means that either the public key is unecrypted or the user
      should be asked for the passphrase. */
   char *passphrase = NULL;
+  int res;
 
   scm_dynwind_begin (0);
 
@@ -98,16 +72,24 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 0, 0,
   c_filename = scm_to_locale_string (filename);
   scm_dynwind_free (c_filename);
 
-  key_data->key_type = KEY_TYPE_PRIVATE;
-  key_data->ssh_private_key = privatekey_from_file (session_data->ssh_session,
-                                                    c_filename,
-                                                    0, /* Detect key type
-                                                          automatically */
-                                                    passphrase);
+  res = ssh_pki_import_privkey_file (c_filename,
+                                     passphrase,
+                                     NULL, /* auth_fn */
+                                     NULL, /* auth_data */
+                                     &key_data->ssh_key);
+
   key_data->is_to_be_freed = 0; /* Key will be freed along with its session. */
 
-  if (key_data->ssh_private_key == NULL)
-    return SCM_BOOL_F;;
+  if (res == SSH_EOF)
+    {
+      const char *msg = "The file does not exist or permission denied";
+      guile_ssh_error1 (FUNC_NAME, msg, filename);
+    }
+  else if (res == SSH_ERROR)
+    {
+      const char *msg = "Unable to import a key from the file";
+      guile_ssh_error1 (FUNC_NAME, msg, filename);
+    }
 
   SCM_NEWSMOB (key_smob, key_tag, key_data);
 
@@ -127,6 +109,7 @@ SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
   struct key_data *private_key_data = _scm_to_ssh_key (key);
   struct key_data *public_key_data;
   SCM smob;
+  int res;
 
   SCM_ASSERT (_private_key_p (private_key_data), key, SCM_ARG1, FUNC_NAME);
 
@@ -135,12 +118,12 @@ SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
 
   public_key_data->key_type = KEY_TYPE_PUBLIC;
 
-  public_key_data->ssh_public_key 
-    = publickey_from_privatekey (private_key_data->ssh_private_key);
+  res = ssh_pki_export_privkey_to_pubkey (private_key_data->ssh_key,
+                                          &public_key_data->ssh_key);
 
   public_key_data->is_to_be_freed = 1; /* The key must be freed by GC. */
 
-  if (public_key_data->ssh_public_key == NULL)
+  if (res != SSH_OK)
     return SCM_BOOL_F;
 
   SCM_NEWSMOB (smob, key_tag, public_key_data);
@@ -154,36 +137,39 @@ SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
  * Return a SSH key smob.
  */
 SCM_DEFINE (guile_ssh_public_key_from_file, "public-key-from-file", 2, 0, 0,
-            (SCM session, SCM filename),
+            (SCM filename),
             "Read public key from a file FILENAME.  Return a SSH key.")
 #define FUNC_NAME s_guile_ssh_public_key_from_file
 {
-  struct session_data *session_data = _scm_to_ssh_session (session);
   struct key_data *public_key_data;
   char *c_filename;
   ssh_string public_key_str;
   SCM key_smob;
   int key_type;
+  int res;
 
   scm_dynwind_begin (0);
 
-  SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG1, FUNC_NAME);
 
   c_filename = scm_to_locale_string (filename);
   scm_dynwind_free (c_filename);
 
-  public_key_str = publickey_from_file (session_data->ssh_session,
-                                        c_filename,
-                                        &key_type);
-
-  if (public_key_str == NULL)
-      return SCM_BOOL_F;
-
   public_key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                        "ssh key");
-  public_key_data->key_type = KEY_TYPE_PUBLIC_STR;
-  public_key_data->ssh_public_key_str.key      = public_key_str;
-  public_key_data->ssh_public_key_str.key_type = key_type;
+
+  res = ssh_pki_import_pubkey_file (c_filename, &public_key_data->ssh_key);
+
+  if (res == SSH_EOF)
+    {
+      const char *msg = "The file does not exist or permission denied";
+      guile_ssh_error1 (FUNC_NAME, msg, filename);
+    }
+  else if (res == SSH_ERROR)
+    {
+      const char *msg = "Unable to import a key from the file";
+      guile_ssh_error1 (FUNC_NAME, msg, filename);
+    }
 
   /* Key will be freed along with the session. */
   public_key_data->is_to_be_freed = 0;

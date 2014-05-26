@@ -67,14 +67,13 @@ ssh_auth_result_to_symbol (const int res)
     }
 }
 
-SCM_DEFINE (guile_ssh_userauth_pubkey, "userauth-pubkey!", 3, 0, 0,
+SCM_DEFINE (guile_ssh_userauth_pubkey, "userauth-pubkey!", 2, 0, 0,
             (SCM session_smob,
-             SCM public_key_smob, SCM private_key_smob),
+             SCM private_key_smob),
             "Try to authenticate with a public key.")
 #define FUNC_NAME s_guile_ssh_userauth_pubkey
 {
   struct session_data *session_data = _scm_to_ssh_session (session_smob);
-  struct key_data *public_key_data  = _scm_to_ssh_key (public_key_smob);
   struct key_data *private_key_data = _scm_to_ssh_key (private_key_smob);
 
   /* See "On the username" commentary above. */
@@ -83,49 +82,50 @@ SCM_DEFINE (guile_ssh_userauth_pubkey, "userauth-pubkey!", 3, 0, 0,
   ssh_string public_key;
   int res;
 
-  scm_dynwind_begin (0);
-
   /* Check types. */
-
-  SCM_ASSERT (_public_key_p (public_key_data),
-              public_key_smob, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (_private_key_p (private_key_data),
-              private_key_smob, SCM_ARG3, FUNC_NAME);
+              private_key_smob, SCM_ARG2, FUNC_NAME);
 
-  public_key = public_key_to_ssh_string (public_key_data);
-  scm_dynwind_unwind_handler ((void (*)(void*)) ssh_string_free, public_key,
-                                  SCM_F_WIND_EXPLICITLY);
-
-  res = ssh_userauth_pubkey (session_data->ssh_session, username,
-                             public_key,
-                             private_key_data->ssh_private_key);
-
-  scm_dynwind_end ();
+  res = ssh_userauth_publickey (session_data->ssh_session, username,
+                                private_key_data->ssh_key);
 
   return ssh_auth_result_to_symbol (res);
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_userauth_autopubkey_x,
-            "userauth-autopubkey!", 1, 0, 0,
+SCM_DEFINE (guile_ssh_userauth_pubkey_auto_x,
+            "userauth-pubkey-auto!", 1, 0, 0,
             (SCM session),
             "Try to automatically authenticate with \"none\" method first and "
-            "then with public keys.  The procedure will try to get a "
-            "cached private key from a SSH agent and if it fails it will try "
-            "to read a key from a file.  If the key is encrypted the user "
+            "then with public keys.  If the key is encrypted the user "
             "will be asked for a passphrase."
             "\n"
             "Return one of the following symbols: error, denied, partial, "
             "success.")
-#define FUNC_NAME s_guile_ssh_userauth_autopubkey_x
+#define FUNC_NAME s_guile_ssh_userauth_public_key_auto_x
+{
+  struct session_data *sd = _scm_to_ssh_session (session);
+  char *username = NULL; /* See "On the username" commentary above. */
+  char *passphrase = NULL;
+  int res = ssh_userauth_publickey_auto (sd->ssh_session,
+                                         username,
+                                         passphrase); /* passphrase */
+  return ssh_auth_result_to_symbol (res);
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_userauth_agent_x,
+            "userauth-agent!", 1, 0, 0,
+            (SCM session),
+            /* FIXME: Fix the docsring. */
+            "")
+#define FUNC_NAME s_guile_ssh_userauth_agent_x
 {
   struct session_data *sd = _scm_to_ssh_session (session);
 
-  /* NULL means that either the public key is unprotected or the user
-     should be asked for the passphrase. */
-  char *passphrase = NULL;
+  char *username = NULL; /* See "On the username" commentary above. */
+  int res = ssh_userauth_agent (sd->ssh_session, username);
 
-  int res = ssh_userauth_autopubkey (sd->ssh_session, passphrase);
   return ssh_auth_result_to_symbol (res);
 }
 #undef FUNC_NAME

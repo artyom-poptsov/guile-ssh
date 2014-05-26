@@ -178,7 +178,7 @@ Options:
         (format-debug "   MD5 hash: ~a~%" (get-public-key-hash session))
 
         (print-debug "5. userauth-autopubkey!\n")
-        (let ((res (userauth-autopubkey! session)))
+        (let ((res (userauth-pubkey-auto! session)))
           (if (eqv? res 'error)
               (handle-error session)))
 

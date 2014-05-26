@@ -32,13 +32,6 @@ enum KEY_TYPE {
   KEY_TYPE_PUBLIC_STR
 };
 
-/* SSH public key KEY represented as a SSH string with a binary
-   content along with its type KEY_TYPE */
-struct public_key_str {
-  ssh_string key;
-  int32_t    key_type;
-};
-
 /* Smob data. */
 struct key_data {
   uint8_t key_type;		/* Type of the key. */
@@ -48,17 +41,7 @@ struct key_data {
      be freed along with this object. */
   uint8_t is_to_be_freed;
 
-  union {
-    ssh_private_key ssh_private_key;
-    ssh_public_key  ssh_public_key;
-
-    /* Some libssh API functions working with public keys represented
-       as a ssh_string instead of ssh_public_key.  The string contains
-       binary data.  Here we hide this peculiarity. */
-    struct public_key_str ssh_public_key_str;
-
-    ssh_key         ssh_key;
-  };
+  ssh_key ssh_key;
 };
 
 
