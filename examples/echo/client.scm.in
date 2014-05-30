@@ -142,8 +142,9 @@ errors."
 
       (case (authenticate-server session)
         ((not-known)
-         (display "The server is unknown.  Please check MD5 sum:\n")
-         (format #t "  ~a~%" (get-public-key-hash session))))
+         (let ((hash (get-public-key-hash session)))
+           (display "The server is unknown.  Please check MD5 sum:\n")
+           (format #t "  ~a~%" (bytevector->hex-string hash)))))
 
       (let* ((private-key (get-prvkey session identity-file))
              (public-key  (get-pubkey session private-key)))

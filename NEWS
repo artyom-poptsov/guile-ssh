@@ -9,6 +9,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 * Unreleased
 ** `get-public-key-hash' now returns the hash as a bytevector
+** New procedure `bytevector->hex-string'
+   in =(ssh session)=
 
 * Changes in version 0.6.0 (2014-03-23)
 ** Remove username from parameter list of auth procedures
