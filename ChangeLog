@@ -1,5 +1,9 @@
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/api-sessions.texi (Sessions): Update description of
+	`get-public-key-hash'.  Add documentation for
+	`bytevector->hex-string'.  Add examples.
+
 	* ssh/session.scm (bytevector->hex-string): New procedure.
 	* examples/echo/client.scm.in (main): Use it.
 	* examples/sssh.scm.in (main): Use it.
