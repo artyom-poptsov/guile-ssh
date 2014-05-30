@@ -397,13 +397,17 @@ SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 1, 0, 0,
   res = ssh_get_pubkey_hash (session_data->ssh_session, &hash);
   scm_dynwind_free (hash);
 
-  hash_str = ssh_get_hexa (hash, res);
-  scm_dynwind_free (hash_str);
-
   if (res >= 0)
-    ret = scm_from_locale_string (hash_str);
+    {
+      size_t idx;
+      ret = scm_c_make_bytevector (res);
+      for (idx = 0; idx < res; ++idx)
+        scm_c_bytevector_set_x(ret, idx, hash[idx]);
+    }
   else
-    ret = SCM_BOOL_F;
+    {
+      ret = SCM_BOOL_F;
+    }
 
   scm_dynwind_end ();
   return ret;
