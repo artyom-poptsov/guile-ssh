@@ -89,14 +89,6 @@ Options:
         (handle-error session))
     prvkey))
 
-(define (get-pubkey session prvkey)
-  "Get a public SSH key from private key PRVKEY.  Handle possible
-errors."
-  (let ((pubkey (private-key->public-key prvkey)))
-    (if (not pubkey)
-        (handle-error session))
-    pubkey))
-
 (define (read-all port)
   "Read all lines from the PORT."
   (let r ((res (read-line port 'concat))
@@ -145,10 +137,9 @@ errors."
          (display "The server is unknown.  Please check MD5 sum:\n")
          (format #t "  ~a~%" (get-public-key-hash session))))
 
-      (let* ((private-key (get-prvkey session identity-file))
-             (public-key  (get-pubkey session private-key)))
+      (let ((private-key (get-prvkey session identity-file)))
 
-        (if (eqv? (userauth-pubkey! session public-key private-key) 'error)
+        (if (eqv? (userauth-pubkey! session private-key) 'error)
             (handle-error session))
 
         (let ((channel (make-channel session)))
