@@ -1,5 +1,7 @@
 2014-05-30  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README: Update requirements.
+
 	* examples/echo/client.scm.in (main): Public key is not needed
 	anymore, remove it.
 	(get-pubkey): Remove.
