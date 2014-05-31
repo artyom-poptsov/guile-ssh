@@ -24,14 +24,6 @@
 
 extern scm_t_bits key_tag;
 
-/* Possible key types. */
-enum KEY_TYPE {
-  KEY_TYPE_NONE,
-  KEY_TYPE_PRIVATE,
-  KEY_TYPE_PUBLIC,
-  KEY_TYPE_PUBLIC_STR
-};
-
 /* Smob data. */
 struct key_data {
   /* If this key is gotten from some other libssh object such as

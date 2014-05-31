@@ -1,3 +1,7 @@
+2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/key-type.h (KEY_TYPE): Remove.
+
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/key-type.h (key_data): Remove `key_type' field.
