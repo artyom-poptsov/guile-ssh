@@ -1,5 +1,10 @@
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm (server-thread): Rename to
+	`*server-thread*'.
+	(spawn-server-thread): Update.
+	(cancel-server-thread): Update.
+
 	* tests/client-server.scm ("get-public-key-hash"): Check the hash.
 	Check `bytevector->hex-string' return value.
 

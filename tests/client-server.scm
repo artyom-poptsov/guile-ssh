@@ -39,7 +39,7 @@
 (define topdir (getenv "abs_top_srcdir"))
 (define rsakey (format #f "~a/tests/rsakey" topdir))
 (define log    (test-runner-aux-value (test-runner-current)))
-(define server-thread #f)
+(define *server-thread* #f)
 
 
 ;;; Helper procedures and macros
@@ -72,13 +72,13 @@
   (format log "    server: ~a~%" message))
 
 (define-macro (spawn-server-thread . body)
-  `(set! server-thread
+  `(set! *server-thread*
       (make-thread
        (lambda ()
          ,@body))))
 
 (define (cancel-server-thread)
-  (cancel-thread server-thread))
+  (cancel-thread *server-thread*))
 
 
 ;;; Testing of basic procedures.
