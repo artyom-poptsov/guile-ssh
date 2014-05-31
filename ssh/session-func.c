@@ -378,31 +378,27 @@ SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
 }
 #undef FUNC_NAME
 
-/* Get MD5 hash of the public key.
-
-   Return MD5 hash on success, #f on error. */
 SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 1, 0, 0,
-            (SCM arg1),
-            "Get MD5 hash of the public key.\n"
-            "Return MD5 hash on success, #f on error.")
+            (SCM session),
+            "Get MD5 hash of the public key as a bytevector.\n"
+            "Return a bytevector on success, #f on error.")
 {
-  struct session_data *session_data = _scm_to_ssh_session (arg1);
+  struct session_data *session_data = _scm_to_ssh_session (session);
   unsigned char *hash = NULL;
-  char *hash_str;
-  int res;
+  int hash_len;
   SCM ret;
 
   scm_dynwind_begin (0);
 
-  res = ssh_get_pubkey_hash (session_data->ssh_session, &hash);
+  hash_len = ssh_get_pubkey_hash (session_data->ssh_session, &hash);
   scm_dynwind_free (hash);
 
-  if (res >= 0)
+  if (hash_len >= 0)
     {
       size_t idx;
-      ret = scm_c_make_bytevector (res);
-      for (idx = 0; idx < res; ++idx)
-        scm_c_bytevector_set_x(ret, idx, hash[idx]);
+      ret = scm_c_make_bytevector (hash_len);
+      for (idx = 0; idx < hash_len; ++idx)
+        scm_c_bytevector_set_x (ret, idx, hash[idx]);
     }
   else
     {
