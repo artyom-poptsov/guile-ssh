@@ -1,5 +1,8 @@
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/echo/client.scm.in (main): Fix a bug: Print fingerprint
+	as a MD5 hex string.
+
 	* ssh/key.scm (string->public-key): New procedure.
 	* ssh/key-func.c (guile_ssh_string_to_public_key): New procedure.
 	* ssh/key-func.h: Likewise.
