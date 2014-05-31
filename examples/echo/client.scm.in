@@ -134,9 +134,10 @@ Options:
 
       (case (authenticate-server session)
         ((not-known)
-         (let ((hash (get-public-key-hash session)))
+         (let* ((pubkey (get-server-public-key session))
+                (hash   (get-public-key-hash pubkey 'sha1)))
            (display "The server is unknown.  Please check MD5 sum:\n")
-           (format #t "  ~a~%" (bytevector->hex-string hash)))))
+           (format #t "  ~a~%" hash))))
 
       (let ((private-key (get-prvkey session identity-file)))
 

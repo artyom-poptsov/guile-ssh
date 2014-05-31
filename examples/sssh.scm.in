@@ -175,7 +175,8 @@ Options:
           ((ok)        (print-debug "   ok\n"))
           ((not-known) (display "   The server is unknown.  Please check MD5.\n")))
 
-        (let ((hash (get-public-key-hash session)))
+        (let* ((pubkey (get-server-public-key session))
+               (hash   (get-public-key-hash pubkey 'md5)))
           (format-debug "   MD5 hash: ~a~%" (bytevector->hex-string hash)))
 
         (print-debug "5. userauth-autopubkey!\n")

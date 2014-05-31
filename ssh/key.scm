@@ -38,6 +38,8 @@
 ;;; Code:
 
 (define-module (ssh key)
+  #:use-module (ice-9 format)
+  #:use-module (rnrs bytevectors)
   #:export (key
             key?
             public-key?
@@ -46,7 +48,15 @@
             public-key->string
             public-key-from-file
             private-key->public-key
-            private-key-from-file))
+            private-key-from-file
+            get-public-key-hash
+            bytevector->hex-string))
+
+(define (bytevector->hex-string bv)
+  "Convert bytevector BV to a colon separated hex string."
+  (string-join (map (lambda (e) (format #f "~2,'0x" e))
+                    (bytevector->u8-list bv))
+               ":"))
 
 (load-extension "libguile-ssh" "init_key")
 

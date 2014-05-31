@@ -24,6 +24,7 @@
 #include "key-type.h"
 #include "session-type.h"
 #include "base64.h"
+#include "common.h"
 
 /* Convert SSH public key KEY to a scheme string. */
 SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
@@ -179,6 +180,55 @@ SCM_DEFINE (guile_ssh_public_key_from_file, "public-key-from-file", 2, 0, 0,
   scm_dynwind_end ();
 
   return key_smob;
+}
+#undef FUNC_NAME
+
+static struct symbol_mapping key_types[] = {
+  { "sha1", SSH_PUBLICKEY_HASH_SHA1 },
+  { "md5",  SSH_PUBLICKEY_HASH_MD5  },
+  { NULL,   -1                      }
+};
+
+SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 2, 0, 0,
+            (SCM key, SCM type),
+            "Get hash of the public KEY as a bytevector.\n"
+            "Possible types are: 'sha1, 'md5\n"
+            "Return a bytevector on success, #f on error.")
+#define FUNC_NAME s_guile_ssh_get_public_key_hash
+{
+  struct key_data *kd = _scm_to_ssh_key (key);
+  unsigned char *hash = NULL;
+  size_t hash_len;
+  int res;
+  SCM ret;
+  struct symbol_mapping *hash_type = NULL;
+
+  SCM_ASSERT (scm_is_symbol (type), type, SCM_ARG2, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  hash_type = _scm_to_ssh_const (key_types, type);
+  if (! hash_type)
+    guile_ssh_error1 (FUNC_NAME, "Wrong type", type);
+
+  res = ssh_get_publickey_hash (kd->ssh_key, hash_type->value,
+                                &hash, &hash_len);
+  scm_dynwind_free (hash);
+
+  if (res == SSH_OK)
+    {
+      size_t idx;
+      ret = scm_c_make_bytevector (hash_len);
+      for (idx = 0; idx < hash_len; ++idx)
+        scm_c_bytevector_set_x (ret, idx, hash[idx]);
+    }
+  else
+    {
+      ret = SCM_BOOL_F;
+    }
+
+  scm_dynwind_end ();
+  return ret;
 }
 #undef FUNC_NAME
 

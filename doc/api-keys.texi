@@ -52,6 +52,42 @@ Get a symbol that represents the type of the Guile-SSH @var{key}.
 Possible types are: @code{dss}, @code{rsa}, @code{rsa1}, @code{unknown}.
 @end deffn
 
+@deffn {Scheme Procedure} get-public-key-hash public-key type
+@cindex fingerprint
+@tindex fingerprint
+Get a @var{public-key} hash of @var{type} as a bytevector.  Return the
+bytevector on success, @code{#f} on error.
+
+See also @code{get-server-public-key} in @pxref{Sessions}.
+
+The @var{type} can be one of the following symbols: @code{md5},
+@code{sha1}.
+
+Example:
+
+@lisp
+(let ((pubkey (get-server-public-key session)))
+  (get-public-key-hash pubkey 'md5))
+@result{} #vu8(15 142 110 203 162 228 250 211 20 212 26 217 118 57 217 66)
+@end lisp
+
+@end deffn
+
+@deffn {Scheme Procedure} bytevector->hex-string bv
+@cindex fingerprint
+@tindex fingerprint
+Convert the given bytevector @var{bv} to a colon separated string.
+
+Example:
+
+@lisp
+(let ((hash (get-public-key-hash pubkey 'md5)))
+  (bytevector->hex-string hash))
+@result{} "0f:8e:6e:cb:a2:e4:fa:d3:14:d4:1a:d9:76:39:d9:42"
+@end lisp
+
+@end deffn
+
 @c Local Variables:
 @c TeX-master: "guile-ssh.texi"
 @c End:

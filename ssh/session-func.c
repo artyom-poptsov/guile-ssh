@@ -24,6 +24,7 @@
 #include "common.h"
 #include "error.h"
 #include "session-type.h"
+#include "key-type.h"
 
 /* SSH option mapping. */
 struct option {
@@ -378,36 +379,31 @@ SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 1, 0, 0,
+SCM_DEFINE (guile_ssh_get_server_public_key, "get-server-public-key", 1, 0, 0,
             (SCM session),
-            "Get MD5 hash of the public key as a bytevector.\n"
-            "Return a bytevector on success, #f on error.")
+            "Get server public key from a SESSION.\n"
+            "Return server's public key.  Throw `guile-ssh-error' on error.")
+#define FUNC_NAME s_guile_ssh_get_server_public_key
 {
-  struct session_data *session_data = _scm_to_ssh_session (session);
-  unsigned char *hash = NULL;
-  int hash_len;
-  SCM ret;
+  struct session_data *sd = _scm_to_ssh_session (session);
+  struct key_data *kd;
+  int res;
+  SCM key_smob;
 
-  scm_dynwind_begin (0);
+  kd = (struct key_data *) scm_gc_malloc (sizeof (struct key_data), "ssh key");
+  /* TODO: Check `kd' for NULL. */
 
-  hash_len = ssh_get_pubkey_hash (session_data->ssh_session, &hash);
-  scm_dynwind_free (hash);
+  res = ssh_get_publickey (sd->ssh_session, &kd->ssh_key);
+  if (res != SSH_OK)
+    guile_ssh_error1 (FUNC_NAME, "Unable to get the server key", session);
 
-  if (hash_len >= 0)
-    {
-      size_t idx;
-      ret = scm_c_make_bytevector (hash_len);
-      for (idx = 0; idx < hash_len; ++idx)
-        scm_c_bytevector_set_x (ret, idx, hash[idx]);
-    }
-  else
-    {
-      ret = SCM_BOOL_F;
-    }
+  kd->is_to_be_freed = 1; /* The key must be freed by GC. */
 
-  scm_dynwind_end ();
-  return ret;
+  SCM_NEWSMOB (key_smob, key_tag, kd);
+
+  return key_smob;
 }
+#undef FUNC_NAME
 
 /* Write the current server as known in the known hosts file.
 

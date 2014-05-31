@@ -119,15 +119,21 @@
       res)))
 
 (test-assert "get-public-key-hash"
-  (let ((hash-bv  #vu8(15 142 110 203 162 228 250 211 20 212 26 217 118 57 217 66))
-        (hash-str "0f:8e:6e:cb:a2:e4:fa:d3:14:d4:1a:d9:76:39:d9:42")
+  (let ((hash-md5-bv   #vu8(15 142 110 203 162 228 250 211 20 212 26 217 118 57 217 66))
+        (hash-md5-str  "0f:8e:6e:cb:a2:e4:fa:d3:14:d4:1a:d9:76:39:d9:42")
+        (hash-sha1-bv  #vu8(20 65 56 155 119 45 84 163 50 26 59 92 215 159 139 5 229 174 84 80))
+        (hash-sha1-str "14:41:38:9b:77:2d:54:a3:32:1a:3b:5c:d7:9f:8b:05:e5:ae:54:50")
         (session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
-    (let ((res (get-public-key-hash session)))
+    (let* ((pubkey   (get-server-public-key session))
+           (md5-res  (get-public-key-hash pubkey 'md5))
+           (sha1-res (get-public-key-hash pubkey 'sha1)))
       (disconnect! session)
-      (and (bytevector=? res hash-bv)
-           (string=? (bytevector->hex-string res) hash-str)))))
+      (and (bytevector=? md5-res hash-md5-bv)
+           (string=? (bytevector->hex-string md5-res) hash-md5-str)
+           (bytevector=? sha1-res hash-sha1-bv)
+           (string=? (bytevector->hex-string sha1-res) hash-sha1-str)))))
 
 (cancel-server-thread)
 

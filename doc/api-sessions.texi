@@ -247,32 +247,11 @@ will be created if host key is accepted.
 
 @end deffn
 
-@deffn {Scheme Procedure} get-public-key-hash session
-@cindex MD5 hash
-Get MD5 hash of a public key as a bytevector.  Return the bytevector
-on success, @code{#f} on error.
+@deffn {Scheme Procedure} get-server-public-key session
+Get server public key from a @var{session}.  Return the server's
+public key.  Throw @code{guile-ssh-error} on error.
 
-Example:
-
-@lisp
-(get-public-key-hash session)
-@result{} #vu8(15 142 110 203 162 228 250 211 20 212 26 217 118 57 217 66)
-@end lisp
-
-@end deffn
-
-@deffn {Scheme Procedure} bytevector->hex-string bv
-@cindex MD5 hash
-Convert the given bytevector @var{bv} to a colon separated string.
-
-Example:
-
-@lisp
-(let ((hash (get-public-key-hash session)))
-  (bytevector->hex-string hash))
-@result{} "0f:8e:6e:cb:a2:e4:fa:d3:14:d4:1a:d9:76:39:d9:42"
-@end lisp
-
+See also @code{get-public-key-hash} in @pxref{Keys}.
 @end deffn
 
 @deffn {Scheme Procedure} write-known-host! session

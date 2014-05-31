@@ -8,9 +8,13 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
-** `get-public-key-hash' now returns the hash as a bytevector
-** New procedure `bytevector->hex-string'
-   in =(ssh session)=
+** Change `get-public-key-hash'
+*** Move the procedure to (ssh key)
+*** Return the hash as a bytevector
+*** Accept a public key as the first argument
+*** Accept a hash type as the second argument
+    Possible types are: 'md5, 'sha1
+** New `bytevector->hex-string' procedure in (ssh key)
 
 * Changes in version 0.6.0 (2014-03-23)
 ** Remove username from parameter list of auth procedures
