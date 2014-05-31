@@ -180,7 +180,7 @@ SCM_DEFINE (guile_ssh_public_key_from_file, "public-key-from-file", 2, 0, 0,
 }
 #undef FUNC_NAME
 
-static struct symbol_mapping key_types[] = {
+static struct symbol_mapping hash_types[] = {
   { "sha1", SSH_PUBLICKEY_HASH_SHA1 },
   { "md5",  SSH_PUBLICKEY_HASH_MD5  },
   { NULL,   -1                      }
@@ -204,7 +204,7 @@ SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 2, 0, 0,
 
   scm_dynwind_begin (0);
 
-  hash_type = _scm_to_ssh_const (key_types, type);
+  hash_type = _scm_to_ssh_const (hash_types, type);
   if (! hash_type)
     guile_ssh_error1 (FUNC_NAME, "Wrong type", type);
 

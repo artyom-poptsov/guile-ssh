@@ -21,6 +21,7 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include "common.h"
 
 extern scm_t_bits key_tag;
 
@@ -33,6 +34,8 @@ struct key_data {
 
   ssh_key ssh_key;
 };
+
+extern struct symbol_mapping key_types[];
 
 
 /* Procedures */

@@ -25,6 +25,15 @@
 
 scm_t_bits key_tag; /* Smob tag. */
 
+struct symbol_mapping key_types[] = {
+  { "dss",     SSH_KEYTYPE_DSS     },
+  { "rsa",     SSH_KEYTYPE_RSA     },
+  { "rsa1",    SSH_KEYTYPE_RSA1    },
+  { "ecdsa",   SSH_KEYTYPE_ECDSA   },
+  { "unknown", SSH_KEYTYPE_UNKNOWN },
+  { NULL,      -1                  }
+};
+
 /* Smob marking */
 SCM
 mark_key_smob (SCM key_smob)
@@ -68,24 +77,7 @@ print_key (SCM smob, SCM port, scm_print_state *pstate)
 static SCM
 scm_from_ssh_key_type (int type)
 {
-  switch (type)
-    {
-    case SSH_KEYTYPE_DSS:
-      return scm_from_locale_symbol ("dss");
-
-    case SSH_KEYTYPE_RSA:
-      return scm_from_locale_symbol ("rsa");      
-
-    case SSH_KEYTYPE_RSA1:
-      return scm_from_locale_symbol ("rsa1");
-
-    case SSH_KEYTYPE_ECDSA:
-      return scm_from_locale_symbol ("ecdsa");
-
-    case SSH_KEYTYPE_UNKNOWN:
-    default:
-      return scm_from_locale_symbol ("unknown");
-    }
+  return _ssh_const_to_scm (key_types, type);
 }
 
 /* Get the type of the key KEY_SMOB.
