@@ -1,5 +1,9 @@
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm ("userauth-get-list"): Fix a bug: Call
+	`userauth-none!' first to get list of allowed authentication
+	methods from the server.
+
 	* tests/client-server.scm: Make sure that the received message is
 	not `#f' before handling it in a server thread.
 	(make-session-loop): New macro.

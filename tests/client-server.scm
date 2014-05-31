@@ -132,28 +132,6 @@
 (cancel-server-thread)
 
 
-;; Server replies "default" with the list of allowed authentication
-;; methods.  Client receives the list.
-(spawn-server-thread
- (let ((server (make-server-for-test)))
-   (server-listen server)
-   (while #t
-     (let ((session (server-accept server)))
-       (server-handle-key-exchange session)
-       (make-session-loop session
-         (message-auth-set-methods! msg '(password public-key))
-         (message-reply-default msg))))))
-
-(test-assert "userauth-get-list"
-  (let ((session (make-session-for-test)))
-    (connect! session)
-    (authenticate-server session)
-    (let ((res (userauth-get-list session)))
-      (equal? res '(password public-key)))))
-
-(cancel-server-thread)
-
-
 ;;; Authentication
 
 ;; Server replies with "success", client receives 'success.
@@ -303,6 +281,29 @@
       (let ((res (userauth-pubkey! session prvkey)))
         (disconnect! session)
         (eq? res 'success)))))
+
+(cancel-server-thread)
+
+
+;; Server replies "default" with the list of allowed authentication
+;; methods.  Client receives the list.
+(spawn-server-thread
+ (let ((server (make-server-for-test)))
+   (server-listen server)
+   (while #t
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
+         (message-auth-set-methods! msg '(password public-key))
+         (message-reply-default msg))))))
+
+(test-assert "userauth-get-list"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (authenticate-server session)
+    (userauth-none! session)
+    (let ((res (userauth-get-list session)))
+      (equal? res '(password public-key)))))
 
 (cancel-server-thread)
 
