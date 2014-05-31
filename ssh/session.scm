@@ -43,6 +43,8 @@
 
 (define-module (ssh session)
   #:use-module (ice-9 optargs)
+  #:use-module (ice-9 format)
+  #:use-module (rnrs bytevectors)
   #:export (session
             session?
             %make-session
@@ -55,6 +57,7 @@
             connected?
             authenticate-server
             get-public-key-hash
+            bytevector->hex-string
             write-known-host!
             get-error))
 
@@ -94,6 +97,12 @@ Return a new SSH session."
     (session-set-if-specified! compression)
     (session-set-if-specified! compression-level)
     session))
+
+(define (bytevector->hex-string bv)
+  "Convert bytevector BV to a colon separated hex string."
+  (string-join (map (lambda (e) (format #f "~2,'0x" e))
+                    (bytevector->u8-list bv))
+               ":"))
 
 (load-extension "libguile-ssh" "init_session")
 

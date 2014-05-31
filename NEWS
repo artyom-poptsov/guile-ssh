@@ -7,6 +7,11 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** `get-public-key-hash' now returns the hash as a bytevector
+** New procedure `bytevector->hex-string'
+   in =(ssh session)=
+
 * Changes in version 0.6.0 (2014-03-23)
 ** Remove username from parameter list of auth procedures
    `userauth-password!' and `userauth-pubkey!' don't take a username

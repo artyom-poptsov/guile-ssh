@@ -20,6 +20,7 @@
 (use-modules (srfi srfi-64)
              (ice-9 threads)
              (ice-9 rdelim)
+             (rnrs bytevectors)
              (ssh server)
              (ssh session)
              (ssh auth)
@@ -38,7 +39,7 @@
 (define topdir (getenv "abs_top_srcdir"))
 (define rsakey (format #f "~a/tests/rsakey" topdir))
 (define log    (test-runner-aux-value (test-runner-current)))
-(define server-thread #f)
+(define *server-thread* #f)
 
 
 ;;; Helper procedures and macros
@@ -71,13 +72,18 @@
   (format log "    server: ~a~%" message))
 
 (define-macro (spawn-server-thread . body)
-  `(set! server-thread
+  `(set! *server-thread*
       (make-thread
        (lambda ()
          ,@body))))
 
 (define (cancel-server-thread)
-  (cancel-thread server-thread))
+  (cancel-thread *server-thread*))
+
+(define-macro (make-session-loop session . body)
+  `(let session-loop ((msg (server-message-get ,session)))
+     (and msg (begin ,@body))
+     (session-loop (server-message-get ,session))))
 
 
 ;;; Testing of basic procedures.
@@ -113,12 +119,15 @@
       res)))
 
 (test-assert "get-public-key-hash"
-  (let ((session (make-session-for-test)))
+  (let ((hash-bv  #vu8(15 142 110 203 162 228 250 211 20 212 26 217 118 57 217 66))
+        (hash-str "0f:8e:6e:cb:a2:e4:fa:d3:14:d4:1a:d9:76:39:d9:42")
+        (session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
     (let ((res (get-public-key-hash session)))
       (disconnect! session)
-      res)))
+      (and (bytevector=? res hash-bv)
+           (string=? (bytevector->hex-string res) hash-str)))))
 
 (cancel-server-thread)
 
@@ -129,12 +138,11 @@
  (let ((server (make-server-for-test)))
    (server-listen server)
    (while #t
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (let session-loop ((msg (server-message-get s)))
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
          (message-auth-set-methods! msg '(password public-key))
-         (message-reply-default msg)
-         (session-loop (server-message-get s)))))))
+         (message-reply-default msg))))))
 
 (test-assert "userauth-get-list"
   (let ((session (make-session-for-test)))
@@ -153,12 +161,11 @@
  (let ((server (make-server-for-test)))
    (server-listen server)
    (while #t
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (let session-loop ((msg (server-message-get s)))
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
          (message-auth-set-methods! msg '(none))
-         (message-reply-success msg)
-         (session-loop (server-message-get s)))))))
+         (message-reply-success msg))))))
 
 (test-assert "userauth-none!, success"
   (let ((session (make-session-for-test)))
@@ -176,12 +183,11 @@
  (let ((server (make-server-for-test)))
    (server-listen server)
    (while #t
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (let session-loop ((msg (server-message-get s)))
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
          (message-auth-set-methods! msg '(public-key))
-         (message-reply-default msg)
-         (session-loop (server-message-get s)))))))
+         (message-reply-default msg))))))
 
 (test-assert "userauth-none!, denied"
   (let ((session (make-session-for-test)))
@@ -200,12 +206,11 @@
  (let ((server (make-server-for-test)))
    (server-listen server)
    (while #t
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (let session-loop ((msg (server-message-get s)))
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
          (message-auth-set-methods! msg '(none))
-         (message-reply-success msg 'partial)
-         (session-loop (server-message-get s)))))))
+         (message-reply-success msg 'partial))))))
 
 (test-assert "userauth-none!, partial"
   (let ((session (make-session-for-test)))
@@ -222,12 +227,11 @@
  (let ((server (make-server-for-test)))
    (server-listen server)
    (while #t
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (let session-loop ((msg (server-message-get s)))
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
          (message-auth-set-methods! msg '(password))
-         (message-reply-success msg)
-         (session-loop (server-message-get s)))))))
+         (message-reply-success msg))))))
 
 (test-assert "userauth-password!, success"
   (let ((session (make-session-for-test)))
@@ -244,12 +248,11 @@
  (let ((server (make-server-for-test)))
    (server-listen server)
    (while #t
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (let session-loop ((msg (server-message-get s)))
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
          (message-auth-set-methods! msg '(password))
-         (message-reply-default msg)
-         (session-loop (server-message-get s)))))))
+         (message-reply-default msg))))))
 
 (test-assert "userauth-password!, denied"
   (let ((session (make-session-for-test)))
@@ -266,12 +269,11 @@
  (let ((server (make-server-for-test)))
    (server-listen server)
    (while #t
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (let session-loop ((msg (server-message-get s)))
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
          (message-auth-set-methods! msg '(password))
-         (message-reply-success msg 'partial)
-         (session-loop (server-message-get s)))))))
+         (message-reply-success msg 'partial))))))
 
 (test-assert "userauth-password!, partial"
   (let ((session (make-session-for-test)))
@@ -288,11 +290,10 @@
  (let ((server (make-server-for-test)))
    (server-listen server)
    (while #t
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (let session-loop ((msg (server-message-get s)))
-         (message-reply-success msg)
-         (session-loop (server-message-get s)))))))
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
+         (message-reply-success msg))))))
 
 (test-assert "userauth-pubkey!, success"
   (let ((session (make-session-for-test)))
@@ -314,10 +315,10 @@
  (let ((server (make-server-for-test)))
    (server-listen server)
    (while #t
-     (let ((s (server-accept server))
+     (let ((session (server-accept server))
            (channel #f))
-       (server-handle-key-exchange s)
-       (let session-loop ((msg (server-message-get s)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
          (let ((msg-type (message-get-type msg)))
            (srvmsg msg-type)
            (case (car msg-type)
@@ -328,8 +329,7 @@
                   (write-line "pong" channel))
               (message-reply-success msg))
              (else
-               (message-reply-success msg))))
-         (session-loop (server-message-get s)))))))
+               (message-reply-success msg)))))))))
 
 (define session
   (let ((session (make-session-for-test)))
@@ -373,11 +373,11 @@ takes RWPROC procedure that handles I/O operation."
    (let ((server (make-server-for-test)))
      (server-listen server)
      (while #t
-       (let ((s (server-accept server))
+       (let ((session (server-accept server))
              (channel #f))
-         (server-handle-key-exchange s)
-         (let session-loop ((msg (server-message-get s)))
-           (if (and msg (not (eof-object? msg)))
+         (server-handle-key-exchange session)
+         (make-session-loop session
+           (if (not (eof-object? msg))
                (let ((msg-type (message-get-type msg)))
                  (case (car msg-type)
                    ((request-channel-open)
@@ -389,8 +389,7 @@ takes RWPROC procedure that handles I/O operation."
                    ((request-channel)
                     (message-reply-success msg))
                    (else
-                    (message-reply-success msg)))))
-           (session-loop (server-message-get s))))))))
+                    (message-reply-success msg)))))))))))
 
 (define (make-session-for-dt-test)
   (let ((s (make-session-for-test)))
