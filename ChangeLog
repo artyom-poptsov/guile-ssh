@@ -1,5 +1,11 @@
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key.scm (string->public-key): New procedure.
+	* ssh/key-func.c (guile_ssh_string_to_public_key): New procedure.
+	* ssh/key-func.h: Likewise.
+	* doc/api-keys.texi (Keys): Add description of
+	`string->public-key'.
+
 	* ssh/key-type.c (scm_from_ssh_key_type): Rename to
 	`_ssh_key_type_to_scm'.  Make it public.
 	(_scm_to_ssh_key_type): New procedure.

@@ -46,6 +46,7 @@
             private-key?
             get-key-type
             public-key->string
+            string->public-key
             public-key-from-file
             private-key->public-key
             private-key-from-file

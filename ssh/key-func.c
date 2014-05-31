@@ -44,6 +44,47 @@ SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_string_to_public_key, "string->public-key", 2, 0, 0,
+            (SCM base64_str, SCM type),
+            "Convert Base64 string to a public key.  Return new public key.\n"
+            "Throw `guile-ssh-error' on error.")
+#define FUNC_NAME s_guile_ssh_string_to_public_key
+{
+  struct key_data *kd = NULL;
+  char *c_base64_str = NULL;
+  struct symbol_mapping *key_type = NULL;
+  int res;
+  SCM key_smob;
+
+  SCM_ASSERT (scm_is_string (base64_str), base64_str, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (scm_is_symbol (type),       type,   SCM_ARG2, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  kd = scm_gc_malloc (sizeof (struct key_data), "ssh key");
+
+  c_base64_str = scm_to_locale_string (base64_str);
+  scm_dynwind_free (c_base64_str);
+
+  key_type = _scm_to_ssh_key_type (type);
+  if (! key_type)
+    guile_ssh_error1 (FUNC_NAME, "Wrong key type", type);
+
+  res = ssh_pki_import_pubkey_base64 (c_base64_str,
+                                      key_type->value,
+                                      &kd->ssh_key);
+  if (res != SSH_OK)
+    {
+      const char *msg = "Could not convert the given string to a public key";
+      guile_ssh_error1 (FUNC_NAME, msg, scm_list_2 (base64_str, type));
+    }
+
+  SCM_NEWSMOB (key_smob, key_tag, kd);
+
+  return key_smob;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 0, 0,
             (SCM session, SCM filename),
             "Read private key from a file FILENAME.  If the the key is "
