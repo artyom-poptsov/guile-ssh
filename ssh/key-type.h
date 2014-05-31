@@ -55,6 +55,6 @@ extern inline int _private_key_p (struct key_data *key);
 extern inline int _public_key_p (struct key_data *key);
 
 extern SCM _ssh_key_type_to_scm (int arg1);
-extern int _scm_to_ssh_key_type (SCM arg1);
+extern struct symbol_mapping *_scm_to_ssh_key_type (SCM arg1);
 
 #endif	/* ifndef __KEY_TYPE_H__ */
