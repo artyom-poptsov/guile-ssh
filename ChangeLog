@@ -1,5 +1,10 @@
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/base64.c, ssh/base64.h: Remove the files because we don't
+	need a custom base64 converter anymore.
+	* ssh/key-func.c: Don't include `base64.h'.
+	* ssh/Makefile.am (libguile_ssh_la_SOURCES): Update.
+
 	Use new libssh 0.6 API for handling of public key fingerprints.
 	Update TCs and documentation.
 	* examples/sssh.scm.in (main): Update.

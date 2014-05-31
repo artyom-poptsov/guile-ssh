@@ -23,7 +23,6 @@
 
 #include "key-type.h"
 #include "session-type.h"
-#include "base64.h"
 #include "common.h"
 
 /* Convert SSH public key KEY to a scheme string. */
