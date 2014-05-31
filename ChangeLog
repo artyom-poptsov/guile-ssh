@@ -1,5 +1,7 @@
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/session-func.c (guile_ssh_get_public_key_hash): Cleanup.
+
 	* tests/client-server.scm ("userauth-get-list"): Fix a bug: Call
 	`userauth-none!' first to get list of allowed authentication
 	methods from the server.
