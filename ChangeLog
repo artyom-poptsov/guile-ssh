@@ -1,8 +1,15 @@
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-type.c (scm_from_ssh_key_type): Rename to
+	`_ssh_key_type_to_scm'.  Make it public.
+	(_scm_to_ssh_key_type): New procedure.
+	* ssh/key-type.h (_ssh_key_type_to_scm, _scm_to_ssh_key_type):
+	Export.
+
 	* ssh/key-type.h (key_types): Export structure.
 	* ssh/key-type.c (key_types): New structure.
 	(scm_from_ssh_key_type): Use `_ssh_const_to_scm'.
+
 	* ssh/key-func.c (key_types): Rename to `hash_types'.
 	(guile_ssh_get_public_key_hash): Update.
 

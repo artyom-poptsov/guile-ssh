@@ -70,16 +70,22 @@ print_key (SCM smob, SCM port, scm_print_state *pstate)
 }
 
 
-/* Convert SSH key type to a Scheme symbol.
+/* Convert SSH key type to/from a Scheme symbol.
+   Possible symbols are: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown */
 
-   Return a key type as a Scheme symbol.  The type can be one of the
-   following list: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown */
-static SCM
-scm_from_ssh_key_type (int type)
+SCM
+_ssh_key_type_to_scm (int type)
 {
   return _ssh_const_to_scm (key_types, type);
 }
 
+int
+_scm_to_ssh_key_type (SCM type)
+{
+  return _scm_to_ssh_const (key_types, type);
+}
+
+
 /* Get the type of the key KEY_SMOB.
 
    Return a key type as a Scheme symbol.  The type can be one of the
@@ -91,7 +97,7 @@ SCM_DEFINE (guile_ssh_key_get_type, "get-key-type", 1, 0, 0,
 {
   struct key_data *data = _scm_to_ssh_key (key);
   enum ssh_keytypes_e type = ssh_key_type (data->ssh_key);
-  return scm_from_ssh_key_type (type);
+  return _ssh_key_type_to_scm (type);
 }
 
 
