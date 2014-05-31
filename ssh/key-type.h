@@ -34,8 +34,6 @@ enum KEY_TYPE {
 
 /* Smob data. */
 struct key_data {
-  uint8_t key_type;		/* Type of the key. */
-
   /* If this key is gotten from some other libssh object such as
      session or message -- it must not be freed by GC, because it will
      be freed along with this object. */

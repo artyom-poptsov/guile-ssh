@@ -116,8 +116,6 @@ SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
   public_key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                        "ssh key");
 
-  public_key_data->key_type = KEY_TYPE_PUBLIC;
-
   res = ssh_pki_export_privkey_to_pubkey (private_key_data->ssh_key,
                                           &public_key_data->ssh_key);
 
