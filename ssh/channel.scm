@@ -33,6 +33,9 @@
 ;;   channel-request-exec
 ;;   channel-request-pty
 ;;   channel-request-shell
+;;   channel-open-forward
+;;   channel-open-reverse-forward
+;;   channel-cancel-forward
 ;;   channel-set-pty-size!
 ;;   channel-set-stream!
 ;;   channel-get-stream
@@ -52,6 +55,9 @@
             channel-request-exec
             channel-request-pty
             channel-request-shell
+            channel-open-forward
+            channel-open-reverse-forward
+            channel-cancel-forward
             channel-set-pty-size!
             channel-set-stream!
             channel-get-stream

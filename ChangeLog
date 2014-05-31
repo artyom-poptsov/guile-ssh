@@ -1,5 +1,12 @@
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/channel-func.c (_ssh_result_to_symbol): New procedure.
+	(guile_ssh_channel_open_forward, channel-open-reverse-forward)
+	(guile_ssh_channel_cancel_forward): New procedures.
+	* ssh/channel.scm (channel-open-forward)
+	(channel-open-reverse-forward, channel-cancel-forward): New
+	procedures.
+
 	Use new libssh 0.6 API for handling of public key fingerprints.
 	Update TCs and documentation.
 	* examples/sssh.scm.in (main): Update.
