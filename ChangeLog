@@ -1,5 +1,8 @@
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm ("get-public-key-hash"): Check the hash.
+	Check `bytevector->hex-string' return value.
+
 	* ssh/session.scm (bytevector->hex-string): Fix a bug: Use
 	`format' from `(ice-9 format)' module.
 

@@ -20,6 +20,7 @@
 (use-modules (srfi srfi-64)
              (ice-9 threads)
              (ice-9 rdelim)
+             (rnrs bytevectors)
              (ssh server)
              (ssh session)
              (ssh auth)
@@ -113,12 +114,15 @@
       res)))
 
 (test-assert "get-public-key-hash"
-  (let ((session (make-session-for-test)))
+  (let ((hash-bv  #vu8(15 142 110 203 162 228 250 211 20 212 26 217 118 57 217 66))
+        (hash-str "0f:8e:6e:cb:a2:e4:fa:d3:14:d4:1a:d9:76:39:d9:42")
+        (session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
     (let ((res (get-public-key-hash session)))
       (disconnect! session)
-      res)))
+      (and (bytevector=? res hash-bv)
+           (string=? (bytevector->hex-string res) hash-str)))))
 
 (cancel-server-thread)
 
