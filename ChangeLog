@@ -1,5 +1,8 @@
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/session.scm (bytevector->hex-string): Fix a bug: Use
+	`format' from `(ice-9 format)' module.
+
 	* doc/api-sessions.texi (Sessions): Update description of
 	`get-public-key-hash'.  Add documentation for
 	`bytevector->hex-string'.  Add examples.

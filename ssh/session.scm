@@ -43,6 +43,7 @@
 
 (define-module (ssh session)
   #:use-module (ice-9 optargs)
+  #:use-module (ice-9 format)
   #:use-module (rnrs bytevectors)
   #:export (session
             session?
