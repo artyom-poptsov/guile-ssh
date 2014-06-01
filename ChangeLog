@@ -1,5 +1,13 @@
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/key.scm: New test suite.
+	* tests/Makefile.am (SCM_TESTS): Add `key.scm'.
+	(EXTRA_DIST): Add `dsakey.pub', `ecdsakey', `ecdsakey.pub',
+	`rsakey.pub'.
+	* tests/dsakey.pub, tests/ecdsakey, tests/ecdsakey.pub,
+	tests/rsakey.pub: New files
+	* NEWS: Update.
+
 	* ssh/key-type.c: Add information about a bug with private/public
 	key predicates.
 	(guile_ssh_is_public_key_p, guile_ssh_is_private_key_p): Fix a

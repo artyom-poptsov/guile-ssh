@@ -22,7 +22,8 @@ SCM_TESTS = \
 	session.scm \
 	client-server.scm \
 	server-client.scm \
-	sssh-ssshd.scm
+	sssh-ssshd.scm \
+	key.scm
 
 TESTS = ${SCM_TESTS}
 
@@ -48,4 +49,8 @@ AM_SCM_LOG_FLAGS = \
 EXTRA_DIST = \
 	${SCM_TESTS}		\
 	dsakey			\
-	rsakey
+	dsakey.pub		\
+	ecdsakey		\
+	ecdsakey.pub		\
+	rsakey			\
+	rsakey.pub
