@@ -23,6 +23,15 @@
 
 #include "key-type.h"
 
+/* BUG: Currently a SSH key that has been read from a file has both
+   public and private flags.  It means that we cannot distinguish
+   whether the key is private or public by means of
+   `ssh_key_is_private' and `ssh_key_is_public' procedures (they both
+   return true).
+
+   See `ssh_pki_import_privkey_file' and `pki_private_key_from_base64'
+   in libssh 0.6.3 for details. -avp */
+
 scm_t_bits key_tag; /* Smob tag. */
 
 struct symbol_mapping key_types[] = {

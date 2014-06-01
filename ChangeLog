@@ -1,8 +1,10 @@
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
-	* ssh/key-type.c (guile_ssh_is_public_key_p)
-	(guile_ssh_is_private_key_p): Fix a bug: Return `#f' if the
-	argument is not a Guile-SSH key object.
+	* ssh/key-type.c: Add information about a bug with private/public
+	key predicates.
+	(guile_ssh_is_public_key_p, guile_ssh_is_private_key_p): Fix a
+	bug: Return `#f' if the argument is not a Guile-SSH key object.
+
 	* NEWS: Update.
 
 	* ssh/key-func.c (guile_ssh_public_key_from_file): Fix a bug:
