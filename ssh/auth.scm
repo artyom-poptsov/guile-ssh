@@ -24,8 +24,10 @@
 ;; 
 ;; These methods are exported:
 ;;
-;;   userauth-pubkey!
-;;   userauth-autopubkey!
+;;   userauth-public-key!
+;;   userauth-public-key/auto!
+;;   userauth-public-key/try
+;;   userauth-agent!
 ;;   userauth-password!
 ;;   userauth-none!
 ;;   userauth-get-list
@@ -35,8 +37,9 @@
 
 (define-module (ssh auth)
   #:use-module (ssh session)
-  #:export (userauth-pubkey!
-            userauth-pubkey-auto!
+  #:export (userauth-public-key!
+            userauth-public-key/auto!
+            userauth-public-key/try
             userauth-agent!
             userauth-password!
             userauth-none!

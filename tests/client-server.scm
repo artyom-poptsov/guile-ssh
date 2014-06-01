@@ -279,12 +279,12 @@
        (make-session-loop session
          (message-reply-success msg))))))
 
-(test-assert "userauth-pubkey!, success"
+(test-assert "userauth-public-key!, success"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
     (let* ((prvkey (private-key-from-file session rsakey)))
-      (let ((res (userauth-pubkey! session prvkey)))
+      (let ((res (userauth-public-key! session prvkey)))
         (disconnect! session)
         (eq? res 'success)))))
 

@@ -15,8 +15,8 @@ Please note that you must specify a username either on creation of a
 session or by @code{session-set!} call (@pxref{Sessions}) before
 calling of procedures from this section.
 
-@deffn {Scheme Procedure} userauth-pubkey! session public-key private-key
-Try to authenticate with a @var{public-key}.
+@deffn {Scheme Procedure} userauth-public-key! session private-key
+Try to authenticate with a public/private key.
 
 Return one of the following symbols:
 
@@ -34,13 +34,56 @@ A serious error happened.
 
 @end deffn
 
-@deffn {Scheme Procedure} userauth-autopubkey! session
+@deffn {Scheme Procedure} userauth-public-key/auto! session
 @cindex authentication with a SSH agent
 Try to automatically authenticate with @code{none} method first and
 then with public keys.  The procedure will try to get a cached private
 key from a @acronym{SSH} agent and if it fails it will try to read a
 key from a file.  If the key is encrypted the user will be asked for a
 passphrase.
+
+Return one of the following symbols:
+
+@table @samp
+@item success
+Authentication success.
+@item partial
+You've been partially authenticated, you still have to use another
+method.
+@item denied
+Authentication failed: use another method.
+@item error
+A serious error happened.
+@end table
+
+@end deffn
+
+@deffn {Scheme Procedure} userauth-public-key/try session public-key
+Try to authenticate with the given @var{public-key}.
+
+To avoid unnecessary processing and user interaction, the following
+method is provided for querying whether authentication using the
+@var{public-key} would be possible.
+
+Return one of the following symbols:
+
+@table @samp
+@item success
+The public key is accepted, you want now to use
+@code{userauth-public-key!}.
+@item partial
+You've been partially authenticated, you still have to use another
+method.
+@item denied
+Authentication failed: use another method.
+@item error
+A serious error happened.
+@end table
+
+@end deffn
+
+@deffn {Scheme Procedure} userauth-agent! session
+Try to do public key authentication with ssh agent.
 
 Return one of the following symbols:
 

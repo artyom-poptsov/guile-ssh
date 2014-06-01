@@ -180,7 +180,7 @@ Options:
           (format-debug "   MD5 hash: ~a~%" (bytevector->hex-string hash)))
 
         (print-debug "5. userauth-autopubkey!\n")
-        (let ((res (userauth-pubkey-auto! session)))
+        (let ((res (userauth-public-key/auto! session)))
           (if (eqv? res 'error)
               (handle-error session)))
 

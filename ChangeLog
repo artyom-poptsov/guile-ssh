@@ -1,5 +1,21 @@
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/auth.c (guile_ssh_userauth_pubkey): Rename to
+	`guile_ssh_userauth_public_key_x'.  All callers updated.
+	(guile_ssh_userauth_pubkey_auto_x): Rename to
+	`guile_ssh_userauth_public_key_auto_x'.  All callers updated.
+	(guile_ssh_userauth_password): Rename to
+	`guile_ssh_userauth_password_x'.  All callers updated.
+	(guile_ssh_userauth_public_key_try): New procedure.
+	* ssh/auth.h, ssh/auth.scm: Update.
+	* examples/echo/client.scm.in (main): Update.
+	* examples/sssh.scm.in (main): Update.
+	* tests/client-server.scm ("userauth-pubkey!, success"): Rename to
+	"userauth-public-key!, success".  Update.
+	* doc/api-auth.texi (Auth): Update.  Add description of
+	`userauth-public-key/try' and `userauth-agent!' procedures.
+	* NEWS: Update.
+
 	* examples/echo/client.scm.in (main): Fix a bug: Print fingerprint
 	as a MD5 hex string.
 

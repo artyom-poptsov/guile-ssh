@@ -141,7 +141,7 @@ Options:
 
       (let ((private-key (get-prvkey session identity-file)))
 
-        (if (eqv? (userauth-pubkey! session private-key) 'error)
+        (if (eqv? (userauth-public-key! session private-key) 'error)
             (handle-error session))
 
         (let ((channel (make-channel session)))

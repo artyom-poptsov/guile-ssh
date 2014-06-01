@@ -14,6 +14,11 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 *** Accept a public key as the first argument
 *** Accept a hash type as the second argument
     Possible types are: 'md5, 'sha1
+** Change `userauth-pubkey!'
+*** Rename it to `userauth-public-key!'
+*** Change arguments
+** Rename `userauth-pubkey-auto!' to `userauth-public-key/auto!'
+** New `userauth-public-key/try' procedure in (ssh auth)
 ** New `bytevector->hex-string' procedure in (ssh key)
 
 * Changes in version 0.6.0 (2014-03-23)
