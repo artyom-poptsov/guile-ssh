@@ -20,6 +20,10 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Rename `userauth-pubkey-auto!' to `userauth-public-key/auto!'
 ** New `userauth-public-key/try' procedure in (ssh auth)
 ** New `bytevector->hex-string' procedure in (ssh key)
+** Bug fixes
+*** `public-key?' and `private-key?' now produce correct result
+    Funcitons now return `#f' if the given argument is not a Guile-SSH
+    key object.
 
 * Changes in version 0.6.0 (2014-03-23)
 ** Remove username from parameter list of auth procedures

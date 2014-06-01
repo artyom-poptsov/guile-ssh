@@ -114,16 +114,16 @@ SCM_DEFINE (guile_ssh_is_public_key_p, "public-key?", 1, 0, 0,
             (SCM x),
             "Return #t if X is a SSH public-key, #f otherwise.")
 {
-  struct key_data *key = _scm_to_ssh_key (x);
-  return scm_from_bool (_public_key_p (key));
+  return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x)
+                        && _public_key_p (_scm_to_ssh_key (x)));
 }
 
 SCM_DEFINE (guile_ssh_is_private_key_p, "private-key?", 1, 0, 0,
             (SCM x),
             "Return #t if X is a SSH private-key, #f otherwise.")
 {
-  struct key_data *key = _scm_to_ssh_key (x);
-  return scm_from_bool (_private_key_p (key));
+  return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x)
+                        && _private_key_p (_scm_to_ssh_key (x)));
 }
 
 SCM
