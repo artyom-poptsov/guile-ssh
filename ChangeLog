@@ -1,5 +1,8 @@
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-func.c (guile_ssh_public_key_from_file): Fix a bug:
+	Require only one argument.
+
 	* ssh/auth.c (guile_ssh_userauth_pubkey): Rename to
 	`guile_ssh_userauth_public_key_x'.  All callers updated.
 	(guile_ssh_userauth_pubkey_auto_x): Rename to

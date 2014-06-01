@@ -175,7 +175,7 @@ SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
  *
  * Return a SSH key smob.
  */
-SCM_DEFINE (guile_ssh_public_key_from_file, "public-key-from-file", 2, 0, 0,
+SCM_DEFINE (guile_ssh_public_key_from_file, "public-key-from-file", 1, 0, 0,
             (SCM filename),
             "Read public key from a file FILENAME.  Return a SSH key.")
 #define FUNC_NAME s_guile_ssh_public_key_from_file
