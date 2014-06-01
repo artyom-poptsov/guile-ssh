@@ -21,21 +21,12 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include "common.h"
 
 extern scm_t_bits key_tag;
 
-/* Possible key types. */
-enum KEY_TYPE {
-  KEY_TYPE_NONE,
-  KEY_TYPE_PRIVATE,
-  KEY_TYPE_PUBLIC,
-  KEY_TYPE_PUBLIC_STR
-};
-
 /* Smob data. */
 struct key_data {
-  uint8_t key_type;		/* Type of the key. */
-
   /* If this key is gotten from some other libssh object such as
      session or message -- it must not be freed by GC, because it will
      be freed along with this object. */
@@ -43,6 +34,8 @@ struct key_data {
 
   ssh_key ssh_key;
 };
+
+extern struct symbol_mapping key_types[];
 
 
 /* Procedures */
@@ -60,5 +53,8 @@ extern void init_key_type (void);
 extern struct key_data *_scm_to_ssh_key (SCM x);
 extern inline int _private_key_p (struct key_data *key);
 extern inline int _public_key_p (struct key_data *key);
+
+extern SCM _ssh_key_type_to_scm (int arg1);
+extern struct symbol_mapping *_scm_to_ssh_key_type (SCM arg1);
 
 #endif	/* ifndef __KEY_TYPE_H__ */

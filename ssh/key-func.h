@@ -24,6 +24,7 @@ public_key_to_ssh_string (const struct key_data* public_key_data);
 
 
 /* Guile SSH API */
+extern SCM guile_ssh_string_to_public_key (SCM arg1, SCM arg2);
 extern SCM guile_ssh_public_key_to_string (SCM arg1);
 extern SCM guile_ssh_private_key_from_file (SCM arg1, SCM arg2);
 extern SCM guile_ssh_public_key_from_file (SCM arg1, SCM arg2);

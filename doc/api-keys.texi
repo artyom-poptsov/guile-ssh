@@ -31,6 +31,14 @@ otherwise.
 Convert @var{public-key} to a string.
 @end deffn
 
+@deffn {Scheme Procedure} string->public-key string type
+Convert a public key of @var{type} represented as Base64 @var{string}
+to a Guile-SSH key.  Throw @code{guile-ssh-error} on error.
+
+The @var{type} must be one of the following symbols: @code{dss},
+@code{rsa}, @code{rsa1}, @code{ecdsa}
+@end deffn
+
 @deffn {Scheme Procedure} private-key-from-file session file
 Read private key from a @var{file}.  If the the key is encrypted the
 user will be asked for passphrase to decrypt the key.

@@ -23,7 +23,25 @@
 
 #include "key-type.h"
 
+/* BUG: Currently a SSH key that has been read from a file has both
+   public and private flags.  It means that we cannot distinguish
+   whether the key is private or public by means of
+   `ssh_key_is_private' and `ssh_key_is_public' procedures (they both
+   return true).
+
+   See `ssh_pki_import_privkey_file' and `pki_private_key_from_base64'
+   in libssh 0.6.3 for details. -avp */
+
 scm_t_bits key_tag; /* Smob tag. */
+
+struct symbol_mapping key_types[] = {
+  { "dss",     SSH_KEYTYPE_DSS     },
+  { "rsa",     SSH_KEYTYPE_RSA     },
+  { "rsa1",    SSH_KEYTYPE_RSA1    },
+  { "ecdsa",   SSH_KEYTYPE_ECDSA   },
+  { "unknown", SSH_KEYTYPE_UNKNOWN },
+  { NULL,      -1                  }
+};
 
 /* Smob marking */
 SCM
@@ -61,33 +79,22 @@ print_key (SCM smob, SCM port, scm_print_state *pstate)
 }
 
 
-/* Convert SSH key type to a Scheme symbol.
+/* Convert SSH key type to/from a Scheme symbol.
+   Possible symbols are: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown */
 
-   Return a key type as a Scheme symbol.  The type can be one of the
-   following list: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown */
-static SCM
-scm_from_ssh_key_type (int type)
+SCM
+_ssh_key_type_to_scm (int type)
 {
-  switch (type)
-    {
-    case SSH_KEYTYPE_DSS:
-      return scm_from_locale_symbol ("dss");
-
-    case SSH_KEYTYPE_RSA:
-      return scm_from_locale_symbol ("rsa");      
-
-    case SSH_KEYTYPE_RSA1:
-      return scm_from_locale_symbol ("rsa1");
-
-    case SSH_KEYTYPE_ECDSA:
-      return scm_from_locale_symbol ("ecdsa");
-
-    case SSH_KEYTYPE_UNKNOWN:
-    default:
-      return scm_from_locale_symbol ("unknown");
-    }
+  return _ssh_const_to_scm (key_types, type);
 }
 
+struct symbol_mapping *
+_scm_to_ssh_key_type (SCM type)
+{
+  return _scm_to_ssh_const (key_types, type);
+}
+
+
 /* Get the type of the key KEY_SMOB.
 
    Return a key type as a Scheme symbol.  The type can be one of the
@@ -99,7 +106,7 @@ SCM_DEFINE (guile_ssh_key_get_type, "get-key-type", 1, 0, 0,
 {
   struct key_data *data = _scm_to_ssh_key (key);
   enum ssh_keytypes_e type = ssh_key_type (data->ssh_key);
-  return scm_from_ssh_key_type (type);
+  return _ssh_key_type_to_scm (type);
 }
 
 
@@ -116,16 +123,16 @@ SCM_DEFINE (guile_ssh_is_public_key_p, "public-key?", 1, 0, 0,
             (SCM x),
             "Return #t if X is a SSH public-key, #f otherwise.")
 {
-  struct key_data *key = _scm_to_ssh_key (x);
-  return scm_from_bool (_public_key_p (key));
+  return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x)
+                        && _public_key_p (_scm_to_ssh_key (x)));
 }
 
 SCM_DEFINE (guile_ssh_is_private_key_p, "private-key?", 1, 0, 0,
             (SCM x),
             "Return #t if X is a SSH private-key, #f otherwise.")
 {
-  struct key_data *key = _scm_to_ssh_key (x);
-  return scm_from_bool (_private_key_p (key));
+  return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x)
+                        && _private_key_p (_scm_to_ssh_key (x)));
 }
 
 SCM

@@ -263,7 +263,6 @@ get_auth_req (ssh_message msg)
 
   pkey_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                  "ssh key");
-  pkey_data->key_type = KEY_TYPE_PUBLIC;
   pkey_data->ssh_key = public_key;
 
   /* The key will be freed along with the message. */
