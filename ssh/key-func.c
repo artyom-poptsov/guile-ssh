@@ -22,7 +22,6 @@
 #include <libssh/libssh.h>
 
 #include "key-type.h"
-#include "session-type.h"
 #include "common.h"
 
 /* Convert SSH public key KEY to a scheme string. */
@@ -85,8 +84,8 @@ SCM_DEFINE (guile_ssh_string_to_public_key, "string->public-key", 2, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 0, 0,
-            (SCM session, SCM filename),
+SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 1, 0, 0,
+            (SCM filename),
             "Read private key from a file FILENAME.  If the the key is "
             "encrypted the user will be asked for passphrase to decrypt "
             "the key.\n"
@@ -95,7 +94,6 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 0, 0,
 #define FUNC_NAME s_guile_ssh_private_key_from_file
 {
   SCM key_smob;
-  struct session_data *session_data = _scm_to_ssh_session (session);
   struct key_data *key_data;
   char *c_filename;
   /* NULL means that either the public key is unecrypted or the user
@@ -105,7 +103,7 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 2, 0, 0,
 
   scm_dynwind_begin (0);
 
-  SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG1, FUNC_NAME);
 
   key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                 "ssh key");
