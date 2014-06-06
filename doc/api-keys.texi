@@ -39,7 +39,7 @@ The @var{type} must be one of the following symbols: @code{dss},
 @code{rsa}, @code{rsa1}, @code{ecdsa}
 @end deffn
 
-@deffn {Scheme Procedure} private-key-from-file session file
+@deffn {Scheme Procedure} private-key-from-file file
 Read private key from a @var{file}.  If the the key is encrypted the
 user will be asked for passphrase to decrypt the key.
 

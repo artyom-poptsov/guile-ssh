@@ -1,5 +1,14 @@
 2014-06-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-func.c (guile_ssh_private_key_from_file): Remove `session'
+	parameter.  All callers updated.
+	* doc/api-keys.texi (Keys): Update description of
+	`private-key-from-file'.
+	* examples/echo/client.scm.in (get-prvkey): Update.
+	* tests/key.scm ("private-key-from-file"): Update.
+	* tests/client-server.scm ("userauth-public-key!, success"): Update.
+	* NEWS: Update.
+
 	Fix a GC issue: Keep a reference to the parent session in channel and
 	message smobs to prevent the session from premature GC'ing.  Without
 	the fix GC could free a session even if there are live channels and by

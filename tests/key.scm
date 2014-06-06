@@ -18,7 +18,6 @@
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
 (use-modules (srfi srfi-64)
-             (ssh session)
              (ssh key))
 
 (define %topdir (getenv "abs_top_srcdir"))
@@ -32,20 +31,18 @@
 (test-begin "key")
 
 (test-assert "private-key-from-file"
-  (let ((session (%make-session)))
-    (and (private-key-from-file session %rsa-private-key-file)
-         (private-key-from-file session %dsa-private-key-file)
-         (private-key-from-file session %ecdsa-private-key-file))))
+  (and (private-key-from-file %rsa-private-key-file)
+       (private-key-from-file %dsa-private-key-file)
+       (private-key-from-file %ecdsa-private-key-file)))
 
 (test-assert "public-key-from-file"
   (and (public-key-from-file %rsa-public-key-file)
        (public-key-from-file %dsa-public-key-file)
        (public-key-from-file %ecdsa-public-key-file)))
 
-(define *session* (%make-session))
-(define *rsa-key*       (private-key-from-file *session* %rsa-private-key-file))
-(define *dsa-key*       (private-key-from-file *session* %dsa-private-key-file))
-(define *ecdsa-key*     (private-key-from-file *session* %ecdsa-private-key-file))
+(define *rsa-key*       (private-key-from-file %rsa-private-key-file))
+(define *dsa-key*       (private-key-from-file %dsa-private-key-file))
+(define *ecdsa-key*     (private-key-from-file %ecdsa-private-key-file))
 (define *rsa-pub-key*   (public-key-from-file %rsa-public-key-file))
 (define *dsa-pub-key*   (public-key-from-file %dsa-public-key-file))
 (define *ecdsa-pub-key* (public-key-from-file %ecdsa-public-key-file))
