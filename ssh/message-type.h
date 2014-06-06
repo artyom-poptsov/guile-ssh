@@ -27,6 +27,10 @@ extern scm_t_bits message_tag;
 
 /* Smob data. */
 struct message_data {
+  /* Reference to the parent session.  We need to keep the reference
+     to prevent the session from premature freeing by the GC. */
+  SCM session;
+
   ssh_message message;
 };
 

@@ -22,6 +22,10 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New `bytevector->hex-string' procedure in (ssh key)
 ** Add tests for Guile-SSH keys
 ** Bug fixes
+*** Fix a GC issue
+    Keep a reference to the parent session in channels and messages to prevent
+    the session from premature GC'ing.  Without that GC could free a session
+    even if there are live channels and by that break the channels.
 *** `public-key?' and `private-key?' now produce correct result
     Functions now return `#f' if the given argument is not a Guile-SSH
     key object.

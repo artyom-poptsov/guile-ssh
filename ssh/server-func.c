@@ -247,6 +247,8 @@ SCM_DEFINE (guile_ssh_server_message_get,
       return SCM_BOOL_F;
     }
 
+  message_data->session = session;
+
   SCM_NEWSMOB (smob, message_tag, message_data);
   return smob;
 }

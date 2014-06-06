@@ -126,7 +126,7 @@ SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
   if (! ch)
     return SCM_BOOL_F;
 
-  SCM channel = _ssh_channel_to_scm (ch);
+  SCM channel = _ssh_channel_to_scm (ch, msg_data->session);
   SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
 
   return channel;

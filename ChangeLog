@@ -1,3 +1,24 @@
+2014-06-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	Fix a GC issue: Keep a reference to the parent session in channel and
+	message smobs to prevent the session from premature GC'ing.  Without
+	the fix GC could free a session even if there are live channels and by
+	that break the channels.
+
+	Reported by Ludovic Courtès <ludo@gnu.org>
+
+	* ssh/channel-type.h (channel_data): Store a reference to the parent
+	session.
+	* ssh/message-type.h (message_data): Likewise.
+	* ssh/channel-type.c (_ssh_channel_to_scm): Change argument list.  All
+	callers updated.
+	(guile_ssh_make_channel): Update.
+	* ssh/message-func.c
+	(guile_ssh_message_channel_request_open_reply_accept): Update.
+	* ssh/server-func.c (guile_ssh_server_message_get): Store a reference
+	to a session in the message smob.
+	* NEWS: Update.
+
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/key.scm: New test suite.

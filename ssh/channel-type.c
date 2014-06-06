@@ -194,7 +194,7 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
 /* Pack the SSH channel CH to a Scheme port and return newly created
    port. */
 SCM
-_ssh_channel_to_scm (ssh_channel ch)
+_ssh_channel_to_scm (ssh_channel ch, SCM session)
 {
   struct channel_data *channel_data;
   SCM ptob;
@@ -204,6 +204,7 @@ _ssh_channel_to_scm (ssh_channel ch)
 
   channel_data->ssh_channel = ch;
   channel_data->is_stderr = 0;  /* Reading from stderr disabled by default */
+  channel_data->session = session;
 
   ptob = scm_new_port_table_entry (channel_tag);
   pt   = SCM_PTAB_ENTRY (ptob);
@@ -239,7 +240,7 @@ SCM_DEFINE (guile_ssh_make_channel, "make-channel", 1, 0, 0,
   if (! ch)
     return SCM_BOOL_F;
 
-  return _ssh_channel_to_scm (ch);
+  return _ssh_channel_to_scm (ch, arg1);
 }
 
 

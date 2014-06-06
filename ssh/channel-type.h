@@ -27,6 +27,10 @@ extern scm_t_bits channel_tag;
 
 /* Smob data. */
 struct channel_data {
+  /* Reference to the parent session.  We need to keep the reference
+     to prevent the session from premature freeing by the GC. */
+  SCM session;
+
   ssh_channel ssh_channel;
   uint8_t is_stderr;
 };
@@ -42,6 +46,6 @@ extern void init_channel_type (void);
 
 /* Helper procedures */
 extern struct channel_data *_scm_to_ssh_channel (SCM x);
-extern SCM _ssh_channel_to_scm (ssh_channel ch);
+extern SCM _ssh_channel_to_scm (ssh_channel ch, SCM session);
 
 #endif /* ifndef __CHANNEL_TYPE_H__ */
