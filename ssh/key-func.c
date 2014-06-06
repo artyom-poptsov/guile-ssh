@@ -117,8 +117,6 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 1, 0, 0,
                                      NULL, /* auth_data */
                                      &key_data->ssh_key);
 
-  key_data->is_to_be_freed = 0; /* Key will be freed along with its session. */
-
   if (res == SSH_EOF)
     {
       const char *msg = "The file does not exist or permission denied";
@@ -157,8 +155,6 @@ SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
 
   res = ssh_pki_export_privkey_to_pubkey (private_key_data->ssh_key,
                                           &public_key_data->ssh_key);
-
-  public_key_data->is_to_be_freed = 1; /* The key must be freed by GC. */
 
   if (res != SSH_OK)
     return SCM_BOOL_F;
@@ -207,9 +203,6 @@ SCM_DEFINE (guile_ssh_public_key_from_file, "public-key-from-file", 1, 0, 0,
       const char *msg = "Unable to import a key from the file";
       guile_ssh_error1 (FUNC_NAME, msg, filename);
     }
-
-  /* Key will be freed along with the session. */
-  public_key_data->is_to_be_freed = 0;
 
   SCM_NEWSMOB (key_smob, key_tag, public_key_data);
 

@@ -27,11 +27,6 @@ extern scm_t_bits key_tag;
 
 /* Smob data. */
 struct key_data {
-  /* If this key is gotten from some other libssh object such as
-     session or message -- it must not be freed by GC, because it will
-     be freed along with this object. */
-  uint8_t is_to_be_freed;
-
   ssh_key ssh_key;
 };
 

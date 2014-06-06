@@ -1,5 +1,13 @@
 2014-06-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-type.h (key_data): Remove `is_to_be_freed' field.
+	* ssh/key-type.c (free_key_smob): Always free the SSH key on GC'ing.
+	* ssh/key-func.c (guile_ssh_private_key_from_file)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_public_key_from_file): Likewise.
+	* ssh/message-func.c (get_auth_req): Likewise.
+	* ssh/session-func.c (guile_ssh_get_server_public_key): Likewise.
+
 	* ssh/key-func.c (guile_ssh_private_key_from_file): Remove `session'
 	parameter.  All callers updated.
 	* doc/api-keys.texi (Keys): Update description of

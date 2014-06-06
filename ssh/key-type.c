@@ -55,10 +55,7 @@ size_t
 free_key_smob (SCM arg1)
 {
   struct key_data *data = _scm_to_ssh_key (arg1);
-
-  if (data->is_to_be_freed)
-    ssh_key_free (data->ssh_key);
-
+  ssh_key_free (data->ssh_key);
   return 0;
 }
 

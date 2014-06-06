@@ -397,8 +397,6 @@ SCM_DEFINE (guile_ssh_get_server_public_key, "get-server-public-key", 1, 0, 0,
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to get the server key", session);
 
-  kd->is_to_be_freed = 1; /* The key must be freed by GC. */
-
   SCM_NEWSMOB (key_smob, key_tag, kd);
 
   return key_smob;
