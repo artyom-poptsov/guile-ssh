@@ -154,33 +154,33 @@ _ssh_result_to_symbol (int res)
 }
 
 SCM_DEFINE (guile_ssh_channel_open_forward,
-            "channel-open-forward", 5, 0, 0,
-            (SCM channel, SCM remotehost, SCM remoteport,
-             SCM sourcehost, SCM localport),
+            "%channel-open-forward", 5, 0, 0,
+            (SCM channel, SCM remote_host, SCM remote_port,
+             SCM source_host, SCM local_port),
             "")
 #define FUNC_NAME s_guile_ssh_channel_open_forward
 {
   struct channel_data *cd = _scm_to_ssh_channel (channel);
-  char *c_remotehost = NULL;
-  char *c_sourcehost = NULL;
+  char *c_remote_host = NULL;
+  char *c_source_host = NULL;
   int res;
 
-  SCM_ASSERT (scm_is_string (remotehost), remotehost, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT (scm_is_number (remoteport), remoteport, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT (scm_is_string (sourcehost), sourcehost, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT (scm_is_number (localport),  localport,  SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (remote_host), remote_host, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (remote_port), remote_port, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (source_host), source_host, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (local_port),  local_port,  SCM_ARG5, FUNC_NAME);
 
   scm_dynwind_begin (0);
 
-  c_remotehost = scm_to_locale_string (remotehost);
-  scm_dynwind_free (c_remotehost);
+  c_remote_host = scm_to_locale_string (remote_host);
+  scm_dynwind_free (c_remote_host);
 
-  c_sourcehost = scm_to_locale_string (sourcehost);
-  scm_dynwind_free (c_sourcehost);
+  c_source_host = scm_to_locale_string (source_host);
+  scm_dynwind_free (c_source_host);
 
   res = ssh_channel_open_forward (cd->ssh_channel,
-                                  c_remotehost, scm_to_int32 (remoteport),
-                                  c_sourcehost, scm_to_int32 (localport));
+                                  c_remote_host, scm_to_int32 (remote_port),
+                                  c_source_host, scm_to_int32 (local_port));
 
   if (res == SSH_OK)
     SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
@@ -192,35 +192,35 @@ SCM_DEFINE (guile_ssh_channel_open_forward,
 #undef FUNC_NAME
 
 SCM_DEFINE (guile_ssh_channel_open_reverse_forward,
-            "channel-open-reverse-forward", 5, 0, 0,
-            (SCM channel, SCM remotehost, SCM remoteport,
-             SCM sourcehost, SCM localport),
+            "%channel-open-forward/reverse", 5, 0, 0,
+            (SCM channel, SCM remote_host, SCM remote_port,
+             SCM source_host, SCM local_port),
             "")
 #define FUNC_NAME s_guile_ssh_channel_open_reverse_forward
 {
   struct channel_data *cd = _scm_to_ssh_channel (channel);
-  char *c_remotehost = NULL;
-  char *c_sourcehost = NULL;
+  char *c_remote_host = NULL;
+  char *c_source_host = NULL;
   int res;
 
-  SCM_ASSERT (scm_is_string (remotehost), remotehost, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT (scm_is_number (remoteport), remoteport, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT (scm_is_string (sourcehost), sourcehost, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT (scm_is_number (localport),  localport,  SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (remote_host), remote_host, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (remote_port), remote_port, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (source_host), source_host, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (local_port),  local_port,  SCM_ARG5, FUNC_NAME);
 
   scm_dynwind_begin (0);
 
-  c_remotehost = scm_to_locale_string (remotehost);
-  scm_dynwind_free (c_remotehost);
+  c_remote_host = scm_to_locale_string (remote_host);
+  scm_dynwind_free (c_remote_host);
 
-  c_sourcehost = scm_to_locale_string (sourcehost);
-  scm_dynwind_free (c_sourcehost);
+  c_source_host = scm_to_locale_string (source_host);
+  scm_dynwind_free (c_source_host);
 
   res = ssh_channel_open_reverse_forward (cd->ssh_channel,
-                                          c_remotehost,
-                                          scm_to_int32 (remoteport),
-                                          c_sourcehost,
-                                          scm_to_int32 (localport));
+                                          c_remote_host,
+                                          scm_to_int32 (remote_port),
+                                          c_source_host,
+                                          scm_to_int32 (local_port));
 
   if (res == SSH_OK)
     SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);

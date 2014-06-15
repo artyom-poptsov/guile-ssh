@@ -1,5 +1,15 @@
 2014-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/channel-func.c (channel-open-forward): Rename to
+	`%channel-open-forward'.  Rename arguments.
+	(channel-open-reverse-forward): Rename to
+	`%channel-open-forward/reverse'.  Rename arguments.
+	* ssh/channel.scm (channel-open-forward): Rename to
+	`%channel-open-forward'.
+	(channel-open-reverse-forward): Rename to
+	`%channel-open-forward/reverse'.
+	(channel-open-forward, channel-open-forward/reverse): New procedures.
+
 	* ssh/message-func.c (get_auth_req): Fix a bug with assignment of
 	`ssh_public_key' type to `ssh_key' variable: Use
 	`ssh_message_auth_pubkey' instead of `ssh_message_auth_publickey' to

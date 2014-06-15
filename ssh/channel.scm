@@ -55,8 +55,10 @@
             channel-request-exec
             channel-request-pty
             channel-request-shell
+            %channel-open-forward
             channel-open-forward
-            channel-open-reverse-forward
+            %channel-open-forward/reverse
+            channel-open-forward/reverse
             channel-cancel-forward
             channel-set-pty-size!
             channel-set-stream!
@@ -64,6 +66,32 @@
             channel-open?
             channel-eof?))
 
+
+(define* (channel-open-forward channel
+                               #:key (source-host "localhost") local-port
+                               remote-host (remote-port local-port))
+  "Open a TCP/IP forwarding channel.  Connect to a REMOTE-HOST and REMOTE-PORT,
+and use SOURCE-HOST and LOCAL-PORT as origination of connections.
+
+If the SOURCE-HOST is not set, then \"localhost\" is used.  If REMOTE-PORT is
+not set, then it will be set to LOCAL-PORT value.
+
+Please note that the procedure does not bind the LOCAL-PORT and does not
+automatically forward the content of a socket to the channel."
+  (%channel-open-forward channel
+                         remote-host remote-port
+                         source-host local-port))
+
+(define* (channel-open-forward/reverse channel
+                                       #:key (source-host "localhost") local-port
+                                       remote-host (remote-port local-port))
+  ;; TODO: Write more detailed docstring.
+  "Open a TCP/IP reverse forwarding channel."
+  (%channel-open-forward/reverse channel
+                                 remote-host remote-port
+                                 source-host local-port))
+                               
+
 (load-extension "libguile-ssh" "init_channel")
 
 ;;; channel.scm ends here.
