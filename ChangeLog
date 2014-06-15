@@ -1,3 +1,25 @@
+2014-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/message-func.c (get_auth_req): Fix a bug with assignment of
+	`ssh_public_key' type to `ssh_key' variable: Use
+	`ssh_message_auth_pubkey' instead of `ssh_message_auth_publickey' to
+	get the key.
+
+	* ssh/message-func.c (get_auth_req, get_pty_req, get_env_req)
+	(get_exec_req, get_global_req, get_service_req, get_channel_open_req):
+	Fix warnings: Add `const' qualifier where it is needed.
+
+2014-06-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/key-func.c (guile_ssh_private_key_from_file): Remove `session'
+	parameter.  All callers updated.
+	* doc/api-keys.texi (Keys): Update description of
+	`private-key-from-file'.
+	* examples/echo/client.scm.in (get-prvkey): Update.
+	* tests/key.scm ("private-key-from-file"): Update.
+	* tests/client-server.scm ("userauth-public-key!, success"): Update.
+	* NEWS: Update.
+
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/key.scm: New test suite.

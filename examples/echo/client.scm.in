@@ -84,7 +84,7 @@ Options:
 
 (define (get-prvkey session identity-file)
   "Get a private SSH key.  Handle possible errors."
-  (let ((prvkey (private-key-from-file session identity-file)))
+  (let ((prvkey (private-key-from-file identity-file)))
     (if (not prvkey)
         (handle-error session))
     prvkey))
