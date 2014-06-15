@@ -1,5 +1,7 @@
 2014-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/api-channels.texi (Channels): Add subsection on port forwarding.
+
 	* ssh/channel-func.c (channel-open-forward): Rename to
 	`%channel-open-forward'.  Rename arguments.
 	(channel-open-reverse-forward): Rename to

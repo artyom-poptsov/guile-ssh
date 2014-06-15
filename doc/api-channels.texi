@@ -103,6 +103,47 @@ Return @code{#t} if remote has sent @acronym{EOF}, @code{#f}
 otherwise.
 @end deffn
 
+@subsection Port forwarding
+@cindex Port forwarding
+
+@deffn {Scheme Procedure} %channel-open-forward channel remote-host remote-port source-host local-port
+Open a TCP/IP forwarding channel.  Connect to a @var{remote-host} and
+@var{remote-port}, and use @var{source-host} and @var{local-port} as
+origination of connections.
+
+Please @strong{note} that the procedure does not bind the @var{local-port} and
+does not automatically forward the content of a socket to the channel.
+@end deffn
+
+@deffn {Scheme Procedure} channel-open-forward channel #:key source-host local-port remote-host remote-port
+Convenient wrapper upon the more primitive @code{%channel-open-forward}
+procedure.
+
+If the @var{source-host} is not set, then "localhost" is used.  If
+@var{remote-port} is not set, then it will be set to @var{local-port} value.
+
+Example:
+
+@lisp
+(channel-open-forward channel
+                      #:local-port  8080
+                      #:remote-host "www.example.com"
+                      #:remote-port 80)
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} %channel-open-forward/reverse channel remote-host remote-port source-host local-port
+Open a TCP/IP reverse forwarding channel.
+
+Please @strong{note} that the procedure does not bind the @var{local-port} and
+does not automatically forward the content of a socket to the channel.
+@end deffn
+
+@deffn {Scheme Procedure} channel-open-forward/reverse channel #:key source-host local-port remote-host remote-port
+Convenient wrapper upon the more primitive
+@code{%channel-open-forward/reverse} procedure.
+@end deffn
+
 @c Local Variables:
 @c TeX-master: "guile-ssh.texi"
 @c End:
