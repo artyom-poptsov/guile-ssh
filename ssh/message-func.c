@@ -246,7 +246,7 @@ get_auth_req (ssh_message msg)
   SCM result = scm_c_make_vector (4, SCM_UNDEFINED);
   const char *user     = ssh_message_auth_user (msg);
   const char *password = ssh_message_auth_password (msg);
-  ssh_key public_key = ssh_message_auth_publickey (msg);
+  ssh_key public_key   = ssh_message_auth_pubkey (msg);
   SCM pkey_state;
   SCM pkey_smob;
   struct key_data *pkey_data;

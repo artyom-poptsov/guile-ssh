@@ -1,5 +1,10 @@
 2014-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/message-func.c (get_auth_req): Fix a bug with assignment of
+	`ssh_public_key' type to `ssh_key' variable: Use
+	`ssh_message_auth_pubkey' instead of `ssh_message_auth_publickey' to
+	get the key.
+
 	* ssh/message-func.c (get_auth_req, get_pty_req, get_env_req)
 	(get_exec_req, get_global_req, get_service_req, get_channel_open_req):
 	Fix warnings: Add `const' qualifier where it is needed.
