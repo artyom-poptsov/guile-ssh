@@ -1,3 +1,9 @@
+2014-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/message-func.c (get_auth_req, get_pty_req, get_env_req)
+	(get_exec_req, get_global_req, get_service_req, get_channel_open_req):
+	Fix warnings: Add `const' qualifier where it is needed.
+
 2014-06-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/key-func.c (guile_ssh_private_key_from_file): Remove `session'

@@ -244,8 +244,8 @@ static SCM
 get_auth_req (ssh_message msg)
 {
   SCM result = scm_c_make_vector (4, SCM_UNDEFINED);
-  char *user     = ssh_message_auth_user (msg);
-  char *password = ssh_message_auth_password (msg);
+  const char *user     = ssh_message_auth_user (msg);
+  const char *password = ssh_message_auth_password (msg);
   ssh_key public_key = ssh_message_auth_publickey (msg);
   SCM pkey_state;
   SCM pkey_smob;
@@ -285,7 +285,7 @@ static SCM
 get_pty_req (ssh_message msg)
 {
   SCM result = scm_c_make_vector (5, SCM_UNDEFINED);
-  char *term = ssh_message_channel_request_pty_term (msg);
+  const char *term = ssh_message_channel_request_pty_term (msg);
   int w   = ssh_message_channel_request_pty_width (msg);
   int h   = ssh_message_channel_request_pty_height (msg);
   int pxw = ssh_message_channel_request_pty_pxwidth (msg);
@@ -305,8 +305,8 @@ static SCM
 get_env_req (ssh_message msg)
 {
   SCM result  = scm_c_make_vector (3, SCM_UNDEFINED);
-  char *name  = ssh_message_channel_request_env_name (msg);
-  char *value = ssh_message_channel_request_env_value (msg);
+  const char *name  = ssh_message_channel_request_env_name (msg);
+  const char *value = ssh_message_channel_request_env_value (msg);
 
   SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (name));
   SCM_SIMPLE_VECTOR_SET(result, 1, scm_from_locale_string (value));
@@ -319,7 +319,7 @@ static SCM
 get_exec_req (ssh_message msg)
 {
   SCM result = scm_c_make_vector (1, SCM_UNDEFINED);
-  char *cmd = ssh_message_channel_request_command (msg);
+  const char *cmd = ssh_message_channel_request_command (msg);
   SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (cmd));
   return result;
 }
@@ -329,7 +329,7 @@ static SCM
 get_global_req (ssh_message msg)
 {
   SCM result = scm_c_make_vector (2, SCM_UNDEFINED);
-  char *addr = ssh_message_global_request_address (msg);
+  const char *addr = ssh_message_global_request_address (msg);
   int port = ssh_message_global_request_port (msg);
 
   SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (addr));
@@ -343,7 +343,7 @@ static SCM
 get_service_req (ssh_message msg)
 {
   SCM result = scm_c_make_vector (1, SCM_UNDEFINED);
-  char *req  = ssh_message_service_service (msg);
+  const char *req = ssh_message_service_service (msg);
 
   SCM_SIMPLE_VECTOR_SET(result, 0, scm_from_locale_string (req));
 
@@ -355,10 +355,10 @@ get_service_req (ssh_message msg)
 static SCM
 get_channel_open_req (ssh_message msg)
 {
-  char *orig    = ssh_message_channel_request_open_originator (msg);
-  int orig_port = ssh_message_channel_request_open_originator_port (msg);
-  char *dest    = ssh_message_channel_request_open_destination (msg);
-  int dest_port = ssh_message_channel_request_open_destination_port (msg);
+  const char *orig = ssh_message_channel_request_open_originator (msg);
+  int orig_port    = ssh_message_channel_request_open_originator_port (msg);
+  const char *dest = ssh_message_channel_request_open_destination (msg);
+  int dest_port    = ssh_message_channel_request_open_destination_port (msg);
   SCM result;
 
   if ((! orig) || (! dest))
