@@ -1,5 +1,18 @@
 2014-06-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm ("authenticate-server, not-known")
+	("authenticate-server, ok"): New TCs.
+	* NEWS: Update.
+
+	* doc/guile-ssh.texi: Add an overview of programming with Guile-SSH to
+	the "Examples" chapter.
+	* doc/examples.texi: Add to the repository.
+	* doc/Makefile.am (guile_ssh_TEXINFOS): Add `examples.texi'.
+	* doc/version.texi: Update.
+	* NEWS: Update.
+
+	* .dir-locals.el: Add to the repository.
+
 	* ssh/channel.scm (%channel-open-forward)
 	(%channel-open-forward/reverse): Don't export primitive procedures.
 	* doc/api-channels.texi (Channels): Update.

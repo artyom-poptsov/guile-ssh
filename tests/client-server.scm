@@ -38,6 +38,7 @@
 (define port   12400)
 (define topdir (getenv "abs_top_srcdir"))
 (define rsakey (format #f "~a/tests/rsakey" topdir))
+(define %knownhosts (format #f "~a/tests/knownhosts" topdir))
 (define log    (test-runner-aux-value (test-runner-current)))
 (define *server-thread* #f)
 
@@ -51,6 +52,7 @@
    #:port    port
    #:timeout 10        ;seconds
    #:user    "bob"
+   #:knownhosts %knownhosts
    #:log-verbosity 'nolog))
 
 (define (make-server-for-test)
@@ -105,10 +107,25 @@
 (test-assert "connect!, disconnect!"
   (let ((session (make-session-for-test)))
     (connect! session)
-    (authenticate-server session)
     (let ((res (connected? session)))
       (disconnect! session)
       res)))
+
+(test-assert "authenticate-server, not-known"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (let ((res (authenticate-server session)))
+      (disconnect! session)
+      (eq? res 'not-known))))
+
+(test-assert "authenticate-server, ok"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (write-known-host! session)
+    (let ((res (authenticate-server session)))
+      (disconnect! session)
+      (delete-file %knownhosts)
+      (eq? res 'ok))))
 
 (test-assert "get-protocol-version"
   (let ((session (make-session-for-test)))

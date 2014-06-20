@@ -1,0 +1,156 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Examples
+@chapter Examples
+
+There are working examples that come with Guile-SSH.  These examples are
+normally installed in @file{$prefix/share/libguile-ssh/examples} directory:
+
+@table @samp
+@item sssh.scm
+@itemx ssshd.scm
+Guile-SSH client and server example.
+@item echo/client.scm
+@itemx echo/server.scm
+Echo client and server example.
+@end table
+
+In addition, the following sections will provide an overview of programming
+with Guile-SSH.
+
+@section Client
+
+In this example we will connect to a server, open a channel and execute a
+command.  Then we will read output from the command and close connection to
+the server.
+
+@lisp
+(use-modules (ssh channel)
+             (ssh session)
+             (ssh auth)
+             (ssh key))
+
+(let ((session (make-session #:user          "bob"
+                             #:host          "example.com"
+                             #:port          22
+                             #:log-verbosity 'nolog))) ; Be quiet
+  ;; Connect to the server
+  (connect! session)
+
+  ;; Perform server authentication
+  (case (authenticate-server session)
+    ...) ; Check the result
+
+  ;; Try to authenticate on the server with one of the `userauth-*'
+  ;; procedures.  Let's use `userauth-agent!'.
+  (case (userauth-agent! session)
+    ...) ; Check the result
+
+  ;; Suppose the authentication went successfully.
+  ;; Now we need to open a channel.
+  (let ((channel (make-channel session)))
+
+    (if (not channel)
+        ...) ; Handle an error
+
+    ;; Open a session so we will be able to execute a command
+    ;; on the server
+    (catch 'guile-ssh-error
+      (lambda () (channel-open-session channel))
+      (lambda (key . args)
+        ...)) ; Handle an error
+
+    ;; Execute a command
+    (channel-request-exec channel "uname")
+
+    ;; Poll the channel for data
+    (let poll ((ready? #f))
+      (if ready?
+        (begin
+          ...) ; Read the output from the command
+        (poll (char-ready? channel))))
+
+    ;; Close the channel
+    (close channel)
+
+    ;; Disconnect from the server
+    (disconnect! session)))
+@end lisp
+
+@section Server
+
+In this example we will create a new server and start the server loop.
+
+@lisp
+(use-modules (ssh server)
+             (ssh message)
+             (ssh session)
+             (ssh channel)
+             (ssh key)
+             (ssh auth))
+
+(let ((server (make-server #:bindport      22
+                           #:rsakey        "/home/alice/.ssh/host_rsa_key"
+                           #:dsakey        "/home/alice/.ssh/host_dsa_key"
+                           #:log-verbosity 'nolog))) ; Be quiet
+
+  ;; Start listen to incoming connections.
+  (server-listen server)
+
+  ;; Start the main loop of the server
+  (while #t
+
+    ;; Accept new connections from clients.  Every connection is
+    ;; handled in its own SSH session.
+    (let ((session (catch 'guile-ssh-error
+                     (lambda () (server-accept server))
+                     (lambda (key . args)
+                       ;; Handle an error
+                       #f))))
+
+      (if (not session)
+        (begin
+          (sleep 1)
+          (continue)))
+
+      ;; Handle server authentication request from a client
+      (server-handle-key-exchange session)
+
+      ;; Start the session loop.  Handle incoming messages from
+      ;; the client
+      (let session-loop ((msg (server-message-get session)))
+
+        (if (not msg)
+          ...) ; Handle an error
+
+        ;; Get type of the received message
+        (let ((msg-type (message-get-type msg)))
+
+          ;; Handle the message according to the type.  Type is a list of
+          ;; symbols where the car is the type and cadr is subtype.
+          (case (car msg-type)
+
+            ((request-service)
+              ...) ; Handle service request
+
+            ((request-auth)
+              ...) ; Handle authentication request
+
+            ((request-channel-open)
+              ...) ; Handle request
+
+            ((request-channel)
+              ...))) ; Handle request
+
+        (if (connected? session)
+            (session-loop (server-message-get session))))
+
+      (disconnect! session))))
+@end lisp
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:
