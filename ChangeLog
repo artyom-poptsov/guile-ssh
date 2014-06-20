@@ -1,5 +1,9 @@
 2014-06-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm ("authenticate-server, not-known")
+	("authenticate-server, ok"): New TCs.
+	* NEWS: Update.
+
 	* doc/guile-ssh.texi: Add an overview of programming with Guile-SSH to
 	the "Examples" chapter.
 	* doc/examples.texi: Add to the repository.
