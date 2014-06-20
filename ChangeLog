@@ -1,5 +1,9 @@
 2014-06-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/guile-ssh.texi (Installation): Update URLs to Guile-SSH
+	repository.  Require libssh 0.6.3.
+	* NEWS: Update.
+
 	* tests/client-server.scm ("authenticate-server, not-known")
 	("authenticate-server, ok"): New TCs.
 	* NEWS: Update.

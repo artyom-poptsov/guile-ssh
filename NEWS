@@ -29,6 +29,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     Functions now return `#f' if the given argument is not a Guile-SSH
     key object.
 ** Documentation update
+*** Fix old URLs to Guile-SSH repository in the `Installation' chapter
 *** Add an overview of programming with Guile-SSH to the "Examples" chapter
 
 * Changes in version 0.6.0 (2014-03-23)
