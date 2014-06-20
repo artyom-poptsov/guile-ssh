@@ -21,6 +21,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Rename `userauth-pubkey-auto!' to `userauth-public-key/auto!'
 ** New `userauth-public-key/try' procedure in (ssh auth)
 ** New `bytevector->hex-string' procedure in (ssh key)
+** New `channel-open-forward' procedure in (ssh channel)
+** New `channel-open-forward/reverse' procedure in (ssh channel)
 ** Add tests for Guile-SSH keys
 ** Bug fixes
 *** `public-key?' and `private-key?' now produce correct result

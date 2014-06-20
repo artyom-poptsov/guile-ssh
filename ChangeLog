@@ -1,3 +1,10 @@
+2014-06-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/channel.scm (%channel-open-forward)
+	(%channel-open-forward/reverse): Don't export primitive procedures.
+	* doc/api-channels.texi (Channels): Update.
+	* NEWS: Update.
+
 2014-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* doc/api-channels.texi (Channels): Add subsection on port forwarding.

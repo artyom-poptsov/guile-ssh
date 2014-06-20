@@ -55,9 +55,7 @@
             channel-request-exec
             channel-request-pty
             channel-request-shell
-            %channel-open-forward
             channel-open-forward
-            %channel-open-forward/reverse
             channel-open-forward/reverse
             channel-cancel-forward
             channel-set-pty-size!
