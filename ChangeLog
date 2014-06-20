@@ -1,3 +1,7 @@
+2014-06-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* .dir-locals.el: Add to the repository.
+
 2014-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/message-func.c (get_auth_req): Fix a bug with assignment of
