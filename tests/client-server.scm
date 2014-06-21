@@ -77,7 +77,12 @@
   `(set! *server-thread*
       (make-thread
        (lambda ()
-         ,@body))))
+         ;; XXX: We need to catch here all exceptions because if an exception
+         ;; is thrown in a thread and the exception arguments contain an
+         ;; Guile-SSH object (such as a channel) then we get "Error while
+         ;; printing of exception" due to some problems with the port that is
+         ;; passed to the print procedure of the smob.
+         (false-if-exception ,@body)))))
 
 (define (cancel-server-thread)
   (cancel-thread *server-thread*))

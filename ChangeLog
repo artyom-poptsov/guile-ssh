@@ -1,5 +1,9 @@
 2014-06-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm (spawn-server-thread): Catch all exceptions
+	to fix the "Error while printing of exception" during the tests.
+	* tests/server-client.scm (spawn-client-thread): Likewise.
+
 	* ssh/channel-type.c (print_channel): Use `SCM_OPPORTP' predicate.
 
 2014-06-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
