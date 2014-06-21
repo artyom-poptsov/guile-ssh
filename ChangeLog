@@ -1,3 +1,7 @@
+2014-06-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/channel-type.c (print_channel): Use `SCM_OPPORTP' predicate.
+
 2014-06-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* doc/guile-ssh.texi (Installation): Update URLs to Guile-SSH
