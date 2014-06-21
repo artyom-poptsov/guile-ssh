@@ -1,3 +1,13 @@
+2014-06-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/session-func.c (guile_ssh_session_get): New procedure.
+	* ssh/session-func.h (guile_ssh_session_get): Likewise.
+	* ssh/session.scm (session-get): New procedure.
+	* tests/session.scm ("session-get"): New TC.
+	* doc/api-sessions.texi (Sessions): Add description of `session-get'
+	procedure.
+	* NEWS: Update.
+
 2014-06-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/client-server.scm (spawn-server-thread): Catch all exceptions

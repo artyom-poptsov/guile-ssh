@@ -21,6 +21,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Rename `userauth-pubkey-auto!' to `userauth-public-key/auto!'
 ** New `userauth-public-key/try' procedure in (ssh auth)
 ** New `bytevector->hex-string' procedure in (ssh key)
+** New `session-get' procedure in (ssh session)
 ** Changes in tests
 *** Add tests for Guile-SSH keys
 *** Add tests for `authenticate-server' procedure

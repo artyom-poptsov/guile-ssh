@@ -212,7 +212,21 @@ is expected to be a number from 1 to 9, 9 being the most efficient but
 slower.
 @end table
 
+@end deffn
 
+@deffn {Scheme Procedure} session-get session option
+Get value of the @var{option} for @var{session}.  The @var{option} is expected
+to be a symbol.
+
+Please not that currently not all the possible session options can be gotten
+with this procedure.  Here is the list of allowed options:
+
+@table @samp
+@item host
+@item user
+@item identity
+@item proxycommand
+@end table
 @end deffn
 
 @deffn {Scheme Procedure} connect! session

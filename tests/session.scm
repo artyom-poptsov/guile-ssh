@@ -22,6 +22,9 @@
 
 (test-begin "session")
 
+(define %topdir (getenv "abs_top_srcdir"))
+(define %rsakey (format #f "~a/tests/rsakey" %topdir))
+
 (test-assert "%make-session"
   (%make-session))
 
@@ -92,6 +95,19 @@
         (cdr opt)))
      options)
     res))
+
+(test-assert "session-get"
+  (let* ((host         "example.com")
+         (user         "alice")
+         (proxycommand "test")
+         (session      (make-session #:host         host
+                                     #:user         user
+                                     #:identity     %rsakey
+                                     #:proxycommand proxycommand)))
+    (and (string=? (session-get session 'host)         host)
+         (string=? (session-get session 'user)         user)
+         (string=? (session-get session 'identity)     %rsakey)
+         (string=? (session-get session 'proxycommand) proxycommand))))
 
 (test-assert "make-session"
   (make-session #:host "localhost"

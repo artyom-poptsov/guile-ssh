@@ -269,6 +269,40 @@ SCM_DEFINE (guile_ssh_session_set, "session-set!", 3, 0, 0,
 }
 #undef FUNC_NAME
 
+
+/* Options whose values can be requested through `session-get' */
+static struct symbol_mapping session_options_getable[] = {
+  { "host",         SSH_OPTIONS_HOST         },
+  { "user",         SSH_OPTIONS_USER         },
+  { "identity",     SSH_OPTIONS_IDENTITY     },
+  { "proxycommand", SSH_OPTIONS_PROXYCOMMAND },
+  { NULL,           -1                       }
+};
+
+SCM_DEFINE (guile_ssh_session_get, "session-get", 2, 0, 0,
+            (SCM session, SCM option),
+            "")
+#define FUNC_NAME s_guile_ssh_session_get
+{
+  struct session_data*sd     = _scm_to_ssh_session (session);
+  struct symbol_mapping *opt = NULL;
+  char *value                = NULL; /* Value of the option */
+  int res;
+
+  SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
+
+  opt = _scm_to_ssh_const (session_options_getable, option);
+  if (! opt)
+    guile_ssh_error1 (FUNC_NAME, "Wrong option", option);
+
+  res = ssh_options_get (sd->ssh_session, opt->value, &value);
+  if (res == SSH_ERROR)
+    guile_ssh_error1 (FUNC_NAME, "Unable to get value of the option", option);
+
+  return scm_from_locale_string (value);
+}
+#undef FUNC_NAME
+
 /* Connect to the SSH server. 
 
    Return one of the following symbols: 'ok, 'again */
