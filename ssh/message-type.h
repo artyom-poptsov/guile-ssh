@@ -34,7 +34,7 @@ extern void init_message_type (void);
 
 
 /* Helper procedures. */
-extern struct message_data *_scm_to_ssh_message (SCM x);
+extern struct message_data *_scm_to_message_data (SCM x);
 
 #endif  /* ifndef __MESSAGE_TYPE_H__ */
 

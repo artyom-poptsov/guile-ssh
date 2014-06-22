@@ -40,7 +40,7 @@ mark_session (SCM session_smob)
 size_t
 free_session (SCM session_smob)
 {
-  struct session_data *data = _scm_to_ssh_session (session_smob);
+  struct session_data *data = _scm_to_session_data (session_smob);
 
   ssh_disconnect (data->ssh_session);
   ssh_free (data->ssh_session);
@@ -76,7 +76,7 @@ SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
 static int
 print_session (SCM session, SCM port, scm_print_state *pstate)
 {
-  struct session_data *sd = _scm_to_ssh_session (session);
+  struct session_data *sd = _scm_to_session_data (session);
   char *user = NULL;
   char *host = NULL;
   uint32_t smob_addr = (uint32_t) scm_object_address (session);
@@ -119,8 +119,8 @@ SCM_DEFINE (guile_ssh_is_session_p, "session?", 1, 0, 0,
 SCM
 equalp_session (SCM x1, SCM x2)
 {
-  struct session_data *session1 = _scm_to_ssh_session (x1);
-  struct session_data *session2 = _scm_to_ssh_session (x2);
+  struct session_data *session1 = _scm_to_session_data (x1);
+  struct session_data *session2 = _scm_to_session_data (x2);
 
   if ((! session1) || (! session2))
     return SCM_BOOL_F;
@@ -135,7 +135,7 @@ equalp_session (SCM x1, SCM x2)
 
 /* Convert SCM object to a SSH session */
 struct session_data*
-_scm_to_ssh_session (SCM x)
+_scm_to_session_data (SCM x)
 {
   scm_assert_smob_type (session_tag, x);
   return (struct session_data *) SCM_SMOB_DATA (x);

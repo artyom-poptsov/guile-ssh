@@ -1,8 +1,55 @@
 2014-06-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/channel-type.c (_scm_to_ssh_channel): Rename to
+	`_scm_to_channel_data'.  All callers updated.
+	* ssh/channel-type.h: Likewise.
+	* ssh/channel-func.c (guile_ssh_channel_open_session)
+	(guile_ssh_channel_request_exec, guile_ssh_channel_request_pty)
+	(guile_ssh_channel_request_shell, guile_ssh_channel_request_env)
+	(guile_ssh_channel_set_pty_size_x, guile_ssh_channel_set_stream_x)
+	(guile_ssh_channel_get_stream, guile_ssh_channel_is_open_p)
+	(guile_ssh_channel_is_eof_p): Update.
+	* ssh/key-type.c (_scm_to_ssh_key): Rename to `_scm_to_key_data'.  All
+	callers updated.
+	* ssh/key-type.h: Likewise.
+	* ssh/key-func.c (guile_ssh_public_key_to_string)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_get_public_key_hash): Update.
+	* ssh/message-type.c (_scm_to_ssh_message): Rename to
+	`_scm_to_message_data'.  All callers updated.
+	* ssh/message-type.h: Likewise.
+	* ssh/message-func.c (guile_ssh_message_reply_default)
+	(guile_ssh_message_service_reply_success)
+	(guile_ssh_message_auth_reply_success)
+	(guile_ssh_message_auth_reply_public_key_ok)
+	(guile_ssh_message_channel_request_reply_success)
+	(guile_ssh_message_channel_request_open_reply_accept)
+	(guile_ssh_message_get_type, guile_ssh_message_get_req)
+	(guile_ssh_message_auth_set_methods_x): Update.
+	* ssh/server-type.c (_scm_to_ssh_server): Rename to
+	`_scm_to_server_data'.  All callers updated.
+	* ssh/server-type.h: Likewise.
+	* ssh/server-func.c (guile_ssh_server_set_x, guile_ssh_server_listen)
+	(guile_ssh_server_accept, guile_ssh_server_handle_key_exchange)
+	(guile_ssh_server_message_get): Update.
+	* ssh/session-type.c (_scm_to_session_data): Rename to
+	`_scm_to_session_data'.  All callers updated.
+	* ssh/session-type.h: Likewise.
+	* ssh/session-func.c (guile_ssh_blocking_flush, guile_ssh_session_set)
+	(guile_ssh_session_get, guile_ssh_connect_x, guile_ssh_disconnect)
+	(guile_ssh_get_protocol_version, guile_ssh_get_error)
+	(guile_ssh_authenticate_server, guile_ssh_get_server_public_key)
+	(guile_ssh_write_known_host, guile_ssh_is_connected_p): Update.
+	* ssh/auth.c (guile_ssh_userauth_public_key_x)
+	(guile_ssh_userauth_public_key_auto_x)
+	(guile_ssh_userauth_public_key_try, guile_ssh_userauth_agent_x)
+	(guile_ssh_userauth_password_x, guile_ssh_userauth_none_x)
+	(guile_ssh_userauth_get_list): Update.
+
 	* ssh/session-type.c (print_session): New procedure.
 	(init_session_type): Register `print_session' callback.
 	* ssh/channel-type.c (print_channel): Print object address.
+
 	* ssh/message-type.c (print_message): Likewise.
 	* ssh/key-type.c (print_key): Likewise.
 	* ssh/common.c (_scm_object_hex_address): New procedure.

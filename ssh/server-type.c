@@ -38,7 +38,7 @@ mark_server (SCM server)
 size_t
 free_server (SCM server)
 {
-  struct server_data *server_data = _scm_to_ssh_server (server);
+  struct server_data *server_data = _scm_to_server_data (server);
   ssh_bind_free (server_data->bind);
   return 0;
 }
@@ -72,8 +72,8 @@ SCM_DEFINE (guile_ssh_is_server_p, "server?", 1, 0, 0,
 SCM
 equalp_server (SCM x1, SCM x2)
 {
-  struct server_data *server1 = _scm_to_ssh_server (x1);
-  struct server_data *server2 = _scm_to_ssh_server (x2);
+  struct server_data *server1 = _scm_to_server_data (x1);
+  struct server_data *server2 = _scm_to_server_data (x2);
 
   if ((! server1) || (! server2))
     return SCM_BOOL_F;
@@ -88,7 +88,7 @@ equalp_server (SCM x1, SCM x2)
 
 /* Convert X to a SSH server. */
 struct server_data *
-_scm_to_ssh_server (SCM x)
+_scm_to_server_data (SCM x)
 {
   scm_assert_smob_type (server_tag, x);
   return (struct server_data *) SCM_SMOB_DATA (x);

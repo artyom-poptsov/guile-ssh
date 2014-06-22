@@ -73,8 +73,8 @@ SCM_DEFINE (guile_ssh_userauth_public_key_x, "userauth-public-key!", 2, 0, 0,
             "Try to authenticate with a public key.")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_x
 {
-  struct session_data *session_data = _scm_to_ssh_session (session_smob);
-  struct key_data *private_key_data = _scm_to_ssh_key (private_key_smob);
+  struct session_data *session_data = _scm_to_session_data (session_smob);
+  struct key_data *private_key_data = _scm_to_key_data (private_key_smob);
 
   /* See "On the username" commentary above. */
   char *username = NULL;
@@ -104,7 +104,7 @@ SCM_DEFINE (guile_ssh_userauth_public_key_auto_x,
             "success.")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_auto_x
 {
-  struct session_data *sd = _scm_to_ssh_session (session);
+  struct session_data *sd = _scm_to_session_data (session);
   char *username = NULL; /* See "On the username" commentary above. */
   char *passphrase = NULL;
   int res = ssh_userauth_publickey_auto (sd->ssh_session,
@@ -120,8 +120,8 @@ SCM_DEFINE (guile_ssh_userauth_public_key_try,
             "")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_try
 {
-  struct session_data *sd = _scm_to_ssh_session (session);
-  struct key_data *kd = _scm_to_ssh_key (public_key);
+  struct session_data *sd = _scm_to_session_data (session);
+  struct key_data *kd = _scm_to_key_data (public_key);
   char *username = NULL;        /* See "On the username" commentary above */
   int res;
 
@@ -139,7 +139,7 @@ SCM_DEFINE (guile_ssh_userauth_agent_x,
             "")
 #define FUNC_NAME s_guile_ssh_userauth_agent_x
 {
-  struct session_data *sd = _scm_to_ssh_session (session);
+  struct session_data *sd = _scm_to_session_data (session);
 
   char *username = NULL; /* See "On the username" commentary above. */
   int res = ssh_userauth_agent (sd->ssh_session, username);
@@ -154,7 +154,7 @@ SCM_DEFINE (guile_ssh_userauth_password_x, "userauth-password!", 2, 0, 0,
             "Try to authenticate by password.")
 #define FUNC_NAME s_guile_ssh_userauth_password_x
 {
-  struct session_data* session_data = _scm_to_ssh_session (session);
+  struct session_data* session_data = _scm_to_session_data (session);
 
   /* See "On the username" commentary above. */
   char *username = NULL;
@@ -189,7 +189,7 @@ SCM_DEFINE (guile_ssh_userauth_none_x, "userauth-none!", 1, 0, 0,
             (SCM arg1),
             "Try to authenticate through the \"none\" method.")
 {
-  struct session_data *session_data = _scm_to_ssh_session (arg1);
+  struct session_data *session_data = _scm_to_session_data (arg1);
   /* username is deprecated parameter.  Should be set to NULL. */
   int res = ssh_userauth_none (session_data->ssh_session, 
                                NULL); /* Username */
@@ -203,7 +203,7 @@ SCM_DEFINE (guile_ssh_userauth_get_list, "userauth-get-list", 1, 0, 0,
             (SCM session),
             "Get available authentication methods for a session SESSION.")
 {
-  struct session_data *session_data = _scm_to_ssh_session (session);
+  struct session_data *session_data = _scm_to_session_data (session);
   SCM auth_list = SCM_EOL;
 
   /* The second argument of the function is a username.  According to

@@ -35,7 +35,7 @@ extern void init_server_type (void);
 
 
 /* Helper procedures. */
-extern struct server_data *_scm_to_ssh_server (SCM x);
+extern struct server_data *_scm_to_server_data (SCM x);
 
 #endif  /* ifndef __SERVER_TYPE_H__ */
 

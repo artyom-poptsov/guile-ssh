@@ -40,7 +40,7 @@ mark_message (SCM message)
 size_t
 free_message (SCM message)
 {
-  struct message_data *msg_data = _scm_to_ssh_message (message);
+  struct message_data *msg_data = _scm_to_message_data (message);
   ssh_message_free (msg_data->message);
   return 0;
 }
@@ -66,8 +66,8 @@ print_message (SCM smob,  SCM port, scm_print_state *pstate)
 SCM
 equalp_message (SCM x1, SCM x2)
 {
-  struct message_data *msg1 = _scm_to_ssh_message (x1);
-  struct message_data *msg2 = _scm_to_ssh_message (x2);
+  struct message_data *msg1 = _scm_to_message_data (x1);
+  struct message_data *msg2 = _scm_to_message_data (x2);
 
   if ((! msg1) || (! msg2))
     return SCM_BOOL_F;
@@ -90,7 +90,7 @@ SCM_DEFINE (guile_ssh_is_message_p,
 
 /* Convert X to a SSH message. */
 struct message_data *
-_scm_to_ssh_message (SCM x)
+_scm_to_message_data (SCM x)
 {
   scm_assert_smob_type (message_tag, x);
   return (struct message_data *) SCM_SMOB_DATA (x);
