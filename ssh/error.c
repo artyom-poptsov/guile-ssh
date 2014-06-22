@@ -19,6 +19,7 @@
  */
 
 #include <libguile.h>
+#include <libssh/libssh.h>
 
 #include "error.h"
 
@@ -35,6 +36,13 @@ guile_ssh_error1 (const char *proc, const char *msg, SCM args)
 {
   scm_error (scm_from_locale_symbol (GUILE_SSH_ERROR), proc, msg, args,
              SCM_BOOL_F);
+}
+
+/* Report a session error. */
+inline void
+guile_ssh_session_error1 (const char *proc, ssh_session session, SCM args)
+{
+  guile_ssh_error1 (proc, ssh_get_error (session), args);
 }
 
 /* ssh-error.c ends here */

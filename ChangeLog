@@ -1,5 +1,16 @@
 2014-06-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/error.c (guile_ssh_session_error1): New procedure.
+	* ssh/error.h: Likewise.
+	* ssh/channel-func.c (guile_ssh_channel_open_session)
+	(guile_ssh_channel_request_exec, guile_ssh_channel_request_pty)
+	(guile_ssh_channel_request_shell, guile_ssh_channel_request_env): Use it.
+	* ssh/channel-type.c (ptob_write, ptob_flush): Use it.
+	* ssh/server-func.c (guile_ssh_server_accept)
+	(guile_ssh_server_handle_key_exchange): Use it.
+	* ssh/session-func.c (guile_ssh_connect_x)
+	(guile_ssh_authenticate_server, guile_ssh_write_known_host): Use it.
+
 	* ssh/channel-type.c (_scm_to_ssh_channel): Rename to
 	`_scm_to_channel_data'.  All callers updated.
 	* ssh/channel-type.h: Likewise.

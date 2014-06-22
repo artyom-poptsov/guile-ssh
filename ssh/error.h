@@ -25,5 +25,7 @@ extern inline void guile_ssh_error (const char *proc, const char *msg,
                                      SCM args, SCM rest);
 extern inline void guile_ssh_error1 (const char *proc, const char *msg, 
                                      SCM args);
+inline void
+guile_ssh_session_error1 (const char *proc, ssh_session session, SCM args);
 
 #endif /* ifndef __GUILE_SSH_ERROR_H__ */

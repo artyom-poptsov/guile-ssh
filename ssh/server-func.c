@@ -201,10 +201,8 @@ SCM_DEFINE (guile_ssh_server_accept, "server-accept", 1, 0, 0,
   struct session_data *session_data = _scm_to_session_data (session);
   int res = ssh_bind_accept (server_data->bind, session_data->ssh_session);
   if (res != SSH_OK)
-    {
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session_data->ssh_session),
-                        session);
-    }
+    guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
+
   return session;
 }
 #undef FUNC_NAME
@@ -220,10 +218,8 @@ SCM_DEFINE (guile_ssh_server_handle_key_exchange,
   struct session_data *session_data = _scm_to_session_data (session);
   int res = ssh_handle_key_exchange (session_data->ssh_session);
   if (res != SSH_OK)
-    {
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session_data->ssh_session),
-                        session);
-    }
+    guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
+
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME

@@ -38,7 +38,7 @@ SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
 
   SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
@@ -65,8 +65,7 @@ SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session),
-                        scm_list_2 (channel, cmd));
+      guile_ssh_session_error1 (FUNC_NAME, session, scm_list_2 (channel, cmd));
     }
 
   return SCM_UNDEFINED;
@@ -84,7 +83,7 @@ SCM_DEFINE (guile_ssh_channel_request_pty, "channel-request-pty", 1, 0, 0,
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1  (FUNC_NAME, session, channel);
     }
 
   return SCM_UNDEFINED;
@@ -102,7 +101,7 @@ SCM_DEFINE (guile_ssh_channel_request_shell, "channel-request-shell", 1, 0, 0,
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
 
   return SCM_UNDEFINED;
@@ -131,7 +130,7 @@ SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
 
   return SCM_UNDEFINED;

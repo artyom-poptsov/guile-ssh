@@ -324,8 +324,7 @@ SCM_DEFINE (guile_ssh_connect_x, "connect!", 1, 0, 0,
 
     case SSH_ERROR:
     default:
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (data->ssh_session),
-                        session);
+      guile_ssh_session_error1 (FUNC_NAME, data->ssh_session, session);
       return SCM_BOOL_F;        /* Not reached. */
     }
 }
@@ -406,8 +405,7 @@ SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
 
     case SSH_SERVER_ERROR:
     default:
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (data->ssh_session),
-                        session);
+      guile_ssh_session_error1 (FUNC_NAME, data->ssh_session, session);
       return SCM_BOOL_F;        /* Not reached. */
     }
 }
@@ -451,10 +449,7 @@ SCM_DEFINE (guile_ssh_write_known_host, "write-known-host!", 1, 0, 0,
   struct session_data *session_data = _scm_to_session_data (session);
   int res = ssh_write_knownhost (session_data->ssh_session);
   if (res != SSH_OK)
-    {
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session_data->ssh_session),
-                        session);
-    }
+    guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
                       
   return SCM_UNDEFINED;
 }

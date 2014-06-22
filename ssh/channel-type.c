@@ -87,7 +87,7 @@ ptob_write (SCM channel, const void *data, size_t sz)
   if (res == SSH_ERROR)
     {
       ssh_session session = ssh_channel_get_session (channel_data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
 
   if (res < sz)
@@ -112,7 +112,7 @@ ptob_flush (SCM channel)
       if (res == SSH_ERROR)
         {
           ssh_session session = ssh_channel_get_session (cd->ssh_channel);
-          guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+          guile_ssh_session_error1 (FUNC_NAME, session, channel);
         }
     }
 
