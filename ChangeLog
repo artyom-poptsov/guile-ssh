@@ -1,5 +1,14 @@
 2014-06-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/session-type.c (print_session): New procedure.
+	(init_session_type): Register `print_session' callback.
+	* ssh/channel-type.c (print_channel): Print object address.
+	* ssh/message-type.c (print_message): Likewise.
+	* ssh/key-type.c (print_key): Likewise.
+	* ssh/common.c (_scm_object_hex_address): New procedure.
+	* ssh/common.h (_scm_object_hex_address): Likewise.
+	* NEWS: Update.
+
 	* ssh/session-func.c (guile_ssh_session_get): New procedure.
 	* ssh/session-func.h (guile_ssh_session_get): Likewise.
 	* ssh/session.scm (session-get): New procedure.

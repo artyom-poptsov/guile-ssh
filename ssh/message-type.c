@@ -24,6 +24,7 @@
 
 #include "message-type.h"
 #include "message-func.h"
+#include "common.h"
 
 scm_t_bits message_tag;         /* Smob tag. */
 
@@ -53,6 +54,8 @@ print_message (SCM smob,  SCM port, scm_print_state *pstate)
   SCM msg_type = guile_ssh_message_get_type (smob);
   scm_puts ("#<message: ", port);
   scm_display (msg_type, port);
+  scm_puts (" ", port);
+  scm_display (_scm_object_hex_address (smob), port);
   scm_puts (">", port);
   return 1;
 }

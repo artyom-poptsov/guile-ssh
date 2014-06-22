@@ -22,6 +22,7 @@
 #include <libssh/libssh.h>
 
 #include "key-type.h"
+#include "common.h"
 
 /* BUG: Currently a SSH key that has been read from a file has both
    public and private flags.  It means that we cannot distinguish
@@ -72,7 +73,8 @@ print_key (SCM smob, SCM port, scm_print_state *pstate)
   scm_puts (_public_key_p (key_data) ? "public" : "private", port);
   scm_puts (" ", port);
   scm_display (type, port);
-  scm_puts (" key", port);
+  scm_puts (" key ", port);
+  scm_display (_scm_object_hex_address (smob), port);
   scm_puts (">", port);
 
   return 1;

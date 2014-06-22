@@ -22,6 +22,12 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New `userauth-public-key/try' procedure in (ssh auth)
 ** New `bytevector->hex-string' procedure in (ssh key)
 ** New `session-get' procedure in (ssh session)
+** Improve printing of Guile-SSH objects
+*** Print more detailed information about `session' object
+    Print user name, host name and current state of a `session' object.
+*** Print object address for `channel' object
+*** Print object address for `message' object
+*** Print object address for `key' object
 ** Changes in tests
 *** Add tests for Guile-SSH keys
 *** Add tests for `authenticate-server' procedure
