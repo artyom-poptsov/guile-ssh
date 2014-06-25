@@ -33,12 +33,12 @@ SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_channel_open_session
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
+  struct channel_data *data = _scm_to_channel_data (channel);
   int res = ssh_channel_open_session (data->ssh_channel);
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
 
   SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
@@ -53,7 +53,7 @@ SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
             "Run a shell command CMD without an interactive shell.")
 #define FUNC_NAME s_guile_ssh_channel_request_exec
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
+  struct channel_data *data = _scm_to_channel_data (channel);
   int res;
   char *c_cmd;                  /* Command to execute. */
 
@@ -65,8 +65,7 @@ SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session),
-                        scm_list_2 (channel, cmd));
+      guile_ssh_session_error1 (FUNC_NAME, session, scm_list_2 (channel, cmd));
     }
 
   return SCM_UNDEFINED;
@@ -79,12 +78,12 @@ SCM_DEFINE (guile_ssh_channel_request_pty, "channel-request-pty", 1, 0, 0,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_channel_request_pty
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
+  struct channel_data *data = _scm_to_channel_data (channel);
   int res = ssh_channel_request_pty (data->ssh_channel);
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1  (FUNC_NAME, session, channel);
     }
 
   return SCM_UNDEFINED;
@@ -97,12 +96,12 @@ SCM_DEFINE (guile_ssh_channel_request_shell, "channel-request-shell", 1, 0, 0,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_channel_request_shell
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
+  struct channel_data *data = _scm_to_channel_data (channel);
   int res = ssh_channel_request_shell (data->ssh_channel);
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
 
   return SCM_UNDEFINED;
@@ -117,7 +116,7 @@ SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
             "undefined.")
 #define FUNC_NAME s_guile_ssh_channel_request_env
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
+  struct channel_data *data = _scm_to_channel_data (channel);
   char *c_name;
   char *c_value;
   int res;
@@ -131,7 +130,7 @@ SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
 
   return SCM_UNDEFINED;
@@ -145,7 +144,7 @@ SCM_DEFINE (guile_ssh_channel_set_pty_size_x,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_channel_set_pty_size_x
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
+  struct channel_data *data = _scm_to_channel_data (channel);
 
   SCM_ASSERT (scm_is_unsigned_integer (col, 0, UINT32_MAX), col,
               SCM_ARG2, FUNC_NAME);
@@ -168,7 +167,7 @@ SCM_DEFINE (guile_ssh_channel_set_stream_x,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_channel_set_stream_x
 {
-  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  struct channel_data *cd = _scm_to_channel_data (channel);
   SCM_ASSERT (scm_is_symbol (stream_name), stream_name, SCM_ARG2, FUNC_NAME);
   if (scm_is_eq (stream_name, scm_from_locale_symbol ("stdout")))
     {
@@ -197,7 +196,7 @@ SCM_DEFINE (guile_ssh_channel_get_stream,
             "\"stderr\".")
 #define FUNC_NAME s_guile_ssh_channel_get_stream
 {
-  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  struct channel_data *cd = _scm_to_channel_data (channel);
   if (cd->is_stderr == 0)
     return scm_from_locale_symbol ("stdout");
   if (cd->is_stderr == 1)
@@ -215,7 +214,7 @@ SCM_DEFINE (guile_ssh_channel_is_open_p, "channel-open?", 1, 0, 0,
             (SCM channel),
             "Return #t if channel CHANNEL is open, #f otherwise.")
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
+  struct channel_data *data = _scm_to_channel_data (channel);
   int res = ssh_channel_is_open (data->ssh_channel);
   return scm_from_bool (res);
 }
@@ -224,7 +223,7 @@ SCM_DEFINE (guile_ssh_channel_is_eof_p, "channel-eof?", 1, 0, 0,
             (SCM channel),
             "Return #t if remote has set EOF, #f otherwise.")
 {
-  struct channel_data *data = _scm_to_ssh_channel (channel);
+  struct channel_data *data = _scm_to_channel_data (channel);
   int res = ssh_channel_is_eof (data->ssh_channel);
   return scm_from_bool (res);
 }

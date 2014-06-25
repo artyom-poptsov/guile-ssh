@@ -25,6 +25,7 @@
 #include "session-type.h"
 #include "channel-type.h"
 #include "error.h"
+#include "common.h"
 
 scm_t_bits channel_tag;         /* Smob tag. */
 
@@ -42,7 +43,7 @@ static int
 ptob_fill_input (SCM channel)
 #define FUNC_NAME "ptob_fill_input"
 {
-  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  struct channel_data *cd = _scm_to_channel_data (channel);
   scm_port *pt = SCM_PTAB_ENTRY (channel);
   int res;
 
@@ -81,12 +82,12 @@ static void
 ptob_write (SCM channel, const void *data, size_t sz)
 #define FUNC_NAME "ptob_write"
 {
-  struct channel_data *channel_data = _scm_to_ssh_channel (channel);
+  struct channel_data *channel_data = _scm_to_channel_data (channel);
   int res = ssh_channel_write (channel_data->ssh_channel, data, sz);
   if (res == SSH_ERROR)
     {
       ssh_session session = ssh_channel_get_session (channel_data->ssh_channel);
-      guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+      guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
 
   if (res < sz)
@@ -102,7 +103,7 @@ ptob_flush (SCM channel)
 #define FUNC_NAME "ptob_flush"
 {
   scm_port *pt = SCM_PTAB_ENTRY (channel);
-  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  struct channel_data *cd = _scm_to_channel_data (channel);
   size_t wrsize = pt->write_pos - pt->write_buf;
 
   if (wrsize)
@@ -111,7 +112,7 @@ ptob_flush (SCM channel)
       if (res == SSH_ERROR)
         {
           ssh_session session = ssh_channel_get_session (cd->ssh_channel);
-          guile_ssh_error1 (FUNC_NAME, ssh_get_error (session), channel);
+          guile_ssh_session_error1 (FUNC_NAME, session, channel);
         }
     }
 
@@ -125,7 +126,7 @@ static int
 ptob_input_waiting (SCM channel)
 #define FUNC_NAME "ptob_input_waiting"
 {
-  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  struct channel_data *cd = _scm_to_channel_data (channel);
   int res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
 
   if (res == SSH_ERROR)
@@ -140,7 +141,7 @@ static int
 ptob_close (SCM channel)
 {
   scm_port *pt = SCM_PTAB_ENTRY (channel);
-  struct channel_data *ch = _scm_to_ssh_channel (channel);
+  struct channel_data *ch = _scm_to_channel_data (channel);
 
   ptob_flush (channel);
 
@@ -176,18 +177,20 @@ free_channel (SCM channel_smob)
 static int
 print_channel (SCM channel, SCM port, scm_print_state *pstate)
 {
+  scm_puts ("#<", port);
   if (SCM_OPPORTP (channel))
     {
-      struct channel_data *ch = _scm_to_ssh_channel (channel);
+      struct channel_data *ch = _scm_to_channel_data (channel);
       int is_open = ssh_channel_is_open (ch->ssh_channel);
-      scm_puts ("#<", port);
       scm_puts (is_open ? "open" : "closed", port);
-      scm_puts (" ssh channel>", port);
+      scm_puts (" ssh channel ", port);
     }
   else
     {
-      scm_puts ("#<closed ssh channel>", port);
+      scm_puts ("closed ssh channel ", port);
     }
+  scm_display (_scm_object_hex_address (channel), port);
+  scm_puts (">", port);      
   return 1;
 }
 
@@ -234,7 +237,7 @@ SCM_DEFINE (guile_ssh_make_channel, "make-channel", 1, 0, 0,
             (SCM arg1),
             "Allocate a new SSH channel.")
 {
-  struct session_data *session_data = _scm_to_ssh_session (arg1);
+  struct session_data *session_data = _scm_to_session_data (arg1);
   ssh_channel ch = ssh_channel_new (session_data->ssh_session);
 
   if (! ch)
@@ -256,8 +259,8 @@ SCM_DEFINE (guile_ssh_is_channel_p, "channel?", 1, 0, 0,
 SCM
 equalp_channel (SCM x1, SCM x2)
 {
-  struct channel_data *channel1 = _scm_to_ssh_channel (x1);
-  struct channel_data *channel2 = _scm_to_ssh_channel (x2);
+  struct channel_data *channel1 = _scm_to_channel_data (x1);
+  struct channel_data *channel2 = _scm_to_channel_data (x2);
 
   if ((! channel1) || (! channel2))
     return SCM_BOOL_F;
@@ -272,7 +275,7 @@ equalp_channel (SCM x1, SCM x2)
 
 /* Convert X to a SSH channel */
 struct channel_data *
-_scm_to_ssh_channel (SCM x)
+_scm_to_channel_data (SCM x)
 {
   scm_assert_smob_type (channel_tag, x);
   return (struct channel_data *) SCM_STREAM (x);

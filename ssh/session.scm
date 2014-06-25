@@ -29,6 +29,7 @@
 ;;   make-session
 ;;   blocking-flush!
 ;;   session-set!
+;;   session-get
 ;;   get-protocol-version
 ;;   connect!
 ;;   disconnect!
@@ -49,6 +50,7 @@
             make-session
 	    blocking-flush!
             session-set!
+            session-get
             get-protocol-version
             connect!
             disconnect!

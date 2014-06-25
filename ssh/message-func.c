@@ -40,7 +40,7 @@ SCM_DEFINE (guile_ssh_message_reply_default,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_reply_default
 {
-  struct message_data *msg_data = _scm_to_ssh_message (msg);
+  struct message_data *msg_data = _scm_to_message_data (msg);
   int res = ssh_message_reply_default (msg_data->message);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
@@ -56,7 +56,7 @@ SCM_DEFINE (guile_ssh_message_service_reply_success,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_service_reply_success
 {
-  struct message_data *msg_data = _scm_to_ssh_message (msg);
+  struct message_data *msg_data = _scm_to_message_data (msg);
   int res = ssh_message_service_reply_success (msg_data->message);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
@@ -71,7 +71,7 @@ SCM_DEFINE (guile_ssh_message_auth_reply_success,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_auth_reply_success
 {
-  struct message_data *msg_data = _scm_to_ssh_message (msg);
+  struct message_data *msg_data = _scm_to_message_data (msg);
   int c_partial_p = scm_to_bool (partial_p);
   int res = ssh_message_auth_reply_success (msg_data->message, c_partial_p);
   if (res != SSH_OK)
@@ -90,7 +90,7 @@ SCM_DEFINE (guile_ssh_message_auth_reply_public_key_ok,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_auth_reply_public_key_ok
 {
-  struct message_data *msg_data = _scm_to_ssh_message (msg);
+  struct message_data *msg_data = _scm_to_message_data (msg);
   int res = ssh_message_auth_reply_pk_ok_simple (msg_data->message);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
@@ -105,7 +105,7 @@ SCM_DEFINE (guile_ssh_message_channel_request_reply_success,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_channel_request_reply_success
 {
-  struct message_data *msg_data = _scm_to_ssh_message (msg);
+  struct message_data *msg_data = _scm_to_message_data (msg);
   int res = ssh_message_channel_request_reply_success (msg_data->message);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
@@ -119,7 +119,7 @@ SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
             "Accept open-channel request.\n"
             "Return a new SSH channel.")
 {
-  struct message_data *msg_data = _scm_to_ssh_message (msg);
+  struct message_data *msg_data = _scm_to_message_data (msg);
   ssh_channel ch;
 
   ch = ssh_message_channel_request_open_reply_accept (msg_data->message);
@@ -231,7 +231,7 @@ SCM_DEFINE (guile_ssh_message_get_type,
             (SCM msg),
             "Get type of the message MSG.")
 {
-  struct message_data *message_data = _scm_to_ssh_message (msg);
+  struct message_data *message_data = _scm_to_message_data (msg);
   return _ssh_message_type_to_scm (message_data->message);
 }
 
@@ -377,7 +377,7 @@ SCM_DEFINE (guile_ssh_message_get_req,
             "Get a request object from the message MSG")
 #define FUNC_NAME s_guile_ssh_message_get_req
 {
-  struct message_data *message_data = _scm_to_ssh_message (msg);
+  struct message_data *message_data = _scm_to_message_data (msg);
   ssh_message ssh_msg = message_data->message;
   int type = ssh_message_type (ssh_msg);
 
@@ -447,7 +447,7 @@ SCM_DEFINE (guile_ssh_message_auth_set_methods_x,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_message_auth_set_methods_x
 {
-  struct message_data *message_data = _scm_to_ssh_message (msg);
+  struct message_data *message_data = _scm_to_message_data (msg);
   int methods = 0;
   int res;
 
