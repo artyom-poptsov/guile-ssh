@@ -42,6 +42,7 @@
 ;;; Code:
 
 (define-module (ssh version)
+  #:use-module (ssh log)
   #:export (get-libssh-version
             get-library-version))
 

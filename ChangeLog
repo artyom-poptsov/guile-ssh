@@ -1,3 +1,18 @@
+2014-06-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-logging.texi: Add to the repository.
+	* doc/guile-ssh.texi (API Reference): Add description of logging API.
+	* doc/version.texi: Update.
+	* doc/Makefile.am (guile_ssh_TEXINFOS): Add `api-logging.texi'.
+	* ssh/log.c, ssh/log.h, ssh/log.scm: Add to the repository.
+	* ssh/Makefile.am (libguile_ssh_la_SOURCES, BUILT_SOURCES)
+	(SCM_SOURCES): Update.
+	* ssh/auth.scm, ssh/channel.scm, ssh/key.scm, ssh/message.scm,
+	ssh/server.scm, ssh/session.scm, ssh/version.scm: Use (ssh log).
+	* tests/log.scm: New TS.
+	* tests/Makefile.am (SCM_TESTS): Add `log.scm'.
+	* NEWS: Update.
+
 2014-06-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/error.c (guile_ssh_session_error1): New procedure.
