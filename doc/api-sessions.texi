@@ -230,8 +230,8 @@ with this procedure.  Here is the list of allowed options:
 @end deffn
 
 @deffn {Scheme Procedure} connect! session
-Connect @var{session} to a SSH server.  Return one of the following
-symbols: @code{ok}, @code{again}.
+Connect @var{session} to a SSH server.  Return one of the following symbols:
+@code{ok}, @code{again}, @code{error}.
 @end deffn
 
 @deffn {Scheme Procedure} disconnect! session
@@ -257,6 +257,8 @@ The server is unknown. User should confirm the MD5 is correct.
 @item file-not-found
 The known host file does not exist. The host is thus unknown. File
 will be created if host key is accepted.
+@item error
+An error occured.
 @end table
 
 @end deffn

@@ -1,3 +1,12 @@
+2014-06-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/session-func.c (guile_ssh_blocking_flush): Return `error' symbol
+	on error.  Assert that the result of libssh procedure is one of the
+	valid constants described in `libssh.h'.
+	(guile_ssh_connect_x, guile_ssh_authenticate_server): Likewise.
+	* doc/api-sessions.texi (Sessions): Update.
+	* NEWS: Update.
+
 2014-06-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/error.c (guile_ssh_session_error1): New procedure.
