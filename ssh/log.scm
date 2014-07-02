@@ -23,7 +23,8 @@
             current-logging-callback
             set-logging-callback!
             set-log-userdata!
-            get-log-userdata))
+            get-log-userdata
+            format-log))
 
 
 (define (%default-log-printer priority function message userdata)
@@ -31,6 +32,16 @@
 which comments out log messages with \";;; \""
   (display ";;; " (current-error-port))
   (%default-libssh-log-printer priority function message userdata))
+
+(define (format-log priority procedure-name format-string . args)
+  "Write a formatted message to the libssh log with the given PRIORITY.
+
+Priority is expected to be one of the following symbols: 'nolog, 'rare,
+'protocol, 'packet, 'functions
+
+Return value is undefined."
+  (let ((message (apply format #f format-string args)))
+    (%write-log priority procedure-name message)))
 
 (load-extension "libguile-ssh" "init_log_func")
 

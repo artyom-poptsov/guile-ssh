@@ -25,6 +25,7 @@
 #include <time.h>
 
 #include "error.h"
+#include "common.h"
 
 /* Whether the default calback was set or not. */
 static int is_logging_callback_set = 0;
@@ -154,6 +155,37 @@ SCM_DEFINE (guile_ssh_get_log_userdata,
   void *data = (void *) ssh_get_log_userdata ();
   return data ? (SCM) data : SCM_BOOL_F;
 }
+
+
+SCM_DEFINE (guile_ssh_write_log,
+            "%write-log", 3, 0, 0,
+            (SCM priority, SCM function_name, SCM message),
+            "\
+Write a MESSAGE to the libssh log with the given PRIORITY.  Return value is \
+undefined. \
+")
+#define FUNC_NAME s_guile_ssh_write_log
+{
+  struct symbol_mapping *c_priority;
+  char *c_function_name;
+  char *c_message;
+
+  SCM_ASSERT (scm_symbol_p (priority),      priority,      SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (scm_string_p (function_name), function_name, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_string_p (message),       message,       SCM_ARG3, FUNC_NAME);
+
+  c_priority = _scm_to_ssh_const (log_verbosity, priority);
+  if (! c_priority)
+    guile_ssh_error1 (FUNC_NAME, "Wrong priority level", priority);
+
+  c_function_name = scm_to_locale_string (function_name);
+  c_message       = scm_to_locale_string (message);
+
+  _ssh_log (c_priority->value, c_function_name, c_message);
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
 
 
 /* Initialization */

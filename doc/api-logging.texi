@@ -70,6 +70,29 @@ By default the user data is set to @code{#f}.
 Get the current user data.
 @end deffn
 
+@deffn {Scheme Procedure} format-log priority procedure-name format-string arg ...
+Write a formatted message to the libssh log with the given @var{priority}.
+Return value is undefined.
+
+Syntax for the @var{format-string} is the same as for @code{format} procedure.
+
+@var{priority} is expected to be a symbol.  Acceptable priority levels are:
+
+@table @samp
+@item nolog
+The message will be printed even if the logging is disabled
+@item rare
+Rare and noteworthy events
+@item protocol
+High level protocol information
+@item packet
+Lower level protocol infomations, packet level
+@item functions
+Function path
+@end table
+
+@end deffn
+
 @c Local Variables:
 @c TeX-master: "guile-ssh.texi"
 @c End:
