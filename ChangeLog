@@ -1,5 +1,7 @@
 2014-07-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README (Distribution): Add information about `log.scm'.
+
 	* ssh/log.c (guile_ssh_default_libssh_log_printer): Don't print the
 	function name because it is already included in the message passed to
 	the callback.
