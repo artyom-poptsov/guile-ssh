@@ -1,0 +1,98 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2014 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Logging
+@section Logging
+
+@cindex logging
+
+The @code{(ssh log)} module provides procedures to control the libssh logging
+facilities.
+
+@deffn {Scheme Procedure} %default-log-printer priority function message userdata
+Default callback for printing log messages to the current error port.  The
+procedure comments out log messages with ``;;; `` to make it easier to
+distinguish libssh traces from Guile-SSH messages in REPL mode.
+
+This callback is set by default.
+@end deffn
+
+@deffn {Scheme Procedure} %default-libssh-log-printer priority function message userdata
+The procedure makes log messages in the same format as the libssh default log
+formatter.
+@end deffn
+
+@deffn {Scheme Procedure} current-logging-callback
+Return the current logging callback.  Returns a procedure or @code{#f} if the
+callback is not set.
+@end deffn
+
+@deffn {Scheme Procedure} set-logging-callback! callback
+Change the current logging callback to @var{callback}.  The @var{callback}
+must be a procedure that takes four arguments: priority of a log message, a
+function name, the message and a custom user data.
+
+Throw @code{guile-ssh-error} on an error.  Return value is undefined.
+
+Here is an example of a custom callback which indents each log message
+according to its priority:
+
+@lisp
+(define (pretty-log-printer priority function message userdata)
+  (do ((i 1 (1+ i)))
+      ((> i priority))
+    (display "  " (current-error-port)))
+  (format (current-error-port) "[~a] ~a~%"
+          (strftime "%Y-%m-%dT%H:%M:%S%z" (localtime (current-time)))
+          message))
+
+(set-logging-callback! pretty-log-printer)
+@end lisp
+
+You can restore the default callback as the follows:
+
+@lisp
+(set-logging-callback! %default-log-printer)
+@end lisp
+
+@end deffn
+
+@deffn {Scheme Procedure} set-log-userdata! user-data
+Set an arbitrary @var{user-data} to be passed to a logging callback.
+Throw @code{guile-ssh-error} on an error.  Return value is undefined.
+
+By default the user data is set to @code{#f}.
+@end deffn
+
+@deffn {Scheme Procedure} get-log-userdata
+Get the current user data.
+@end deffn
+
+@deffn {Scheme Procedure} format-log priority procedure-name format-string arg ...
+Write a formatted message to the libssh log with the given @var{priority}.
+Return value is undefined.
+
+Syntax for the @var{format-string} is the same as for @code{format} procedure.
+
+@var{priority} is expected to be a symbol.  Acceptable priority levels are:
+
+@table @samp
+@item nolog
+The message will be printed even if the logging is disabled
+@item rare
+Rare and noteworthy events
+@item protocol
+High level protocol information
+@item packet
+Lower level protocol infomations, packet level
+@item functions
+Function path
+@end table
+
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:

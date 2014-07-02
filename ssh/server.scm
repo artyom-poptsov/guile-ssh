@@ -38,6 +38,7 @@
 
 (define-module (ssh server)
   #:use-module (ice-9 optargs)
+  #:use-module (ssh log)
   #:export (server
             server?
 	    %make-server

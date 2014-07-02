@@ -35,6 +35,7 @@
 ;;; Code:
 
 (define-module (ssh message)
+  #:use-module (ssh log)
   #:use-module (ssh key)
   #:export (message
             message?

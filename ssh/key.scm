@@ -40,6 +40,7 @@
 (define-module (ssh key)
   #:use-module (ice-9 format)
   #:use-module (rnrs bytevectors)
+  #:use-module (ssh log)
   #:export (key
             key?
             public-key?
