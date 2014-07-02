@@ -1,3 +1,54 @@
+2014-07-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/client-server.scm: Improve logging: Redirect stderr to
+	`client-server-errors.log' file.  Redirect libssh log messages to
+	`client-server-libssh.log' file.  Set more verbose log level for
+	sessions.  Use `test-assert-with-log' macro instead of `test-assert'.
+	(libssh-log-printer): New procedure.
+	(test-assert-with-log): New macro.
+	* tests/Makefile.am (CLEANFILES): Add log files.
+	* .dir-locals.el: Update.
+
+	* ssh/log.c (guile_ssh_write_log): Fix a warning: Pass the message as
+	a argument to the formatter.
+
+2014-07-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* README (Distribution): Add information about `log.scm'.
+
+	* ssh/log.c (guile_ssh_default_libssh_log_printer): Don't print the
+	function name because it is already included in the message passed to
+	the callback.
+
+	* ssh/log.scm (format-log): New procedure.
+	* ssh/log.c: Add copyright information.
+	(guile_ssh_write_log): New procedure.
+	* doc/api-logging.texi (Logging): Add information about `format-log'
+	procedure.
+
+2014-06-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/session-func.c (guile_ssh_blocking_flush): Return `error' symbol
+	on error.  Assert that the result of libssh procedure is one of the
+	valid constants described in `libssh.h'.
+	(guile_ssh_connect_x, guile_ssh_authenticate_server): Likewise.
+	* doc/api-sessions.texi (Sessions): Update.
+
+2014-06-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-logging.texi: Add to the repository.
+	* doc/guile-ssh.texi (API Reference): Add description of logging API.
+	* doc/version.texi: Update.
+	* doc/Makefile.am (guile_ssh_TEXINFOS): Add `api-logging.texi'.
+	* ssh/log.c, ssh/log.h, ssh/log.scm: Add to the repository.
+	* ssh/Makefile.am (libguile_ssh_la_SOURCES, BUILT_SOURCES)
+	(SCM_SOURCES): Update.
+	* ssh/auth.scm, ssh/channel.scm, ssh/key.scm, ssh/message.scm,
+	ssh/server.scm, ssh/session.scm, ssh/version.scm: Use (ssh log).
+	* tests/log.scm: New TS.
+	* tests/Makefile.am (SCM_TESTS): Add `log.scm'.
+	* NEWS: Update.
+
 2014-06-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/error.c (guile_ssh_session_error1): New procedure.

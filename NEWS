@@ -17,7 +17,14 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Change `userauth-pubkey!'
 *** Rename it to `userauth-public-key!'
 *** Change arguments
+** `blocking-flush!' now returns `error' symbol on error
+   instead of throwing of an exception
+** `connect!' now returns `error' symbol on error
+   instead of throwing of an exception
+** `authenticate-server' now returns `error' symbol on error
+   instead of throwing of an exception
 ** `private-key-from-file' now takes only a file name
+** New (ssh log) module
 ** Rename `userauth-pubkey-auto!' to `userauth-public-key/auto!'
 ** New `userauth-public-key/try' procedure in (ssh auth)
 ** New `bytevector->hex-string' procedure in (ssh key)

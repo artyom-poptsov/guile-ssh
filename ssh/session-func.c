@@ -62,7 +62,11 @@ static struct symbol_mapping session_options[] = {
 
 /* Blocking flush of the outgoing buffer.
 
-   Return on of the following symbols: 'ok, 'error. 'again. */
+   Return on of the following symbols: 'ok, 'error. 'again. 
+
+   Asserts:
+   - Return value of `ssh_blocking_flush' is one of the valid constants
+     described in libssh.h */
 SCM_DEFINE (guile_ssh_blocking_flush, "blocking-flush!", 2, 0, 0,
             (SCM session_smob, SCM timeout),
             "Blocking flush of the outgoing buffer.\n"
@@ -89,8 +93,11 @@ SCM_DEFINE (guile_ssh_blocking_flush, "blocking-flush!", 2, 0, 0,
       return scm_from_locale_symbol ("again");
 
     case SSH_ERROR:
-    default:
       return scm_from_locale_symbol ("error");
+
+    default:                    /* Must not happen. */
+      assert (0);
+      return SCM_BOOL_F;
     }
 }
 #undef FUNC_NAME
@@ -305,11 +312,15 @@ SCM_DEFINE (guile_ssh_session_get, "session-get", 2, 0, 0,
 
 /* Connect to the SSH server. 
 
-   Return one of the following symbols: 'ok, 'again */
+   Return one of the following symbols: 'ok, 'again, 'error 
+
+   Asserts:
+   - Return value of `ssh_connect' is one of the valid constants described in
+     libssh.h */
 SCM_DEFINE (guile_ssh_connect_x, "connect!", 1, 0, 0,
             (SCM session),
             "Connect to the SSH server.\n"
-            "Return one of the following symbols: 'ok, 'again")
+            "Return one of the following symbols: 'ok, 'again, 'error")
 #define FUNC_NAME s_guile_ssh_connect_x
 {
   struct session_data* data = _scm_to_session_data (session);
@@ -323,9 +334,11 @@ SCM_DEFINE (guile_ssh_connect_x, "connect!", 1, 0, 0,
       return scm_from_locale_symbol ("again");
 
     case SSH_ERROR:
-    default:
-      guile_ssh_session_error1 (FUNC_NAME, data->ssh_session, session);
-      return SCM_BOOL_F;        /* Not reached. */
+      return scm_from_locale_symbol ("error");
+
+    default:                    /* Must not happen */
+      assert (0);
+      return SCM_BOOL_F;
     }
 }
 #undef FUNC_NAME
@@ -375,12 +388,16 @@ SCM_DEFINE (guile_ssh_get_error, "get-error", 1, 0, 1,
 /* Authenticate the server.  
 
    Return one of the following symbols: 'ok, 'known-changed,
-   'found-other, 'not-known, 'file-not-found */
+   'found-other, 'not-known, 'file-not-found, 'error
+
+   Asserts:
+   - Return value of `ssh_is_server_known' is one of the valid constants
+     described in libssh.h */
 SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
             (SCM session),
             "Authenticate the server.\n"
             "Return one of the following symbols: 'ok, 'known-changed,\n"
-            "'found-other, 'not-known, 'file-not-found")
+            "'found-other, 'not-known, 'file-not-found, 'error")
 #define FUNC_NAME s_guile_ssh_authenticate_server
 {
   struct session_data* data = _scm_to_session_data (session);
@@ -404,9 +421,11 @@ SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
       return scm_from_locale_symbol ("file-not-found");
 
     case SSH_SERVER_ERROR:
-    default:
-      guile_ssh_session_error1 (FUNC_NAME, data->ssh_session, session);
-      return SCM_BOOL_F;        /* Not reached. */
+      return scm_from_locale_symbol ("error");
+
+    default:                    /* Must not happen. */
+      assert (0);
+      return SCM_BOOL_F;
     }
 }
 #undef FUNC_NAME

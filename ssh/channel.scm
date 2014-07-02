@@ -43,6 +43,7 @@
 ;;; Code:
 
 (define-module (ssh channel)
+  #:use-module (ssh log)
   #:use-module (ssh session)
   #:export (channel
             channel?

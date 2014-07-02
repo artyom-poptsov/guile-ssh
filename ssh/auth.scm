@@ -36,6 +36,7 @@
 ;;; Code:
 
 (define-module (ssh auth)
+  #:use-module (ssh log)
   #:use-module (ssh session)
   #:export (userauth-public-key!
             userauth-public-key/auto!
