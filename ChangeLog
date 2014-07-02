@@ -1,5 +1,9 @@
 2014-07-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/log.c (guile_ssh_default_libssh_log_printer): Don't print the
+	function name because it is already included in the message passed to
+	the callback.
+
 	* ssh/log.scm (format-log): New procedure.
 	* ssh/log.c: Add copyright information.
 	(guile_ssh_write_log): New procedure.

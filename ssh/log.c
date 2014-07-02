@@ -89,8 +89,6 @@ SCM_DEFINE (guile_ssh_default_libssh_log_printer,
 
   scm_display (priority, scm_current_error_port ());
   scm_puts ("] ", scm_current_error_port ());
-  scm_display (function_name, scm_current_error_port ());
-  scm_puts (": ", scm_current_error_port ());
   scm_display (message, scm_current_error_port ());
 
   scm_newline (scm_current_error_port ());
