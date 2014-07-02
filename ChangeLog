@@ -1,3 +1,8 @@
+2014-07-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/log.c (guile_ssh_write_log): Fix a warning: Pass the message as
+	a argument to the formatter.
+
 2014-07-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* README (Distribution): Add information about `log.scm'.

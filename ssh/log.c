@@ -179,7 +179,7 @@ undefined. \
   c_function_name = scm_to_locale_string (function_name);
   c_message       = scm_to_locale_string (message);
 
-  _ssh_log (c_priority->value, c_function_name, c_message);
+  _ssh_log (c_priority->value, c_function_name, "%s", c_message);
 
   return SCM_UNDEFINED;
 }
