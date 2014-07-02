@@ -55,3 +55,7 @@ EXTRA_DIST = \
 	ecdsakey.pub		\
 	rsakey			\
 	rsakey.pub
+
+CLEANFILES = \
+	client-server-errors.log		\
+	client-server-libssh.log

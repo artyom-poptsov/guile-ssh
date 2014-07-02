@@ -1,5 +1,14 @@
 2014-07-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm: Improve logging: Redirect stderr to
+	`client-server-errors.log' file.  Redirect libssh log messages to
+	`client-server-libssh.log' file.  Set more verbose log level for
+	sessions.  Use `test-assert-with-log' macro instead of `test-assert'.
+	(libssh-log-printer): New procedure.
+	(test-assert-with-log): New macro.
+	* tests/Makefile.am (CLEANFILES): Add log files.
+	* .dir-locals.el: Update.
+
 	* ssh/log.c (guile_ssh_write_log): Fix a warning: Pass the message as
 	a argument to the formatter.
 

@@ -27,6 +27,7 @@
              (ssh message)
              (ssh key)
              (ssh channel)
+             (ssh log)
              (srfi srfi-4))
 
 (test-begin "client-server")
@@ -42,6 +43,25 @@
 (define log    (test-runner-aux-value (test-runner-current)))
 (define *server-thread* #f)
 
+(define %libssh-log-file "client-server-libssh.log")
+(define %error-log-file  "client-server-errors.log")
+
+(set-current-error-port (open-output-file %error-log-file))
+
+
+;;; Logging callback
+
+(define libssh-log-printer
+  (let ((p (open-output-file %libssh-log-file)))
+    (lambda (priority function message userdata)
+      (format p "[~a, \"~a\", ~a]: ~a~%"
+              (strftime "%Y-%m-%dT%H:%M:%S%z" (localtime (current-time)))
+              userdata
+              priority
+              message))))
+
+(set-logging-callback! libssh-log-printer)
+
 
 ;;; Helper procedures and macros
 
@@ -53,7 +73,7 @@
    #:timeout 10        ;seconds
    #:user    "bob"
    #:knownhosts %knownhosts
-   #:log-verbosity 'nolog))
+   #:log-verbosity 'rare))
 
 (define (make-server-for-test)
   "Make a server with predefined parameters for a test."
@@ -93,6 +113,16 @@
      (session-loop (server-message-get ,session))))
 
 
+;; Pass the test case NAME as the userdata to the libssh log
+(define-syntax test-assert-with-log
+  (syntax-rules ()
+    ((_ name body ...)
+     (test-assert name
+       (begin
+         (set-log-userdata! name)
+         body ...)))))
+
+
 ;;; Testing of basic procedures.
 
 
@@ -109,21 +139,21 @@
        (sleep 1)
        (session? s)))))
 
-(test-assert "connect!, disconnect!"
+(test-assert-with-log "connect!, disconnect!"
   (let ((session (make-session-for-test)))
     (connect! session)
     (let ((res (connected? session)))
       (disconnect! session)
       res)))
 
-(test-assert "authenticate-server, not-known"
+(test-assert-with-log "authenticate-server, not-known"
   (let ((session (make-session-for-test)))
     (connect! session)
     (let ((res (authenticate-server session)))
       (disconnect! session)
       (eq? res 'not-known))))
 
-(test-assert "authenticate-server, ok"
+(test-assert-with-log "authenticate-server, ok"
   (let ((session (make-session-for-test)))
     (connect! session)
     (write-known-host! session)
@@ -132,7 +162,7 @@
       (delete-file %knownhosts)
       (eq? res 'ok))))
 
-(test-assert "get-protocol-version"
+(test-assert-with-log "get-protocol-version"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
@@ -140,7 +170,7 @@
       (disconnect! session)
       res)))
 
-(test-assert "get-public-key-hash"
+(test-assert-with-log "get-public-key-hash"
   (let ((hash-md5-bv   #vu8(15 142 110 203 162 228 250 211 20 212 26 217 118 57 217 66))
         (hash-md5-str  "0f:8e:6e:cb:a2:e4:fa:d3:14:d4:1a:d9:76:39:d9:42")
         (hash-sha1-bv  #vu8(20 65 56 155 119 45 84 163 50 26 59 92 215 159 139 5 229 174 84 80))
@@ -173,7 +203,7 @@
          (message-auth-set-methods! msg '(none))
          (message-reply-success msg))))))
 
-(test-assert "userauth-none!, success"
+(test-assert-with-log "userauth-none!, success"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
@@ -195,7 +225,7 @@
          (message-auth-set-methods! msg '(public-key))
          (message-reply-default msg))))))
 
-(test-assert "userauth-none!, denied"
+(test-assert-with-log "userauth-none!, denied"
   (let ((session (make-session-for-test)))
     (sleep 2)
     (connect! session)
@@ -218,7 +248,7 @@
          (message-auth-set-methods! msg '(none))
          (message-reply-success msg 'partial))))))
 
-(test-assert "userauth-none!, partial"
+(test-assert-with-log "userauth-none!, partial"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
@@ -239,7 +269,7 @@
          (message-auth-set-methods! msg '(password))
          (message-reply-success msg))))))
 
-(test-assert "userauth-password!, success"
+(test-assert-with-log "userauth-password!, success"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
@@ -260,7 +290,7 @@
          (message-auth-set-methods! msg '(password))
          (message-reply-default msg))))))
 
-(test-assert "userauth-password!, denied"
+(test-assert-with-log "userauth-password!, denied"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
@@ -281,7 +311,7 @@
          (message-auth-set-methods! msg '(password))
          (message-reply-success msg 'partial))))))
 
-(test-assert "userauth-password!, partial"
+(test-assert-with-log "userauth-password!, partial"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
@@ -301,7 +331,7 @@
        (make-session-loop session
          (message-reply-success msg))))))
 
-(test-assert "userauth-public-key!, success"
+(test-assert-with-log "userauth-public-key!, success"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
@@ -325,7 +355,7 @@
          (message-auth-set-methods! msg '(password public-key))
          (message-reply-default msg))))))
 
-(test-assert "userauth-get-list"
+(test-assert-with-log "userauth-get-list"
   (let ((session (make-session-for-test)))
     (connect! session)
     (authenticate-server session)
@@ -374,12 +404,12 @@
     (set! channel (make-channel session))
     channel))
 
-(test-assert "channel-open-session"
+(test-assert-with-log "channel-open-session"
   (begin
     (channel-open-session channel)
     (not (port-closed? channel))))
 
-(test-assert "channel-request-exec"
+(test-assert-with-log "channel-request-exec"
   (begin
     (channel-request-exec channel "hello")
     (let ((res (read-line channel)))
@@ -438,7 +468,7 @@ takes RWPROC procedure that handles I/O operation."
    (let ((str (read-line channel)))
      (write-line str channel))))
 
-(test-assert "data transferring, string"
+(test-assert-with-log "data transferring, string"
   (let* ((session (make-session-for-dt-test))
          (channel (make-channel-for-dt-test session))
          (str "Hello Scheme World!"))
@@ -462,7 +492,7 @@ takes RWPROC procedure that handles I/O operation."
      (uniform-array-read! v channel)
      (uniform-array-write v channel))))
 
-(test-assert "data transferring, bytevector"
+(test-assert-with-log "data transferring, bytevector"
   (let* ((session (make-session-for-dt-test))
          (channel (make-channel-for-dt-test session))
          (vect (make-u8vector *vect-size* *vect-fill*)))
