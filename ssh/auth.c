@@ -70,7 +70,9 @@ ssh_auth_result_to_symbol (const int res)
 SCM_DEFINE (guile_ssh_userauth_public_key_x, "userauth-public-key!", 2, 0, 0,
             (SCM session_smob,
              SCM private_key_smob),
-            "Try to authenticate with a public key.")
+            "\
+Try to authenticate with a public key.\
+")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_x
 {
   struct session_data *session_data = _scm_to_session_data (session_smob);
@@ -96,12 +98,12 @@ SCM_DEFINE (guile_ssh_userauth_public_key_x, "userauth-public-key!", 2, 0, 0,
 SCM_DEFINE (guile_ssh_userauth_public_key_auto_x,
             "userauth-public-key/auto!", 1, 0, 0,
             (SCM session),
-            "Try to automatically authenticate with \"none\" method first and "
-            "then with public keys.  If the key is encrypted the user "
-            "will be asked for a passphrase."
-            "\n"
-            "Return one of the following symbols: error, denied, partial, "
-            "success.")
+            "\
+Try to automatically authenticate with \"none\" method first and then with \n\
+public keys.  If the key is encrypted the user will be asked for a \n\
+passphrase.  Return one of the following symbols: error, denied, partial, \n\
+success.\
+")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_auto_x
 {
   struct session_data *sd = _scm_to_session_data (session);
@@ -151,7 +153,9 @@ SCM_DEFINE (guile_ssh_userauth_agent_x,
 /* Try to authenticate by password. */
 SCM_DEFINE (guile_ssh_userauth_password_x, "userauth-password!", 2, 0, 0,
             (SCM session, SCM password),
-            "Try to authenticate by password.")
+            "\
+Try to authenticate by password.\
+")
 #define FUNC_NAME s_guile_ssh_userauth_password_x
 {
   struct session_data* session_data = _scm_to_session_data (session);
@@ -187,7 +191,9 @@ SCM_DEFINE (guile_ssh_userauth_password_x, "userauth-password!", 2, 0, 0,
    'partial, 'again */
 SCM_DEFINE (guile_ssh_userauth_none_x, "userauth-none!", 1, 0, 0,
             (SCM arg1),
-            "Try to authenticate through the \"none\" method.")
+            "\
+Try to authenticate through the \"none\" method.\
+")
 {
   struct session_data *session_data = _scm_to_session_data (arg1);
   /* username is deprecated parameter.  Should be set to NULL. */
@@ -201,7 +207,9 @@ SCM_DEFINE (guile_ssh_userauth_none_x, "userauth-none!", 1, 0, 0,
    Return list of available methods. */
 SCM_DEFINE (guile_ssh_userauth_get_list, "userauth-get-list", 1, 0, 0,
             (SCM session),
-            "Get available authentication methods for a session SESSION.")
+            "\
+Get available authentication methods for a session SESSION.\
+")
 {
   struct session_data *session_data = _scm_to_session_data (session);
   SCM auth_list = SCM_EOL;

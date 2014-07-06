@@ -35,9 +35,12 @@
 SCM_DEFINE (guile_ssh_message_reply_default,
             "message-reply-default", 1, 0, 0,
             (SCM msg),
-            "Reduced version of the reply default that only reply with "
-            "SSH_MSG_UNIMPLEMENTED.\n"
-            "Return value is undefined.")
+            "\
+Reduced version of the reply default that only reply with \
+SSH_MSG_UNIMPLEMENTED.\n\
+\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_message_reply_default
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
@@ -51,9 +54,10 @@ SCM_DEFINE (guile_ssh_message_reply_default,
 SCM_DEFINE (guile_ssh_message_service_reply_success,
             "message-service-reply-success", 1, 0, 0,
             (SCM msg),
-            "Reply with \"success\" status on the service-request "
-            "message MSG.\n"
-            "Return value is undefined.")
+            "\
+Reply with \"success\" status on the service-request message MSG.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_message_service_reply_success
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
@@ -67,8 +71,10 @@ SCM_DEFINE (guile_ssh_message_service_reply_success,
 SCM_DEFINE (guile_ssh_message_auth_reply_success,
             "message-auth-reply-success", 2, 0, 0,
             (SCM msg, SCM partial_p),
-            "Reply with \"success\" on the auth-request message MSG.\n"
-            "Return value is undefined.")
+            "\
+Reply with \"success\" on the auth-request message MSG.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_message_auth_reply_success
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
@@ -86,8 +92,10 @@ SCM_DEFINE (guile_ssh_message_auth_reply_success,
 SCM_DEFINE (guile_ssh_message_auth_reply_public_key_ok,
             "message-auth-reply-public-key-ok", 1, 0, 0,
             (SCM msg),
-            "Reply OK on the public key auth-request message MSG.\n"
-            "Return value is undefined.")
+            "\
+Reply OK on the public key auth-request message MSG.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_message_auth_reply_public_key_ok
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
@@ -101,8 +109,10 @@ SCM_DEFINE (guile_ssh_message_auth_reply_public_key_ok,
 SCM_DEFINE (guile_ssh_message_channel_request_reply_success,
             "message-channel-request-reply-success", 1, 0, 0,
             (SCM msg),
-            "TODO: Add description.\n"
-            "Return value is undefined.")
+            "\
+TODO: Add description.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_message_channel_request_reply_success
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
@@ -116,8 +126,10 @@ SCM_DEFINE (guile_ssh_message_channel_request_reply_success,
 SCM_DEFINE (guile_ssh_message_channel_request_open_reply_accept,
             "message-channel-request-open-reply-accept", 1, 0, 0,
             (SCM msg),
-            "Accept open-channel request.\n"
-            "Return a new SSH channel.")
+            "\
+Accept open-channel request.\n\
+Return a new SSH channel.\
+")
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
   ssh_channel ch;
@@ -229,7 +241,9 @@ _ssh_message_type_to_scm (ssh_message msg)
 SCM_DEFINE (guile_ssh_message_get_type,
             "message-get-type", 1, 0, 0,
             (SCM msg),
-            "Get type of the message MSG.")
+            "\
+Get type of the message MSG.\
+")
 {
   struct message_data *message_data = _scm_to_message_data (msg);
   return _ssh_message_type_to_scm (message_data->message);
@@ -377,7 +391,9 @@ get_channel_open_req (ssh_message msg)
 SCM_DEFINE (guile_ssh_message_get_req,
             "message-get-req", 1, 0, 0,
             (SCM msg),
-            "Get a request object from the message MSG")
+            "\
+Get a request object from the message MSG\
+")
 #define FUNC_NAME s_guile_ssh_message_get_req
 {
   struct message_data *message_data = _scm_to_message_data (msg);
@@ -446,8 +462,10 @@ _scm_member_p (SCM elem, SCM lst)
 SCM_DEFINE (guile_ssh_message_auth_set_methods_x,
             "message-auth-set-methods!", 2, 0, 0,
             (SCM msg, SCM methods_list),
-            "Set authentication methods.\n"
-            "Return value is undefined.")
+            "\
+Set authentication methods.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_message_auth_set_methods_x
 {
   struct message_data *message_data = _scm_to_message_data (msg);

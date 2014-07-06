@@ -80,7 +80,9 @@ equalp_message (SCM x1, SCM x2)
 SCM_DEFINE (guile_ssh_is_message_p,
             "message?", 1, 0, 0,
             (SCM x),
-            "Return #t if X a SSH message, #f otherwise.")
+            "\
+Return #t if X a SSH message, #f otherwise.\
+")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (message_tag, x));
 }

@@ -27,7 +27,9 @@
 /* Convert SSH public key KEY to a scheme string. */
 SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
             (SCM key),
-            "Convert SSH public key to a scheme string.")
+            "\
+Convert SSH public key to a scheme string.\
+")
 #define FUNC_NAME s_guile_ssh_public_key_to_string
 {
   struct key_data *key_data = _scm_to_key_data (key);
@@ -45,8 +47,10 @@ SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
 
 SCM_DEFINE (guile_ssh_string_to_public_key, "string->public-key", 2, 0, 0,
             (SCM base64_str, SCM type),
-            "Convert Base64 string to a public key.  Return new public key.\n"
-            "Throw `guile-ssh-error' on error.")
+            "\
+Convert Base64 string to a public key.  Return new public key.\n\
+Throw `guile-ssh-error' on error.\
+")
 #define FUNC_NAME s_guile_ssh_string_to_public_key
 {
   struct key_data *kd = NULL;
@@ -86,11 +90,12 @@ SCM_DEFINE (guile_ssh_string_to_public_key, "string->public-key", 2, 0, 0,
 
 SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 1, 0, 0,
             (SCM filename),
-            "Read private key from a file FILENAME.  If the the key is "
-            "encrypted the user will be asked for passphrase to decrypt "
-            "the key.\n"
-            "\n"
-            "Return a new SSH key of #f on error.")
+            "\
+Read private key from a file FILENAME.  If the the key isn encrypted the user\n\
+will be asked for passphrase to decrypt the key.\n\
+\n\
+Return a new SSH key of #f on error.\
+")
 #define FUNC_NAME s_guile_ssh_private_key_from_file
 {
   SCM key_smob;
@@ -138,11 +143,12 @@ SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 1, 0, 0,
 }
 #undef FUNC_NAME
 
-/* Get public key from a private key KEY */
 SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
             1, 0, 0,
             (SCM key),
-            "Get public key from a private key KEY")
+            "\
+Get public key from a private key KEY.\
+")
 #define FUNC_NAME s_guile_ssh_public_key_from_private_key
 {
   struct key_data *private_key_data = _scm_to_key_data (key);
@@ -175,7 +181,9 @@ SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
  */
 SCM_DEFINE (guile_ssh_public_key_from_file, "public-key-from-file", 1, 0, 0,
             (SCM filename),
-            "Read public key from a file FILENAME.  Return a SSH key.")
+            "\
+Read public key from a file FILENAME.  Return a SSH key.\
+")
 #define FUNC_NAME s_guile_ssh_public_key_from_file
 {
   struct key_data *public_key_data;
@@ -227,9 +235,11 @@ static struct symbol_mapping hash_types[] = {
 
 SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 2, 0, 0,
             (SCM key, SCM type),
-            "Get hash of the public KEY as a bytevector.\n"
-            "Possible types are: 'sha1, 'md5\n"
-            "Return a bytevector on success, #f on error.")
+            "\
+Get hash of the public KEY as a bytevector.\n\
+Possible types are: 'sha1, 'md5\n\
+Return a bytevector on success, #f on error.\
+")
 #define FUNC_NAME s_guile_ssh_get_public_key_hash
 {
   struct key_data *kd = _scm_to_key_data (key);

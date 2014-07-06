@@ -159,7 +159,7 @@ SCM_DEFINE (guile_ssh_write_log,
             "%write-log", 3, 0, 0,
             (SCM priority, SCM function_name, SCM message),
             "\
-Write a MESSAGE to the libssh log with the given PRIORITY.  Return value is \
+Write a MESSAGE to the libssh log with the given PRIORITY.  Return value is \n\
 undefined. \
 ")
 #define FUNC_NAME s_guile_ssh_write_log

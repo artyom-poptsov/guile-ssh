@@ -29,8 +29,10 @@
 
 SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
             (SCM channel),
-            "Open a new session and mark the channel CHANNEL as opened port.\n"
-            "Return value is undefined.")
+            "\
+Open a new session and mark the channel CHANNEL as opened port.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_channel_open_session
 {
   struct channel_data *data = _scm_to_channel_data (channel);
@@ -50,7 +52,9 @@ SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
 /* Run a shell command CMD without an interactive shell. */
 SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
             (SCM channel, SCM cmd),
-            "Run a shell command CMD without an interactive shell.")
+            "\
+Run a shell command CMD without an interactive shell.\
+")
 #define FUNC_NAME s_guile_ssh_channel_request_exec
 {
   struct channel_data *data = _scm_to_channel_data (channel);
@@ -74,8 +78,10 @@ SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
 
 SCM_DEFINE (guile_ssh_channel_request_pty, "channel-request-pty", 1, 0, 0,
             (SCM channel),
-            "Request a PTY (pseudo terminal).\n"
-            "Return value is undefined.")
+            "\
+Request a PTY (pseudo terminal).\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_channel_request_pty
 {
   struct channel_data *data = _scm_to_channel_data (channel);
@@ -92,8 +98,10 @@ SCM_DEFINE (guile_ssh_channel_request_pty, "channel-request-pty", 1, 0, 0,
 
 SCM_DEFINE (guile_ssh_channel_request_shell, "channel-request-shell", 1, 0, 0,
             (SCM channel),
-            "Request a shell.\n"
-            "Return value is undefined.")
+            "\
+Request a shell.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_channel_request_shell
 {
   struct channel_data *data = _scm_to_channel_data (channel);
@@ -112,8 +120,10 @@ SCM_DEFINE (guile_ssh_channel_request_shell, "channel-request-shell", 1, 0, 0,
    Return value is undefined. */
 SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
             (SCM channel, SCM name, SCM value),
-            "Set an environment variable NAME to value VALUE.  Return value is "
-            "undefined.")
+            "\
+Set an environment variable NAME to value VALUE.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_channel_request_env
 {
   struct channel_data *data = _scm_to_channel_data (channel);
@@ -140,8 +150,10 @@ SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
 SCM_DEFINE (guile_ssh_channel_set_pty_size_x,
             "channel-set-pty-size!", 3, 0, 0,
             (SCM channel, SCM col, SCM row),
-            "Change size of the PTY to columns COL and rows ROW.\n"
-            "Return value is undefined.")
+            "\
+Change size of the PTY to columns COL and rows ROW.\n\
+eturn value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_channel_set_pty_size_x
 {
   struct channel_data *data = _scm_to_channel_data (channel);
@@ -162,9 +174,11 @@ SCM_DEFINE (guile_ssh_channel_set_pty_size_x,
 SCM_DEFINE (guile_ssh_channel_set_stream_x,
             "channel-set-stream!", 2, 0, 0,
             (SCM channel, SCM stream_name),
-            "Set stream STREAM_NAME for channel CHANNEL.  STREAM_NAME must be "
-            "one of the following symbols: \"stdout\" (default), \"stderr\".\n"
-            "Return value is undefined.")
+            "\
+Set stream STREAM_NAME for channel CHANNEL.  STREAM_NAME must be one of the \n\
+following symbols: \"stdout\" (default), \"stderr\".\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_channel_set_stream_x
 {
   struct channel_data *cd = _scm_to_channel_data (channel);
@@ -191,9 +205,10 @@ SCM_DEFINE (guile_ssh_channel_set_stream_x,
 SCM_DEFINE (guile_ssh_channel_get_stream,
             "channel-get-stream", 1, 0, 0,
             (SCM channel),
-            "Get current stream name from CHANNEL.  Throw `guile-ssh-error' on "
-            "error.  Return one of the following symbols: \"stdout\", "
-            "\"stderr\".")
+            "\
+Get current stream name from CHANNEL.  Throw `guile-ssh-error' on error.\n\
+Return one of the following symbols: \"stdout\", \"stderr\".\
+")
 #define FUNC_NAME s_guile_ssh_channel_get_stream
 {
   struct channel_data *cd = _scm_to_channel_data (channel);
@@ -221,7 +236,9 @@ SCM_DEFINE (guile_ssh_channel_is_open_p, "channel-open?", 1, 0, 0,
 
 SCM_DEFINE (guile_ssh_channel_is_eof_p, "channel-eof?", 1, 0, 0,
             (SCM channel),
-            "Return #t if remote has set EOF, #f otherwise.")
+            "\
+Return #t if remote has set EOF, #f otherwise.\
+")
 {
   struct channel_data *data = _scm_to_channel_data (channel);
   int res = ssh_channel_is_eof (data->ssh_channel);

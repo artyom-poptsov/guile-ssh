@@ -146,8 +146,10 @@ set_option (ssh_bind bind, int type, SCM value)
 
 SCM_DEFINE (guile_ssh_server_set_x, "server-set!", 3, 0, 0,
             (SCM server, SCM option, SCM value),
-            "Set a SSH server option.\n"
-            "Return value is undefined.")
+            "\
+Set a SSH server option.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_server_set_x
 {
   struct server_data *server_data = _scm_to_server_data (server);
@@ -177,8 +179,10 @@ SCM_DEFINE (guile_ssh_server_set_x, "server-set!", 3, 0, 0,
 
 SCM_DEFINE (guile_ssh_server_listen, "server-listen", 1, 0, 0,
             (SCM server),
-            "Start listening to the socket.\n"
-            "Return value is undefined.")
+            "\
+Start listening to the socket.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_server_listen
 {
   struct server_data *server_data = _scm_to_server_data (server);
@@ -192,8 +196,10 @@ SCM_DEFINE (guile_ssh_server_listen, "server-listen", 1, 0, 0,
 
 SCM_DEFINE (guile_ssh_server_accept, "server-accept", 1, 0, 0,
             (SCM server),
-            "Accept an incoming ssh connection to the SERVER.\n"
-            "Throw `guile-ssh-error' on error.  Return a new SSH session.")
+            "\
+Accept an incoming ssh connection to the SERVER.\n\
+Throw `guile-ssh-error' on error.  Return a new SSH session.\
+")
 #define FUNC_NAME s_guile_ssh_server_accept
 {
   struct server_data *server_data   = _scm_to_server_data (server);
@@ -211,8 +217,10 @@ SCM_DEFINE (guile_ssh_server_accept, "server-accept", 1, 0, 0,
 SCM_DEFINE (guile_ssh_server_handle_key_exchange,
             "server-handle-key-exchange", 1, 0, 0,
             (SCM session),
-            "Handle key exchange for a server SERVER and setup encryption.\n"
-            "Return value is undefined.")
+            "\
+Handle key exchange for a server SERVER and setup encryption.\n\
+Return value is undefined.\
+")
 #define FUNC_NAME s_guile_ssh_server_handle_key_exchange
 {
   struct session_data *session_data = _scm_to_session_data (session);
@@ -228,7 +236,9 @@ SCM_DEFINE (guile_ssh_server_handle_key_exchange,
 SCM_DEFINE (guile_ssh_server_message_get,
             "server-message-get", 1, 0, 0,
             (SCM session),
-            "Get a message.")
+            "\
+Get a message.\
+")
 {
   SCM smob;
   struct session_data *session_data = _scm_to_session_data (session);

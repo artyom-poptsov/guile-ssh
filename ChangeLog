@@ -1,3 +1,10 @@
+2014-07-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/auth.c, ssh/channel-func.c, ssh/channel-type.c, ssh/key-func.c,
+	ssh/key-type.c, ssh/log.c, ssh/message-func.c, ssh/message-type.c,
+	ssh/server-func.c, ssh/session-type.c, ssh/version.c: Improve the
+	docstrings format.
+
 2014-07-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/client-server.scm: Improve logging: Redirect stderr to
