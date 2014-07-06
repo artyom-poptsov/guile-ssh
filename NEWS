@@ -14,6 +14,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 *** Accept a public key as the first argument
 *** Accept a hash type as the second argument
     Possible types are: 'md5, 'sha1
+** (ssh auth) procedures now throw an exception if the session is not connected
 ** Change `userauth-pubkey!'
 *** Rename it to `userauth-public-key!'
 *** Change arguments

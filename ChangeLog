@@ -1,5 +1,14 @@
 2014-07-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/auth.c (guile_ssh_userauth_public_key_x)
+	(guile_ssh_userauth_public_key_auto_x)
+	(guile_ssh_userauth_public_key_try, guile_ssh_userauth_agent_x)
+	(guile_ssh_userauth_password_x, guile_ssh_userauth_none_x)
+	(guile_ssh_userauth_get_list): Throw `guile-ssh-error' if the session
+	is not connected.
+	* doc/api-auth.texi (Auth): Update.
+	* NEWS: Update.
+
 	* ssh/auth.c, ssh/channel-func.c, ssh/channel-type.c, ssh/key-func.c,
 	ssh/key-type.c, ssh/log.c, ssh/message-func.c, ssh/message-type.c,
 	ssh/server-func.c, ssh/session-type.c, ssh/version.c: Improve the

@@ -18,6 +18,8 @@ calling of procedures from this section.
 @deffn {Scheme Procedure} userauth-public-key! session private-key
 Try to authenticate with a public/private key.
 
+Throw @code{guile-ssh-error} if the @var{session} is not connected.
+
 Return one of the following symbols:
 
 @table @samp
@@ -42,6 +44,8 @@ key from a @acronym{SSH} agent and if it fails it will try to read a
 key from a file.  If the key is encrypted the user will be asked for a
 passphrase.
 
+Throw @code{guile-ssh-error} if the @var{session} is not connected.
+
 Return one of the following symbols:
 
 @table @samp
@@ -60,6 +64,8 @@ A serious error happened.
 
 @deffn {Scheme Procedure} userauth-public-key/try session public-key
 Try to authenticate with the given @var{public-key}.
+
+Throw @code{guile-ssh-error} if the @var{session} is not connected.
 
 To avoid unnecessary processing and user interaction, the following
 method is provided for querying whether authentication using the
@@ -85,6 +91,8 @@ A serious error happened.
 @deffn {Scheme Procedure} userauth-agent! session
 Try to do public key authentication with ssh agent.
 
+Throw @code{guile-ssh-error} if the @var{session} is not connected.
+
 Return one of the following symbols:
 
 @table @samp
@@ -103,6 +111,8 @@ A serious error happened.
 
 @deffn {Scheme Procedure} userauth-password! session password
 Try to authenticate by @var{password}.
+
+Throw @code{guile-ssh-error} if the @var{session} is not connected.
 
 Return one of the following symbols:
 
@@ -125,6 +135,8 @@ In nonblocking mode, you've got to call this again later.
 @deffn {Scheme Procedure} userauth-none! session
 Try to authenticate through the @code{none} method.
 
+Throw @code{guile-ssh-error} if the @var{session} is not connected.
+
 Return one of the following symbols: 
 
 @table @samp
@@ -145,6 +157,8 @@ A serious error happened.
 @deffn {Scheme Procedure} userauth-get-list session
 Get available authentication methods for a @var{session}.  Return list
 of available methods.
+
+Throw @code{guile-ssh-error} if the @var{session} is not connected.
 
 This call will block, even in nonblocking mode, if run for the first
 time before a (complete) call to @code{userauth-none!}.
