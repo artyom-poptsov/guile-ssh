@@ -72,7 +72,7 @@ SCM_DEFINE (guile_ssh_userauth_public_key_x, "userauth-public-key!", 2, 0, 0,
              SCM private_key_smob),
             "\
 Try to authenticate with a public key.\n\
-Throw `guile-ssh-error' if the SESSION is not connected.\
+Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_x
 {
@@ -86,11 +86,9 @@ Throw `guile-ssh-error' if the SESSION is not connected.\
   int res;
 
   /* Check types. */
+  GSSH_VALIDATE_CONNECTED_SESSION (session_data, session_smob, SCM_ARG1);
   SCM_ASSERT (_private_key_p (private_key_data),
               private_key_smob, SCM_ARG2, FUNC_NAME);
-
-  if (! ssh_is_connected (session_data->ssh_session))
-    guile_ssh_error1 (FUNC_NAME, "Session is not connected", session_smob);
 
   res = ssh_userauth_publickey (session_data->ssh_session, username,
                                 private_key_data->ssh_key);
@@ -108,7 +106,7 @@ public keys.  If the key is encrypted the user will be asked for a \n\
 passphrase.  Return one of the following symbols: error, denied, partial, \n\
 success.\n\
 \n\
-Throw `guile-ssh-error' if the SESSION is not connected.\
+Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_auto_x
 {
@@ -116,8 +114,7 @@ Throw `guile-ssh-error' if the SESSION is not connected.\
   char *username = NULL; /* See "On the username" commentary above. */
   char *passphrase = NULL;
 
-  if (! ssh_is_connected (sd->ssh_session))
-    guile_ssh_error1 (FUNC_NAME, "Session is not connected", session);
+  GSSH_VALIDATE_CONNECTED_SESSION (sd, session, SCM_ARG1);
 
   int res = ssh_userauth_publickey_auto (sd->ssh_session,
                                          username,
@@ -130,7 +127,7 @@ SCM_DEFINE (guile_ssh_userauth_public_key_try,
             "userauth-public-key/try", 2, 0, 0,
             (SCM session, SCM public_key),
             "\
-Throw `guile-ssh-error' if the SESSION is not connected.\
+Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_try
 {
@@ -139,6 +136,7 @@ Throw `guile-ssh-error' if the SESSION is not connected.\
   char *username = NULL;        /* See "On the username" commentary above */
   int res;
 
+  GSSH_VALIDATE_CONNECTED_SESSION (sd, session, SCM_ARG1);
   SCM_ASSERT (_public_key_p (kd), public_key, SCM_ARG2, FUNC_NAME);
 
   if (! ssh_is_connected (sd->ssh_session))
@@ -154,7 +152,7 @@ SCM_DEFINE (guile_ssh_userauth_agent_x,
             (SCM session),
             /* FIXME: Fix the docsring. */
             "\
-Throw `guile-ssh-error' if the SESSION is not connected.\
+Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_agent_x
 {
@@ -163,8 +161,7 @@ Throw `guile-ssh-error' if the SESSION is not connected.\
   char *username = NULL; /* See "On the username" commentary above. */
   int res;
 
-  if (! ssh_is_connected (sd->ssh_session))
-    guile_ssh_error1 (FUNC_NAME, "Session is not connected", session);
+  GSSH_VALIDATE_CONNECTED_SESSION (sd, session, SCM_ARG1);
 
   res = ssh_userauth_agent (sd->ssh_session, username);
 
@@ -177,7 +174,7 @@ SCM_DEFINE (guile_ssh_userauth_password_x, "userauth-password!", 2, 0, 0,
             (SCM session, SCM password),
             "\
 Try to authenticate by password.\n\
-Throw `guile-ssh-error' if the SESSION is not connected.\
+Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_password_x
 {
@@ -192,10 +189,8 @@ Throw `guile-ssh-error' if the SESSION is not connected.\
   scm_dynwind_begin (0);
 
   /* Check types. */
+  GSSH_VALIDATE_CONNECTED_SESSION (session_data, session, SCM_ARG1);
   SCM_ASSERT (scm_is_string (password), password, SCM_ARG2, FUNC_NAME);
-
-  if (! ssh_is_connected (session_data->ssh_session))
-    guile_ssh_error1 (FUNC_NAME, "Session is not connected", session);
 
   c_password = scm_to_locale_string (password);
   scm_dynwind_free (c_password);
@@ -219,15 +214,14 @@ SCM_DEFINE (guile_ssh_userauth_none_x, "userauth-none!", 1, 0, 0,
             (SCM arg1),
             "\
 Try to authenticate through the \"none\" method.\n\
-Throw `guile-ssh-error' if the SESSION is not connected.\
+Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_none_x
 {
   struct session_data *session_data = _scm_to_session_data (arg1);
   int res;
 
-  if (! ssh_is_connected (session_data->ssh_session))
-    guile_ssh_error1 (FUNC_NAME, "Session is not connected", arg1);
+  GSSH_VALIDATE_CONNECTED_SESSION (session_data, arg1, SCM_ARG1);
 
   /* username is deprecated parameter.  Should be set to NULL. */
   res = ssh_userauth_none (session_data->ssh_session, 
@@ -244,7 +238,7 @@ SCM_DEFINE (guile_ssh_userauth_get_list, "userauth-get-list", 1, 0, 0,
             (SCM session),
             "\
 Get available authentication methods for a session SESSION.\n\
-Throw `guile-ssh-error' if the SESSION is not connected.\
+Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_get_list
 {
@@ -252,8 +246,7 @@ Throw `guile-ssh-error' if the SESSION is not connected.\
   SCM auth_list = SCM_EOL;
   int res;
 
-  if (! ssh_is_connected (session_data->ssh_session))
-    guile_ssh_error1 (FUNC_NAME, "Session is not connected", session);
+  GSSH_VALIDATE_CONNECTED_SESSION (session_data, session, SCM_ARG1);
 
   /* The second argument of the function is a username.  According to
      the documentation for libssh 0.5.3, this argument is deprecated

@@ -1,3 +1,11 @@
+2014-07-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/auth.c: Throw `wrong-type-arg' instead of `guile-ssh-error' if a
+	disconnected session is passed as an argument to procedures in the
+	module.
+	* ssh/session-type.h (GSSH_VALIDATE_CONNECTED_SESSION): New macro.
+	* doc/api-auth.texi (Auth): Update.
+
 2014-07-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/auth.c (guile_ssh_userauth_public_key_x)

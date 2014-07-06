@@ -36,6 +36,14 @@ struct session_data {
   struct channel_data **channels;
 };
 
+/* Make sure that the session pointed by session data structure pointer SD is
+   connected. */
+#define GSSH_VALIDATE_CONNECTED_SESSION(sd, scm, pos) \
+  do { \
+    SCM_ASSERT_TYPE (ssh_is_connected (sd->ssh_session), scm, \
+                     pos, FUNC_NAME, "connected session"); \
+  } while (0)
+
 
 extern SCM guile_ssh_make_session (void);
 extern SCM guile_ssh_is_session_p (SCM arg1);
