@@ -1,3 +1,15 @@
+2014-07-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/session-func.c (guile_ssh_get_protocol_version)
+	(guile_ssh_authenticate_server, guile_ssh_get_server_public_key)
+	(guile_ssh_write_known_host): Expect a connected session as an
+	argument.  Throw `wrong-type-arg' if the session is not connected.
+	* tests/session.scm ("get-protocol-version"): Move with some changes
+	to `tests/client-server.scm'.
+	* tests/client-server.scm ("get-protocol-version"): New TC.
+	* doc/api-sessions.texi (Sessions): Update.
+	* NEWS: Update.
+
 2014-07-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/auth.c: Throw `wrong-type-arg' instead of `guile-ssh-error' if a

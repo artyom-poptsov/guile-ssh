@@ -363,10 +363,15 @@ SCM_DEFINE (guile_ssh_get_protocol_version, "get-protocol-version", 1, 0, 0,
             (SCM arg1),
             "Get SSH version.\n"
             "Return 1 for SSH1, 2 for SSH2 or #f on error.")
+#define FUNC_NAME s_guile_ssh_get_protocol_version
 {
   struct session_data* data = _scm_to_session_data (arg1);
   SCM ret;
-  int version = ssh_get_version (data->ssh_session);
+  int version;
+
+  GSSH_VALIDATE_CONNECTED_SESSION (data, arg1, SCM_ARG1);
+
+  version = ssh_get_version (data->ssh_session);
 
   if (version >= 0)
     ret = scm_from_int (version);
@@ -375,6 +380,7 @@ SCM_DEFINE (guile_ssh_get_protocol_version, "get-protocol-version", 1, 0, 0,
 
   return ret;
 }
+#undef FUNC_NAME
 
 SCM_DEFINE (guile_ssh_get_error, "get-error", 1, 0, 1,
             (SCM arg1),
@@ -401,7 +407,11 @@ SCM_DEFINE (guile_ssh_authenticate_server, "authenticate-server", 1, 0, 0,
 #define FUNC_NAME s_guile_ssh_authenticate_server
 {
   struct session_data* data = _scm_to_session_data (session);
-  int res = ssh_is_server_known (data->ssh_session);
+  int res;
+
+  GSSH_VALIDATE_CONNECTED_SESSION (data, session, SCM_ARG1);
+
+  res = ssh_is_server_known (data->ssh_session);
 
   switch (res)
     {
@@ -441,6 +451,8 @@ SCM_DEFINE (guile_ssh_get_server_public_key, "get-server-public-key", 1, 0, 0,
   int res;
   SCM key_smob;
 
+  GSSH_VALIDATE_CONNECTED_SESSION (sd, session, SCM_ARG1);
+
   kd = (struct key_data *) scm_gc_malloc (sizeof (struct key_data), "ssh key");
   /* TODO: Check `kd' for NULL. */
 
@@ -466,7 +478,12 @@ SCM_DEFINE (guile_ssh_write_known_host, "write-known-host!", 1, 0, 0,
 #define FUNC_NAME s_guile_ssh_write_known_host
 {
   struct session_data *session_data = _scm_to_session_data (session);
-  int res = ssh_write_knownhost (session_data->ssh_session);
+  int res;
+
+  GSSH_VALIDATE_CONNECTED_SESSION (session_data, session, SCM_ARG1);
+
+  res = ssh_write_knownhost (session_data->ssh_session);
+
   if (res != SSH_OK)
     guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
                       

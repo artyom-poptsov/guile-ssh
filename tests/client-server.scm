@@ -146,6 +146,11 @@
       (disconnect! session)
       res)))
 
+(test-assert-with-log "get-protocol-version"
+  (let ((session (make-session-for-test)))
+    (connect! session)
+    (eq? 2 (get-protocol-version session))))
+
 (test-assert-with-log "authenticate-server, not-known"
   (let ((session (make-session-for-test)))
     (connect! session)
