@@ -20,6 +20,7 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include <assert.h>
 
 #include "common.h"
 #include "error.h"
