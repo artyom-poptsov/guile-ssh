@@ -1,5 +1,7 @@
 2014-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* TODO (Known Bugs): New section.
+
 	* ssh/session-func.c: Include missed `assert.h' header.
 
 2014-07-12  Artyom Poptsov  <poptsov.artyom@gmail.com>

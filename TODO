@@ -1,5 +1,11 @@
 -*- Mode: Outline -*-
 
-* Make channel buffers configurable.
-* Make use of libssh callbacks to track asynchronous events on channels
+* Ideas
+** Make channel buffers configurable.
+** Make use of libssh callbacks to track asynchronous events on channels
+
+* Known Bugs
+** `channel-open?', `channel-eof?' and other opeartions fail on a closed channel
+   because all the resources were freed when the channel was closed.  That's
+   the reason why we get "Segmentation fault" error.
   
