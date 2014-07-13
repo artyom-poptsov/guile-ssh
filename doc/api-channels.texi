@@ -40,6 +40,11 @@ Open a session channel.  This procedure actually turn the
 Run a shell @var{command} without an interactive shell.  Throw
 @code{guile-ssh-error} on error.  Return value is undefined.
 
+@strong{Note} that the procedure only can be used to execute a single command
+on the remote host, so you should close the channel after
+@code{channel-request-exec}.  If you want to execute another command then you
+must open a new channel and use it.
+
 Example:
 
 @lisp

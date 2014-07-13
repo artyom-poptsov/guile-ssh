@@ -1,5 +1,9 @@
 2014-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/api-channels.texi (Channels): Add note that
+	`channel-request-exec' can be used to execute only a single command on
+	a channel.
+
 	* TODO (Known Bugs): New section.
 
 	* ssh/session-func.c: Include missed `assert.h' header.
