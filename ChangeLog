@@ -1,3 +1,7 @@
+2014-07-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/log.scm: Fix TS name.
+
 2014-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* doc/api-channels.texi (Channels): Add note that

@@ -20,7 +20,7 @@
 (use-modules (srfi srfi-64)
              (ssh  log))
 
-(test-begin "client-server")
+(test-begin "log")
 
 (test-assert "current-logging-callback"
   (eq? (current-logging-callback) %default-log-printer))
@@ -45,7 +45,7 @@
     (eq? (current-logging-callback) %default-log-printer)))
 
 
-(test-end "client-server")
+(test-end "log")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))
 
