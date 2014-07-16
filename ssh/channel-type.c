@@ -276,12 +276,15 @@ equalp_channel (SCM x1, SCM x2)
 
 /* Helper procedures */
 
-/* Convert X to a SSH channel */
+/* Convert X to a SSH channel.  Return the channel data or NULL if the channel
+   has been freed. */
 struct channel_data *
 _scm_to_channel_data (SCM x)
 {
   scm_assert_smob_type (channel_tag, x);
-  return (struct channel_data *) SCM_STREAM (x);
+  return SCM_PTAB_ENTRY (x)
+    ? (struct channel_data *) SCM_STREAM (x)
+    : (struct channel_data *) NULL;
 }
 
 
