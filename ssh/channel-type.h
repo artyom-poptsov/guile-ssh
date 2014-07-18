@@ -31,6 +31,14 @@ struct channel_data {
   uint8_t is_stderr;
 };
 
+/* Make sure that the channel data is valid.  Throw `guile-ssh-error' if the
+   channel SCM has been closed and freed. */
+#define GSSH_VALIDATE_CHANNEL_DATA(cd, scm, fn)                         \
+  do {                                                                  \
+    if (! cd)                                                           \
+      guile_ssh_error1 (fn, "Channel has been closed and freed.", scm); \
+  } while (0)
+
 
 /* API */
 

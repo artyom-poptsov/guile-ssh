@@ -36,7 +36,9 @@ Return value is undefined.\
 #define FUNC_NAME s_guile_ssh_channel_open_session
 {
   struct channel_data *data = _scm_to_channel_data (channel);
-  int res = ssh_channel_open_session (data->ssh_channel);
+  int res;
+  GSSH_VALIDATE_CHANNEL_DATA (data, channel, FUNC_NAME);
+  res = ssh_channel_open_session (data->ssh_channel);
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
@@ -230,20 +232,24 @@ SCM_DEFINE (guile_ssh_channel_is_open_p, "channel-open?", 1, 0, 0,
             "Return #t if channel CHANNEL is open, #f otherwise.")
 {
   struct channel_data *data = _scm_to_channel_data (channel);
-  int res = ssh_channel_is_open (data->ssh_channel);
-  return scm_from_bool (res);
+  if (data && ssh_channel_is_open (data->ssh_channel))
+    return SCM_BOOL_T;
+  return SCM_BOOL_F;
 }
 
 SCM_DEFINE (guile_ssh_channel_is_eof_p, "channel-eof?", 1, 0, 0,
             (SCM channel),
             "\
-Return #t if remote has set EOF, #f otherwise.\
+Return #t if remote has set EOF, #f otherwise.\n\
+Throw `guile-ssh-error' if the channel has been closed and freed.\
 ")
+#define FUNC_NAME s_guile_ssh_channel_is_eof_p
 {
   struct channel_data *data = _scm_to_channel_data (channel);
-  int res = ssh_channel_is_eof (data->ssh_channel);
-  return scm_from_bool (res);
+  GSSH_VALIDATE_CHANNEL_DATA (data, channel, FUNC_NAME);
+  return scm_from_bool (ssh_channel_is_eof (data->ssh_channel));
 }
+#undef FUNC_NAME
 
 
 /* Initialize channel related functions. */

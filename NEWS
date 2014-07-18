@@ -15,6 +15,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 *** Accept a hash type as the second argument
     Possible types are: 'md5, 'sha1
 ** (ssh auth) procedures now throw an exception if the session is not connected
+** Some (ssh channel) procedures now handle freed channels
+   - `channel-open?' returns `#f'
+   - `channel-open-session' and `channel-eof?' throw to `guile-ssh-error'
 ** Some (ssh session) procedures now throw an exception if the session is not connected
    These procedures are:
    - `get-protocol-version'
