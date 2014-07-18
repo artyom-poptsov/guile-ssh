@@ -1,5 +1,13 @@
 2014-07-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/channel-type.h (GSSH_VALIDATE_OPEN_CHANNEL): New macro.
+	* ssh/channel-func.c (guile_ssh_channel_request_exec)
+	(guile_ssh_channel_request_pty, guile_ssh_channel_request_shell)
+	(guile_ssh_channel_request_env, guile_ssh_channel_set_pty_size_x)
+	(guile_ssh_channel_set_stream_x, guile_ssh_channel_get_stream): Expect
+	an open channel as an argument.
+	* doc/api-channels.texi (Channels): Update.
+
 	* ssh/channel-type.h (GSSH_VALIDATE_CHANNEL_DATA): New macro.
 	* ssh/channel-func.c (guile_ssh_channel_is_open_p): Return `#f' if the
 	channel has been closed and freed.
