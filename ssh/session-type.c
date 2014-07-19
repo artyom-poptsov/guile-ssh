@@ -88,7 +88,7 @@ print_session (SCM session, SCM port, scm_print_state *pstate)
                port);
   ssh_string_free_char (user);
 
-  scm_puts ("@", port);
+  scm_putc ('@', port);
 
   res = ssh_options_get (sd->ssh_session, SSH_OPTIONS_HOST, &host);
   scm_display ((res == SSH_OK) ? scm_from_locale_string (host) : SCM_UNDEFINED,
@@ -101,7 +101,7 @@ print_session (SCM session, SCM port, scm_print_state *pstate)
 
   scm_display (_scm_object_hex_address (session), port);
 
-  scm_puts (">", port);
+  scm_putc ('>', port);
 
   return 1;
 }

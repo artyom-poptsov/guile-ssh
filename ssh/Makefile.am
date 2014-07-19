@@ -66,8 +66,6 @@ SUFFIXES = .x
 
 CLEANFILES = *.x
 
-if HAVE_GUILE_VM
-
 GOBJECTS = $(SCM_SOURCES:%.scm=%.go)
 $(GOBJECTS): $(lib_LTLIBRARIES)	# Build the library first
 
@@ -109,7 +107,5 @@ CLEANFILES += $(GOBJECTS)
 clean-go:
 	-$(RM) -f $(GOBJECTS)
 .PHONY: clean-go
-
-endif HAVE_GUILE_VM
 
 ## Makefile.am ends here

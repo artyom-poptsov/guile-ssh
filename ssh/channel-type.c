@@ -177,17 +177,20 @@ free_channel (SCM channel_smob)
 static int
 print_channel (SCM channel, SCM port, scm_print_state *pstate)
 {
-  scm_puts ("#<", port);
-  if (SCM_OPPORTP (channel))
+  struct channel_data *ch = _scm_to_channel_data (channel);
+  scm_puts ("#<channel ", port);
+  if (! ch)
     {
-      struct channel_data *ch = _scm_to_channel_data (channel);
+      scm_puts ("(freed) ", port);
+    }
+  else if (SCM_OPPORTP (channel))
+    {
       int is_open = ssh_channel_is_open (ch->ssh_channel);
-      scm_puts (is_open ? "open" : "closed", port);
-      scm_puts (" ssh channel ", port);
+      scm_puts (is_open ? "(open) " : "(closed) ", port);
     }
   else
     {
-      scm_puts ("closed ssh channel ", port);
+      scm_puts ("(closed) ", port);
     }
   scm_display (_scm_object_hex_address (channel), port);
   scm_puts (">", port);      
