@@ -1,6 +1,8 @@
 2014-07-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
-	* tests/server-client.scm: Fix global variables names.
+	* tests/server-client.scm: Fix global variables names.  Remove extra
+	global variables.
+	(clnmsg): Improve.
 
 	* tests/server-client.scm: Improve TCs.
 	(libssh-log-printer): New procedure.

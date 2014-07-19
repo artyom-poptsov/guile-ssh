@@ -36,8 +36,6 @@
 (define %rsakey (format #f "~a/tests/rsakey" %topdir))
 (define %dsakey (format #f "~a/tests/dsakey" %topdir))
 (define %knownhosts (format #f "~a/tests/knownhosts" %topdir))
-(define %log    (test-runner-aux-value (test-runner-current)))
-(define client-thread #f)
 
 (define %libssh-log-file "server-client-libssh.log")
 (define %error-log-file  "server-client-errors.log")
@@ -79,9 +77,11 @@
    #:dsakey   %dsakey
    #:log-verbosity 'rare))
 
-(define (clnmsg message)
-  "Print a server MESSAGE to the test log."
-  (format %log "    client: ~a~%" message))
+(define clnmsg
+  (let ((log (test-runner-aux-value (test-runner-current))))
+    (lambda (message)
+      "Print a server MESSAGE to the test log."
+      (format %log "    client: ~a~%" message))))
 
 
 ;; Pass the test case NAME as the userdata to the libssh log
@@ -96,20 +96,6 @@
          (set! *port* (1+ *port*))
 
          body ...)))))
-
-(define-macro (spawn-client-thread . body)
-  `(set! client-thread
-      (make-thread
-       (lambda ()
-         ;; XXX: We need to catch here all exceptions because if an exception
-         ;; is thrown in a thread and the exception arguments contain an
-         ;; Guile-SSH object (such as a channel) then we get "Error while
-         ;; printing of exception" due to some problems with the port that is
-         ;; passed to the print procedure of the smob.
-         (false-if-exception ,@body)))))
-
-(define (cancel-client-thread)
-  (cancel-thread client-thread))
 
 
 ;;; Testing of basic procedures
