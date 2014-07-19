@@ -1,5 +1,14 @@
 2014-07-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/sssh.scm.in (*option-spec*): Add `known-hosts-file' option.
+	(main): Handle it.
+	* tests/sssh-ssshd.scm: Fix a bug in the test suite: use test
+	`known_hosts' file to make sure that it has no records.
+	("ssshd, start"): Add a delay to make sure that
+	ssshd started.
+	("sssh, exec"): Improve.  Do cleanup at the end of the TC.
+	(*sssh-cmd*): Set `knownhosts' file explicitly.
+
 	* tests/server-client.scm: Fix global variables names.  Remove extra
 	global variables.
 	(clnmsg): Improve.
