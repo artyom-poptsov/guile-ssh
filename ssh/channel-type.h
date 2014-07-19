@@ -54,6 +54,7 @@ struct channel_data {
 
 extern SCM guile_ssh_make_channel (SCM arg1);
 extern SCM guile_ssh_is_channel_p (SCM arg1);
+extern SCM guile_ssh_channel_get_session (SCM arg1);
 
 extern void init_channel_type (void);
 

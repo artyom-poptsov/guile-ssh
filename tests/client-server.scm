@@ -493,6 +493,20 @@
         ;; server
         (start-server/channel-test server))))
 
+(test-assert-with-log "channel-get-session"
+  (let ((server (make-server-for-test))
+        (pid    (primitive-fork)))
+
+    (if (not (= 0 pid))
+
+        ;; client
+        (let* ((session (make-session/channel-test))
+               (channel (make-channel session)))
+          (eq? session (channel-get-session channel)))
+
+        ;; server
+        (start-server/channel-test server))))
+
 (test-assert-with-log "channel-open-session"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))

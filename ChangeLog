@@ -1,5 +1,13 @@
 2014-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/channel-func.c (guile_ssh_channel_get_session): New procedure.
+	* ssh/channel-func.h (guile_ssh_channel_get_session): Likewise.
+	* ssh/channel.scm (channel-get-session): Export.
+	* tests/client-server.scm ("channel-get-session"): New TC.
+	* doc/api-channels.texi (Channels): Add description of
+	`channel-get-session' procedure.
+	* NEWS: Update.
+
 	* README: Require GNU Guile 2.0.
 	* doc/guile-ssh.texi (Installation): Likewise.
 	* configure.ac: Remove checks related to GNU Guile 1.8.
