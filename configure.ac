@@ -48,28 +48,14 @@ AC_ARG_WITH([guilesitedir],
 # Check for needed libraries
 # -------------------------------------------------------------------------------
 
-dnl Try to find Guile-2.0
-PKG_CHECK_MODULES(
-        [GUILE_2],
-        [guile-2.0],
-        [AC_DEFINE([HAVE_GUILE_2], 1, [Use Guile-2.0])],
-        dnl Try to find Guile-1.8
-        [PKG_CHECK_MODULES(
-                [GUILE_1],
-                [guile-1.8],
-                [AC_DEFINE([HAVE_GUILE_1], 1, [Use Guile-1.8])])])
-
-PKG_CHECK_MODULES([LIBSSH], [libssh >= 0.5.4])
+PKG_CHECK_MODULES([GUILE_2], [guile-2.0])
+PKG_CHECK_MODULES([LIBSSH], [libssh >= 0.6.3])
 
 # -------------------------------------------------------------------------------
 
 GUILE_PROGS
 GUILE_FLAGS
 GUILE_SITE_DIR
-
-# Guile-VM's compiler (aka. Guile 2.0.x).
-AM_CONDITIONAL([HAVE_GUILE_VM],
-  [$GUILE_TOOLS compile --help 2>&1 >/dev/null])
 
 LT_INIT()
 

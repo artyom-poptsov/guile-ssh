@@ -8,6 +8,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
+** Require GNU Guile 2.0
+** Require libssh 0.6.3
 ** Change `get-public-key-hash'
 *** Move the procedure to (ssh key)
 *** Return the hash as a bytevector
