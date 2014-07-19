@@ -1,5 +1,7 @@
 2014-07-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/session-type.h, ssh/session-type.c: Cleanup.
+
 	* examples/sssh.scm.in (*option-spec*): Add `known-hosts-file' option.
 	(main): Handle it.
 	* tests/sssh-ssshd.scm: Fix a bug in the test suite: use test

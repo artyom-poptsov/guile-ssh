@@ -67,9 +67,6 @@ Create a new session.\
   if (session_data->ssh_session == NULL)
     return SCM_BOOL_F;
 
-  session_data->channels = NULL;
-  session_data->channel_cnt = 0;
-
   SCM_NEWSMOB (smob, session_tag, session_data);
 
   return smob;
