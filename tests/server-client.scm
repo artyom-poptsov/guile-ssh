@@ -81,7 +81,7 @@
   (let ((log (test-runner-aux-value (test-runner-current))))
     (lambda (message)
       "Print a server MESSAGE to the test log."
-      (format %log "    client: ~a~%" message))))
+      (format log "    client: ~a~%" message))))
 
 
 ;; Pass the test case NAME as the userdata to the libssh log
