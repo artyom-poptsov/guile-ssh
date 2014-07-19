@@ -69,11 +69,10 @@ print_key (SCM smob, SCM port, scm_print_state *pstate)
   struct key_data *key_data = _scm_to_key_data (smob);
   SCM type = guile_ssh_key_get_type (smob);
 
-  scm_puts ("#<", port);
-  scm_puts (_public_key_p (key_data) ? "public" : "private", port);
-  scm_puts (" ", port);
+  scm_puts ("#<key ", port);
   scm_display (type, port);
-  scm_puts (" key ", port);
+  scm_putc (' ', port);
+  scm_puts (_public_key_p (key_data) ? "(public) " : "(private) ", port);
   scm_display (_scm_object_hex_address (smob), port);
   scm_puts (">", port);
 
