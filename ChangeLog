@@ -1,5 +1,14 @@
 2014-07-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/server-client.scm: Improve TCs.
+	(libssh-log-printer): New procedure.
+	(make-session-for-test): Set known hosts file explicitly.
+	(make-server-for-test): Set DSA key.  Change log verbosity level to
+	`rare'.
+	(test-assert-with-log): New macro.
+	("accept, key exchange", "server-message-get", "message-get-type"):
+	Start the client as a different process during the test.  Improve.
+
 	* tests/client-server.scm: Improve TCs
 	(spawn-server-thread, cancel-server-thread): Remove.
 	(make-session-loop): Stop the loop when client disconnects.
