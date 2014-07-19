@@ -1,3 +1,21 @@
+2014-07-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/client-server.scm: Improve TCs
+	(spawn-server-thread, cancel-server-thread): Remove.
+	(make-session-loop): Stop the loop when client disconnects.
+	("connect!, disconnect!", "get-protocol-version")
+	("authenticate-server, not-known", "authenticate-server, ok")
+	("get-public-key-hash", "userauth-none!, success")
+	("userauth-none!, denied", "userauth-none!, partial")
+	("userauth-password!, success", "userauth-password!, denied")
+	("userauth-password!, partial", "userauth-public-key!, success")
+	("userauth-get-list", "make-channel", "channel-open-session")
+	("channel-request-exec", "data transferring, string")
+	("data transferring, bytevector"): Start the server as a different
+	process during the test.  Improve.
+	(start-server/channel-test, make-session/channel-test)
+	(start-server/dt-test, make-channel/dt-test): New procedures.
+
 2014-07-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/channel-type.h (GSSH_VALIDATE_OPEN_CHANNEL): New macro.
