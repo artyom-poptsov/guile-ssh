@@ -235,7 +235,9 @@ _ssh_channel_to_scm (ssh_channel ch, SCM session)
 /* Allocate a new SSH channel. */
 SCM_DEFINE (guile_ssh_make_channel, "make-channel", 1, 0, 0,
             (SCM arg1),
-            "Allocate a new SSH channel.")
+            "\
+Allocate a new SSH channel.\
+")
 {
   struct session_data *session_data = _scm_to_session_data (arg1);
   ssh_channel ch = ssh_channel_new (session_data->ssh_session);
@@ -251,7 +253,9 @@ SCM_DEFINE (guile_ssh_make_channel, "make-channel", 1, 0, 0,
 
 SCM_DEFINE (guile_ssh_is_channel_p, "channel?", 1, 0, 0,
             (SCM x),
-            "Return #t if X is a SSH channel, #f otherwise.")
+            "\
+Return #t if X is a SSH channel, #f otherwise.\
+")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (channel_tag, x));
 }
@@ -273,12 +277,15 @@ equalp_channel (SCM x1, SCM x2)
 
 /* Helper procedures */
 
-/* Convert X to a SSH channel */
+/* Convert X to a SSH channel.  Return the channel data or NULL if the channel
+   has been freed. */
 struct channel_data *
 _scm_to_channel_data (SCM x)
 {
   scm_assert_smob_type (channel_tag, x);
-  return (struct channel_data *) SCM_STREAM (x);
+  return SCM_PTAB_ENTRY (x)
+    ? (struct channel_data *) SCM_STREAM (x)
+    : (struct channel_data *) NULL;
 }
 
 

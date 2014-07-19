@@ -14,6 +14,20 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 *** Accept a public key as the first argument
 *** Accept a hash type as the second argument
     Possible types are: 'md5, 'sha1
+** (ssh auth) procedures now throw an exception if the session is not connected
+** (ssh channel) procedures now handle closed and freed channels
+   - `channel-open?' returns `#f' if the channel has been closed freed.
+   - `channel-open-session' and `channel-eof?' throw to `guile-ssh-error' if
+     the channel has been closed and freed.
+   - `channel-request-env', `channel-request-exec', `channel-request-pty',
+     `channel-request-shell', `channel-set-pty-size!', `channel-set-stream!',
+     `channel-get-stream' now throw `wrong-type-arg` if the channel is closed.
+** Some (ssh session) procedures now throw an exception if the session is not connected
+   These procedures are:
+   - `get-protocol-version'
+   - `authenticate-server'
+   - `get-server-public-key'
+   - `write-known-host!'
 ** Change `userauth-pubkey!'
 *** Rename it to `userauth-public-key!'
 *** Change arguments

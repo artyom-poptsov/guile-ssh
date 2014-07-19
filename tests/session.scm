@@ -119,10 +119,6 @@
         (timeout 15))
     (eq? (blocking-flush! session timeout) 'ok)))
 
-(test-assert "get-protocol-version"
-  (let ((session (%make-session)))
-    (get-protocol-version session)))
-
 (test-assert "connected?, check that we are not connected"
   (let ((session (%make-session)))
     (not (connected? session))))

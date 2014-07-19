@@ -57,6 +57,7 @@
     (help          (single-char #\h) (value #f))
     (version       (single-char #\v) (value #f))
     (debug         (single-char #\d) (value #f))
+    (known-hosts-file                (value #t))
     (ssh-debug                       (value #t))))
 
 
@@ -139,6 +140,7 @@ Options:
          (debug-needed?     (option-ref options 'debug #f))
          (ssh-debug         (option-ref options 'ssh-debug
                                         *default-log-verbosity*))
+         (known-hosts-file  (option-ref options 'known-hosts-file #f))
          (help-needed?      (option-ref options 'help #f))
          (version-needed?   (option-ref options 'version #f))
          (args              (option-ref options '() #f)))
@@ -163,6 +165,9 @@ Options:
                                    #:port port
                                    #:identity identity-file
                                    #:log-verbosity (string->symbol ssh-debug))))
+
+        (and known-hosts-file
+             (session-set! session 'knownhosts known-hosts-file))
 
         (print-debug "3. connect! (ssh_connect_x)\n")
         (connect! session)

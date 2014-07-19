@@ -240,7 +240,12 @@ as well as by a server.
 @end deffn
 
 @deffn {Scheme Procedure} authenticate-server session
-Authenticate the server.  Return one of the following symbols:
+Authenticate the server. 
+
+Throw @code{wrong-type-arg} exception if a disconnected @var{session} is
+passed as an argument.
+
+Return one of the following symbols:
 
 @table @samp
 @item ok
@@ -267,12 +272,16 @@ An error occured.
 Get server public key from a @var{session}.  Return the server's
 public key.  Throw @code{guile-ssh-error} on error.
 
+Also throw @code{wrong-type-arg} exception if a disconnected @var{session} is
+passed as an argument.
+
 See also @code{get-public-key-hash} in @pxref{Keys}.
 @end deffn
 
 @deffn {Scheme Procedure} write-known-host! session
 Write the current server as known in the known hosts file.  Throw
-@code{guile-ssh-error} on error.  Return value is undefined.
+@code{guile-ssh-error} on error.  Throw @code{wrong-type-arg} exception if a
+disconnected session is passed as an argument.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} connected? session
@@ -289,6 +298,9 @@ Retrieve the error text message from the last error related to
 @deffn {Scheme Procedure} get-protocol-version session
 Get version of SSH protocol.  Return 1 for SSH1, 2 for SSH2 or
 @code{#f} on error.
+
+Throw @code{wrong-type-arg} exception if a disconnected @var{session} is
+passed as an argument.
 @end deffn
 
 @c Local Variables:

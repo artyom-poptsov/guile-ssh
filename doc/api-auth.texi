@@ -15,6 +15,9 @@ Please note that you must specify a username either on creation of a
 session or by @code{session-set!} call (@pxref{Sessions}) before
 calling of procedures from this section.
 
+Also @strong{note} that the session must be connected before calling to these
+procedures, otherwise the @code{wrong-type-arg} exception will be thrown.
+
 @deffn {Scheme Procedure} userauth-public-key! session private-key
 Try to authenticate with a public/private key.
 

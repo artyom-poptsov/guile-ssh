@@ -30,6 +30,7 @@
 (define *topdir* (getenv "abs_top_srcdir"))
 (define *rsakey* (format #f "~a/tests/rsakey" *topdir*))
 (define *dsakey* (format #f "~a/tests/dsakey" *topdir*))
+(define %knownhosts (format #f "~a/tests/knownhosts" *topdir*))
 (define *test-cmd* "uname --all")
 
 (define *srv-address* INADDR_LOOPBACK)
@@ -49,6 +50,7 @@
    *topdir* "/examples/sssh.scm"
    " --identity-file=" *rsakey*
    " --port=" (number->string *srv-port*)
+   " --known-hosts-file=" %knownhosts
    " " (inet-ntoa *srv-address*)
    " '" *test-cmd* "'"))
 
@@ -81,28 +83,30 @@
                                (1+ try)))
               (format #t "Couldn't read a PID file ~a in ~a tries.~%"
                       *srv-pid-file* try))))
+    (sleep 1)
     ssshd-pid))
 
-(define output (read-line (open-input-pipe *test-cmd*)))
-
 (test-assert "sssh, exec"
-  (let ((p (open-input-pipe *sssh-cmd*))
-        (res #f))
+  (let ((output (read-line (open-input-pipe *test-cmd*)))
+        (p      (open-input-pipe *sssh-cmd*))
+        (res    #f))
     (let r ((l (read-line p)))
       (if (not (eof-object? l))
           (if (string=? output l)
               (set! res #t)
               (r (read-line p)))))
+
+    ;; Cleanup
+
+    (and ssshd-pid
+         (kill ssshd-pid SIGTERM))
+
+    (and (file-exists? *srv-pid-file*)
+         (delete-file *srv-pid-file*))
+
+    ;; Return the result
+
     res))
-
-
-;;; Cleanup
-
-(if ssshd-pid
-    (kill ssshd-pid SIGTERM))
-
-(if (file-exists? *srv-pid-file*)
-    (delete-file *srv-pid-file*))
 
 
 (test-end "sssh-ssshd")

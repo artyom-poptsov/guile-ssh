@@ -53,7 +53,9 @@ free_session (SCM session_smob)
 /* Create a new session. */
 SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
             (),
-            "Create a new session.")
+            "\
+Create a new session.\
+")
 {
   SCM smob;
 
@@ -111,7 +113,9 @@ print_session (SCM session, SCM port, scm_print_state *pstate)
 /* Predicates */
 SCM_DEFINE (guile_ssh_is_session_p, "session?", 1, 0, 0,
             (SCM x),
-            "Return #t if X is a SSH session, #f otherwise.")
+            "\
+Return #t if X is a SSH session, #f otherwise.\
+")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (session_tag, x));
 }

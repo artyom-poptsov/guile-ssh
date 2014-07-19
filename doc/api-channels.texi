@@ -37,8 +37,14 @@ Open a session channel.  This procedure actually turn the
 @deffn {Scheme Procedure} channel-request-exec channel command
 @cindex non-interactive SSH session
 @cindex command execution
-Run a shell @var{command} without an interactive shell.  Throw
-@code{guile-ssh-error} on error.  Return value is undefined.
+Run a shell @var{command} without an interactive shell.  The @var{channel}
+must be open.  Throw @code{guile-ssh-error} on error.  Return value is
+undefined.
+
+@strong{Note} that the procedure only can be used to execute a single command
+on the remote host, so you should close the channel after
+@code{channel-request-exec}.  If you want to execute another command then you
+must open a new channel and use it.
 
 Example:
 
@@ -53,30 +59,32 @@ Example:
 @end deffn
 
 @deffn {Scheme Procedure} channel-request-pty channel
-Request a @acronym{PTY} (pseudo terminal).  Throw
-@code{guile-ssh-error} on error.  Return value is undefined.
+Request a @acronym{PTY} (pseudo terminal).  Throw @code{guile-ssh-error} on
+error.  The @var{channel} must be open.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} channel-request-shell channel
-Request a shell.  Throw @code{guile-ssh-error} on error.  Return value
-is undefined.
+Request a shell.  The @var{channel} must be open.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} channel-request-env channel variable value
 @cindex setting of environment variables
 Set an environment @var{variable} to @var{value}.  Throw
-@code{guile-ssh-error} on error.  Return value is undefined.
+@code{guile-ssh-error} on error.  The @var{channel} must be open.  Return
+value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} channel-set-pty-size! channel columns rows
-Change size of the @acronym{PTY} to @var{columns} and @var{rows}.
-Return value is undefined.
+Change size of the @acronym{PTY} to @var{columns} and @var{rows}.  The
+@var{channel} must be open.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} channel-set-stream! channel stream
-Set default @var{stream} for @var{channel}.  @var{stream} must be one
-of the following symbols: @code{stdout} (default), @code{stderr}.
-Throw @code{guile-ssh-error} on error.  Return value is undefined.
+Set default @var{stream} for @var{channel}.  @var{stream} must be one of the
+following symbols: @code{stdout} (default), @code{stderr}.  The @var{channel}
+must be open.  Throw @code{guile-ssh-error} on error.  Return value is
+undefined.
 
 Example:
 
@@ -86,8 +94,8 @@ Example:
 @end deffn
 
 @deffn {Scheme Procedure} channel-get-stream channel
-Get current stream name from @var{channel}.  Throw
-@code{guile-ssh-error} on error.  Return one of the following symbols:
+Get current stream name from @var{channel}.  The @var{channel} must be open.
+Throw @code{guile-ssh-error} on error.  Return one of the following symbols:
 @code{stdout}, @code{stderr}.
 
 Example:
@@ -99,8 +107,8 @@ Example:
 @end deffn
 
 @deffn {Scheme Procedure} channel-eof? channel
-Return @code{#t} if remote has sent @acronym{EOF}, @code{#f}
-otherwise.
+Return @code{#t} if remote has sent @acronym{EOF}, @code{#f} otherwise.  Throw
+@code{guile-ssh-error} if the channel has been closed and freed.
 @end deffn
 
 @c Local Variables:
