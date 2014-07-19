@@ -1,5 +1,7 @@
 2014-07-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/server-client.scm: Fix global variables names.
+
 	* tests/server-client.scm: Improve TCs.
 	(libssh-log-printer): New procedure.
 	(make-session-for-test): Set known hosts file explicitly.

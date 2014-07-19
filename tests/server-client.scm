@@ -30,13 +30,13 @@
 
 ;;; Global symbols
 
-(define addr   "127.0.0.1")
-(define port   12500)
-(define topdir (getenv "abs_top_srcdir"))
-(define rsakey (format #f "~a/tests/rsakey" topdir))
-(define dsakey (format #f "~a/tests/dsakey" topdir))
-(define %knownhosts (format #f "~a/tests/knownhosts" topdir))
-(define log    (test-runner-aux-value (test-runner-current)))
+(define %addr   "127.0.0.1")
+(define *port*   12500)
+(define %topdir (getenv "abs_top_srcdir"))
+(define %rsakey (format #f "~a/tests/rsakey" %topdir))
+(define %dsakey (format #f "~a/tests/dsakey" %topdir))
+(define %knownhosts (format #f "~a/tests/knownhosts" %topdir))
+(define %log    (test-runner-aux-value (test-runner-current)))
 (define client-thread #f)
 
 (define %libssh-log-file "server-client-libssh.log")
@@ -63,8 +63,8 @@
 (define (make-session-for-test)
   "Make a session with predefined parameters for a test."
   (make-session
-   #:host    addr
-   #:port    port
+   #:host    %addr
+   #:port    *port*
    #:timeout 10        ;seconds
    #:user    "bob"
    #:knownhosts %knownhosts
@@ -73,15 +73,15 @@
 (define (make-server-for-test)
   "Make a server with predefined parameters for a test."
   (make-server
-   #:bindaddr addr
-   #:bindport port
-   #:rsakey   rsakey
-   #:dsakey   dsakey
+   #:bindaddr %addr
+   #:bindport *port*
+   #:rsakey   %rsakey
+   #:dsakey   %dsakey
    #:log-verbosity 'rare))
 
 (define (clnmsg message)
   "Print a server MESSAGE to the test log."
-  (format log "    client: ~a~%" message))
+  (format %log "    client: ~a~%" message))
 
 
 ;; Pass the test case NAME as the userdata to the libssh log
@@ -93,7 +93,7 @@
          (set-log-userdata! name)
 
          ;; Every test uses its own port to avoid conflicts
-         (set! port (1+ port))
+         (set! *port* (1+ *port*))
 
          body ...)))))
 
