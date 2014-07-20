@@ -1,5 +1,8 @@
 2014-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/channel-type.c (mark_channel): Mark the session.
+	* ssh/message-type.c (mark_message): Likewise.
+
 	* ssh/channel-func.c (guile_ssh_channel_get_session): New procedure.
 	* ssh/channel-func.h (guile_ssh_channel_get_session): Likewise.
 	* ssh/channel.scm (channel-get-session): Export.

@@ -162,7 +162,8 @@ ptob_close (SCM channel)
 SCM
 mark_channel (SCM channel_smob)
 {
-  return SCM_BOOL_F;
+  struct channel_data *cd = _scm_to_channel_data (channel_smob);
+  return cd->session;
 }
 
 size_t
