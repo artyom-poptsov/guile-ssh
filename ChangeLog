@@ -1,5 +1,7 @@
 2014-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/session-func.c: Improve docstrings.  Remove extra comments.
+
 	* ssh/channel-type.c (mark_channel): Mark the session.
 	* ssh/message-type.c (mark_message): Likewise.
 
