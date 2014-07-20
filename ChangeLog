@@ -1,5 +1,7 @@
 2014-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/session-func.c: Improve docstrings.  Remove extra comments.
+
 	* README: Require GNU Guile 2.0.
 	* doc/guile-ssh.texi (Installation): Likewise.
 	* configure.ac: Remove checks related to GNU Guile 1.8.
