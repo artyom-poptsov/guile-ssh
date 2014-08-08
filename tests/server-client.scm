@@ -22,139 +22,168 @@
              (ssh server)
              (ssh session)
              (ssh auth)
-             (ssh message))
+             (ssh message)
+             (ssh log))
 
 (test-begin "server-client")
 
 
 ;;; Global symbols
 
-(define addr   "127.0.0.1")
-(define port   12500)
-(define topdir (getenv "abs_top_srcdir"))
-(define rsakey (format #f "~a/tests/rsakey" topdir))
-(define log    (test-runner-aux-value (test-runner-current)))
-(define client-thread #f)
+(define %addr   "127.0.0.1")
+(define *port*   12500)
+(define %topdir (getenv "abs_top_srcdir"))
+(define %rsakey (format #f "~a/tests/rsakey" %topdir))
+(define %dsakey (format #f "~a/tests/dsakey" %topdir))
+(define %knownhosts (format #f "~a/tests/knownhosts" %topdir))
+
+(define %libssh-log-file "server-client-libssh.log")
+(define %error-log-file  "server-client-errors.log")
+
+(set-current-error-port (open-output-file %error-log-file))
+
+
+;;; Logging callback
+
+(define libssh-log-printer
+  (let ((p (open-output-file %libssh-log-file)))
+    (lambda (priority function message userdata)
+      (format p "[~a, \"~a\", ~a]: ~a~%"
+              (strftime "%Y-%m-%dT%H:%M:%S%z" (localtime (current-time)))
+              userdata
+              priority
+              message))))
+
+(set-logging-callback! libssh-log-printer)
 
 ;;; Helper procedures and macros
 
 (define (make-session-for-test)
   "Make a session with predefined parameters for a test."
-
-  ;; FIXME: This hack is aimed to give every client its own unique
-  ;; port to listen to.  Servers will pick up new port number
-  ;; automatically through global `port' symbol as well.
-  (set! port (1+ port))
-
   (make-session
-   #:host    addr
-   #:port    port
+   #:host    %addr
+   #:port    *port*
    #:timeout 10        ;seconds
    #:user    "bob"
+   #:knownhosts %knownhosts
    #:log-verbosity 'nolog))
 
 (define (make-server-for-test)
   "Make a server with predefined parameters for a test."
   (make-server
-   #:bindaddr addr
-   #:bindport port
-   #:rsakey   rsakey
-   #:log-verbosity 'nolog))
+   #:bindaddr %addr
+   #:bindport *port*
+   #:rsakey   %rsakey
+   #:dsakey   %dsakey
+   #:log-verbosity 'rare))
 
-(define (clnmsg message)
-  "Print a server MESSAGE to the test log."
-  (format log "    client: ~a~%" message))
+(define clnmsg
+  (let ((log (test-runner-aux-value (test-runner-current))))
+    (lambda (message)
+      "Print a server MESSAGE to the test log."
+      (format log "    client: ~a~%" message))))
 
-(define-macro (spawn-client-thread . body)
-  `(set! client-thread
-      (make-thread
-       (lambda ()
-         ,@body))))
+
+;; Pass the test case NAME as the userdata to the libssh log
+(define-syntax test-assert-with-log
+  (syntax-rules ()
+    ((_ name body ...)
+     (test-assert name
+       (begin
+         (set-log-userdata! name)
 
-(define (cancel-client-thread)
-  (cancel-thread client-thread))
+         ;; Every test uses its own port to avoid conflicts
+         (set! *port* (1+ *port*))
+
+         body ...)))))
 
 
 ;;; Testing of basic procedures
 
-(spawn-client-thread
- (let ((session (make-session-for-test)))
-   (while (not (connected? session))
-     (sleep 1)
-     (catch #t
-       (lambda () (connect! session))
-       (lambda (key . args) #f)))
-   (authenticate-server session)
-   (let ((res (connected? session)))
-     (disconnect! session)
-     res)))
+(test-assert-with-log "accept, key exchange"
+  (let ((server (make-server-for-test))
+        (session (make-session-for-test))
+        (pid     (primitive-fork)))
 
-(test-assert "accept, key exchange"
-  (let ((server (make-server-for-test)))
-    (server-listen server)
-    (let ((s (server-accept server)))
-      (server-handle-key-exchange s)
-      s)))
+    (if (not (= 0 pid))
 
-(cancel-client-thread)
+        ;; server
+        (begin
+          (server-listen server)
+          (let ((s (server-accept server)))
+            (catch #t
+              (lambda ()
+                (server-handle-key-exchange s))
+              (lambda (key . args)
+                (display args)
+                (newline)))
+            s))
 
-
-(spawn-client-thread
- (let ((session (make-session-for-test)))
-   (while (not (connected? session))
-     (sleep 1)
-     (catch #t
-       (lambda () (connect! session))
-       (lambda (key . args) #f)))
-   (clnmsg "connected")
-   (authenticate-server session)
-   (clnmsg "server authenticated")
-   (userauth-none! session)
-   (clnmsg "client authenticated")
-   (disconnect! session)))
-
-(test-assert "server-message-get"
-  (let ((server (make-server-for-test)))
-    (server-listen server)
-    (let ((session (server-accept server)))
-      (server-handle-key-exchange session)
-      (let ((msg (server-message-get session)))
-        (message-auth-set-methods! msg '(none))
-        (message-reply-success msg)
-        (disconnect! session)
-        (message? msg)))))
-
-(cancel-client-thread)
+        ;; client
+        (begin
+          (sleep 1)
+          (connect! session)
+          (authenticate-server session)
+          (primitive-exit)))))
 
 
-(spawn-client-thread
- (let ((session (make-session-for-test)))
-   (while (not (connected? session))
-     (sleep 1)
-     (catch #t
-       (lambda () (connect! session))
-       (lambda (key . args) #f)))
-   (clnmsg "connected")
-   (authenticate-server session)
-   (clnmsg "server authenticated")
-   (userauth-none! session)
-   (clnmsg "client authenticated")
-   (disconnect! session)))
+(test-assert-with-log "server-message-get"
+  (let ((session (make-session-for-test))
+        (pid     (primitive-fork)))
 
-(test-assert "message-get-type"
-  (let ((server (make-server-for-test)))
-    (server-listen server)
-    (let ((session (server-accept server)))
-      (server-handle-key-exchange session)
-      (let ((msg (server-message-get session)))
-        (let ((msg-type (message-get-type msg))
-              (expected-type '(request-service)))
-          (message-auth-set-methods! msg '(none))
-          (message-reply-success msg)
-          (disconnect! session)
-          (equal? msg-type expected-type))))))
+    (if (not (= 0 pid))
 
-(cancel-client-thread)
+        ;; server
+        (let ((server (make-server-for-test)))
+          (server-listen server)
+          (let ((session (server-accept server)))
+            (server-handle-key-exchange session)
+            (let ((msg (server-message-get session)))
+              (message-auth-set-methods! msg '(none))
+              (message-reply-success msg)
+              (message? msg))))
+
+        ;; client
+        (begin
+          (sleep 1)
+          (connect! session)
+          (clnmsg "connected")
+          (authenticate-server session)
+          (clnmsg "server authenticated")
+          (userauth-none! session)
+          (clnmsg "client authenticated")
+          (primitive-exit)))))
+
+
+(test-assert-with-log "message-get-type"
+  (let ((session (make-session-for-test))
+        (pid     (primitive-fork)))
+
+    (if (not (= 0 pid))
+
+        ;; server
+        (let ((server (make-server-for-test)))
+          (server-listen server)
+          (let ((session (server-accept server)))
+            (server-handle-key-exchange session)
+            (let ((msg (server-message-get session)))
+              (let ((msg-type (message-get-type msg))
+                    (expected-type '(request-service)))
+                (message-auth-set-methods! msg '(none))
+                (message-reply-success msg)
+                (disconnect! session)
+                (equal? msg-type expected-type)))))
+
+        ;; client
+        (begin
+          (sleep 1)
+          (connect! session)
+          (clnmsg "connected")
+          (authenticate-server session)
+          (clnmsg "server authenticated")
+          (userauth-none! session)
+          (clnmsg "client authenticated")
+          (primitive-exit)))))
 
 
 (test-end "server-client")

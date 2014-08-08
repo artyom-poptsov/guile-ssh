@@ -8,21 +8,51 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
+** Require GNU Guile 2.0
+** Require libssh 0.6.3
 ** Change `get-public-key-hash'
 *** Move the procedure to (ssh key)
 *** Return the hash as a bytevector
 *** Accept a public key as the first argument
 *** Accept a hash type as the second argument
     Possible types are: 'md5, 'sha1
+** (ssh auth) procedures now throw an exception if the session is not connected
+** (ssh channel) procedures now handle closed and freed channels
+   - `channel-open?' returns `#f' if the channel has been closed freed.
+   - `channel-open-session' and `channel-eof?' throw to `guile-ssh-error' if
+     the channel has been closed and freed.
+   - `channel-request-env', `channel-request-exec', `channel-request-pty',
+     `channel-request-shell', `channel-set-pty-size!', `channel-set-stream!',
+     `channel-get-stream' now throw `wrong-type-arg` if the channel is closed.
+** Some (ssh session) procedures now throw an exception if the session is not connected
+   These procedures are:
+   - `get-protocol-version'
+   - `authenticate-server'
+   - `get-server-public-key'
+   - `write-known-host!'
 ** Change `userauth-pubkey!'
 *** Rename it to `userauth-public-key!'
 *** Change arguments
+** `blocking-flush!' now returns `error' symbol on error
+   instead of throwing of an exception
+** `connect!' now returns `error' symbol on error
+   instead of throwing of an exception
+** `authenticate-server' now returns `error' symbol on error
+   instead of throwing of an exception
 ** `private-key-from-file' now takes only a file name
+** New (ssh log) module
 ** Rename `userauth-pubkey-auto!' to `userauth-public-key/auto!'
 ** New `userauth-public-key/try' procedure in (ssh auth)
 ** New `bytevector->hex-string' procedure in (ssh key)
 ** New `channel-open-forward' procedure in (ssh channel)
 ** New `channel-open-forward/reverse' procedure in (ssh channel)
+** New `session-get' procedure in (ssh session)
+** Improve printing of Guile-SSH objects
+*** Print more detailed information about `session' object
+    Print user name, host name and current state of a `session' object.
+*** Print object address for `channel' object
+*** Print object address for `message' object
+*** Print object address for `key' object
 ** Changes in tests
 *** Add tests for Guile-SSH keys
 *** Add tests for `authenticate-server' procedure
@@ -31,6 +61,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     Functions now return `#f' if the given argument is not a Guile-SSH
     key object.
 ** Documentation update
+*** Fix old URLs to Guile-SSH repository in the `Installation' chapter
 *** Add an overview of programming with Guile-SSH to the "Examples" chapter
 
 * Changes in version 0.6.0 (2014-03-23)

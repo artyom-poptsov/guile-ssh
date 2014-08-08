@@ -1,4 +1,276 @@
+2014-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/session-func.c: Improve docstrings.  Remove extra comments.
+
+	* README: Require GNU Guile 2.0.
+	* doc/guile-ssh.texi (Installation): Likewise.
+	* configure.ac: Remove checks related to GNU Guile 1.8.
+	* Makefile.am, ssh/Makefile.am: Likewise.
+	* doc/version.texi: Update.
+	* NEWS: Update.
+
+2014-07-19  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* TODO: Update.
+
+	* ssh/channel-type.c (print_channel): Print data type first.  Print
+	`freed' state if the channel has been closed and freed.
+	* ssh/key-type.c (print_key): Print data type first.
+	* ssh/message-type.c (print_message): Improve.
+	* ssh/session-type.c (print_session): Improve a bit.
+
+	* ssh/session-type.h, ssh/session-type.c: Cleanup.
+
+	* examples/sssh.scm.in (*option-spec*): Add `known-hosts-file' option.
+	(main): Handle it.
+	* tests/sssh-ssshd.scm: Fix a bug in the test suite: use test
+	`known_hosts' file to make sure that it has no records.
+	("ssshd, start"): Add a delay to make sure that
+	ssshd started.
+	("sssh, exec"): Improve.  Do cleanup at the end of the TC.
+	(*sssh-cmd*): Set `knownhosts' file explicitly.
+
+	* tests/server-client.scm: Fix global variables names.  Remove extra
+	global variables.
+	(clnmsg): Improve.
+
+	* tests/server-client.scm: Improve TCs.
+	(libssh-log-printer): New procedure.
+	(make-session-for-test): Set known hosts file explicitly.
+	(make-server-for-test): Set DSA key.  Change log verbosity level to
+	`rare'.
+	(test-assert-with-log): New macro.
+	("accept, key exchange", "server-message-get", "message-get-type"):
+	Start the client as a different process during the test.  Improve.
+
+	* tests/client-server.scm: Improve TCs
+	(spawn-server-thread, cancel-server-thread): Remove.
+	(make-session-loop): Stop the loop when client disconnects.
+	("connect!, disconnect!", "get-protocol-version")
+	("authenticate-server, not-known", "authenticate-server, ok")
+	("get-public-key-hash", "userauth-none!, success")
+	("userauth-none!, denied", "userauth-none!, partial")
+	("userauth-password!, success", "userauth-password!, denied")
+	("userauth-password!, partial", "userauth-public-key!, success")
+	("userauth-get-list", "make-channel", "channel-open-session")
+	("channel-request-exec", "data transferring, string")
+	("data transferring, bytevector"): Start the server as a different
+	process during the test.  Improve.
+	(start-server/channel-test, make-session/channel-test)
+	(start-server/dt-test, make-channel/dt-test): New procedures.
+
+2014-07-18  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/channel-type.h (GSSH_VALIDATE_OPEN_CHANNEL): New macro.
+	* ssh/channel-func.c (guile_ssh_channel_request_exec)
+	(guile_ssh_channel_request_pty, guile_ssh_channel_request_shell)
+	(guile_ssh_channel_request_env, guile_ssh_channel_set_pty_size_x)
+	(guile_ssh_channel_set_stream_x, guile_ssh_channel_get_stream): Expect
+	an open channel as an argument.
+	* doc/api-channels.texi (Channels): Update.
+
+	* ssh/channel-type.h (GSSH_VALIDATE_CHANNEL_DATA): New macro.
+	* ssh/channel-func.c (guile_ssh_channel_is_open_p): Return `#f' if the
+	channel has been closed and freed.
+	(guile_ssh_channel_is_eof_p, guile_ssh_channel_open_session): Throw an
+	exeption if the channel has been closed and freed.
+
+2014-07-16  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/channel-type.c (_scm_to_channel_data): Return NULL if the
+	channel has been freed.
+
+2014-07-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/log.scm: Fix TS name.
+
+2014-07-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-channels.texi (Channels): Add note that
+	`channel-request-exec' can be used to execute only a single command on
+	a channel.
+
+	* TODO (Known Bugs): New section.
+
+	* ssh/session-func.c: Include missed `assert.h' header.
+
+2014-07-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/session-func.c (guile_ssh_get_protocol_version)
+	(guile_ssh_authenticate_server, guile_ssh_get_server_public_key)
+	(guile_ssh_write_known_host): Expect a connected session as an
+	argument.  Throw `wrong-type-arg' if the session is not connected.
+	* tests/session.scm ("get-protocol-version"): Move with some changes
+	to `tests/client-server.scm'.
+	* tests/client-server.scm ("get-protocol-version"): New TC.
+	* doc/api-sessions.texi (Sessions): Update.
+	* NEWS: Update.
+
+2014-07-07  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/auth.c: Throw `wrong-type-arg' instead of `guile-ssh-error' if a
+	disconnected session is passed as an argument to procedures in the
+	module.
+	* ssh/session-type.h (GSSH_VALIDATE_CONNECTED_SESSION): New macro.
+	* doc/api-auth.texi (Auth): Update.
+
+2014-07-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/auth.c (guile_ssh_userauth_public_key_x)
+	(guile_ssh_userauth_public_key_auto_x)
+	(guile_ssh_userauth_public_key_try, guile_ssh_userauth_agent_x)
+	(guile_ssh_userauth_password_x, guile_ssh_userauth_none_x)
+	(guile_ssh_userauth_get_list): Throw `guile-ssh-error' if the session
+	is not connected.
+	* doc/api-auth.texi (Auth): Update.
+	* NEWS: Update.
+
+	* ssh/auth.c, ssh/channel-func.c, ssh/channel-type.c, ssh/key-func.c,
+	ssh/key-type.c, ssh/log.c, ssh/message-func.c, ssh/message-type.c,
+	ssh/server-func.c, ssh/session-type.c, ssh/version.c: Improve the
+	docstrings format.
+
+2014-07-03  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/client-server.scm: Improve logging: Redirect stderr to
+	`client-server-errors.log' file.  Redirect libssh log messages to
+	`client-server-libssh.log' file.  Set more verbose log level for
+	sessions.  Use `test-assert-with-log' macro instead of `test-assert'.
+	(libssh-log-printer): New procedure.
+	(test-assert-with-log): New macro.
+	* tests/Makefile.am (CLEANFILES): Add log files.
+	* .dir-locals.el: Update.
+
+	* ssh/log.c (guile_ssh_write_log): Fix a warning: Pass the message as
+	a argument to the formatter.
+
+2014-07-02  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* README (Distribution): Add information about `log.scm'.
+
+	* ssh/log.c (guile_ssh_default_libssh_log_printer): Don't print the
+	function name because it is already included in the message passed to
+	the callback.
+
+	* ssh/log.scm (format-log): New procedure.
+	* ssh/log.c: Add copyright information.
+	(guile_ssh_write_log): New procedure.
+	* doc/api-logging.texi (Logging): Add information about `format-log'
+	procedure.
+
+2014-06-29  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/session-func.c (guile_ssh_blocking_flush): Return `error' symbol
+	on error.  Assert that the result of libssh procedure is one of the
+	valid constants described in `libssh.h'.
+	(guile_ssh_connect_x, guile_ssh_authenticate_server): Likewise.
+	* doc/api-sessions.texi (Sessions): Update.
+
+2014-06-28  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-logging.texi: Add to the repository.
+	* doc/guile-ssh.texi (API Reference): Add description of logging API.
+	* doc/version.texi: Update.
+	* doc/Makefile.am (guile_ssh_TEXINFOS): Add `api-logging.texi'.
+	* ssh/log.c, ssh/log.h, ssh/log.scm: Add to the repository.
+	* ssh/Makefile.am (libguile_ssh_la_SOURCES, BUILT_SOURCES)
+	(SCM_SOURCES): Update.
+	* ssh/auth.scm, ssh/channel.scm, ssh/key.scm, ssh/message.scm,
+	ssh/server.scm, ssh/session.scm, ssh/version.scm: Use (ssh log).
+	* tests/log.scm: New TS.
+	* tests/Makefile.am (SCM_TESTS): Add `log.scm'.
+	* NEWS: Update.
+
+2014-06-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/error.c (guile_ssh_session_error1): New procedure.
+	* ssh/error.h: Likewise.
+	* ssh/channel-func.c (guile_ssh_channel_open_session)
+	(guile_ssh_channel_request_exec, guile_ssh_channel_request_pty)
+	(guile_ssh_channel_request_shell, guile_ssh_channel_request_env): Use it.
+	* ssh/channel-type.c (ptob_write, ptob_flush): Use it.
+	* ssh/server-func.c (guile_ssh_server_accept)
+	(guile_ssh_server_handle_key_exchange): Use it.
+	* ssh/session-func.c (guile_ssh_connect_x)
+	(guile_ssh_authenticate_server, guile_ssh_write_known_host): Use it.
+
+	* ssh/channel-type.c (_scm_to_ssh_channel): Rename to
+	`_scm_to_channel_data'.  All callers updated.
+	* ssh/channel-type.h: Likewise.
+	* ssh/channel-func.c (guile_ssh_channel_open_session)
+	(guile_ssh_channel_request_exec, guile_ssh_channel_request_pty)
+	(guile_ssh_channel_request_shell, guile_ssh_channel_request_env)
+	(guile_ssh_channel_set_pty_size_x, guile_ssh_channel_set_stream_x)
+	(guile_ssh_channel_get_stream, guile_ssh_channel_is_open_p)
+	(guile_ssh_channel_is_eof_p): Update.
+	* ssh/key-type.c (_scm_to_ssh_key): Rename to `_scm_to_key_data'.  All
+	callers updated.
+	* ssh/key-type.h: Likewise.
+	* ssh/key-func.c (guile_ssh_public_key_to_string)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_get_public_key_hash): Update.
+	* ssh/message-type.c (_scm_to_ssh_message): Rename to
+	`_scm_to_message_data'.  All callers updated.
+	* ssh/message-type.h: Likewise.
+	* ssh/message-func.c (guile_ssh_message_reply_default)
+	(guile_ssh_message_service_reply_success)
+	(guile_ssh_message_auth_reply_success)
+	(guile_ssh_message_auth_reply_public_key_ok)
+	(guile_ssh_message_channel_request_reply_success)
+	(guile_ssh_message_channel_request_open_reply_accept)
+	(guile_ssh_message_get_type, guile_ssh_message_get_req)
+	(guile_ssh_message_auth_set_methods_x): Update.
+	* ssh/server-type.c (_scm_to_ssh_server): Rename to
+	`_scm_to_server_data'.  All callers updated.
+	* ssh/server-type.h: Likewise.
+	* ssh/server-func.c (guile_ssh_server_set_x, guile_ssh_server_listen)
+	(guile_ssh_server_accept, guile_ssh_server_handle_key_exchange)
+	(guile_ssh_server_message_get): Update.
+	* ssh/session-type.c (_scm_to_session_data): Rename to
+	`_scm_to_session_data'.  All callers updated.
+	* ssh/session-type.h: Likewise.
+	* ssh/session-func.c (guile_ssh_blocking_flush, guile_ssh_session_set)
+	(guile_ssh_session_get, guile_ssh_connect_x, guile_ssh_disconnect)
+	(guile_ssh_get_protocol_version, guile_ssh_get_error)
+	(guile_ssh_authenticate_server, guile_ssh_get_server_public_key)
+	(guile_ssh_write_known_host, guile_ssh_is_connected_p): Update.
+	* ssh/auth.c (guile_ssh_userauth_public_key_x)
+	(guile_ssh_userauth_public_key_auto_x)
+	(guile_ssh_userauth_public_key_try, guile_ssh_userauth_agent_x)
+	(guile_ssh_userauth_password_x, guile_ssh_userauth_none_x)
+	(guile_ssh_userauth_get_list): Update.
+
+	* ssh/session-type.c (print_session): New procedure.
+	(init_session_type): Register `print_session' callback.
+	* ssh/channel-type.c (print_channel): Print object address.
+
+	* ssh/message-type.c (print_message): Likewise.
+	* ssh/key-type.c (print_key): Likewise.
+	* ssh/common.c (_scm_object_hex_address): New procedure.
+	* ssh/common.h (_scm_object_hex_address): Likewise.
+	* NEWS: Update.
+
+	* ssh/session-func.c (guile_ssh_session_get): New procedure.
+	* ssh/session-func.h (guile_ssh_session_get): Likewise.
+	* ssh/session.scm (session-get): New procedure.
+	* tests/session.scm ("session-get"): New TC.
+	* doc/api-sessions.texi (Sessions): Add description of `session-get'
+	procedure.
+	* NEWS: Update.
+
+2014-06-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/client-server.scm (spawn-server-thread): Catch all exceptions
+	to fix the "Error while printing of exception" during the tests.
+	* tests/server-client.scm (spawn-client-thread): Likewise.
+
+	* ssh/channel-type.c (print_channel): Use `SCM_OPPORTP' predicate.
+
 2014-06-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/guile-ssh.texi (Installation): Update URLs to Guile-SSH
+	repository.  Require libssh 0.6.3.
+	* NEWS: Update.
 
 	* tests/client-server.scm ("authenticate-server, not-known")
 	("authenticate-server, ok"): New TCs.

@@ -24,7 +24,9 @@
 /* Get version of the libssh. */
 SCM_DEFINE (guile_ssh_get_libssh_version, "get-libssh-version", 0, 0, 0,
             (),
-            "Get version of the libssh.")
+            "\
+Get version of the libssh.\
+")
 {
   return scm_from_locale_string (SSH_STRINGIFY (LIBSSH_VERSION));
 }

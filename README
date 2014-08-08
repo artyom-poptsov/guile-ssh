@@ -6,7 +6,7 @@ underlying [[http://www.libssh.org/][libssh]] library.
 
 * Requirements
 
- - [[https://www.gnu.org/software/guile/][GNU Guile]] 1.8.x or 2.0.x
+ - [[https://www.gnu.org/software/guile/][GNU Guile]] 2.0.x
  - [[http://www.libssh.org/][libssh]] 0.6.3
 
 * Distribution
@@ -39,14 +39,15 @@ Guile modules, in =${GUILE_SITE}/ssh=:
  - auth.scm    -- User authentication.
  - channel.scm -- Channel manipulation.
  - key.scm     -- Keys management.
+ - log.scm     -- Interface to libssh logging facilities
  - message.scm -- Procedures for working with SSH messages.
  - server.scm  -- Server API.
  - session.scm -- Session management.
  - version.scm -- Information about versions.
 
-If you use GNU Guile 2.0.x then all the modules will be compiled and
-produced .go files will be installed to =site-ccache= directory which
-is something like this: =${libdir}/guile/2.0/site-ccache/ssh/=.
+All the modules will be compiled and produced .go files will be installed to
+=site-ccache= directory which is something like this:
+=${libdir}/guile/2.0/site-ccache/ssh/=.
 
 Documentation in Info format, in =${prefix}/share/info/=:
  - guile-ssh.info

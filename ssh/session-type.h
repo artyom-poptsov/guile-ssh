@@ -28,13 +28,15 @@ extern scm_t_bits session_tag;
 
 struct session_data {
   ssh_session ssh_session;
-
-  /* The reason for storing references to all channels related to the
-     session is that we have to prevent freeing of the channels that
-     are normally freed along with the session. */
-  size_t channel_cnt;
-  struct channel_data **channels;
 };
+
+/* Make sure that the session pointed by session data structure pointer SD is
+   connected. */
+#define GSSH_VALIDATE_CONNECTED_SESSION(sd, scm, pos) \
+  do { \
+    SCM_ASSERT_TYPE (ssh_is_connected (sd->ssh_session), scm, \
+                     pos, FUNC_NAME, "connected session"); \
+  } while (0)
 
 
 extern SCM guile_ssh_make_session (void);
@@ -44,6 +46,6 @@ extern void init_session_type (void);
 
 
 /* Helper procedures */
-extern struct session_data*_scm_to_ssh_session (SCM x);
+extern struct session_data*_scm_to_session_data (SCM x);
 
 #endif  /* ifndef __SESSION_TYPE_H__ */

@@ -29,6 +29,7 @@
 ;;   make-session
 ;;   blocking-flush!
 ;;   session-set!
+;;   session-get
 ;;   get-protocol-version
 ;;   connect!
 ;;   disconnect!
@@ -43,12 +44,14 @@
 
 (define-module (ssh session)
   #:use-module (ice-9 optargs)
+  #:use-module (ssh log)
   #:export (session
             session?
             %make-session
             make-session
 	    blocking-flush!
             session-set!
+            session-get
             get-protocol-version
             connect!
             disconnect!

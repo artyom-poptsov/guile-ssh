@@ -1,4 +1,4 @@
-/* Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -16,26 +16,6 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MESSAGE_TYPE_H__
-#define __MESSAGE_TYPE_H__
+extern void init_log_func (void);
 
-#include <libguile.h>
-#include <libssh/libssh.h>
-
-extern scm_t_bits message_tag;
-
-
-/* Smob data. */
-struct message_data {
-  ssh_message message;
-};
-
-extern void init_message_type (void);
-
-
-/* Helper procedures. */
-extern struct message_data *_scm_to_message_data (SCM x);
-
-#endif  /* ifndef __MESSAGE_TYPE_H__ */
-
-/* message-type.h ends here */
+/* log.h ends here */

@@ -22,6 +22,7 @@
 #include <libssh/libssh.h>
 
 #include "key-type.h"
+#include "common.h"
 
 /* BUG: Currently a SSH key that has been read from a file has both
    public and private flags.  It means that we cannot distinguish
@@ -54,7 +55,7 @@ mark_key_smob (SCM key_smob)
 size_t
 free_key_smob (SCM arg1)
 {
-  struct key_data *data = _scm_to_ssh_key (arg1);
+  struct key_data *data = _scm_to_key_data (arg1);
 
   if (data->is_to_be_freed)
     ssh_key_free (data->ssh_key);
@@ -65,14 +66,14 @@ free_key_smob (SCM arg1)
 static int
 print_key (SCM smob, SCM port, scm_print_state *pstate)
 {
-  struct key_data *key_data = _scm_to_ssh_key (smob);
+  struct key_data *key_data = _scm_to_key_data (smob);
   SCM type = guile_ssh_key_get_type (smob);
 
-  scm_puts ("#<", port);
-  scm_puts (_public_key_p (key_data) ? "public" : "private", port);
-  scm_puts (" ", port);
+  scm_puts ("#<key ", port);
   scm_display (type, port);
-  scm_puts (" key", port);
+  scm_putc (' ', port);
+  scm_puts (_public_key_p (key_data) ? "(public) " : "(private) ", port);
+  scm_display (_scm_object_hex_address (smob), port);
   scm_puts (">", port);
 
   return 1;
@@ -101,10 +102,12 @@ _scm_to_ssh_key_type (SCM type)
    following list: 'dss, 'rsa, 'rsa1, 'unknown */
 SCM_DEFINE (guile_ssh_key_get_type, "get-key-type", 1, 0, 0,
             (SCM key),
-            "Get a symbol that represents the type of the SSH key KEY.\n"
-            "Possible types are: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown")
+            "\
+Get a symbol that represents the type of the SSH key KEY.\n\
+Possible types are: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown\
+")
 {
-  struct key_data *data = _scm_to_ssh_key (key);
+  struct key_data *data = _scm_to_key_data (key);
   enum ssh_keytypes_e type = ssh_key_type (data->ssh_key);
   return _ssh_key_type_to_scm (type);
 }
@@ -114,32 +117,38 @@ SCM_DEFINE (guile_ssh_key_get_type, "get-key-type", 1, 0, 0,
 
 SCM_DEFINE (guile_ssh_is_key_p, "key?", 1, 0, 0,
             (SCM x),
-            "Return #t if X is a SSH key, #f otherwise.")
+            "\
+Return #t if X is a SSH key, #f otherwise.\
+")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x));
 }
 
 SCM_DEFINE (guile_ssh_is_public_key_p, "public-key?", 1, 0, 0,
             (SCM x),
-            "Return #t if X is a SSH public-key, #f otherwise.")
+            "\
+Return #t if X is a SSH public-key, #f otherwise.\
+")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x)
-                        && _public_key_p (_scm_to_ssh_key (x)));
+                        && _public_key_p (_scm_to_key_data (x)));
 }
 
 SCM_DEFINE (guile_ssh_is_private_key_p, "private-key?", 1, 0, 0,
             (SCM x),
-            "Return #t if X is a SSH private-key, #f otherwise.")
+            "\
+Return #t if X is a SSH private-key, #f otherwise.\
+")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x)
-                        && _private_key_p (_scm_to_ssh_key (x)));
+                        && _private_key_p (_scm_to_key_data (x)));
 }
 
 SCM
 equalp_key (SCM x1, SCM x2)
 {
-  struct key_data *key1 = _scm_to_ssh_key (x1);
-  struct key_data *key2 = _scm_to_ssh_key (x2);
+  struct key_data *key1 = _scm_to_key_data (x1);
+  struct key_data *key2 = _scm_to_key_data (x2);
 
   if ((! key1) || (! key2))
     return SCM_BOOL_F;
@@ -154,7 +163,7 @@ equalp_key (SCM x1, SCM x2)
 
 /* Convert X to a SSH key */
 struct key_data *
-_scm_to_ssh_key (SCM x)
+_scm_to_key_data (SCM x)
 {
   scm_assert_smob_type (key_tag, x);
   return (struct key_data *) SCM_SMOB_DATA (x);

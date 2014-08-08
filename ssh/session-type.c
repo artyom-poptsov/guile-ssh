@@ -24,7 +24,9 @@
 
 #include "session-type.h"
 #include "channel-type.h"
+#include "session-func.h"
 #include "error.h"
+#include "common.h"
 
 scm_t_bits session_tag;	/* Smob tag. */
 
@@ -38,7 +40,7 @@ mark_session (SCM session_smob)
 size_t
 free_session (SCM session_smob)
 {
-  struct session_data *data = _scm_to_ssh_session (session_smob);
+  struct session_data *data = _scm_to_session_data (session_smob);
 
   ssh_disconnect (data->ssh_session);
   ssh_free (data->ssh_session);
@@ -51,7 +53,9 @@ free_session (SCM session_smob)
 /* Create a new session. */
 SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
             (),
-            "Create a new session.")
+            "\
+Create a new session.\
+")
 {
   SCM smob;
 
@@ -63,19 +67,52 @@ SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
   if (session_data->ssh_session == NULL)
     return SCM_BOOL_F;
 
-  session_data->channels = NULL;
-  session_data->channel_cnt = 0;
-
   SCM_NEWSMOB (smob, session_tag, session_data);
 
   return smob;
+}
+
+static int
+print_session (SCM session, SCM port, scm_print_state *pstate)
+{
+  struct session_data *sd = _scm_to_session_data (session);
+  char *user = NULL;
+  char *host = NULL;
+  uint32_t smob_addr = (uint32_t) scm_object_address (session);
+  int res;
+
+  scm_puts ("#<session ", port);
+
+  res = ssh_options_get (sd->ssh_session, SSH_OPTIONS_USER, &user);
+  scm_display ((res == SSH_OK) ? scm_from_locale_string (user) : SCM_UNDEFINED,
+               port);
+  ssh_string_free_char (user);
+
+  scm_putc ('@', port);
+
+  res = ssh_options_get (sd->ssh_session, SSH_OPTIONS_HOST, &host);
+  scm_display ((res == SSH_OK) ? scm_from_locale_string (host) : SCM_UNDEFINED,
+               port);
+  ssh_string_free_char (host);
+
+  scm_puts (ssh_is_connected (sd->ssh_session) ? " (connected) "
+                                               : " (disconnected) ",
+            port);
+
+  scm_display (_scm_object_hex_address (session), port);
+
+  scm_putc ('>', port);
+
+  return 1;
 }
 
 
 /* Predicates */
 SCM_DEFINE (guile_ssh_is_session_p, "session?", 1, 0, 0,
             (SCM x),
-            "Return #t if X is a SSH session, #f otherwise.")
+            "\
+Return #t if X is a SSH session, #f otherwise.\
+")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (session_tag, x));
 }
@@ -83,8 +120,8 @@ SCM_DEFINE (guile_ssh_is_session_p, "session?", 1, 0, 0,
 SCM
 equalp_session (SCM x1, SCM x2)
 {
-  struct session_data *session1 = _scm_to_ssh_session (x1);
-  struct session_data *session2 = _scm_to_ssh_session (x2);
+  struct session_data *session1 = _scm_to_session_data (x1);
+  struct session_data *session2 = _scm_to_session_data (x2);
 
   if ((! session1) || (! session2))
     return SCM_BOOL_F;
@@ -99,7 +136,7 @@ equalp_session (SCM x1, SCM x2)
 
 /* Convert SCM object to a SSH session */
 struct session_data*
-_scm_to_ssh_session (SCM x)
+_scm_to_session_data (SCM x)
 {
   scm_assert_smob_type (session_tag, x);
   return (struct session_data *) SCM_SMOB_DATA (x);
@@ -114,6 +151,7 @@ init_session_type (void)
                                     sizeof (struct session_data));
   scm_set_smob_mark (session_tag, mark_session);
   scm_set_smob_free (session_tag, free_session);
+  scm_set_smob_print (session_tag, print_session);
   scm_set_smob_equalp (session_tag, equalp_session);
 
 #include "session-type.x"

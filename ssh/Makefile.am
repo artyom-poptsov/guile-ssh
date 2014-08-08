@@ -30,16 +30,17 @@ libguile_ssh_la_SOURCES = \
 	server-type.h message-type.c message-type.h message-func.c \
 	message-func.h message-main.c \
 	version.c threads.c threads.h \
-	common.c common.h
+	common.c common.h	\
+	log.c log.h
 
 BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 	key-func.x key-type.x session-func.x session-type.x \
 	server-type.x server-func.x message-type.x message-func.x \
-	version.x
+	version.x log.x
 
 SCM_SOURCES = \
 	auth.scm channel.scm key.scm session.scm	\
-	server.scm message.scm version.scm
+	server.scm message.scm version.scm log.scm
 
 libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
 
@@ -64,8 +65,6 @@ SUFFIXES = .x
 	$(AM_V_SNARF)$(GUILE_SNARF) -o $@ $< $(snarfcppopts)
 
 CLEANFILES = *.x
-
-if HAVE_GUILE_VM
 
 GOBJECTS = $(SCM_SOURCES:%.scm=%.go)
 $(GOBJECTS): $(lib_LTLIBRARIES)	# Build the library first
@@ -108,7 +107,5 @@ CLEANFILES += $(GOBJECTS)
 clean-go:
 	-$(RM) -f $(GOBJECTS)
 .PHONY: clean-go
-
-endif HAVE_GUILE_VM
 
 ## Makefile.am ends here

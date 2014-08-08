@@ -18,6 +18,7 @@
 ## along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
 SCM_TESTS = \
+	log.scm \
 	server.scm \
 	session.scm \
 	client-server.scm \
@@ -54,3 +55,7 @@ EXTRA_DIST = \
 	ecdsakey.pub		\
 	rsakey			\
 	rsakey.pub
+
+CLEANFILES = \
+	client-server-errors.log		\
+	client-server-libssh.log
