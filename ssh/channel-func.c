@@ -181,7 +181,7 @@ SCM_DEFINE (guile_ssh_channel_open_forward,
             "")
 #define FUNC_NAME s_guile_ssh_channel_open_forward
 {
-  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  struct channel_data *cd = _scm_to_channel_data (channel);
   char *c_remote_host = NULL;
   char *c_source_host = NULL;
   int res;
@@ -219,7 +219,7 @@ SCM_DEFINE (guile_ssh_channel_open_reverse_forward,
             "")
 #define FUNC_NAME s_guile_ssh_channel_open_reverse_forward
 {
-  struct channel_data *cd = _scm_to_ssh_channel (channel);
+  struct channel_data *cd = _scm_to_channel_data (channel);
   char *c_remote_host = NULL;
   char *c_source_host = NULL;
   int res;
@@ -260,7 +260,7 @@ SCM_DEFINE (guile_ssh_channel_cancel_forward,
             "Return value is undefined.")
 #define FUNC_NAME s_guile_ssh_channel_cancel_forward
 {
-  struct session_data *sd = _scm_to_ssh_session (session);
+  struct session_data *sd = _scm_to_session_data (session);
   char *c_address = NULL;
   int res;
   

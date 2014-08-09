@@ -1,3 +1,10 @@
+2014-08-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/channel-func.c (guile_ssh_channel_open_forward)
+	(guile_ssh_channel_open_reverse_forward)
+	(guile_ssh_channel_cancel_forward): Fix a bug: Rename
+	`_scm_to_ssh_session' to `_scm_to_session_data'.
+
 2014-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/session-func.c: Improve docstrings.  Remove extra comments.
