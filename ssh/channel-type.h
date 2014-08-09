@@ -56,6 +56,6 @@ extern void init_channel_type (void);
 
 /* Helper procedures */
 extern struct channel_data *_scm_to_channel_data (SCM x);
-extern SCM _ssh_channel_to_scm (ssh_channel ch);
+extern SCM _scm_from_channel_data (ssh_channel ch);
 
 #endif /* ifndef __CHANNEL_TYPE_H__ */

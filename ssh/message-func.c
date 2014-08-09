@@ -138,7 +138,7 @@ Return a new SSH channel.\
   if (! ch)
     return SCM_BOOL_F;
 
-  SCM channel = _ssh_channel_to_scm (ch);
+  SCM channel = _scm_from_channel_data (ch);
   SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
 
   return channel;

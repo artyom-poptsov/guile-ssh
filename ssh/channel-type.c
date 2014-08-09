@@ -197,10 +197,55 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
   return 1;
 }
 
+/* Allocate a new SSH channel. */
+SCM_DEFINE (guile_ssh_make_channel, "make-channel", 1, 0, 0,
+            (SCM arg1),
+            "\
+Allocate a new SSH channel.\
+")
+{
+  struct session_data *session_data = _scm_to_session_data (arg1);
+  ssh_channel ch = ssh_channel_new (session_data->ssh_session);
+
+  if (! ch)
+    return SCM_BOOL_F;
+
+  return _scm_from_channel_data (ch);
+}
+
+
+/* Predicates */
+
+SCM_DEFINE (guile_ssh_is_channel_p, "channel?", 1, 0, 0,
+            (SCM x),
+            "\
+Return #t if X is a SSH channel, #f otherwise.\
+")
+{
+  return scm_from_bool (SCM_SMOB_PREDICATE (channel_tag, x));
+}
+
+SCM
+equalp_channel (SCM x1, SCM x2)
+{
+  struct channel_data *channel1 = _scm_to_channel_data (x1);
+  struct channel_data *channel2 = _scm_to_channel_data (x2);
+
+  if ((! channel1) || (! channel2))
+    return SCM_BOOL_F;
+  else if (channel1 != channel2)
+    return SCM_BOOL_F;
+  else
+    return SCM_BOOL_T;
+}
+
+
+/* Helper procedures */
+
 /* Pack the SSH channel CH to a Scheme port and return newly created
    port. */
 SCM
-_ssh_channel_to_scm (ssh_channel ch)
+_scm_from_channel_data (ssh_channel ch)
 {
   struct channel_data *channel_data;
   SCM ptob;
@@ -233,51 +278,6 @@ _ssh_channel_to_scm (ssh_channel ch)
 
   return ptob;
 }
-
-/* Allocate a new SSH channel. */
-SCM_DEFINE (guile_ssh_make_channel, "make-channel", 1, 0, 0,
-            (SCM arg1),
-            "\
-Allocate a new SSH channel.\
-")
-{
-  struct session_data *session_data = _scm_to_session_data (arg1);
-  ssh_channel ch = ssh_channel_new (session_data->ssh_session);
-
-  if (! ch)
-    return SCM_BOOL_F;
-
-  return _ssh_channel_to_scm (ch);
-}
-
-
-/* Predicates */
-
-SCM_DEFINE (guile_ssh_is_channel_p, "channel?", 1, 0, 0,
-            (SCM x),
-            "\
-Return #t if X is a SSH channel, #f otherwise.\
-")
-{
-  return scm_from_bool (SCM_SMOB_PREDICATE (channel_tag, x));
-}
-
-SCM
-equalp_channel (SCM x1, SCM x2)
-{
-  struct channel_data *channel1 = _scm_to_channel_data (x1);
-  struct channel_data *channel2 = _scm_to_channel_data (x2);
-
-  if ((! channel1) || (! channel2))
-    return SCM_BOOL_F;
-  else if (channel1 != channel2)
-    return SCM_BOOL_F;
-  else
-    return SCM_BOOL_T;
-}
-
-
-/* Helper procedures */
 
 /* Convert X to a SSH channel.  Return the channel data or NULL if the channel
    has been freed. */
