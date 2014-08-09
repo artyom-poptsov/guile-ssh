@@ -1,3 +1,8 @@
+2014-08-10  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/dist.scm: New module.
+	* ssh/Makefile.am (SCM_SOURCES): Add `dist.scm'.
+
 2014-08-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/session-type.c (print_session): Print port number.
