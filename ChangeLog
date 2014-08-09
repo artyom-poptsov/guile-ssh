@@ -1,5 +1,7 @@
 2014-08-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/session-type.c (print_session): Print port number.
+
 	* ssh/session-func.c (guile_ssh_session_get): Handle `port' option.
 	* doc/api-sessions.texi (Sessions): Update.
 	* tests/session.scm ("session-get"): Update.
