@@ -98,13 +98,16 @@
 
 (test-assert "session-get"
   (let* ((host         "example.com")
+         (port         12345)
          (user         "alice")
          (proxycommand "test")
          (session      (make-session #:host         host
+                                     #:port         port
                                      #:user         user
                                      #:identity     %rsakey
                                      #:proxycommand proxycommand)))
     (and (string=? (session-get session 'host)         host)
+         (=        (session-get session 'port)         port)
          (string=? (session-get session 'user)         user)
          (string=? (session-get session 'identity)     %rsakey)
          (string=? (session-get session 'proxycommand) proxycommand))))
