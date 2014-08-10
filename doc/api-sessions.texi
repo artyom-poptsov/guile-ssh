@@ -223,6 +223,7 @@ with this procedure.  Here is the list of allowed options:
 
 @table @samp
 @item host
+@item port
 @item user
 @item identity
 @item proxycommand

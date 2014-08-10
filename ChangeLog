@@ -1,3 +1,18 @@
+2014-08-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/session-type.c (print_session): Print port number.
+
+	* ssh/session-func.c (guile_ssh_session_get): Handle `port' option.
+	* doc/api-sessions.texi (Sessions): Update.
+	* tests/session.scm ("session-get"): Update.
+
+	* ssh/channel-type.c (_ssh_channel_to_scm): Rename to
+	`_scm_from_channel_data'.  All callers updated.
+	(guile_ssh_make_channel): Update.
+	* ssh/channel-type.h: Update.
+	* ssh/message-func.c
+	(guile_ssh_message_channel_request_open_reply_accept): Update.
+
 2014-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/session-func.c: Improve docstrings.  Remove extra comments.
