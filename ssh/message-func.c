@@ -496,6 +496,18 @@ Return value is undefined.\
 #undef FUNC_NAME
 
 
+SCM_DEFINE (guile_ssh_message_get_session,
+            "message-get-session", 1, 0, 0,
+            (SCM message),
+            "\
+Get the session from which the MESSAGE was received.  Return the session.\
+")
+{
+  struct message_data *md = _scm_to_message_data (message);
+  return md->session;
+}
+
+
 void
 init_message_func (void)
 {

@@ -46,6 +46,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New `bytevector->hex-string' procedure in (ssh key)
 ** New `session-get' procedure in (ssh session)
 ** New `channel-get-session' procedure in (ssh channel)
+** New `message-get-session' procedure in (ssh message)
 ** Improve printing of Guile-SSH objects
 *** Print more detailed information about `session' object
     Print user name, host name and current state of a `session' object.

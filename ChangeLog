@@ -1,3 +1,14 @@
+2014-08-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/message.scm (message-get-session): New procedure.
+	* ssh/message-func.c (guile_ssh_message_get_session): New procedure.
+	* ssh/message-func.h: Likewise.
+	* tests/server-client.scm ("message-get-session"): New TC.
+	* doc/api-messages.texi (Message Handling): Add description of
+	`message-get-session'
+	* doc/version.texi: Update.
+	* NEWS: Update.
+
 2014-08-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/session-type.c (print_session): Print port number.

@@ -186,6 +186,36 @@
           (primitive-exit)))))
 
 
+(test-assert-with-log "message-get-session"
+  (let ((session (make-session-for-test))
+        (pid     (primitive-fork)))
+
+    (if (not (= 0 pid))
+
+        ;; server
+        (let ((server (make-server-for-test)))
+          (server-listen server)
+          (let ((session (server-accept server)))
+            (server-handle-key-exchange session)
+            (let* ((msg (server-message-get session))
+                   (x   (message-get-session msg)))
+              (message-auth-set-methods! msg '(none))
+              (message-reply-success msg)
+              (disconnect! x)
+              (equal? x session))))
+
+        ;; client
+        (begin
+          (sleep 1)
+          (connect! session)
+          (clnmsg "connected")
+          (authenticate-server session)
+          (clnmsg "server authenticated")
+          (userauth-none! session)
+          (clnmsg "client authenticated")
+          (primitive-exit)))))
+
+
 (test-end "server-client")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))
