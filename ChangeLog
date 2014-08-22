@@ -1,5 +1,8 @@
 2014-08-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/Makefile.am (CLEANFILES): Add `server-client-errors.log' and
+	`server-client-libssh.log'.
+
 	* tests/client-server.scm (%knownhosts): Use `abs_top_builddir'
 	instead of `abs_top_srcdir' to fix the permission issue on `make
 	distcheck' during tests.

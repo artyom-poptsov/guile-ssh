@@ -59,4 +59,6 @@ EXTRA_DIST = \
 
 CLEANFILES = \
 	client-server-errors.log		\
-	client-server-libssh.log
+	client-server-libssh.log		\
+	server-client-errors.log		\
+	server-client-libssh.log
