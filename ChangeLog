@@ -1,3 +1,10 @@
+2014-08-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/client-server.scm (%knownhosts): Use `abs_top_builddir'
+	instead of `abs_top_srcdir' to fix the permission issue on `make
+	distcheck' during tests.
+	* tests/Makefile.am (AM_TESTS_ENVIRONMENT): Export `abs_top_builddir'.
+
 2014-08-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/message.scm (message-get-session): New procedure.

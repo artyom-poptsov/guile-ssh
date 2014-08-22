@@ -32,6 +32,7 @@ TEST_EXTENSIONS = .scm
 
 AM_TESTS_ENVIRONMENT = \
 	abs_top_srcdir="$(abs_top_srcdir)"; export abs_top_srcdir; \
+	abs_top_builddir="$(abs_top_builddir)"; export abs_top_builddir; \
 	ORIGTERM=${TERM}; export ORIGTERM; \
 	TERM=xterm; export TERM; \
 	GUILE_AUTO_COMPILE=0; export GUILE_AUTO_COMPILE;

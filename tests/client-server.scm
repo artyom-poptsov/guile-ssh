@@ -39,7 +39,8 @@
 (define port   12400)
 (define topdir (getenv "abs_top_srcdir"))
 (define rsakey (format #f "~a/tests/rsakey" topdir))
-(define %knownhosts (format #f "~a/tests/knownhosts" topdir))
+(define %knownhosts (format #f "~a/tests/knownhosts"
+                            (getenv "abs_top_builddir")))
 (define log    (test-runner-aux-value (test-runner-current)))
 (define *server-thread* #f)
 
