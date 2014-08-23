@@ -1,3 +1,7 @@
+2014-08-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* TODO: Update.
+
 2014-08-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/Makefile.am (CLEANFILES): Add `server-client-errors.log' and
