@@ -63,12 +63,11 @@
 
 (test-assert "public-key?"
   (and (public-key? *rsa-pub-key*)
-       ;; FIXME: Currently a SSH key that has been read from a file
-       ;; has both public and private flags.  It means that we cannot
-       ;; distinguish whether the key is private or public.
-       ;;
-       ;; So that will return `#f':
-       ;; (not (public-key? *rsa-key*))
+
+       ;; XXX: Currently a SSH key that has been read from a file
+       ;; has both public and private flags.
+       (public-key? *rsa-key*)
+
        (not (public-key? "not a key"))))
 
 (test-assert "private-key->public-key"
