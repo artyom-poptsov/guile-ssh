@@ -69,7 +69,7 @@ print_key (SCM smob, SCM port, scm_print_state *pstate)
   scm_puts ("#<key ", port);
   scm_display (type, port);
   scm_putc (' ', port);
-  scm_puts (_public_key_p (key_data) ? "(public) " : "(private) ", port);
+  scm_puts (_private_key_p (key_data) ? "(private) " : "(public) ", port);
   scm_display (_scm_object_hex_address (smob), port);
   scm_puts (">", port);
 

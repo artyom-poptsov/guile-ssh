@@ -1,3 +1,9 @@
+2014-08-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/key-type.c (print_key): Use `_private_key_p' predicate to
+	determite type of the key so private key will be displayed as
+	"private", not "public".
+
 2014-08-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* TODO: Update.
