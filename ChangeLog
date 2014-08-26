@@ -1,5 +1,11 @@
 2014-08-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-func.c (guile_ssh_string_to_public_key): Fix a bug: Call
+	`scm_dynwind_end' at the end of the procedure so call to the procedure
+	won't lead to segfaults.
+	* tests/key.scm ("public-key->string"): Improve.
+	("string->public-key"): New TC.
+
 	* tests/key.scm ("public-key?"): Improve TC.
 	("public-key->string"): New TC.
 

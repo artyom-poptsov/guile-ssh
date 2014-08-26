@@ -84,6 +84,8 @@ Throw `guile-ssh-error' on error.\
 
   SCM_NEWSMOB (key_smob, key_tag, kd);
 
+  scm_dynwind_end ();
+
   return key_smob;
 }
 #undef FUNC_NAME
