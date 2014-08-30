@@ -124,7 +124,7 @@ Return #t if X is a SSH key, #f otherwise.\
 SCM_DEFINE (guile_ssh_is_public_key_p, "public-key?", 1, 0, 0,
             (SCM x),
             "\
-Return #t if X is a SSH public-key, #f otherwise.\
+Return #t if X is a SSH key and it contains a public key, #f otherwise.\
 ")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x)

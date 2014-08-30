@@ -18,8 +18,10 @@ Return @code{#t} if @var{x} is a Guile-SSH key, @code{#f} otherwise.
 @end deffn
 
 @deffn {Scheme Procedure} public-key? x
-Return @code{#t} if @var{x} is a Guile-SSH public key, @code{#f}
-otherwise.
+Return @code{#t} if @var{x} is a Guile-SSH key and it @strong{contains} a
+public key, @code{#f} otherwise.  What it means is that the procedure will
+return @code{#t} for a private key too (because the private key contains a
+public key in some sense).
 @end deffn
 
 @deffn {Scheme Procedure} private-key? x

@@ -1,3 +1,9 @@
+2014-08-30  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-keys.texi (Keys): Make description of `public-key?' more
+	accurate.
+	* ssh/key-type.c (guile_ssh_is_public_key_p): Update docstring.
+
 2014-08-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/key-func.c (guile_ssh_string_to_public_key): Fix a bug: Call
