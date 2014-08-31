@@ -1,5 +1,8 @@
 2014-08-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Bump version to 0.7.0.
+	* configure.ac, doc/version.texi: Likewise.
+
 	* README (Distribution): Update.
 
 2014-08-30  Artyom Poptsov  <poptsov.artyom@gmail.com>

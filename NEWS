@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.7.0 (2014-08-31)
 ** Require GNU Guile 2.0
 ** Require libssh 0.6.3
 ** Change `get-public-key-hash'
