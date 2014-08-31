@@ -1,3 +1,7 @@
+2014-08-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* README (Distribution): Update.
+
 2014-08-30  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* doc/api-keys.texi (Keys): Make description of `public-key?' more
