@@ -111,7 +111,7 @@
          body ...)))))
 
 
-(define (run-server-and-client server-proc client-proc)
+(define (run-client-test server-proc client-proc)
   "Run a SERVER-PROC in newly created process.  The server passed to a
 SERVER-PROC as an argument.  CLIENT-PROC is expected to be a thunk that should
 be executed in the parent process.  The procedure returns a result of
@@ -133,7 +133,7 @@ CLIENT-PROC call."
 ;;; Testing of basic procedures.
 
 (test-assert-with-log "connect!, disconnect!"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -152,7 +152,7 @@ CLIENT-PROC call."
          res)))))
 
 (test-assert-with-log "get-protocol-version"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -171,7 +171,7 @@ CLIENT-PROC call."
          (eq? 2 res))))))
 
 (test-assert-with-log "authenticate-server, not-known"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -190,7 +190,7 @@ CLIENT-PROC call."
          (eq? res 'not-known))))))
 
 (test-assert-with-log "authenticate-server, ok"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -211,7 +211,7 @@ CLIENT-PROC call."
          (eq? res 'ok))))))
 
 (test-assert-with-log "get-public-key-hash"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -245,7 +245,7 @@ CLIENT-PROC call."
 
 ;; Server replies with "success", client receives 'success.
 (test-assert-with-log "userauth-none!, success"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -270,7 +270,7 @@ CLIENT-PROC call."
 
 ;; Server replies with "default", client receives 'denied.
 (test-assert-with-log "userauth-none!, denied"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -295,7 +295,7 @@ CLIENT-PROC call."
 
 ;; Server replies with "partial success", client receives 'partial.
 (test-assert-with-log "userauth-none!, partial"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -319,7 +319,7 @@ CLIENT-PROC call."
 
 
 (test-assert-with-log "userauth-password!, success"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -343,7 +343,7 @@ CLIENT-PROC call."
 
 
 (test-assert-with-log "userauth-password!, denied"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -367,7 +367,7 @@ CLIENT-PROC call."
 
 
 (test-assert-with-log "userauth-password!, partial"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -391,7 +391,7 @@ CLIENT-PROC call."
 
 
 (test-assert-with-log "userauth-public-key!, success"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -417,7 +417,7 @@ CLIENT-PROC call."
 ;; Server replies "default" with the list of allowed authentication
 ;; methods.  Client receives the list.
 (test-assert-with-log "userauth-get-list"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -474,7 +474,7 @@ CLIENT-PROC call."
     session))
 
 (test-assert "make-channel"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -486,7 +486,7 @@ CLIENT-PROC call."
        (make-channel session)))))
 
 (test-assert-with-log "channel-get-session"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -499,7 +499,7 @@ CLIENT-PROC call."
        (eq? session (channel-get-session channel))))))
 
 (test-assert-with-log "channel-open-session"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -514,7 +514,7 @@ CLIENT-PROC call."
 
 ;; Client sends "ping" as a command to execute, server replies with "pong"
 (test-assert-with-log "channel-request-exec"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -562,7 +562,7 @@ CLIENT-PROC call."
 
 
 (test-assert-with-log "data transferring, string"
-  (run-server-and-client
+  (run-client-test
 
    ;; server
    (lambda (server)
@@ -589,7 +589,7 @@ CLIENT-PROC call."
   (let ((vect-size 10)
         (vect-fill 10))
 
-    (run-server-and-client
+    (run-client-test
 
      ;; server
      (lambda (server)

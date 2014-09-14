@@ -1,5 +1,8 @@
 2014-09-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/client-server.scm (run-server-and-client): Rename to
+	`run-client-test'.  All callers updated.
+
 	* tests/server-client.scm: Use `dynamic-wind' for child processes in
 	tests.
 	(run-server-test): New procedure.
