@@ -1,5 +1,11 @@
 2014-09-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/server-client.scm: Use `dynamic-wind' for child processes in
+	tests.
+	(run-server-test): New procedure.
+	("accept, key exchange", "server-message-get", "message-get-type")
+	("message-get-session"): Use it.
+
 	* tests/client-server.scm: Use `dynamic-wind' for child processes in
 	tests.
 	(run-server-and-client): New procedure.
