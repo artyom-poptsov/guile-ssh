@@ -2,6 +2,17 @@
 
 	* tests/client-server.scm: Use `dynamic-wind' for child processes in
 	tests.
+	(run-server-and-client): New procedure.
+	("connect!, disconnect!")
+	("get-protocol-version", "authenticate-server, not-known")
+	("authenticate-server, ok", "get-public-key-hash")
+	("userauth-none!, success", "userauth-none!, denied")
+	("userauth-none!, partial", "userauth-password!, success")
+	("userauth-password!, denied", "userauth-password!, partial")
+	("userauth-public-key!, success", "userauth-get-list")
+	("make-channel", "channel-get-session", "channel-open-session")
+	("channel-request-exec", "data transferring, string")
+	("data transferring, bytevector"): Use it.
 
 2014-08-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
