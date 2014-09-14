@@ -1,5 +1,7 @@
 2014-09-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/server-client.scm ("accept, key exchange"): Add missed paren.
+
 	* tests/client-server.scm (run-server-and-client): Rename to
 	`run-client-test'.  All callers updated.
 

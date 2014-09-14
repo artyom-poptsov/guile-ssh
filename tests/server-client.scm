@@ -139,7 +139,7 @@ argument.  The procedure returns a result of SERVER-PROC call."
          (lambda (key . args)
            (display args)
            (newline)))
-       s)))
+       s))))
 
 
 (test-assert-with-log "server-message-get"
