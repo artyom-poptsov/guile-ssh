@@ -1,3 +1,8 @@
+2014-09-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/client-server.scm: Use `dynamic-wind' for child processes in
+	tests.
+
 2014-08-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* NEWS: Bump version to 0.7.0.

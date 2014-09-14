@@ -117,28 +117,43 @@
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
-        
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((s (server-accept server)))
+              (server-handle-key-exchange s)
+              (primitive-exit)))
+          (lambda ()
+            (primitive-exit 1))))
+
         ;; client
         (let ((session (make-session-for-test)))
           (sleep 1)
           (connect! session)
           (let ((res (connected? session)))
             (disconnect! session)
-            res))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((s (server-accept server)))
-            (server-handle-key-exchange s)
-            (primitive-exit))))))
+            res))))
 
 (test-assert-with-log "get-protocol-version"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((s (server-accept server)))
+              (server-handle-key-exchange s)
+              (primitive-exit)))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -146,20 +161,24 @@
           (connect! session)
           (let ((res (get-protocol-version session)))
             (disconnect! session)
-            (eq? 2 res)))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((s (server-accept server)))
-            (server-handle-key-exchange s)
-            (primitive-exit))))))
+            (eq? 2 res))))))
 
 (test-assert-with-log "authenticate-server, not-known"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((s (server-accept server)))
+              (server-handle-key-exchange s)
+              (primitive-exit)))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -167,20 +186,24 @@
           (connect! session)
           (let ((res (authenticate-server session)))
             (disconnect! session)
-            (eq? res 'not-known)))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((s (server-accept server)))
-            (server-handle-key-exchange s)
-            (primitive-exit))))))
+            (eq? res 'not-known))))))
 
 (test-assert-with-log "authenticate-server, ok"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((s (server-accept server)))
+              (server-handle-key-exchange s)
+              (primitive-exit)))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -190,20 +213,24 @@
           (let ((res (authenticate-server session)))
             (disconnect! session)
             (delete-file %knownhosts)
-            (eq? res 'ok)))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((s (server-accept server)))
-            (server-handle-key-exchange s)
-            (primitive-exit))))))
+            (eq? res 'ok))))))
 
 (test-assert-with-log "get-public-key-hash"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((s (server-accept server)))
+              (server-handle-key-exchange s)
+              (primitive-exit)))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((hash-md5-bv   #vu8(15 142 110 203 162 228 250 211 20 212 26 217 118 57 217 66))
@@ -221,14 +248,7 @@
             (and (bytevector=? md5-res hash-md5-bv)
                  (string=? (bytevector->hex-string md5-res) hash-md5-str)
                  (bytevector=? sha1-res hash-sha1-bv)
-                 (string=? (bytevector->hex-string sha1-res) hash-sha1-str))))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((s (server-accept server)))
-            (server-handle-key-exchange s)
-            (primitive-exit))))))
+                 (string=? (bytevector->hex-string sha1-res) hash-sha1-str)))))))
 
 
 ;;; Authentication
@@ -239,7 +259,21 @@
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((session (server-accept server)))
+              (server-handle-key-exchange session)
+              (make-session-loop session
+                                 (message-auth-set-methods! msg '(none))
+                                 (message-reply-success msg)))
+            (primitive-exit))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -248,17 +282,7 @@
           (authenticate-server session)
           (let ((res (userauth-none! session)))
             (disconnect! session)
-            (eq? res 'success)))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (make-session-loop session
-                               (message-auth-set-methods! msg '(none))
-                               (message-reply-success msg)))
-          (primitive-exit)))))
+            (eq? res 'success))))))
 
 
 ;; Server replies with "default", client receives 'denied.
@@ -266,7 +290,21 @@
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((session (server-accept server)))
+              (server-handle-key-exchange session)
+              (make-session-loop session
+                                 (message-auth-set-methods! msg '(public-key))
+                                 (message-reply-default msg)))
+            (primitive-exit))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -275,17 +313,7 @@
           (authenticate-server session)
           (let ((res (userauth-none! session)))
             (disconnect! session)
-            (eq? res 'denied)))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (make-session-loop session
-                               (message-auth-set-methods! msg '(public-key))
-                               (message-reply-default msg)))
-          (primitive-exit)))))
+            (eq? res 'denied))))))
 
 
 ;; Server replies with "partial success", client receives 'partial.
@@ -293,7 +321,21 @@
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((session (server-accept server)))
+              (server-handle-key-exchange session)
+              (make-session-loop session
+                                 (message-auth-set-methods! msg '(none))
+                                 (message-reply-success msg 'partial)))
+            (primitive-exit))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -302,24 +344,28 @@
           (authenticate-server session)
           (let ((res (userauth-none! session)))
             (disconnect! session)
-            (eq? res 'partial)))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (make-session-loop session
-                               (message-auth-set-methods! msg '(none))
-                               (message-reply-success msg 'partial)))
-          (primitive-exit)))))
+            (eq? res 'partial))))))
 
 
 (test-assert-with-log "userauth-password!, success"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((session (server-accept server)))
+              (server-handle-key-exchange session)
+              (make-session-loop session
+                                 (message-auth-set-methods! msg '(password))
+                                 (message-reply-success msg)))
+            (primitive-exit))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -328,24 +374,28 @@
           (authenticate-server session)
           (let ((res (userauth-password! session "password")))
             (disconnect! session)
-            (eq? res 'success)))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (make-session-loop session
-                               (message-auth-set-methods! msg '(password))
-                               (message-reply-success msg)))
-          (primitive-exit)))))
+            (eq? res 'success))))))
 
 
 (test-assert-with-log "userauth-password!, denied"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((session (server-accept server)))
+              (server-handle-key-exchange session)
+              (make-session-loop session
+                                 (message-auth-set-methods! msg '(password))
+                                 (message-reply-default msg)))
+            (primitive-exit))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -354,24 +404,28 @@
           (authenticate-server session)
           (let ((res (userauth-password! session "password")))
             (disconnect! session)
-            (eq? res 'denied)))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (make-session-loop session
-                               (message-auth-set-methods! msg '(password))
-                               (message-reply-default msg)))
-          (primitive-exit)))))
+            (eq? res 'denied))))))
 
 
 (test-assert-with-log "userauth-password!, partial"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((session (server-accept server)))
+              (server-handle-key-exchange session)
+              (make-session-loop session
+                                 (message-auth-set-methods! msg '(password))
+                                 (message-reply-success msg 'partial)))
+            (primitive-exit))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -380,24 +434,27 @@
           (authenticate-server session)
           (let ((res (userauth-password! session "password")))
             (disconnect! session)
-            (eq? res 'partial)))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (make-session-loop session
-                               (message-auth-set-methods! msg '(password))
-                               (message-reply-success msg 'partial)))
-          (primitive-exit)))))
+            (eq? res 'partial))))))
 
 
 (test-assert-with-log "userauth-public-key!, success"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((session (server-accept server)))
+              (server-handle-key-exchange session)
+              (make-session-loop session
+                                 (message-reply-success msg)))
+            (primitive-exit))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -407,16 +464,7 @@
           (let* ((prvkey (private-key-from-file rsakey)))
             (let ((res (userauth-public-key! session prvkey)))
               (disconnect! session)
-              (eq? res 'success))))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (make-session-loop session
-                               (message-reply-success msg)))
-          (primitive-exit)))))
+              (eq? res 'success)))))))
 
 
 ;; Server replies "default" with the list of allowed authentication
@@ -425,7 +473,21 @@
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (server-listen server)
+            (let ((session (server-accept server)))
+              (server-handle-key-exchange session)
+              (make-session-loop session
+                                 (message-auth-set-methods! msg '(password public-key))
+                                 (message-reply-default msg)))
+            (primitive-exit))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session-for-test)))
@@ -434,18 +496,7 @@
           (authenticate-server session)
           (userauth-none! session)
           (let ((res (userauth-get-list session)))
-            (equal? res '(password public-key))))
-
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (make-session-loop session
-                               (message-auth-set-methods! msg '(password public-key))
-                               (message-reply-default msg)))
-          (primitive-exit)))))
-
+            (equal? res '(password public-key)))))))
 
 
 ;;; Channel test
@@ -485,50 +536,73 @@
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (start-server/channel-test server))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let ((session (make-session/channel-test)))
-          (make-channel session))
-
-        ;; server
-        (start-server/channel-test server))))
+          (make-channel session)))))
 
 (test-assert-with-log "channel-get-session"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (start-server/channel-test server))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let* ((session (make-session/channel-test))
                (channel (make-channel session)))
-          (eq? session (channel-get-session channel)))
-
-        ;; server
-        (start-server/channel-test server))))
+          (eq? session (channel-get-session channel))))))
 
 (test-assert-with-log "channel-open-session"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (start-server/channel-test server))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let* ((session (make-session/channel-test))
                (channel (make-channel session)))
           (channel-open-session channel)
-          (not (port-closed? channel)))
-
-        ;; server
-        (start-server/channel-test server))))
+          (not (port-closed? channel))))))
 
 ;; Client sends "ping" as a command to execute, server replies with "pong"
 (test-assert-with-log "channel-request-exec"
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (start-server/channel-test server))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let* ((session (make-session/channel-test))
@@ -537,9 +611,7 @@
           (channel-request-exec channel "ping")
           (let ((res (read-line channel)))
             (and res
-                 (string=? "pong" res))))
-
-        (start-server/channel-test server))))
+                 (string=? "pong" res)))))))
 
 
 ;; data transferring
@@ -576,7 +648,18 @@
   (let ((server (make-server-for-test))
         (pid    (primitive-fork)))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (start-server/dt-test server
+                                  (lambda (channel)
+                                    (let ((str (read-line channel)))
+                                      (write-line str channel)))))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let* ((session (make-session/channel-test))
@@ -588,13 +671,7 @@
                 (let ((res (read-line channel)))
                   (disconnect! session)
                   (equal? res str))
-                (poll (char-ready? channel)))))
-
-        ;; server
-        (start-server/dt-test server
-                              (lambda (channel)
-                                (let ((str (read-line channel)))
-                                  (write-line str channel)))))))
+                (poll (char-ready? channel))))))))
 
 
 (test-assert-with-log "data transferring, bytevector"
@@ -603,7 +680,19 @@
         (vect-size 10)
         (vect-fill 10))
 
-    (if (not (= 0 pid))
+    (if (zero? pid)
+
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (start-server/dt-test server
+                                  (lambda (channel)
+                                    (let ((v (make-u8vector vect-size 0)))
+                                      (uniform-array-read! v channel)
+                                      (uniform-array-write v channel)))))
+          (lambda ()
+            (primitive-exit 1)))
 
         ;; client
         (let* ((session (make-session/channel-test))
@@ -615,13 +704,7 @@
                 (let ((res (make-u8vector vect-size 0)))
                   (uniform-array-read! res channel)
                   (equal? res vect))
-                (poll (char-ready? channel)))))
-
-        (start-server/dt-test server
-                              (lambda (channel)
-                                (let ((v (make-u8vector vect-size 0)))
-                                  (uniform-array-read! v channel)
-                                  (uniform-array-write v channel)))))))
+                (poll (char-ready? channel))))))))
 
 
 (test-end "client-server")
