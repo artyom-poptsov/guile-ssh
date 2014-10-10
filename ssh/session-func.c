@@ -26,6 +26,7 @@
 #include "error.h"
 #include "session-type.h"
 #include "key-type.h"
+#include "log.h"
 
 /* SSH option mapping. */
 struct option {

@@ -23,9 +23,26 @@
 
 #include <sys/time.h>
 #include <time.h>
+#include <stdio.h>              /* DEBUG */
+#include <unistd.h>             /* DEBUG */
 
 #include "error.h"
 #include "common.h"
+
+/* Log verbosity levels used by libssh sessions and servers. */
+struct symbol_mapping log_verbosity[] = {
+  /* 0, No logging at all */
+  { "nolog",              SSH_LOG_NOLOG     },
+  /* 1, Only rare and noteworthy events */
+  { "rare",               SSH_LOG_RARE      },
+  /* 2, High level protocol information */
+  { "protocol",           SSH_LOG_PROTOCOL  },
+  /* 3, Lower level protocol infomations, packet level */
+  { "packet",             SSH_LOG_PACKET    },
+  /* 4, Every function path */
+  { "functions",          SSH_LOG_FUNCTIONS },
+  { NULL,                 -1                }
+};
 
 /* Whether the default calback was set or not. */
 static int is_logging_callback_set = 0;
@@ -184,6 +201,39 @@ undefined. \
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_set_log_verbosity_x,
+            "set-log-verbosity!", 1, 0, 0,
+            (SCM verbosity),
+            "\
+Set the global log verbosity to a VERBOSITY.  Throw `guile-ssh-error' on \
+error.  Return value is undefined.\
+")
+#define FUNC_NAME s_guile_ssh_set_log_verbosity_x
+{
+  struct symbol_mapping *opt = _scm_to_ssh_const (log_verbosity, verbosity);
+  int res;
+
+  if (! opt)
+    guile_ssh_error1 (FUNC_NAME, "Wrong verbosity level", verbosity);
+
+  res = ssh_set_log_level (opt->value);
+  if (res == SSH_ERROR)
+    guile_ssh_error1 (FUNC_NAME, "Could not set log verbosity", verbosity);
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_get_log_verbosity,
+            "get-log-verbosity", 0, 0, 0,
+            (void),
+            "\
+Get global log verbosity value.\
+")
+{
+  return _ssh_const_to_scm (log_verbosity, ssh_get_log_level ());
+}
 
 
 /* Initialization */

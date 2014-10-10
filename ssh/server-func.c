@@ -27,6 +27,7 @@
 #include "server-type.h"
 #include "message-type.h"
 #include "error.h"
+#include "log.h"
 
 /* Guile SSH specific options that are aimed to unificate the way of
    server configuration. */

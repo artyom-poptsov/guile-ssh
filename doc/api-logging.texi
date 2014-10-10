@@ -93,6 +93,31 @@ Function path
 
 @end deffn
 
+@deffn {Scheme Procedure} set-log-verbosity! verbosity
+Set the global log verbosity to a @var{verbosity}.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
+
+@var{verbosity} is expected to be one of the following symbols:
+
+@table @samp
+@item nolog
+The message will be printed even if the logging is disabled
+@item rare
+Rare and noteworthy events
+@item protocol
+High level protocol information
+@item packet
+Lower level protocol infomations, packet level
+@item functions
+Function path
+@end table
+
+@end deffn
+
+@deffn {Scheme Procedure} get-log-verbosity
+Get global log verbosity value.
+@end deffn
+
 @c Local Variables:
 @c TeX-master: "guile-ssh.texi"
 @c End:

@@ -1,5 +1,16 @@
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/common.c (log_verbosity): Move to `ssh/log.c'.
+	* ssh/common.h, ssh/server-func.c, ssh/session-func.c: Update.
+	* ssh/log.scm (set-log-verbosity!, get-log-verbosity): Export.
+	* ssh/log.c (guile_ssh_set_log_verbosity_x)
+	(guile_ssh_get_log_verbosity): New procedures.
+	* ssh/log.h: Update.
+	* doc/api-logging.texi: Add descripton of `set-log-verbosity!' and
+	`get-log-verbosity'.
+	* NEWS: Update.
+	* tests/log.scm ("set-log-verbosity!", "get-log-verbosity"): New TCs.
+
 	* doc/api-keys.texi (Keys): Add note about support of ECDSA keys with
 	GCrypt.
 

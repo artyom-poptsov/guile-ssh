@@ -24,6 +24,8 @@
             set-logging-callback!
             set-log-userdata!
             get-log-userdata
+            set-log-verbosity!
+            get-log-verbosity
             format-log))
 
 

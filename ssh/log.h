@@ -16,6 +16,8 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+extern struct symbol_mapping log_verbosity[];
+
 extern void init_log_func (void);
 
 /* log.h ends here */

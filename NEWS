@@ -11,6 +11,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New `%get-libssh-version' procedure in (ssh version)
 ** New `get-crypto-library' procedure in (ssh version)
 ** New `zlib-support?' procedure in (ssh version)
+** New `set-log-verbosity!' procedure in (ssh log)
+** New `get-log-verbosity' procedure in (ssh log)
 
 * Changes in version 0.7.0 (2014-08-31)
 ** Require GNU Guile 2.0
