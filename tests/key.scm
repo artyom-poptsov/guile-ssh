@@ -18,8 +18,17 @@
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
 (use-modules (srfi srfi-64)
-             (ssh key))
+             (ssh key)
+             (ssh version))
 
+
+;; ECDSA doesn't work if libssh 0.6.3 was compiled GCrypt
+(define %openssl? (eq? (get-crypto-library) 'openssl))
+(define-syntax-rule (when-openssl test)
+  (or (not %openssl?)
+      test))
+
+
 (define %topdir (getenv "abs_top_srcdir"))
 (define %rsa-private-key-file   (format #f "~a/tests/rsakey"   %topdir))
 (define %dsa-private-key-file   (format #f "~a/tests/dsakey"   %topdir))
@@ -33,28 +42,34 @@
 (test-assert "private-key-from-file"
   (and (private-key-from-file %rsa-private-key-file)
        (private-key-from-file %dsa-private-key-file)
-       (private-key-from-file %ecdsa-private-key-file)))
+       (when-openssl
+        (private-key-from-file %ecdsa-private-key-file))))
 
 (test-assert "public-key-from-file"
   (and (public-key-from-file %rsa-public-key-file)
        (public-key-from-file %dsa-public-key-file)
-       (public-key-from-file %ecdsa-public-key-file)))
+       (when-openssl
+        (public-key-from-file %ecdsa-public-key-file))))
 
 (define *rsa-key*       (private-key-from-file %rsa-private-key-file))
 (define *dsa-key*       (private-key-from-file %dsa-private-key-file))
-(define *ecdsa-key*     (private-key-from-file %ecdsa-private-key-file))
+(define *ecdsa-key*     (when-openssl
+                         (private-key-from-file %ecdsa-private-key-file)))
 (define *rsa-pub-key*   (public-key-from-file %rsa-public-key-file))
 (define *dsa-pub-key*   (public-key-from-file %dsa-public-key-file))
-(define *ecdsa-pub-key* (public-key-from-file %ecdsa-public-key-file))
+(define *ecdsa-pub-key* (when-openssl
+                         (public-key-from-file %ecdsa-public-key-file)))
 
 (test-assert "key?"
   (and (not (key? "not a key"))
        (key? *rsa-key*)
        (key? *dsa-key*)
-       (key? *ecdsa-key*)
+       (when-openssl
+        (key? *ecdsa-key*))
        (key? *rsa-pub-key*)
        (key? *dsa-pub-key*)
-       (key? *ecdsa-pub-key*)))
+       (when-openssl
+        (key? *ecdsa-pub-key*))))
 
 (test-assert "private-key?"
   (and (private-key? *rsa-key*)
@@ -73,12 +88,14 @@
 (test-assert "private-key->public-key"
   (and (private-key->public-key *rsa-key*)
        (private-key->public-key *dsa-key*)
-       (private-key->public-key *ecdsa-key*)))
+       (when-openssl
+        (private-key->public-key *ecdsa-key*))))
 
 (test-assert "get-key-type"
   (and (eq? 'rsa   (get-key-type *rsa-key*))
        (eq? 'dss   (get-key-type *dsa-key*))
-       (eq? 'ecdsa (get-key-type *ecdsa-key*))))
+       (when-openssl
+        (eq? 'ecdsa (get-key-type *ecdsa-key*)))))
 
 
 ;;; Converting between strings and keys
@@ -93,15 +110,17 @@
 (test-assert "public-key->string"
   (and (string=? (public-key->string *rsa-pub-key*)   %rsakey-pub-string)
        (string=? (public-key->string *dsa-pub-key*)   %dsakey-pub-string)
-       (string=? (public-key->string *ecdsa-pub-key*) %ecdsakey-pub-string)))
+       (when-openssl
+        (string=? (public-key->string *ecdsa-pub-key*) %ecdsakey-pub-string))))
 
 (test-assert "string->public-key"
   (and (string=? (public-key->string (string->public-key %rsakey-pub-string 'rsa))
                  %rsakey-pub-string)
        (string=? (public-key->string (string->public-key %dsakey-pub-string 'dss))
                  %dsakey-pub-string)
-       (string=? (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa))
-                 %ecdsakey-pub-string)))
+       (when-openssl
+        (string=? (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa))
+                  %ecdsakey-pub-string))))
 
 ;;;
 

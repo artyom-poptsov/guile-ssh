@@ -1,5 +1,14 @@
 2014-10-10  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* tests/key.scm: Don't do ECDSA key tests if libssh was compiled with
+	GCrypt.
+	(when-openssl): New macro.
+	("private-key-from-file", "public-key-from-file", "key?")
+	("private-key->public-key", "get-key-type", "public-key->string")
+	("string->public-key"): Use it.
+
+2014-10-10  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
 	* ssh/version.c (get-libssh-version): Rename to `%get-libssh-version'.
 	Return raw libssh version string.
 	* ssh/version.scm (%get-libssh-version, get-crypto-library)
