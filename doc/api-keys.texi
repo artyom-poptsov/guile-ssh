@@ -13,6 +13,9 @@
 The @code{(ssh key)} module provides procedures for handling of
 Guile-SSH keys.
 
+@strong{Note} that Guile-SSH does not support ECDSA keys if libssh 0.6.3 is
+compiled with GCrypt instead of OpenSSL.
+
 @deffn {Scheme Procedure} key? x
 Return @code{#t} if @var{x} is a Guile-SSH key, @code{#f} otherwise.
 @end deffn

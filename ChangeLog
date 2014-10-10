@@ -1,3 +1,8 @@
+2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-keys.texi (Keys): Add note about support of ECDSA keys with
+	GCrypt.
+
 2014-10-10  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* tests/key.scm: Don't do ECDSA key tests if libssh was compiled with
