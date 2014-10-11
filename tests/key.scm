@@ -99,12 +99,13 @@
 
 
 (test-assert "private-key-to-file"
-  (let ((file-name "./tmp-rsa-key"))
-    (private-key-to-file *rsa-key* file-name)
-    (let ((key (private-key-from-file file-name)))
-      (delete-file file-name)
-      (and (key? key)
-           (private-key? key)))))
+  (when-openssl
+   (let ((file-name "./tmp-rsa-key"))
+     (private-key-to-file *rsa-key* file-name)
+     (let ((key (private-key-from-file file-name)))
+       (delete-file file-name)
+       (and (key? key)
+            (private-key? key))))))
 
 
 ;;; Converting between strings and keys

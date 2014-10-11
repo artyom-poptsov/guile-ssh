@@ -24,7 +24,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    The procedure can be used to generate a new keypair with the specified
    parameters.
 ** New `private-key-to-file' procedure in (ssh key)
-   The procedure can be used to export a private key to a file.
+   The procedure can be used to export a private key to a file (doesn't work
+   if libssh 0.6.3 is compiled with GCrypt).
 ** Changes in tests
 *** Fix "end of file" errors in tests
    Fix the following kind of errors in tests:
