@@ -132,6 +132,44 @@ Return a new SSH key of #f on error.\
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_private_key_to_file,
+            "private-key-to-file", 2, 0, 0,
+            (SCM key, SCM file_name),
+            "\
+Export a private KEY to file FILE_NAME.  Throw `guile-ssh-error' on error. \
+Return value is undefined.\
+")
+#define FUNC_NAME s_guile_ssh_private_key_to_file
+{
+  struct key_data *kd = _scm_to_key_data (key);
+  char *c_file_name = NULL;
+  int res;
+
+  scm_dynwind_begin (0);
+
+  SCM_ASSERT (_private_key_p (kd),       key,       SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (file_name), file_name, SCM_ARG2, FUNC_NAME);
+
+  c_file_name = scm_to_locale_string (file_name);
+  scm_dynwind_free (c_file_name);
+
+  res = ssh_pki_export_privkey_file (kd->ssh_key,
+                                     NULL, /* passphrase */
+                                     NULL, /* auth_fn */
+                                     NULL, /* auth_data */
+                                     c_file_name);
+  if (res == SSH_ERROR)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Unable to export a key to a file",
+                        scm_list_2 (key, file_name));
+    }
+
+  scm_dynwind_end ();
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (guile_ssh_public_key_from_private_key, "private-key->public-key",
             1, 0, 0,
             (SCM key),

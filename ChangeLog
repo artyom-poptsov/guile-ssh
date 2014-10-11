@@ -1,5 +1,11 @@
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-func.c (guile_ssh_private_key_to_file): New procedure.
+	* ssh/key.scm (private-key-to-file): Export.
+	* tests/key.scm ("private-key-to-file"): New TC.
+	* doc/api-keys.texi (Keys): Add description of `private-key-to-file'.
+	* NEWS: Update.
+
 	* ssh/key-func.c (guile_ssh_string_to_public_key)
 	(guile_ssh_private_key_from_file)
 	(guile_ssh_public_key_from_private_key)

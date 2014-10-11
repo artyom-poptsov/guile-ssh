@@ -98,6 +98,15 @@
         (eq? 'ecdsa (get-key-type *ecdsa-key*)))))
 
 
+(test-assert "private-key-to-file"
+  (let ((file-name "./tmp-rsa-key"))
+    (private-key-to-file *rsa-key* file-name)
+    (let ((key (private-key-from-file file-name)))
+      (delete-file file-name)
+      (and (key? key)
+           (private-key? key)))))
+
+
 ;;; Converting between strings and keys
 
 (define %rsakey-pub-string

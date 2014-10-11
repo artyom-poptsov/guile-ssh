@@ -34,6 +34,7 @@
 ;;   public-key-from-file
 ;;   private-key->public-key
 ;;   private-key-from-file
+;;   private-key-to-file
 ;;   get-public-key-hash
 ;;   bytevector->hex-string
 
@@ -55,6 +56,7 @@
             public-key-from-file
             private-key->public-key
             private-key-from-file
+            private-key-to-file
             get-public-key-hash
             bytevector->hex-string))
 
