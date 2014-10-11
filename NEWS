@@ -13,6 +13,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New `zlib-support?' procedure in (ssh version)
 ** New `set-log-verbosity!' procedure in (ssh log)
 ** New `get-log-verbosity' procedure in (ssh log)
+** New `make-keypair' procedure in (ssh key)
 
 * Changes in version 0.7.0 (2014-08-31)
 ** Require GNU Guile 2.0

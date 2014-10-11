@@ -1,5 +1,13 @@
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-type.c (_scm_from_ssh_key, guile_ssh_make_keypair): New
+	procedures.
+	* ssh/key-type.h: Update.
+	* ssh/key.scm (make-keypair): Export.
+	* doc/api-keys.texi (Keys): Add description of `make-keypair'.
+	* tests/key.scm ("make-keypair"): New TC.
+	* NEWS: Update.
+
 	* ssh/common.c (log_verbosity): Move to `ssh/log.c'.
 	* ssh/common.h, ssh/server-func.c, ssh/session-func.c: Update.
 	* ssh/log.scm (set-log-verbosity!, get-log-verbosity): Export.
@@ -9,6 +17,7 @@
 	* doc/api-logging.texi: Add descripton of `set-log-verbosity!' and
 	`get-log-verbosity'.
 	* NEWS: Update.
+
 	* tests/log.scm ("set-log-verbosity!", "get-log-verbosity"): New TCs.
 
 	* doc/api-keys.texi (Keys): Add note about support of ECDSA keys with

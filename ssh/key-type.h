@@ -35,6 +35,7 @@ extern struct symbol_mapping key_types[];
 
 /* Procedures */
 
+extern SCM guile_ssh_make_keypair (SCM arg1, SCM arg2);
 extern SCM guile_ssh_is_key_p (SCM arg1);
 extern SCM guile_ssh_is_public_key_p (SCM arg1);
 extern SCM guile_ssh_is_private_key_p (SCM arg1);
@@ -45,6 +46,7 @@ extern void init_key_type (void);
 
 
 /* Helper procedures */
+extern SCM _scm_from_ssh_key (ssh_key key);
 extern struct key_data *_scm_to_key_data (SCM x);
 extern inline int _private_key_p (struct key_data *key);
 extern inline int _public_key_p (struct key_data *key);

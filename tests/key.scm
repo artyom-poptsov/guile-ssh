@@ -122,6 +122,18 @@
         (string=? (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa))
                   %ecdsakey-pub-string))))
 
+(test-assert "make-keypair"
+  (and (let ((key (make-keypair 'rsa 1024)))
+         (and (key? key)
+              (eq? (get-key-type key) 'rsa)))
+       (let ((key (make-keypair 'dss 1024)))
+         (and (key? key)
+              (eq? (get-key-type key) 'dss)))
+       (when-openssl
+        (let ((key (make-keypair 'ecdsa 256)))
+          (and (key? key)
+               (eq? (get-key-type key) 'ecdsa))))))
+
 ;;;
 
 (test-end "key")

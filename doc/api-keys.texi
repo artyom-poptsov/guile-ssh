@@ -16,6 +16,15 @@ Guile-SSH keys.
 @strong{Note} that Guile-SSH does not support ECDSA keys if libssh 0.6.3 is
 compiled with GCrypt instead of OpenSSL.
 
+@deffn {Scheme Procedure} make-keypair type length
+Generate a keypair of specified @var{type} and @var{length} (in bits).  This
+may take some time.
+
+Possible key types are: @code{dss}, @code{rsa}, @code{rsa1}, @code{ecdsa}.
+
+Return newly generated private key.  Throw @code{guile-ssh-error} on error.
+@end deffn
+
 @deffn {Scheme Procedure} key? x
 Return @code{#t} if @var{x} is a Guile-SSH key, @code{#f} otherwise.
 @end deffn

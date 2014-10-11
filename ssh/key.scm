@@ -45,6 +45,7 @@
             key?
             public-key?
             private-key?
+            make-keypair
             get-key-type
             public-key->string
             string->public-key
