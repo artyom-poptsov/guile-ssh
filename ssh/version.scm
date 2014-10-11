@@ -58,7 +58,7 @@
 
 (define (get-crypto-library)
   "Get cryptographic library name with which libssh was compiled.  Possible
-values are: 'openssl, 'gcrypt"
+values are: 'openssl, 'gnutls"
   (string->symbol (cadr (string-split (%get-libssh-version) #\/))))
 
 (define (zlib-support?)

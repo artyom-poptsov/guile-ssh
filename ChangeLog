@@ -1,5 +1,9 @@
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/version.scm (get-crypto-library): Fix the docstring.
+	* doc/api-version.texi (Version): Fix description of
+	`get-crypto-library'.  Improve description of `zlib-support?'.
+
 	* tests/key.scm ("private-key-to-file") [GCrypt]: Don't perform the
 	test.
 	* doc/api-keys.texi (Keys): Update description of

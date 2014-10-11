@@ -29,11 +29,11 @@ eg. "0.6.3/openssl/zlib".
 
 @deffn {Scheme Procedure} get-crypto-library
 Get cryptographic library name with which libssh was compiled.  Possible
-values are: @code{'openssl}, @code{'gcrypt}.
+values are: @code{'openssl}, @code{'gnutls}.
 @end deffn
 
 @deffn {Scheme Procedure} zlib-support?
-Return #t if libssh was compiled wit zlib support, #f otherwise.
+Return @code{#t} if libssh was compiled wit zlib support, @code{#f} otherwise.
 @end deffn
 
 @deffn {Scheme Procedure} get-library-version
