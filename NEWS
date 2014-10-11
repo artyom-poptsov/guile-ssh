@@ -9,11 +9,36 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 * Unreleased
 ** New `%get-libssh-version' procedure in (ssh version)
+   The procedure can be used to get libssh version in the "raw" format such
+   as: "0.6.3/openssl/zlib".
 ** New `get-crypto-library' procedure in (ssh version)
+   The procedure returns name of a cryptographic library with which libssh was
+   compiled.
 ** New `zlib-support?' procedure in (ssh version)
+   The procedure checks if zlib support is enabled in libssh.
 ** New `set-log-verbosity!' procedure in (ssh log)
+   The procedure sets global libssh log verbosity.
 ** New `get-log-verbosity' procedure in (ssh log)
+   The procedure gets global libssh log verbosity.
 ** New `make-keypair' procedure in (ssh key)
+   The procedure can be used to generate a new keypair with the specified
+   parameters.
+** Changes in tests
+*** Fix "end of file" errors in tests
+   Fix the following kind of errors in tests:
+#+BEGIN_EXAMPLE
+ERROR: In procedure scm_i_lreadparen: /path/to/guile-ssh/sources/tests/./client-server.scm:272:34: end of file
+#+END_EXAMPLE
+   Thanks to Ludovic Courtès for reporting the issue and for a good advice how
+   to fix that.
+*** Don't perform ECDSA key tests if libssh is compiled with GCrypt
+    libssh 0.6.3 does not support ECDSA keys if compiled with GCrypt instead
+    of OpenSSL.  Thus, ECDSA key tests used to fail.  Now there is a check
+    that prevents these tests from execution in case when libssh 0.6.3 is
+    compiled with GCrypt.
+** Update documentation
+   - Add description of the new procedures.
+   - Add note about ECDSA keys support with GCrypt library
 
 * Changes in version 0.7.0 (2014-08-31)
 ** Require GNU Guile 2.0

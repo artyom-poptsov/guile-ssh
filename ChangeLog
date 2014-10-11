@@ -1,5 +1,6 @@
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Update.
 	* TODO (Known Bugs): Update.
 
 	* ssh/key.scm, ssh/log.scm: Update commentary.
