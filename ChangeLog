@@ -1,7 +1,8 @@
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* doc/guile-ssh.texi (Installation): Add note about GCrypt support in
-	libssh.
+	libssh.  Replace "libguile-ssh" with "guile-ssh".
+
 	* doc/version.texi: Update.
 
 	* NEWS: Update.
