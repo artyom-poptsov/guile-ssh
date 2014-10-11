@@ -1,5 +1,10 @@
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-func.c (guile_ssh_string_to_public_key)
+	(guile_ssh_private_key_from_file)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_public_key_from_file): Use `_scm_from_ssh_key'.
+
 	* doc/guile-ssh.texi (Installation): Add note about GCrypt support in
 	libssh.  Replace "libguile-ssh" with "guile-ssh".
 
