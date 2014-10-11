@@ -1,5 +1,8 @@
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Bump version to 0.7.1.
+	* configure.ac, doc/version.texi: Likewise.
+
 	* ssh/version.scm (get-crypto-library): Fix the docstring.
 	* doc/api-version.texi (Version): Fix description of
 	`get-crypto-library'.  Improve description of `zlib-support?'.

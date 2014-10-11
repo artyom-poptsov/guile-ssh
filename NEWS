@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.7.1 (2014-10-11)
 ** New `%get-libssh-version' procedure in (ssh version)
    The procedure can be used to get libssh version in the "raw" format such
    as: "0.6.3/openssl/zlib".
@@ -41,7 +41,7 @@ ERROR: In procedure scm_i_lreadparen: /path/to/guile-ssh/sources/tests/./client-
     compiled with GCrypt.
 ** Update documentation
    - Add description of the new procedures.
-   - Add note about ECDSA keys support with GCrypt library
+   - Add note about ECDSA keys support with GCrypt library.
 
 * Changes in version 0.7.0 (2014-08-31)
 ** Require GNU Guile 2.0
