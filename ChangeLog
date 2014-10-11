@@ -1,9 +1,12 @@
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key.scm, ssh/log.scm: Update commentary.
+
 	* ssh/key-type.c (_scm_from_ssh_key, guile_ssh_make_keypair): New
 	procedures.
 	* ssh/key-type.h: Update.
 	* ssh/key.scm (make-keypair): Export.
+
 	* doc/api-keys.texi (Keys): Add description of `make-keypair'.
 	* tests/key.scm ("make-keypair"): New TC.
 	* NEWS: Update.

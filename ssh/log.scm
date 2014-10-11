@@ -17,6 +17,25 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
+
+;;; Commentary:
+
+;; This module provides access to libssh logging facilities.  These methods
+;; are exported:
+;;
+;;   %default-log-printer
+;;   %default-libssh-log-printer
+;;   current-logging-callback
+;;   set-logging-callback!
+;;   set-log-userdata!
+;;   get-log-userdata
+;;   set-log-verbosity!
+;;   get-log-verbosity
+;;   format-log
+
+
+;;; Code:
+
 (define-module (ssh log)
   #:export (%default-log-printer
             %default-libssh-log-printer
