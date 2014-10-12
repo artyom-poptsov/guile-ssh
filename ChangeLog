@@ -1,3 +1,15 @@
+2014-10-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/server-type.h (server_data): Add `options' field.
+	* ssh/server-type.c (mark_server): Mark `options' field.
+	(guile_ssh_make_server): Initialize `options' field.
+	(print_server): New procedure.
+	(init_server_type): Register server printer procedure.
+	* ssh/server-func.c (guile_ssh_server_set_x): Add an option to the
+	server optons.
+	* ssh/server-func.h (server_options): Export.
+	* NEWS: Update.
+
 2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* NEWS: Bump version to 0.7.1.

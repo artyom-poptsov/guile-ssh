@@ -38,7 +38,7 @@ enum gssh_server_options {
 
 
 /* SSH server options mapping to Guile symbols. */
-static struct symbol_mapping server_options[] = {
+struct symbol_mapping server_options[] = {
   { "bindaddr",           SSH_BIND_OPTIONS_BINDADDR       },
   { "bindport",           SSH_BIND_OPTIONS_BINDPORT       },
   { "hostkey",            SSH_BIND_OPTIONS_HOSTKEY        },
@@ -170,6 +170,8 @@ Return value is undefined.\
       guile_ssh_error1 (FUNC_NAME, "Unable to set the option",
                         scm_list_3 (server, option, value));
     }
+
+  server_data->options = scm_assoc_set_x (server_data->options, option, value);
 
   scm_remember_upto_here_1 (server);
 
