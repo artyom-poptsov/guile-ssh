@@ -1,3 +1,7 @@
+2014-10-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/version.c: Don't include `gcrypt.h'.
+
 2014-10-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/server-func.c (guile_ssh_server_get): New procedure.

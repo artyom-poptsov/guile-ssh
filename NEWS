@@ -8,6 +8,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
+** Remove dependency on libgcrypt added by a mistake
 ** New `server-get' procedure in (ssh server)
    The procedure can be used to retrieve server options.
 ** Improve printing of Guile-SSH server objects

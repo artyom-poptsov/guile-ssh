@@ -20,7 +20,6 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
-#include <gcrypt.h>
 
 /* Get version of the libssh. */
 SCM_DEFINE (guile_ssh_get_libssh_version, "%get-libssh-version", 0, 0, 0,
