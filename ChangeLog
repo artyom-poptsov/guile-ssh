@@ -1,5 +1,7 @@
 2014-10-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/server-type.c (print_server): Print object address.
+
 	* ssh/server-type.h (server_data): Add `options' field.
 	* ssh/server-type.c (mark_server): Mark `options' field.
 	(guile_ssh_make_server): Initialize `options' field.

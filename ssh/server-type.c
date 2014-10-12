@@ -112,6 +112,9 @@ print_server (SCM server, SCM port, scm_print_state *pstate)
       scm_display (bindport, port);
     }
 
+  scm_putc (' ', port);
+  scm_display (_scm_object_hex_address (server), port);
+
   scm_putc ('>', port);
 
   return 1;
