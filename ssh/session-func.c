@@ -26,6 +26,7 @@
 #include "error.h"
 #include "session-type.h"
 #include "key-type.h"
+#include "log.h"
 
 /* SSH option mapping. */
 struct option {
@@ -485,8 +486,6 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
   res = ssh_get_publickey (sd->ssh_session, &kd->ssh_key);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to get the server key", session);
-
-  kd->is_to_be_freed = 1; /* The key must be freed by GC. */
 
   SCM_NEWSMOB (key_smob, key_tag, kd);
 

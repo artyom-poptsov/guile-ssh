@@ -22,21 +22,6 @@
 #include <libssh/libssh.h>
 #include "common.h"
 
-/* Log verbosity levels used by libssh sessions and servers. */
-struct symbol_mapping log_verbosity[] = {
-  /* 0, No logging at all */
-  { "nolog",              SSH_LOG_NOLOG     },
-  /* 1, Only rare and noteworthy events */
-  { "rare",               SSH_LOG_RARE      },
-  /* 2, High level protocol information */
-  { "protocol",           SSH_LOG_PROTOCOL  },
-  /* 3, Lower level protocol infomations, packet level */
-  { "packet",             SSH_LOG_PACKET    },
-  /* 4, Every function path */
-  { "functions",          SSH_LOG_FUNCTIONS },
-  { NULL,                 -1                }
-};
-
 /* Convert the SSH constant VALUE to a Scheme symbol */
 SCM
 _ssh_const_to_scm (struct symbol_mapping *types, int value)

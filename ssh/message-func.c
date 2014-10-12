@@ -138,7 +138,8 @@ Return a new SSH channel.\
   if (! ch)
     return SCM_BOOL_F;
 
-  SCM channel = _scm_from_channel_data (ch);
+  SCM channel = _scm_from_channel_data (ch, msg_data->session);
+
   SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
 
   return channel;
@@ -278,9 +279,6 @@ get_auth_req (ssh_message msg)
   pkey_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                  "ssh key");
   pkey_data->ssh_key = public_key;
-
-  /* The key will be freed along with the message. */
-  pkey_data->is_to_be_freed = 0;
 
   SCM_NEWSMOB (pkey_smob, key_tag, pkey_data);
 
@@ -496,6 +494,18 @@ Return value is undefined.\
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
+
+
+SCM_DEFINE (guile_ssh_message_get_session,
+            "message-get-session", 1, 0, 0,
+            (SCM message),
+            "\
+Get the session from which the MESSAGE was received.  Return the session.\
+")
+{
+  struct message_data *md = _scm_to_message_data (message);
+  return md->session;
+}
 
 
 void

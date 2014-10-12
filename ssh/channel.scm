@@ -56,6 +56,7 @@
             channel-set-pty-size!
             channel-set-stream!
             channel-get-stream
+            channel-get-session
             channel-open?
             channel-eof?))
 

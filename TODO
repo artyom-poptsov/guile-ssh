@@ -5,4 +5,3 @@
 ** Make use of libssh callbacks to track asynchronous events on channels
 
 * Known Bugs
-  

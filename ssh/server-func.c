@@ -27,6 +27,7 @@
 #include "server-type.h"
 #include "message-type.h"
 #include "error.h"
+#include "log.h"
 
 /* Guile SSH specific options that are aimed to unificate the way of
    server configuration. */
@@ -252,6 +253,8 @@ Get a message.\
       scm_gc_free (message_data, sizeof (struct message_data), "message");
       return SCM_BOOL_F;
     }
+
+  message_data->session = session;
 
   SCM_NEWSMOB (smob, message_tag, message_data);
   return smob;

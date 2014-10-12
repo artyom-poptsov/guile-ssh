@@ -162,7 +162,8 @@ ptob_close (SCM channel)
 SCM
 mark_channel (SCM channel_smob)
 {
-  return SCM_BOOL_F;
+  struct channel_data *cd = _scm_to_channel_data (channel_smob);
+  return cd->session;
 }
 
 size_t
@@ -210,7 +211,7 @@ Allocate a new SSH channel.\
   if (! ch)
     return SCM_BOOL_F;
 
-  return _scm_from_channel_data (ch);
+  return _scm_from_channel_data (ch, arg1);
 }
 
 
@@ -245,7 +246,7 @@ equalp_channel (SCM x1, SCM x2)
 /* Pack the SSH channel CH to a Scheme port and return newly created
    port. */
 SCM
-_scm_from_channel_data (ssh_channel ch)
+_scm_from_channel_data (ssh_channel ch, SCM session)
 {
   struct channel_data *channel_data;
   SCM ptob;
@@ -255,6 +256,7 @@ _scm_from_channel_data (ssh_channel ch)
 
   channel_data->ssh_channel = ch;
   channel_data->is_stderr = 0;  /* Reading from stderr disabled by default */
+  channel_data->session = session;
 
   ptob = scm_new_port_table_entry (channel_tag);
   pt   = SCM_PTAB_ENTRY (ptob);

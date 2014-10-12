@@ -96,6 +96,11 @@ Guile-SSH depends on the following packages:
 @item @url{http://www.libssh.org/, libssh}, 0.6.3
 @end itemize
 
+Please @strong{note} that you need
+@url{http://git.libssh.org/projects/libssh.git/commit/?h=v0-6&id=a033b93c616f4a81afc3fc6a017396d507d96c19,
+this} patch to get libssh working if it compiled with GCrypt instead of
+OpenSSL, otherwise Guile-SSH will fail.  One of the ways to get the patch is
+to compile libssh from the @code{v0-6} Git branch.
 
 Get the sources of Guile-SSH from GitHub:
 
@@ -106,7 +111,7 @@ $ git clone git@@github.com:artyom-poptsov/guile-ssh.git
 Configure the sources:
 
 @example
-$ cd libguile-ssh/
+$ cd guile-ssh/
 $ autoreconf -if
 $ ./configure
 @end example

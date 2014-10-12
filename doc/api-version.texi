@@ -22,6 +22,20 @@ follwing format:
 For example, @samp{0.5.2}.
 @end deffn
 
+@deffn {Scheme Procedure} %get-libssh-version
+Low-level procedure that returns a version string in libssh format,
+eg. "0.6.3/openssl/zlib".
+@end deffn
+
+@deffn {Scheme Procedure} get-crypto-library
+Get cryptographic library name with which libssh was compiled.  Possible
+values are: @code{'openssl}, @code{'gnutls}.
+@end deffn
+
+@deffn {Scheme Procedure} zlib-support?
+Return @code{#t} if libssh was compiled wit zlib support, @code{#f} otherwise.
+@end deffn
+
 @deffn {Scheme Procedure} get-library-version
 Get version of the Guile-SSH.
 @end deffn

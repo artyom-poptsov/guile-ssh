@@ -27,11 +27,6 @@ extern scm_t_bits key_tag;
 
 /* Smob data. */
 struct key_data {
-  /* If this key is gotten from some other libssh object such as
-     session or message -- it must not be freed by GC, because it will
-     be freed along with this object. */
-  uint8_t is_to_be_freed;
-
   ssh_key ssh_key;
 };
 
@@ -40,6 +35,7 @@ extern struct symbol_mapping key_types[];
 
 /* Procedures */
 
+extern SCM guile_ssh_make_keypair (SCM arg1, SCM arg2);
 extern SCM guile_ssh_is_key_p (SCM arg1);
 extern SCM guile_ssh_is_public_key_p (SCM arg1);
 extern SCM guile_ssh_is_private_key_p (SCM arg1);
@@ -50,6 +46,7 @@ extern void init_key_type (void);
 
 
 /* Helper procedures */
+extern SCM _scm_from_ssh_key (ssh_key key);
 extern struct key_data *_scm_to_key_data (SCM x);
 extern inline int _private_key_p (struct key_data *key);
 extern inline int _public_key_p (struct key_data *key);

@@ -1,3 +1,163 @@
+2014-10-11  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* NEWS: Bump version to 0.7.1.
+	* configure.ac, doc/version.texi: Likewise.
+
+	* ssh/version.scm (get-crypto-library): Fix the docstring.
+	* doc/api-version.texi (Version): Fix description of
+	`get-crypto-library'.  Improve description of `zlib-support?'.
+
+	* tests/key.scm ("private-key-to-file") [GCrypt]: Don't perform the
+	test.
+	* doc/api-keys.texi (Keys): Update description of
+	`private-key-to-file'.
+	* NEWS: Update.
+
+	* ssh/key-func.c (guile_ssh_private_key_to_file): New procedure.
+	* ssh/key.scm (private-key-to-file): Export.
+	* tests/key.scm ("private-key-to-file"): New TC.
+
+	* doc/api-keys.texi (Keys): Add description of `private-key-to-file'.
+	* NEWS: Update.
+
+	* ssh/key-func.c (guile_ssh_string_to_public_key)
+	(guile_ssh_private_key_from_file)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_public_key_from_file): Use `_scm_from_ssh_key'.
+
+	* doc/guile-ssh.texi (Installation): Add note about GCrypt support in
+	libssh.  Replace "libguile-ssh" with "guile-ssh".
+
+	* doc/version.texi: Update.
+
+	* NEWS: Update.
+	* TODO (Known Bugs): Update.
+
+	* ssh/key.scm, ssh/log.scm: Update commentary.
+
+	* ssh/key-type.c (_scm_from_ssh_key, guile_ssh_make_keypair): New
+	procedures.
+	* ssh/key-type.h: Update.
+	* ssh/key.scm (make-keypair): Export.
+
+	* doc/api-keys.texi (Keys): Add description of `make-keypair'.
+	* tests/key.scm ("make-keypair"): New TC.
+	* NEWS: Update.
+
+	* ssh/common.c (log_verbosity): Move to `ssh/log.c'.
+	* ssh/common.h, ssh/server-func.c, ssh/session-func.c: Update.
+	* ssh/log.scm (set-log-verbosity!, get-log-verbosity): Export.
+	* ssh/log.c (guile_ssh_set_log_verbosity_x)
+	(guile_ssh_get_log_verbosity): New procedures.
+	* ssh/log.h: Update.
+	* doc/api-logging.texi: Add descripton of `set-log-verbosity!' and
+	`get-log-verbosity'.
+	* NEWS: Update.
+
+	* tests/log.scm ("set-log-verbosity!", "get-log-verbosity"): New TCs.
+
+	* doc/api-keys.texi (Keys): Add note about support of ECDSA keys with
+	GCrypt.
+
+2014-10-10  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/key.scm: Don't do ECDSA key tests if libssh was compiled with
+	GCrypt.
+	(when-openssl): New macro.
+	("private-key-from-file", "public-key-from-file", "key?")
+	("private-key->public-key", "get-key-type", "public-key->string")
+	("string->public-key"): Use it.
+
+2014-10-10  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/version.c (get-libssh-version): Rename to `%get-libssh-version'.
+	Return raw libssh version string.
+	* ssh/version.scm (%get-libssh-version, get-crypto-library)
+	(zlib-support?): New procedures.
+	* doc/api-version.texi: Add description of `%get-libssh-version',
+	`get-crypto-library' and `zlib-support?'.
+	* NEWS: Update.
+
+2014-09-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/server-client.scm ("accept, key exchange"): Add missed paren.
+
+	* tests/client-server.scm (run-server-and-client): Rename to
+	`run-client-test'.  All callers updated.
+
+	* tests/server-client.scm: Use `dynamic-wind' for child processes in
+	tests.
+	(run-server-test): New procedure.
+	("accept, key exchange", "server-message-get", "message-get-type")
+	("message-get-session"): Use it.
+
+	* tests/client-server.scm: Use `dynamic-wind' for child processes in
+	tests.
+	(run-server-and-client): New procedure.
+	("connect!, disconnect!")
+	("get-protocol-version", "authenticate-server, not-known")
+	("authenticate-server, ok", "get-public-key-hash")
+	("userauth-none!, success", "userauth-none!, denied")
+	("userauth-none!, partial", "userauth-password!, success")
+	("userauth-password!, denied", "userauth-password!, partial")
+	("userauth-public-key!, success", "userauth-get-list")
+	("make-channel", "channel-get-session", "channel-open-session")
+	("channel-request-exec", "data transferring, string")
+	("data transferring, bytevector"): Use it.
+
+2014-08-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* NEWS: Bump version to 0.7.0.
+	* configure.ac, doc/version.texi: Likewise.
+
+	* README (Distribution): Update.
+
+2014-08-30  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-keys.texi (Keys): Make description of `public-key?' more
+	accurate.
+	* ssh/key-type.c (guile_ssh_is_public_key_p): Update docstring.
+
+2014-08-26  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/key-func.c (guile_ssh_string_to_public_key): Fix a bug: Call
+	`scm_dynwind_end' at the end of the procedure so call to the procedure
+	won't lead to segfaults.
+	* tests/key.scm ("public-key->string"): Improve.
+	("string->public-key"): New TC.
+
+	* tests/key.scm ("public-key?"): Improve TC.
+	("public-key->string"): New TC.
+
+	* ssh/key-type.c (print_key): Use `_private_key_p' predicate to
+	determite type of the key so private key will be displayed as
+	"private", not "public".
+
+2014-08-23  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* TODO: Update.
+
+2014-08-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* tests/Makefile.am (CLEANFILES): Add `server-client-errors.log' and
+	`server-client-libssh.log'.
+
+	* tests/client-server.scm (%knownhosts): Use `abs_top_builddir'
+	instead of `abs_top_srcdir' to fix the permission issue on `make
+	distcheck' during tests.
+	* tests/Makefile.am (AM_TESTS_ENVIRONMENT): Export `abs_top_builddir'.
+
+2014-08-21  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/message.scm (message-get-session): New procedure.
+	* ssh/message-func.c (guile_ssh_message_get_session): New procedure.
+	* ssh/message-func.h: Likewise.
+	* tests/server-client.scm ("message-get-session"): New TC.
+	* doc/api-messages.texi (Message Handling): Add description of
+	`message-get-session'
+	* doc/version.texi: Update.
+	* NEWS: Update.
+
 2014-08-10  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/dist.scm: New module.
@@ -21,6 +181,17 @@
 2014-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/session-func.c: Improve docstrings.  Remove extra comments.
+
+	* ssh/channel-type.c (mark_channel): Mark the session.
+	* ssh/message-type.c (mark_message): Likewise.
+
+	* ssh/channel-func.c (guile_ssh_channel_get_session): New procedure.
+	* ssh/channel-func.h (guile_ssh_channel_get_session): Likewise.
+	* ssh/channel.scm (channel-get-session): Export.
+	* tests/client-server.scm ("channel-get-session"): New TC.
+	* doc/api-channels.texi (Channels): Add description of
+	`channel-get-session' procedure.
+	* NEWS: Update.
 
 	* README: Require GNU Guile 2.0.
 	* doc/guile-ssh.texi (Installation): Likewise.
@@ -318,6 +489,14 @@
 
 2014-06-06  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-type.h (key_data): Remove `is_to_be_freed' field.
+	* ssh/key-type.c (free_key_smob): Always free the SSH key on GC'ing.
+	* ssh/key-func.c (guile_ssh_private_key_from_file)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_public_key_from_file): Likewise.
+	* ssh/message-func.c (get_auth_req): Likewise.
+	* ssh/session-func.c (guile_ssh_get_server_public_key): Likewise.
+
 	* ssh/key-func.c (guile_ssh_private_key_from_file): Remove `session'
 	parameter.  All callers updated.
 	* doc/api-keys.texi (Keys): Update description of
@@ -325,6 +504,25 @@
 	* examples/echo/client.scm.in (get-prvkey): Update.
 	* tests/key.scm ("private-key-from-file"): Update.
 	* tests/client-server.scm ("userauth-public-key!, success"): Update.
+	* NEWS: Update.
+
+	Fix a GC issue: Keep a reference to the parent session in channel and
+	message smobs to prevent the session from premature GC'ing.  Without
+	the fix GC could free a session even if there are live channels and by
+	that break the channels.
+
+	Reported by Ludovic Courtès <ludo@gnu.org>
+
+	* ssh/channel-type.h (channel_data): Store a reference to the parent
+	session.
+	* ssh/message-type.h (message_data): Likewise.
+	* ssh/channel-type.c (_ssh_channel_to_scm): Change argument list.  All
+	callers updated.
+	(guile_ssh_make_channel): Update.
+	* ssh/message-func.c
+	(guile_ssh_message_channel_request_open_reply_accept): Update.
+	* ssh/server-func.c (guile_ssh_server_message_get): Store a reference
+	to a session in the message smob.
 	* NEWS: Update.
 
 2014-06-01  Artyom Poptsov  <poptsov.artyom@gmail.com>

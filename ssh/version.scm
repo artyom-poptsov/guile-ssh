@@ -44,8 +44,27 @@
 (define-module (ssh version)
   #:use-module (ssh log)
   #:export (get-libssh-version
-            get-library-version))
+            get-library-version
+            get-crypto-library
+            zlib-support?
+            ;; Low-level procedures
+            %get-libssh-version))
 
 (load-extension "libguile-ssh" "init_version")
+
+(define (get-libssh-version)
+  "Get version of the libssh."
+  (car (string-split (%get-libssh-version) #\/)))
+
+(define (get-crypto-library)
+  "Get cryptographic library name with which libssh was compiled.  Possible
+values are: 'openssl, 'gnutls"
+  (string->symbol (cadr (string-split (%get-libssh-version) #\/))))
+
+(define (zlib-support?)
+  "Return #t if libssh was compiled wit zlib support, #f otherwise."
+  (let ((version (string-split (%get-libssh-version) #\/)))
+    (and (not (null? (cddr version)))
+         (string=? "zlib" (caddr version)))))
 
 ;;; session.scm ends here

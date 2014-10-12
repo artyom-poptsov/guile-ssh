@@ -43,6 +43,7 @@
             message-reply-success
             message-get-type
             message-get-req
+            message-get-session
 
             message-service-reply-success
             service-req:service

@@ -106,6 +106,11 @@ Example:
 @end lisp
 @end deffn
 
+@deffn {Scheme Procedure} channel-get-session channel
+Get the session to which belongs the @var{channel}.  Throw
+@code{guile-ssh-error} on an error.  Return the session.
+@end deffn
+
 @deffn {Scheme Procedure} channel-eof? channel
 Return @code{#t} if remote has sent @acronym{EOF}, @code{#f} otherwise.  Throw
 @code{guile-ssh-error} if the channel has been closed and freed.

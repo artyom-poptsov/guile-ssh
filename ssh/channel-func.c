@@ -241,6 +241,21 @@ Return one of the following symbols: \"stdout\", \"stderr\".\
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_get_session,
+            "channel-get-session", 1, 0, 0,
+            (SCM channel),
+            "\
+Get the session to which belongs the CHANNEL.  Throw `guile-ssh-error' on an \n\
+error.  Return the session.\
+")
+#define FUNC_NAME s_guile_ssh_channel_get_session
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  GSSH_VALIDATE_CHANNEL_DATA (cd, channel, FUNC_NAME);
+  return cd->session;
+}
+#undef FUNC_NAME
+
 
 /* Predicates */
 

@@ -45,6 +45,20 @@
     (eq? (current-logging-callback) %default-log-printer)))
 
 
+(test-assert "set-log-verbosity!"
+  (begin
+    (set-log-verbosity! 'functions)
+    (catch #t
+      (lambda ()
+        (set-log-verbosity! 'wrong-verbosity)
+        #f)
+      (lambda (key . args)
+        #t))))
+
+(test-assert "get-log-verbosity"
+  (eq? (get-log-verbosity) 'functions))
+
+
 (test-end "log")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))

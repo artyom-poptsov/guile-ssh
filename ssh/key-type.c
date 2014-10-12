@@ -56,10 +56,7 @@ size_t
 free_key_smob (SCM arg1)
 {
   struct key_data *data = _scm_to_key_data (arg1);
-
-  if (data->is_to_be_freed)
-    ssh_key_free (data->ssh_key);
-
+  ssh_key_free (data->ssh_key);
   return 0;
 }
 
@@ -72,7 +69,7 @@ print_key (SCM smob, SCM port, scm_print_state *pstate)
   scm_puts ("#<key ", port);
   scm_display (type, port);
   scm_putc (' ', port);
-  scm_puts (_public_key_p (key_data) ? "(public) " : "(private) ", port);
+  scm_puts (_private_key_p (key_data) ? "(private) " : "(public) ", port);
   scm_display (_scm_object_hex_address (smob), port);
   scm_puts (">", port);
 
@@ -112,6 +109,37 @@ Possible types are: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown\
   return _ssh_key_type_to_scm (type);
 }
 
+SCM_DEFINE (guile_ssh_make_keypair, "make-keypair", 2, 0, 0,
+            (SCM type, SCM length),
+            "\
+Generate a keypair of specified TYPE and LENGTH.  This may take some time.\
+Return newly generated private key.  Throw `guile-ssh-error' on error.\
+")
+#define FUNC_NAME s_guile_ssh_make_keypair
+{
+  ssh_key key = NULL;
+  struct symbol_mapping *c_type = _scm_to_ssh_key_type (type);
+  int c_length;
+  int res;
+
+  SCM_ASSERT (scm_is_unsigned_integer (length, 9, UINT32_MAX), length,
+              SCM_ARG2, FUNC_NAME);
+
+  if (! c_type)
+    guile_ssh_error1 (FUNC_NAME, "Wrong key type", type);
+
+  c_length = scm_to_int (length);
+  res = ssh_pki_generate (c_type->value, c_length, &key);
+  if (res == SSH_ERROR)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not generate key",
+                        scm_list_2 (type, length));
+    }
+
+  return _scm_from_ssh_key (key);
+}
+#undef FUNC_NAME
+
 
 /* Predicates */
 
@@ -127,7 +155,7 @@ Return #t if X is a SSH key, #f otherwise.\
 SCM_DEFINE (guile_ssh_is_public_key_p, "public-key?", 1, 0, 0,
             (SCM x),
             "\
-Return #t if X is a SSH public-key, #f otherwise.\
+Return #t if X is a SSH key and it contains a public key, #f otherwise.\
 ")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (key_tag, x)
@@ -160,6 +188,18 @@ equalp_key (SCM x1, SCM x2)
 
 
 /* Helper procedures */
+
+SCM
+_scm_from_ssh_key (ssh_key key)
+{
+  struct key_data *key_data;
+  SCM key_smob;
+  key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
+                                                "ssh key");
+  key_data->ssh_key = key;
+  SCM_NEWSMOB (key_smob, key_tag, key_data);
+  return key_smob;
+}
 
 /* Convert X to a SSH key */
 struct key_data *

@@ -23,6 +23,7 @@
 
 extern SCM guile_ssh_message_reply_default (SCM arg1);
 extern SCM guile_ssh_message_get_type (SCM arg1);
+extern SCM guile_ssh_message_get_session (SCM arg1);
 
 extern void init_message_func (void);
 

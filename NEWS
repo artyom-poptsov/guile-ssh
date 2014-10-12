@@ -7,7 +7,43 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.7.1 (2014-10-11)
+** New `%get-libssh-version' procedure in (ssh version)
+   The procedure can be used to get libssh version in the "raw" format such
+   as: "0.6.3/openssl/zlib".
+** New `get-crypto-library' procedure in (ssh version)
+   The procedure returns name of a cryptographic library with which libssh was
+   compiled.
+** New `zlib-support?' procedure in (ssh version)
+   The procedure checks if zlib support is enabled in libssh.
+** New `set-log-verbosity!' procedure in (ssh log)
+   The procedure sets global libssh log verbosity.
+** New `get-log-verbosity' procedure in (ssh log)
+   The procedure gets global libssh log verbosity.
+** New `make-keypair' procedure in (ssh key)
+   The procedure can be used to generate a new keypair with the specified
+   parameters.
+** New `private-key-to-file' procedure in (ssh key)
+   The procedure can be used to export a private key to a file (doesn't work
+   if libssh 0.6.3 is compiled with GCrypt).
+** Changes in tests
+*** Fix "end of file" errors in tests
+   Fix the following kind of errors in tests:
+#+BEGIN_EXAMPLE
+ERROR: In procedure scm_i_lreadparen: /path/to/guile-ssh/sources/tests/./client-server.scm:272:34: end of file
+#+END_EXAMPLE
+   Thanks to Ludovic Courtès for reporting the issue and for a good advice how
+   to fix that.
+*** Don't perform ECDSA key tests if libssh is compiled with GCrypt
+    libssh 0.6.3 does not support ECDSA keys if compiled with GCrypt instead
+    of OpenSSL.  Thus, ECDSA key tests used to fail.  Now there is a check
+    that prevents these tests from execution in case when libssh 0.6.3 is
+    compiled with GCrypt.
+** Update documentation
+   - Add description of the new procedures.
+   - Add note about ECDSA keys support with GCrypt library.
+
+* Changes in version 0.7.0 (2014-08-31)
 ** Require GNU Guile 2.0
 ** Require libssh 0.6.3
 ** Change `get-public-key-hash'
@@ -45,6 +81,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New `userauth-public-key/try' procedure in (ssh auth)
 ** New `bytevector->hex-string' procedure in (ssh key)
 ** New `session-get' procedure in (ssh session)
+** New `channel-get-session' procedure in (ssh channel)
+** New `message-get-session' procedure in (ssh message)
 ** Improve printing of Guile-SSH objects
 *** Print more detailed information about `session' object
     Print user name, host name and current state of a `session' object.
@@ -55,6 +93,10 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 *** Add tests for Guile-SSH keys
 *** Add tests for `authenticate-server' procedure
 ** Bug fixes
+*** Fix a GC issue
+    Keep a reference to the parent session in channels and messages to prevent
+    the session from premature GC'ing.  Without that GC could free a session
+    even if there are live channels and by that break the channels.
 *** `public-key?' and `private-key?' now produce correct result
     Functions now return `#f' if the given argument is not a Guile-SSH
     key object.
