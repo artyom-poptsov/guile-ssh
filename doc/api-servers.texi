@@ -94,6 +94,12 @@ Expected type of @var{value}: boolean.
 
 @end deffn
 
+@deffn {Scheme Procedure} server-get server option
+Get value of @var{option} for Guile-SSH @var{server}.  Return @var{option}
+value, or @code{#f} if the @var{option} does not set.  Throw
+@code{guile-ssh-error} on error.
+@end deffn
+
 @deffn {Scheme Procedure} server-listen server
 Start listening to the socket.  Throw @code{guile-ssh-error} on error.
 Return value undefined.

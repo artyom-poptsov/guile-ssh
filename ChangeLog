@@ -1,5 +1,11 @@
 2014-10-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/server-func.c (guile_ssh_server_get): New procedure.
+	* ssh/server.scm (server-get): Export.
+	* tests/server.scm ("server-get"): New TC.
+	* doc/api-servers.texi (Servers): Add description of `server-get'.
+	* NEWS: Update.
+
 	* ssh/server-type.c (print_server): Print object address.
 
 	* ssh/server-type.h (server_data): Add `options' field.

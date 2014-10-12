@@ -179,6 +179,24 @@ Return value is undefined.\
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_server_get, "server-get", 2, 0, 0,
+            (SCM server, SCM option),
+            "\
+Get a Guile-SSH server option.  Return option value, or `#f' if option is\n\
+not set.  Throw `guile-ssh-error' on error.\
+")
+#define FUNC_NAME s_guile_ssh_server_get
+{
+  struct server_data *sd     = _scm_to_server_data (server);
+  struct symbol_mapping *opt = _scm_to_ssh_const (server_options, option);
+
+  if (! opt)
+    guile_ssh_error1 (FUNC_NAME, "No such option", option);
+
+  return scm_assoc_ref (sd->options, option);
+}
+#undef FUNC_NAME
+
 
 SCM_DEFINE (guile_ssh_server_listen, "server-listen", 1, 0, 0,
             (SCM server),

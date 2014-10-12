@@ -8,7 +8,11 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
+** New `server-get' procedure in (ssh server)
+   The procedure can be used to retrieve server options.
 ** Improve printing of Guile-SSH server objects
+** Update documentation
+   - Add description of the new procedures.
 
 * Changes in version 0.7.1 (2014-10-11)
 ** New `%get-libssh-version' procedure in (ssh version)
