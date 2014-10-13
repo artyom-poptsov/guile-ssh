@@ -29,6 +29,7 @@
 ;;   make-server
 ;;   server-accept
 ;;   server-set!
+;;   server-get
 ;;   server-listen!
 ;;   server-handle-key-exchange
 ;;   server-message-get
@@ -45,6 +46,7 @@
             make-server
             server-accept
             server-set!
+            server-get
             server-listen
             server-handle-key-exchange
             server-message-get))

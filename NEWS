@@ -7,6 +7,14 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Remove dependency on libgcrypt added by a mistake
+** New `server-get' procedure in (ssh server)
+   The procedure can be used to retrieve server options.
+** Improve printing of Guile-SSH server objects
+** Update documentation
+   - Add description of the new procedures.
+
 * Changes in version 0.7.1 (2014-10-11)
 ** New `%get-libssh-version' procedure in (ssh version)
    The procedure can be used to get libssh version in the "raw" format such
