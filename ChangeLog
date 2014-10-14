@@ -1,3 +1,7 @@
+2014-10-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/dist/Makefile.am: New file.
+
 2014-10-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/version.c: Don't include `gcrypt.h'.

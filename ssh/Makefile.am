@@ -18,6 +18,8 @@
 include $(top_srcdir)/am/snarf
 include $(top_srcdir)/am/guilec
 
+SUBDIRS = dist
+
 lib_LTLIBRARIES = libguile-ssh.la
 
 libguile_ssh_la_SOURCES = \
