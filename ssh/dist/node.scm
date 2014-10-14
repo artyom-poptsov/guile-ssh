@@ -8,13 +8,10 @@
   #:use-module (ssh session)
   #:use-module (ssh channel)
   #:use-module (ssh key)
+  #:use-module (ssh dist)
   #:export (node?
             make-node
-            run-node
-            ;; Low-level procedures
-            %handle-job))
-
-(define %delimiter "\0")
+            run-node))
 
 (define <node>
   (make-vtable "pw"
@@ -74,22 +71,6 @@ error."
       (else
        (message-reply-default msg)
        #f))))
-
-(define (%send-message message channel)
-  "Send MESSAGE to CHANNEL."
-  (write message channel)
-  (write-char #\nul channel))
-
-(define (%recv-message channel)
-  "Receive server response from the CHANNEL."
-  (read-delimited %delimiter channel))
-
-(define (%handle-job channel)
-  "Receive and handle distributed job from CHANNEL."
-  (let* ((data (read (open-input-string (%recv-message channel))))
-         (proc (primitive-eval (car data))))
-    (format #t "proc: ~a; list: ~a~%" proc (cadr data))
-    (%send-message (map proc (cadr data)) channel)))
 
 (define (handle-req-auth session msg msg-type)
   (let ((subtype (cadr msg-type)))

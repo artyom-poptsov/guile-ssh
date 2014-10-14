@@ -1,6 +1,11 @@
 2014-10-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
-	* ssh/dist/Makefile.am: New file.
+	* ssh/dist/node.scm: Use low-level procedures from (ssh dist).
+	(%send-message, %recv-message, %handle-job): Remove.
+
+	* ssh/Makefile.am (SUBDIRS): Add `dist'.
+	* ssh/dist/node.scm, ssh/dist/Makefile.am: Add to the repository.
+	* configure.ac: Add `ssh/dist/Makefile'.
 
 2014-10-13  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
