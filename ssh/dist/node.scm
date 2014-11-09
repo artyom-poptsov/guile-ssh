@@ -11,7 +11,11 @@
   #:use-module (ssh dist)
   #:export (node?
             make-node
-            run-node))
+            run-node
+
+            %node-default-port))
+
+(define %node-default-port 2223)
 
 (define <node>
   (make-vtable "pw"
@@ -33,7 +37,7 @@
 (define* (make-node #:key (white-list '())
                           (black-list '())
                           (bindaddr   #f)
-                          (bindport   2223)
+                          (bindport   %node-default-port)
                           (rsakey     #f)
                           (dsakey     #f)
                           (log-verbosity 'nolog))

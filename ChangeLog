@@ -1,5 +1,8 @@
 2014-11-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/dist/node.scm (%node-default-port): Export.
+	(make-node): Use it.
+
 	* ssh/dist/node.scm (make-node): Rename options: `rsa-key'->`rsakey';
 	`dsa-key'->`dsakey'.
 	(run-session-loop): Fix a bug: Add missing `message-reply-success'
