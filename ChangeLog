@@ -1,5 +1,7 @@
 2014-11-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/dist/node.scm (make-node): Add a docstring.
+
 	* ssh/dist/node.scm (%node-default-port): Export.
 	(make-node): Use it.
 

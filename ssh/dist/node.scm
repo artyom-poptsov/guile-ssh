@@ -41,6 +41,7 @@
                           (rsakey     #f)
                           (dsakey     #f)
                           (log-verbosity 'nolog))
+  "Make a new distributed computing node.  Return the new <node> instance."
   (let ((server (make-server #:bindaddr      bindaddr
                              #:bindport      bindport
                              #:rsakey        rsakey
