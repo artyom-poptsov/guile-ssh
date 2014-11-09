@@ -122,6 +122,7 @@ error."
                 (let* ((channel (handle-req-channel-open msg msg-type)))
                   (%handle-job channel)
                   (close channel)
+                  (message-reply-success msg)
                   (break)))
                (else
                 (message-reply-default msg))))))))

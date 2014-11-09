@@ -2,6 +2,8 @@
 
 	* ssh/dist/node.scm (make-node): Rename options: `rsa-key'->`rsakey';
 	`dsa-key'->`dsakey'.
+	(run-session-loop): Fix a bug: Add missing `message-reply-success'
+	call after handling of a job.
 
 2014-10-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
