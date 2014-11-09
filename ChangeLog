@@ -1,3 +1,8 @@
+2014-11-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/dist/node.scm (make-node): Rename options: `rsa-key'->`rsakey';
+	`dsa-key'->`dsakey'.
+
 2014-10-14  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/dist/node.scm: Use low-level procedures from (ssh dist).

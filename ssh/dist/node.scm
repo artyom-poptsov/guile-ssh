@@ -34,13 +34,13 @@
                           (black-list '())
                           (bindaddr   #f)
                           (bindport   2223)
-                          (rsa-key    #f)
-                          (dsa-key    #f)
+                          (rsakey     #f)
+                          (dsakey     #f)
                           (log-verbosity 'nolog))
   (let ((server (make-server #:bindaddr      bindaddr
                              #:bindport      bindport
-                             #:rsakey        rsa-key
-                             #:dsakey        dsa-key
+                             #:rsakey        rsakey
+                             #:dsakey        dsakey
                              #:log-verbosity log-verbosity)))
     (make-struct/no-tail <node> server)))
 
