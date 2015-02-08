@@ -1,6 +1,6 @@
 /* channel-func.c -- SSH channel manipulation functions.
  *
- * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -76,6 +76,26 @@ Run a shell command CMD without an interactive shell.\
     }
 
   return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_channel_get_exit_status,
+            "channel-get-exit-status", 1, 0, 0,
+            (SCM channel),
+            "\
+Get the exit status of the channel (error code from the executed \
+instruction).  Return the exist status, or #f if no exit status has been \
+returned (yet). \
+")
+#define FUNC_NAME s_guile_ssh_channel_get_exit_status
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  int res;
+
+  GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
+
+  res = ssh_channel_get_exit_status (cd->ssh_channel);
+  return (res == SSH_ERROR) ? SCM_BOOL_F : scm_from_int (res);
 }
 #undef FUNC_NAME
 

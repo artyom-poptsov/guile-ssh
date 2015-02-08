@@ -57,6 +57,7 @@
             channel-set-stream!
             channel-get-stream
             channel-get-session
+            channel-get-exit-status
             channel-open?
             channel-eof?))
 

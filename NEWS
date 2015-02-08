@@ -11,6 +11,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Remove dependency on libgcrypt added by a mistake
 ** New `server-get' procedure in (ssh server)
    The procedure can be used to retrieve server options.
+** New `channel-get-exit-status' procedure in (ssh channel)
+   The procedure allows to get exit status of an executed command from a
+   channel.
 ** Improve printing of Guile-SSH server objects
 ** Update documentation
    - Add description of the new procedures.

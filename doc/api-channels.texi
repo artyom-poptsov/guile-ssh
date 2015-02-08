@@ -116,6 +116,13 @@ Return @code{#t} if remote has sent @acronym{EOF}, @code{#f} otherwise.  Throw
 @code{guile-ssh-error} if the channel has been closed and freed.
 @end deffn
 
+@deffn {Scheme Procedure} channel-get-exit-status channel
+Get the exit status of the @var{channel} (error code from the executed
+instruction).  The @var{channel} must be open.  Return the exist status, or
+@code{#f} if no exit status has been returned (yet).  Throw
+@code{guile-ssh-error} on error.
+@end deffn
+
 @c Local Variables:
 @c TeX-master: "guile-ssh.texi"
 @c End:
