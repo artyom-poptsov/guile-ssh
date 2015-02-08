@@ -77,7 +77,7 @@ value is undefined.
 
 @deffn {Scheme Procedure} channel-request-send-exit-status channel exit-status
 Send an @var{exit-status} to the remote process (as described in RFC 4254,
-section 6.10).  Only SSH-v2 is supported.
+section 6.10).  Only SSH-v2 is supported.  Return value is undefined.
 
 The @var{channel} needs to be closed with after this message.
 @end deffn

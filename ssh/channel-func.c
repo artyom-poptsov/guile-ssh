@@ -104,7 +104,8 @@ SCM_DEFINE (guile_ssh_channel_request_send_exit_status,
             (SCM channel, SCM exit_status),
             "\
 Send the exit status to the remote process (as described in RFC 4254, section\n\
-6.10).\
+6.10).\n\
+Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_request_send_exit_status
 {

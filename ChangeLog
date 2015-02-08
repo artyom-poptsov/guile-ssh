@@ -1,3 +1,10 @@
+2015-02-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-channels.texi (Channels): Update description of
+	`guile_ssh_channel_request_send_exit_status'.
+	* ssh/channel-func.c (guile_ssh_channel_request_send_exit_status):
+	Update the docstring.
+
 2015-02-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/channel.scm (channel-request-send-exit-status): Export.
