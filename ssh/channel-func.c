@@ -99,6 +99,32 @@ returned (yet). \
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_request_send_exit_status,
+            "channel-request-send-exit-status", 2, 0, 0,
+            (SCM channel, SCM exit_status),
+            "\
+Send the exit status to the remote process (as described in RFC 4254, section\n\
+6.10).\
+")
+#define FUNC_NAME s_guile_ssh_channel_request_send_exit_status
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  int res;
+
+  GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
+
+  res = ssh_channel_request_send_exit_status (cd->ssh_channel,
+                                              scm_to_uint32 (exit_status));
+  if (res != SSH_OK)
+    {
+      ssh_session session = ssh_channel_get_session (cd->ssh_channel);
+      guile_ssh_session_error1  (FUNC_NAME, session, channel);
+    }
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (guile_ssh_channel_request_pty, "channel-request-pty", 1, 0, 0,
             (SCM channel),
             "\

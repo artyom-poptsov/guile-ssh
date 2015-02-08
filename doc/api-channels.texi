@@ -75,6 +75,13 @@ Set an environment @var{variable} to @var{value}.  Throw
 value is undefined.
 @end deffn
 
+@deffn {Scheme Procedure} channel-request-send-exit-status channel exit-status
+Send an @var{exit-status} to the remote process (as described in RFC 4254,
+section 6.10).  Only SSH-v2 is supported.
+
+The @var{channel} needs to be closed with after this message.
+@end deffn
+
 @deffn {Scheme Procedure} channel-set-pty-size! channel columns rows
 Change size of the @acronym{PTY} to @var{columns} and @var{rows}.  The
 @var{channel} must be open.  Return value is undefined.
