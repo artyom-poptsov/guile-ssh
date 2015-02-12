@@ -1,5 +1,8 @@
 2015-02-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/channel-func.c (guile_ssh_channel_request_send_exit_status):
+	Validate exit status.
+
 	* examples/ssshd.scm.in (handle-request-exec): Send exit status.
 	* examples/sssh.scm.in (main): Handle exit status.
 	* NEWS: Update.

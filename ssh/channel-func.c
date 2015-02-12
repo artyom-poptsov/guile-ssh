@@ -113,6 +113,8 @@ Return value is undefined.\
   int res;
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (scm_is_unsigned_integer (exit_status, 0, UINT32_MAX),
+              SCM_ARG2, FUNC_NAME);
 
   res = ssh_channel_request_send_exit_status (cd->ssh_channel,
                                               scm_to_uint32 (exit_status));
