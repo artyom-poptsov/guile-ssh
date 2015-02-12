@@ -1,3 +1,9 @@
+2015-02-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* examples/ssshd.scm.in (handle-request-exec): Send exit status.
+	* examples/sssh.scm.in (main): Handle exit status.
+	* NEWS: Update.
+
 2015-02-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* doc/api-channels.texi (Channels): Update description of

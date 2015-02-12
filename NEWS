@@ -17,6 +17,12 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New `channel-request-send-exit-status' procedure in (ssh channel)
    The procedure can be used to send the exit status to a client.
 ** Improve printing of Guile-SSH server objects
+** Update examples
+*** sssh
+    - Check exit status of an executed command.
+*** ssshd
+    - Send exit status to the client according to the result of command
+      execution.
 ** Update documentation
    - Add description of the new procedures.
 

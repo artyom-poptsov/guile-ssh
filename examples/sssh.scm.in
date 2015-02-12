@@ -209,14 +209,21 @@ Options:
           (print-debug "8. channel-request-exec (ssh_channel_request_exec)\n")
           (channel-request-exec channel cmd)
 
-          (print-debug "9. channel-poll (ssh_channel_poll)\n")
-          (let poll ((ready? #f))
-            (if ready?
-                (begin
-                  (print-debug "10. channel-read (ssh_channel_read)\n")
-                  (display (read-all channel))
-                  (newline))
-                (poll (char-ready? channel))))
+          (case (channel-get-exit-status channel)
+            ((0)
+             (print-debug "9. channel-poll (ssh_channel_poll)\n")
+             (let poll ((ready? #f))
+               (if ready?
+                   (begin
+                     (print-debug "10. channel-read (ssh_channel_read)\n")
+                     (display (read-all channel))
+                     (newline))
+                   (poll (char-ready? channel)))))
+            (else =>
+                  (lambda (status)
+                    (format #t
+                     "ERROR: Failed to execute command `~a' (exit status ~a)~%"
+                      cmd status))))
           (close channel)
           (disconnect! session))))))
 
