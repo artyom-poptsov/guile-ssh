@@ -1,5 +1,8 @@
 2015-02-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/channel-func.c (guile_ssh_channel_request_send_exit_status): Fix
+	wrong call to `SCM_ASSERT'.
+
 	* ssh/channel-func.c (guile_ssh_channel_request_send_exit_status):
 	Validate exit status.
 
