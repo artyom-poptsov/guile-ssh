@@ -194,7 +194,7 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
       scm_puts ("(closed) ", port);
     }
   scm_display (_scm_object_hex_address (channel), port);
-  scm_puts (">", port);      
+  scm_puts (">", port);
   return 1;
 }
 
@@ -251,7 +251,7 @@ _scm_from_channel_data (ssh_channel ch, SCM session)
   struct channel_data *channel_data;
   SCM ptob;
   scm_port *pt;
-  
+
   channel_data = scm_gc_malloc (sizeof (struct channel_data), "channel");
 
   channel_data->ssh_channel = ch;
