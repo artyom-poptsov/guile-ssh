@@ -65,7 +65,10 @@ ptob_fill_input (SCM channel)
   if (res == SSH_ERROR)
     guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", channel);
 
-  if (res == SSH_AGAIN)
+  /* `ssh_channel_read' sometimes returns 0 even if `ssh_channel_poll' returns
+     a positive value.  So we must ensure that res != 0 otherwise an assertion
+     in `scm_i_fill_input' won't be meet (see `ports.c' in Guile 2.0.9). */
+  if ((! res) || (res == SSH_AGAIN))
     return EOF;
 
   pt->read_pos = pt->read_buf;
