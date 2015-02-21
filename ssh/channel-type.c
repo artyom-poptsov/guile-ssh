@@ -1,9 +1,9 @@
 /* channel-type.c -- SSH channel smob.
  *
- * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
- * 
+ *
  * Guile-SSH is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -65,7 +65,10 @@ ptob_fill_input (SCM channel)
   if (res == SSH_ERROR)
     guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", channel);
 
-  if (res == SSH_AGAIN)
+  /* `ssh_channel_read' sometimes returns 0 even if `ssh_channel_poll' returns
+     a positive value.  So we must ensure that res != 0 otherwise an assertion
+     in `scm_i_fill_input' won't be meet (see `ports.c' in Guile 2.0.9). */
+  if ((! res) || (res == SSH_AGAIN))
     return EOF;
 
   pt->read_pos = pt->read_buf;
@@ -194,7 +197,7 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
       scm_puts ("(closed) ", port);
     }
   scm_display (_scm_object_hex_address (channel), port);
-  scm_puts (">", port);      
+  scm_puts (">", port);
   return 1;
 }
 
@@ -251,7 +254,7 @@ _scm_from_channel_data (ssh_channel ch, SCM session)
   struct channel_data *channel_data;
   SCM ptob;
   scm_port *pt;
-  
+
   channel_data = scm_gc_malloc (sizeof (struct channel_data), "channel");
 
   channel_data->ssh_channel = ch;

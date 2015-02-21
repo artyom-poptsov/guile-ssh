@@ -458,8 +458,15 @@ CLIENT-PROC call."
            (set! channel (message-channel-request-open-reply-accept msg)))
           ((request-channel)
            (if (equal? (cadr msg-type) 'channel-request-exec)
-               (write-line "pong" channel))
-           (message-reply-success msg))
+               (let ((cmd (exec-req:cmd (message-get-req msg))))
+                 (cond
+                  ((string=? cmd "ping")
+                   (write-line "pong" channel)
+                   (message-reply-success msg))
+                  ((string=? cmd "uname") ; For exit status testing
+                   (message-reply-success msg)
+                   (channel-request-send-exit-status channel 0))))
+               (message-reply-success msg)))
           (else
            (message-reply-success msg)))))
     (primitive-exit)))
@@ -529,6 +536,22 @@ CLIENT-PROC call."
        (let ((res (read-line channel)))
          (and res
               (string=? "pong" res)))))))
+
+;; Client sends "uname" as a command to execute, server returns exit status 0.
+(test-assert-with-log "channel-request-exec, exit status"
+  (run-client-test
+
+   ;; server
+   (lambda (server)
+     (start-server/channel-test server))
+
+   ;; client
+   (lambda ()
+     (let* ((session (make-session/channel-test))
+            (channel (make-channel session)))
+       (channel-open-session channel)
+       (channel-request-exec channel "uname")
+       (= (channel-get-exit-status channel) 0)))))
 
 
 ;; data transferring

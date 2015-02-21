@@ -1,3 +1,60 @@
+2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/channel-type.c: Update copyright dates.
+
+	`ssh_channel_read' sometimes returns 0 even if `ssh_channel_poll'
+	returns a positive value.  So we must ensure that res != 0 otherwise
+	an assertion in `scm_i_fill_input' won't be meet (see `ports.c' in
+	Guile 2.0.9).
+
+	* ssh/channel-type.c (ptob_fill_input): Return EOF if
+	`ssh_channel_read' returns 0.
+	* NEWS: Update.
+
+2015-02-12  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/channel-type.c (print_channel, _scm_from_channel_data): Remove
+	trailing spaces.
+
+	* ssh/channel-func.c (guile_ssh_channel_request_send_exit_status): Fix
+	wrong call to `SCM_ASSERT'.
+
+	* ssh/channel-func.c (guile_ssh_channel_request_send_exit_status):
+	Validate exit status.
+
+	* examples/ssshd.scm.in (handle-request-exec): Send exit status.
+	* examples/sssh.scm.in (main): Handle exit status.
+	* NEWS: Update.
+
+2015-02-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-channels.texi (Channels): Update description of
+	`guile_ssh_channel_request_send_exit_status'.
+	* ssh/channel-func.c (guile_ssh_channel_request_send_exit_status):
+	Update the docstring.
+
+2015-02-08  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/channel.scm (channel-request-send-exit-status): Export.
+	* ssh/channel-func.c (guile_ssh_channel_request_send_exit_status): New
+	procedure.
+	* ssh/channel-func.h: Update.
+	* tests/client-server.scm ("channel-request-exec, exit status"): New
+	TC.
+	(start-server/channel-test): Update for exit status test.
+	* doc/api-channels.texi (Channels): Add description of
+	`channel-request-send-exit-status'.
+	* NEWS: Update.
+
+	* ssh/channel-func.c (guile_ssh_channel_get_exit_status): New
+	procedure.
+	* ssh/channel-func.h: Update.
+	* ssh/channel.scm (channel-get-exit-status): Export.
+	* doc/api-channels.texi (Channels): Add description of
+	`channel-get-exit-status'.
+
+	* NEWS: Update.
+
 2014-11-09  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/dist/node.scm (make-node): Add a docstring.

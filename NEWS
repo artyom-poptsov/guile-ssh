@@ -9,9 +9,26 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 * Unreleased
 ** Remove dependency on libgcrypt added by a mistake
+** Fix a bug in the channel implementation
+   The bug could occasionally manifest itself on channel reading as the
+   following error:
+#+BEGIN_EXAMPLE
+guile: ports.c:1476: scm_i_fill_input: Assertion `pt->read_pos == pt->read_end' failed.
+#+END_EXAMPLE
 ** New `server-get' procedure in (ssh server)
    The procedure can be used to retrieve server options.
+** New `channel-get-exit-status' procedure in (ssh channel)
+   The procedure allows to get exit status of an executed command from a
+   channel.
+** New `channel-request-send-exit-status' procedure in (ssh channel)
+   The procedure can be used to send the exit status to a client.
 ** Improve printing of Guile-SSH server objects
+** Update examples
+*** sssh
+    - Check exit status of an executed command.
+*** ssshd
+    - Send exit status to the client according to the result of command
+      execution.
 ** Update documentation
    - Add description of the new procedures.
 

@@ -53,10 +53,12 @@
             channel-request-exec
             channel-request-pty
             channel-request-shell
+            channel-request-send-exit-status
             channel-set-pty-size!
             channel-set-stream!
             channel-get-stream
             channel-get-session
+            channel-get-exit-status
             channel-open?
             channel-eof?))
 

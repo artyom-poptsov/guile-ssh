@@ -1,6 +1,6 @@
 /* channel-func.c -- SSH channel manipulation functions.
  *
- * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -73,6 +73,55 @@ Run a shell command CMD without an interactive shell.\
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
       guile_ssh_session_error1 (FUNC_NAME, session, scm_list_2 (channel, cmd));
+    }
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_channel_get_exit_status,
+            "channel-get-exit-status", 1, 0, 0,
+            (SCM channel),
+            "\
+Get the exit status of the channel (error code from the executed \
+instruction).  Return the exist status, or #f if no exit status has been \
+returned (yet). \
+")
+#define FUNC_NAME s_guile_ssh_channel_get_exit_status
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  int res;
+
+  GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
+
+  res = ssh_channel_get_exit_status (cd->ssh_channel);
+  return (res == SSH_ERROR) ? SCM_BOOL_F : scm_from_int (res);
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_channel_request_send_exit_status,
+            "channel-request-send-exit-status", 2, 0, 0,
+            (SCM channel, SCM exit_status),
+            "\
+Send the exit status to the remote process (as described in RFC 4254, section\n\
+6.10).\n\
+Return value is undefined.\
+")
+#define FUNC_NAME s_guile_ssh_channel_request_send_exit_status
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  int res;
+
+  GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (scm_is_unsigned_integer (exit_status, 0, UINT32_MAX), exit_status,
+              SCM_ARG2, FUNC_NAME);
+
+  res = ssh_channel_request_send_exit_status (cd->ssh_channel,
+                                              scm_to_uint32 (exit_status));
+  if (res != SSH_OK)
+    {
+      ssh_session session = ssh_channel_get_session (cd->ssh_channel);
+      guile_ssh_session_error1  (FUNC_NAME, session, channel);
     }
 
   return SCM_UNDEFINED;

@@ -1,4 +1,4 @@
-/* Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  * 
@@ -21,11 +21,14 @@
 
 extern SCM guile_ssh_channel_open_session (SCM arg1);
 extern SCM guile_ssh_channel_request_exec (SCM arg1, SCM arg2);
+extern SCM guile_ssh_channel_request_send_exit_status (SCM arg1, SCM arg2);
 
 extern SCM guile_ssh_channel_is_open_p (SCM arg1);
 extern SCM guile_ssh_channel_is_eof_p (SCM arg1);
 
 extern SCM guile_ssh_channel_set_pty_size_x (SCM arg1, SCM arg2, SCM arg3);
+
+extern SCM guile_ssh_channel_get_exit_status (SCM arg1);
 
 extern void init_channel_func (void);
 
