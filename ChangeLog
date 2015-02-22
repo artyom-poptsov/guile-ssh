@@ -1,5 +1,7 @@
 2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README (Distribution): Fix path to examples.
+
 	* doc/examples.texi (Examples): Fix path to examples.
 	Use `channel-get-exit-status' in the client example.
 

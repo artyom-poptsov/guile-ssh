@@ -52,7 +52,7 @@ All the modules will be compiled and produced .go files will be installed to
 Documentation in Info format, in =${prefix}/share/info/=:
  - guile-ssh.info
 
-Examples, in =${prefix}/share/libguile-ssh/examples=:
+Examples, in =${prefix}/share/guile-ssh/examples=:
  - ssshd.scm    -- SSH server example.
  - sssh.scm     -- SSH client example.
  + echo/
