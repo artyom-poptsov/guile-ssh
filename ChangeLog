@@ -1,5 +1,7 @@
 2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Update.
+
 	* examples/echo/server.scm.in: Update copyright dates.
 
 	* examples/echo/server.scm.in (print-help): Rename to
