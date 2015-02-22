@@ -1,5 +1,8 @@
 2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/dist/node.scm (make-node): Change arguments.
+	* doc/version.texi: Update.
+
 	* ssh/channel-type.c: Update copyright dates.
 
 	`ssh_channel_read' sometimes returns 0 even if `ssh_channel_poll'

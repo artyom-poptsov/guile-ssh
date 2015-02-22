@@ -34,13 +34,13 @@
   (and (struct? x)
        (eq? (struct-vtable x) <node>)))
 
-(define* (make-node #:key (white-list '())
-                          (black-list '())
-                          (bindaddr   #f)
-                          (bindport   %node-default-port)
-                          (rsakey     #f)
-                          (dsakey     #f)
-                          (log-verbosity 'nolog))
+(define* (make-node #:key (allow           '())
+                          (potential-hosts '())
+                          (bindaddr        #f)
+                          (bindport        %node-default-port)
+                          (rsakey          #f)
+                          (dsakey          #f)
+                          (log-verbosity   'nolog))
   "Make a new distributed computing node.  Return the new <node> instance."
   (let ((server (make-server #:bindaddr      bindaddr
                              #:bindport      bindport
