@@ -86,7 +86,7 @@ Options:
 (define (get-prvkey session identity-file)
   "Get a private SSH key.  Handle possible errors."
   (let ((prvkey (private-key-from-file identity-file)))
-    (if (not prvkey)
+    (or prvkey
         (handle-error session))
     prvkey))
 
@@ -109,10 +109,7 @@ Options:
          (help-needed?  (option-ref options 'help #f))
          (args          (option-ref options '() #f)))
 
-    (and (null? args)
-         (print-help-and-exit))
-
-    (and help-needed?
+    (and (or (null? args) help-needed?)
          (print-help-and-exit))
 
     (let* ((host (car args))
@@ -133,12 +130,12 @@ Options:
 
       (let ((private-key (get-prvkey session identity-file)))
 
-        (if (eqv? (userauth-public-key! session private-key) 'error)
-            (handle-error session))
+        (and (eqv? (userauth-public-key! session private-key) 'error)
+             (handle-error session))
 
         (let ((channel (make-channel session)))
 
-          (if (not channel)
+          (or channel
               (handle-error session))
 
           (channel-open-session channel)
