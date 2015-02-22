@@ -1,5 +1,9 @@
 2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/echo/client.scm.in (print-help): Rename to
+	`print-help-and-exit'.
+	(main): Use it.  Remove extra checks.
+
 	* README (Requirements): Require libssh 0.6.3 or 0.6.4.
 	* doc/guile-ssh.texi (Installation): Likewise.
 	* doc/version.texi: Update.
