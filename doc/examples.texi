@@ -7,7 +7,7 @@
 @chapter Examples
 
 There are working examples that come with Guile-SSH.  These examples are
-normally installed in @file{$prefix/share/libguile-ssh/examples} directory:
+normally installed in @file{$prefix/share/guile-ssh/examples} directory:
 
 @table @samp
 @item sssh.scm
