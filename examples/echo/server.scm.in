@@ -121,7 +121,7 @@
         (r (string-append res str) (read-line port 'concat))
         res)))
 
-(define (print-help)
+(define (print-help-and-exit)
   "Print help message and exit."
   (display "\
 Usage: server.scm [ options ]
@@ -131,8 +131,8 @@ Options:
   --dsakey=<key>, -d <key>      Set host DSA key.
   --port=<port>, -p <port>      Set bind port of the server.
   --help, -h                    Print this message and exit.
-"))
-
+")
+  (exit 0))
 
 (define *option-spec*
   '((dsakey (single-char #\d) (value #t))
@@ -148,10 +148,8 @@ Options:
          (port        (option-ref options 'port   *default-bindport*))
          (help-wanted (option-ref options 'help   #f)))
 
-    (if help-wanted
-        (begin
-          (print-help)
-          (exit)))
+    (and help-wanted
+         (print-help-and-exit))
 
     (let ((server  (make-server #:bindport      (string->number port)
                                 #:rsakey        rsakey

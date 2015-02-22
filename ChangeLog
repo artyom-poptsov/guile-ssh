@@ -1,5 +1,9 @@
 2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* examples/echo/server.scm.in (print-help): Rename to
+	`print-help-and-exit'.
+	(main): Use it.
+
 	* examples/echo/client.scm.in (get-prvkey, main): Simplify checks.
 
 	* examples/echo/client.scm.in (print-help): Rename to
