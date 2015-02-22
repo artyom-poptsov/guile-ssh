@@ -1,5 +1,9 @@
 2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* README (Requirements): Require libssh 0.6.3 or 0.6.4.
+	* doc/guile-ssh.texi (Installation): Likewise.
+	* doc/version.texi: Update.
+
 	* README (Distribution): Fix path to examples.
 
 	* doc/examples.texi (Examples): Fix path to examples.
