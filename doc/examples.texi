@@ -66,6 +66,10 @@ the server.
     ;; Execute a command
     (channel-request-exec channel "uname")
 
+    ;; Check the exit status of the command
+    (or (zero? (channel-get-exit-status channel))
+        ...) ; Handle error
+
     ;; Poll the channel for data
     (let poll ((ready? #f))
       (if ready?
