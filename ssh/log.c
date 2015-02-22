@@ -98,7 +98,7 @@ SCM_DEFINE (guile_ssh_default_libssh_log_printer,
   int rc = _get_current_timestring (date, sizeof(date));
 
   scm_puts ("[", scm_current_error_port ());
-  if (rc == 0) 
+  if (rc == 0)
     {
       scm_puts (date, scm_current_error_port ());
       scm_puts (", ", scm_current_error_port ());

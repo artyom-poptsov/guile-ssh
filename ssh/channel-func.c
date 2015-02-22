@@ -176,7 +176,7 @@ Return value is undefined.\
 }
 #undef FUNC_NAME
 
-/* Set an environment variable NAME to value VALUE 
+/* Set an environment variable NAME to value VALUE
    Return value is undefined. */
 SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
             (SCM channel, SCM name, SCM value),

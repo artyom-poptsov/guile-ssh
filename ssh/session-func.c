@@ -64,7 +64,7 @@ static struct symbol_mapping session_options[] = {
 
 /* Blocking flush of the outgoing buffer.
 
-   Return on of the following symbols: 'ok, 'error. 'again. 
+   Return on of the following symbols: 'ok, 'error. 'again.
 
    Asserts:
    - Return value of `ssh_blocking_flush' is one of the valid constants
@@ -322,7 +322,7 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
       char *c_value = NULL;
       res = ssh_options_get (sd->ssh_session, opt->value, &c_value);
       value = (res == SSH_OK) ? scm_from_locale_string (c_value) : SCM_UNDEFINED;
-    } 
+    }
 
   if (res == SSH_ERROR)
     guile_ssh_error1 (FUNC_NAME, "Unable to get value of the option", option);
@@ -331,9 +331,9 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
 }
 #undef FUNC_NAME
 
-/* Connect to the SSH server. 
+/* Connect to the SSH server.
 
-   Return one of the following symbols: 'ok, 'again, 'error 
+   Return one of the following symbols: 'ok, 'again, 'error
 
    Asserts:
    - Return value of `ssh_connect' is one of the valid constants described in
@@ -414,7 +414,7 @@ Retrieve the error text message from the last error.\
   return error;
 }
 
-/* Authenticate the server.  
+/* Authenticate the server.
 
    Return one of the following symbols: 'ok, 'known-changed,
    'found-other, 'not-known, 'file-not-found, 'error
@@ -510,7 +510,7 @@ Return value is undefined.\
 
   if (res != SSH_OK)
     guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
-                      
+
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME

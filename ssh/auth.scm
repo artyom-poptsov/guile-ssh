@@ -21,7 +21,7 @@
 ;;; Commentary:
 
 ;; This module contains API that is used for SSH user authentication.
-;; 
+;;
 ;; These methods are exported:
 ;;
 ;;   userauth-public-key!
