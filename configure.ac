@@ -3,10 +3,10 @@ dnl   Process this file with autoconf to produce configure.
 dnl
 
 define(GUILE_SSH_CONFIGURE_COPYRIGHT, [[
-Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 This file is part of Guile-SSH.
- 
+
 Guile-SSH is free software: you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation, either version 3 of the

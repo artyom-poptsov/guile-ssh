@@ -1,5 +1,7 @@
 2015-02-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* configure.ac: Update copyright dates.  Remove a trailing whitespace.
+
 	* NEWS: Update.
 
 	* ssh/key-type.h: Add parent object to the key structure.
