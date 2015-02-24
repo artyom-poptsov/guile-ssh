@@ -28,6 +28,10 @@ guile: ports.c:1476: scm_i_fill_input: Assertion `pt->read_pos == pt->read_end' 
 ** New `channel-request-send-exit-status' procedure in (ssh channel)
    The procedure can be used to send the exit status to a client.
 ** Improve printing of Guile-SSH server objects
+   Print bind address and port.  Example:
+#+BEGIN_EXAMPLE
+#<server 127.0.0.1:12345 9b70ff0>
+#+END_EXAMPLE
 ** Update examples
 *** sssh
     - Check exit status of an executed command.
@@ -38,6 +42,7 @@ guile: ports.c:1476: scm_i_fill_input: Assertion `pt->read_pos == pt->read_end' 
     - Some cosmetic changes aimed to make the code cleaner.
 ** Update documentation
    - Add description of the new procedures.
+   - Update examples.
 
 * Changes in version 0.7.1 (2014-10-11)
 ** New `%get-libssh-version' procedure in (ssh version)
