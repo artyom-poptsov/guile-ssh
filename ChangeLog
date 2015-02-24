@@ -1,5 +1,7 @@
 2015-02-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* doc/guile-ssh.texi: Update copyright dates.
+
 	* configure.ac: Update copyright dates.  Remove a trailing whitespace.
 
 	* NEWS: Update.
