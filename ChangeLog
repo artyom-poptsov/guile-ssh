@@ -1,5 +1,7 @@
 2015-02-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Update.
+
 	* ssh/key-type.h: Add parent object to the key structure.
 	* ssh/key-type.c (mark_key_smob): Mark parent.
 	(free_key_smob): Free the key only if it does not have a parent.

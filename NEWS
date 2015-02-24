@@ -9,6 +9,11 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 * Unreleased
 ** Remove dependency on libgcrypt added by a mistake
+** Fix "double free or corruption" error on GC'ing of keys
+   Fix "double free or corruption" error that occures in case when a key was
+   derived from an authentication message by means of `message-get-req'.  When
+   such a key is GC'ed then GC'ing of its parent message leads to error, or
+   vice versa.
 ** Fix a bug in the channel implementation
    The bug could occasionally manifest itself on channel reading as the
    following error:
