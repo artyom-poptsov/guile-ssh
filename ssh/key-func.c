@@ -81,7 +81,7 @@ Throw `guile-ssh-error' on error.\
 
   scm_dynwind_end ();
 
-  return _scm_from_ssh_key (ssh_public_key);
+  return _scm_from_ssh_key (ssh_public_key, SCM_BOOL_F);
 }
 #undef FUNC_NAME
 
@@ -128,7 +128,7 @@ Return a new SSH key of #f on error.\
 
   scm_dynwind_end ();
 
-  return _scm_from_ssh_key (ssh_key);
+  return _scm_from_ssh_key (ssh_key, SCM_BOOL_F);
 }
 #undef FUNC_NAME
 
@@ -190,7 +190,7 @@ Get public key from a private key KEY.\
   if (res != SSH_OK)
     return SCM_BOOL_F;
 
-  return _scm_from_ssh_key (ssh_public_key);
+  return _scm_from_ssh_key (ssh_public_key, SCM_BOOL_F);
 }
 #undef FUNC_NAME
 
@@ -231,7 +231,7 @@ Read public key from a file FILENAME.  Return a SSH key.\
 
   scm_dynwind_end ();
 
-  return _scm_from_ssh_key (ssh_public_key);
+  return _scm_from_ssh_key (ssh_public_key, SCM_BOOL_F);
 }
 #undef FUNC_NAME
 

@@ -1,5 +1,18 @@
 2015-02-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* ssh/key-type.h: Add parent object to the key structure.
+	* ssh/key-type.c (mark_key_smob): Mark parent.
+	(free_key_smob): Free the key only if it does not have a parent.
+	(_scm_from_ssh_key): Accept a parent object as the 2nd argument.  All
+	callers updated.
+	* ssh/key-func.c (guile_ssh_string_to_public_key)
+	(guile_ssh_private_key_from_file)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_public_key_from_file, guile_ssh_make_keypair): Update.
+	* ssh/message-func.c (get_auth_req): Accept a SCM message as the 2nd
+	argument.  All callers updated.
+	(guile_ssh_message_get_req): Update.
+
 	* ssh/message-func.c (get_auth_req): Use `_scm_from_ssh_key'.
 
 2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>

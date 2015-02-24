@@ -256,7 +256,7 @@ Get type of the message MSG.\
 
 /* <result> = "#(" <user> <WSP> <password> <WSP> <key> ")" */
 static SCM
-get_auth_req (ssh_message msg)
+get_auth_req (ssh_message msg, SCM scm_msg) /* FIXME: accept only SCM */
 {
   SCM result = scm_c_make_vector (4, SCM_UNDEFINED);
   const char *user     = ssh_message_auth_user (msg);
@@ -276,7 +276,7 @@ get_auth_req (ssh_message msg)
   else
     SCM_SIMPLE_VECTOR_SET (result, 1, SCM_BOOL_F);
 
-  SCM_SIMPLE_VECTOR_SET (result, 2, _scm_from_ssh_key (public_key));
+  SCM_SIMPLE_VECTOR_SET (result, 2, _scm_from_ssh_key (public_key, scm_msg));
 
   pkey_state = _ssh_const_to_scm (pubkey_state_type,
                                   (int) ssh_message_auth_publickey_state (msg));
@@ -398,7 +398,7 @@ Get a request object from the message MSG\
       return get_service_req (ssh_msg);
 
     case SSH_REQUEST_AUTH:
-      return get_auth_req (ssh_msg);
+      return get_auth_req (ssh_msg, msg);
 
     case SSH_REQUEST_CHANNEL_OPEN:
       {

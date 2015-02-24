@@ -48,7 +48,8 @@ struct symbol_mapping key_types[] = {
 SCM
 mark_key_smob (SCM key_smob)
 {
-  return SCM_BOOL_F;
+  struct key_data *kd = _scm_to_key_data (key_smob);
+  return kd->parent;
 }
 
 /* Free the smob. */
@@ -56,7 +57,14 @@ size_t
 free_key_smob (SCM arg1)
 {
   struct key_data *data = _scm_to_key_data (arg1);
-  ssh_key_free (data->ssh_key);
+  if (scm_is_false (data->parent))
+    {
+      /* It's safe to free the key only if it was not derived from some other
+         object and thereby does not share any resources with it.  If the key
+         does have a parent then all the resources will be freed along with
+         it. */
+      ssh_key_free (data->ssh_key);
+    }
   return 0;
 }
 
@@ -136,7 +144,7 @@ Return newly generated private key.  Throw `guile-ssh-error' on error.\
                         scm_list_2 (type, length));
     }
 
-  return _scm_from_ssh_key (key);
+  return _scm_from_ssh_key (key, SCM_BOOL_F);
 }
 #undef FUNC_NAME
 
@@ -190,13 +198,14 @@ equalp_key (SCM x1, SCM x2)
 /* Helper procedures */
 
 SCM
-_scm_from_ssh_key (ssh_key key)
+_scm_from_ssh_key (ssh_key key, SCM parent)
 {
   struct key_data *key_data;
   SCM key_smob;
   key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
                                                 "ssh key");
   key_data->ssh_key = key;
+  key_data->parent = parent;
   SCM_NEWSMOB (key_smob, key_tag, key_data);
   return key_smob;
 }
