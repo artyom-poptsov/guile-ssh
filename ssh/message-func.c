@@ -276,13 +276,7 @@ get_auth_req (ssh_message msg)
   else
     SCM_SIMPLE_VECTOR_SET (result, 1, SCM_BOOL_F);
 
-  pkey_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
-                                                 "ssh key");
-  pkey_data->ssh_key = public_key;
-
-  SCM_NEWSMOB (pkey_smob, key_tag, pkey_data);
-
-  SCM_SIMPLE_VECTOR_SET (result, 2, pkey_smob);
+  SCM_SIMPLE_VECTOR_SET (result, 2, _scm_from_ssh_key (public_key));
 
   pkey_state = _ssh_const_to_scm (pubkey_state_type,
                                   (int) ssh_message_auth_publickey_state (msg));

@@ -1,3 +1,7 @@
+2015-02-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/message-func.c (get_auth_req): Use `_scm_from_ssh_key'.
+
 2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* NEWS: Update.
