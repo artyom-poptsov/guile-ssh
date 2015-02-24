@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.7.2 (2015-02-24)
 ** Remove dependency on libgcrypt added by a mistake
 ** Fix "double free or corruption" error on GC'ing of keys
    Fix "double free or corruption" error that occures in case when a key was

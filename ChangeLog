@@ -1,5 +1,8 @@
 2015-02-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
+	* NEWS: Bump version to 0.7.2
+	* configure.ac, doc/version.texi: Likewise.
+
 	* doc/guile-ssh.texi: Update copyright dates.
 
 	* configure.ac: Update copyright dates.  Remove a trailing whitespace.
