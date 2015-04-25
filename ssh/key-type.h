@@ -27,6 +27,9 @@ extern scm_t_bits key_tag;
 
 /* Smob data. */
 struct key_data {
+  /* Store the parent object to prevent it from premature GC'ing. */
+  SCM parent;
+
   ssh_key ssh_key;
 };
 
@@ -46,7 +49,7 @@ extern void init_key_type (void);
 
 
 /* Helper procedures */
-extern SCM _scm_from_ssh_key (ssh_key key);
+extern SCM _scm_from_ssh_key (ssh_key key, SCM x);
 extern struct key_data *_scm_to_key_data (SCM x);
 extern inline int _private_key_p (struct key_data *key);
 extern inline int _public_key_p (struct key_data *key);

@@ -10,7 +10,7 @@
 @copying
 This manual documents Guile-SSH version @value{VERSION}.
 
-Copyright (C) 2014 Artyom V. Poptsov
+Copyright (C) 2014, 2015 Artyom V. Poptsov
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -93,7 +93,7 @@ Guile-SSH depends on the following packages:
 
 @itemize
 @item @url{https://www.gnu.org/software/guile/, GNU Guile}, 2.0
-@item @url{http://www.libssh.org/, libssh}, 0.6.3
+@item @url{http://www.libssh.org/, libssh}, 0.6.3 or 0.6.4
 @end itemize
 
 Please @strong{note} that you need

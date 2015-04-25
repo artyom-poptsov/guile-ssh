@@ -153,7 +153,7 @@ _scm_to_session_data (SCM x)
 void
 init_session_type (void)
 {
-  session_tag = scm_make_smob_type ("session", 
+  session_tag = scm_make_smob_type ("session",
                                     sizeof (struct session_data));
   scm_set_smob_mark (session_tag, mark_session);
   scm_set_smob_free (session_tag, free_session);

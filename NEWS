@@ -7,8 +7,13 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.7.2 (2015-02-24)
 ** Remove dependency on libgcrypt added by a mistake
+** Fix "double free or corruption" error on GC'ing of keys
+   Fix "double free or corruption" error that occures in case when a key was
+   derived from an authentication message by means of `message-get-req'.  When
+   such a key is GC'ed then GC'ing of its parent message leads to error, or
+   vice versa.
 ** Fix a bug in the channel implementation
    The bug could occasionally manifest itself on channel reading as the
    following error:
@@ -23,14 +28,21 @@ guile: ports.c:1476: scm_i_fill_input: Assertion `pt->read_pos == pt->read_end' 
 ** New `channel-request-send-exit-status' procedure in (ssh channel)
    The procedure can be used to send the exit status to a client.
 ** Improve printing of Guile-SSH server objects
+   Print the bind address of a server object and its bind port.  Example:
+#+BEGIN_EXAMPLE
+#<server 127.0.0.1:12345 9b70ff0>
+#+END_EXAMPLE
 ** Update examples
 *** sssh
     - Check exit status of an executed command.
 *** ssshd
     - Send exit status to the client according to the result of command
       execution.
+*** echo server and client
+    - Some cosmetic changes aimed to make the code cleaner.
 ** Update documentation
    - Add description of the new procedures.
+   - Update examples.
 
 * Changes in version 0.7.1 (2014-10-11)
 ** New `%get-libssh-version' procedure in (ssh version)

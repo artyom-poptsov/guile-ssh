@@ -1,7 +1,60 @@
+2015-02-24  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* NEWS: Bump version to 0.7.2
+	* configure.ac, doc/version.texi: Likewise.
+
+	* doc/guile-ssh.texi: Update copyright dates.
+
+	* configure.ac: Update copyright dates.  Remove a trailing whitespace.
+
+	* NEWS: Update.
+
+	* ssh/key-type.h: Add parent object to the key structure.
+	* ssh/key-type.c (mark_key_smob): Mark parent.
+	(free_key_smob): Free the key only if it does not have a parent.
+	(_scm_from_ssh_key): Accept a parent object as the 2nd argument.  All
+	callers updated.
+	* ssh/key-func.c (guile_ssh_string_to_public_key)
+	(guile_ssh_private_key_from_file)
+	(guile_ssh_public_key_from_private_key)
+	(guile_ssh_public_key_from_file, guile_ssh_make_keypair): Update.
+	* ssh/message-func.c (get_auth_req): Accept a SCM message as the 2nd
+	argument.  All callers updated.
+	(guile_ssh_message_get_req): Update.
+
+	* ssh/message-func.c (get_auth_req): Use `_scm_from_ssh_key'.
+
 2015-02-22  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/dist/node.scm (make-node): Change arguments.
 	* doc/version.texi: Update.
+
+	* NEWS: Update.
+
+	* examples/echo/server.scm.in: Update copyright dates.
+
+	* examples/echo/server.scm.in (print-help): Rename to
+	`print-help-and-exit'.
+	(main): Use it.
+
+	* examples/echo/client.scm.in (get-prvkey, main): Simplify checks.
+
+	* examples/echo/client.scm.in (print-help): Rename to
+	`print-help-and-exit'.
+	(main): Use it.  Remove extra checks.
+
+	* README (Requirements): Require libssh 0.6.3 or 0.6.4.
+	* doc/guile-ssh.texi (Installation): Likewise.
+	* doc/version.texi: Update.
+
+	* README (Distribution): Fix path to examples.
+
+	* doc/examples.texi (Examples): Fix path to examples.
+	Use `channel-get-exit-status' in the client example.
+
+	* ssh/auth.c, ssh/channel-func.c, ssh/session-func.c,
+	ssh/session-main.c, ssh/session-type.c, ssh/threads.c, ssh/auth.scm,
+	ssh/log.c: Remove trailing whitespaces.
 
 	* ssh/channel-type.c: Update copyright dates.
 

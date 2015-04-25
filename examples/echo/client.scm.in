@@ -5,7 +5,7 @@
 
 ;;; client.scm -- Echo client example.
 
-;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -60,7 +60,7 @@
     (help          (single-char #\h) (value #f))))
 
 
-(define (print-help)
+(define (print-help-and-exit)
   "Print information about program usage."
   (display (string-append "\
 " *program-name* " -- Echo client example.
@@ -74,7 +74,8 @@ Options:
   --user=<user>, -u <user>                User name
   --port=<port-number>, -p <port-number>  Port number
   --identity-file=<file>, -i <file>       Path to private key
-")))
+"))
+  (exit 0))
 
 (define (handle-error session)
   "Handle a SSH error."
@@ -85,7 +86,7 @@ Options:
 (define (get-prvkey session identity-file)
   "Get a private SSH key.  Handle possible errors."
   (let ((prvkey (private-key-from-file identity-file)))
-    (if (not prvkey)
+    (or prvkey
         (handle-error session))
     prvkey))
 
@@ -100,11 +101,6 @@ Options:
 
 (define (main args)
   "Entry point of the program."
-  (if (null? (cdr args))
-      (begin
-        (print-help)
-        (exit 0)))
-
   (let* ((options       (getopt-long args *option-spec*))
          (user          (option-ref options 'user *default-user*))
          (port          (option-ref options 'port *default-port*))
@@ -113,15 +109,8 @@ Options:
          (help-needed?  (option-ref options 'help #f))
          (args          (option-ref options '() #f)))
 
-    (if help-needed?
-        (begin
-          (print-help)
-          (exit 0)))
-
-    (if (or (null? args) (null? (cdr args)))
-        (begin
-          (print-help)
-          (exit 0)))
+    (and (or (null? args) help-needed?)
+         (print-help-and-exit))
 
     (let* ((host (car args))
            (str  (cadr args))
@@ -141,12 +130,12 @@ Options:
 
       (let ((private-key (get-prvkey session identity-file)))
 
-        (if (eqv? (userauth-public-key! session private-key) 'error)
-            (handle-error session))
+        (and (eqv? (userauth-public-key! session private-key) 'error)
+             (handle-error session))
 
         (let ((channel (make-channel session)))
 
-          (if (not channel)
+          (or channel
               (handle-error session))
 
           (channel-open-session channel)
