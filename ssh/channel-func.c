@@ -1,6 +1,6 @@
 /* channel-func.c -- SSH channel manipulation functions.
  *
- * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -80,6 +80,55 @@ Run a shell command CMD without an interactive shell.\
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_get_exit_status,
+            "channel-get-exit-status", 1, 0, 0,
+            (SCM channel),
+            "\
+Get the exit status of the channel (error code from the executed \
+instruction).  Return the exist status, or #f if no exit status has been \
+returned (yet). \
+")
+#define FUNC_NAME s_guile_ssh_channel_get_exit_status
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  int res;
+
+  GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
+
+  res = ssh_channel_get_exit_status (cd->ssh_channel);
+  return (res == SSH_ERROR) ? SCM_BOOL_F : scm_from_int (res);
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_channel_request_send_exit_status,
+            "channel-request-send-exit-status", 2, 0, 0,
+            (SCM channel, SCM exit_status),
+            "\
+Send the exit status to the remote process (as described in RFC 4254, section\n\
+6.10).\n\
+Return value is undefined.\
+")
+#define FUNC_NAME s_guile_ssh_channel_request_send_exit_status
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  int res;
+
+  GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (scm_is_unsigned_integer (exit_status, 0, UINT32_MAX), exit_status,
+              SCM_ARG2, FUNC_NAME);
+
+  res = ssh_channel_request_send_exit_status (cd->ssh_channel,
+                                              scm_to_uint32 (exit_status));
+  if (res != SSH_OK)
+    {
+      ssh_session session = ssh_channel_get_session (cd->ssh_channel);
+      guile_ssh_session_error1  (FUNC_NAME, session, channel);
+    }
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (guile_ssh_channel_request_pty, "channel-request-pty", 1, 0, 0,
             (SCM channel),
             "\
@@ -128,7 +177,7 @@ Return value is undefined.\
 }
 #undef FUNC_NAME
 
-/* Set an environment variable NAME to value VALUE 
+/* Set an environment variable NAME to value VALUE
    Return value is undefined. */
 SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
             (SCM channel, SCM name, SCM value),
@@ -366,6 +415,21 @@ Return one of the following symbols: \"stdout\", \"stderr\".\
 
   guile_ssh_error1 (FUNC_NAME, "Wrong stream.",
                     scm_from_int (cd->is_stderr));
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_channel_get_session,
+            "channel-get-session", 1, 0, 0,
+            (SCM channel),
+            "\
+Get the session to which belongs the CHANNEL.  Throw `guile-ssh-error' on an \n\
+error.  Return the session.\
+")
+#define FUNC_NAME s_guile_ssh_channel_get_session
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  GSSH_VALIDATE_CHANNEL_DATA (cd, channel, FUNC_NAME);
+  return cd->session;
 }
 #undef FUNC_NAME
 

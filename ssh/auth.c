@@ -39,7 +39,7 @@
    be set by `session-set!' call.  - avp */
 
 
-/* Convert SSH authentication result to a Scheme symbol 
+/* Convert SSH authentication result to a Scheme symbol
 
    Return a symbol, or #f on error. */
 static SCM
@@ -206,7 +206,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 #undef FUNC_NAME
 
 
-/* Try to authenticate through the "none" method. 
+/* Try to authenticate through the "none" method.
 
    Return one of the following symbols: 'success, 'error, 'denied,
    'partial, 'again */
@@ -224,7 +224,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
   GSSH_VALIDATE_CONNECTED_SESSION (session_data, arg1, SCM_ARG1);
 
   /* username is deprecated parameter.  Should be set to NULL. */
-  res = ssh_userauth_none (session_data->ssh_session, 
+  res = ssh_userauth_none (session_data->ssh_session,
                            NULL); /* Username */
 
   return ssh_auth_result_to_symbol (res);

@@ -1,9 +1,9 @@
 /* channel-type.c -- SSH channel smob.
  *
- * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
- * 
+ *
  * Guile-SSH is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -65,7 +65,10 @@ ptob_fill_input (SCM channel)
   if (res == SSH_ERROR)
     guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", channel);
 
-  if (res == SSH_AGAIN)
+  /* `ssh_channel_read' sometimes returns 0 even if `ssh_channel_poll' returns
+     a positive value.  So we must ensure that res != 0 otherwise an assertion
+     in `scm_i_fill_input' won't be meet (see `ports.c' in Guile 2.0.9). */
+  if ((! res) || (res == SSH_AGAIN))
     return EOF;
 
   pt->read_pos = pt->read_buf;
@@ -162,7 +165,8 @@ ptob_close (SCM channel)
 SCM
 mark_channel (SCM channel_smob)
 {
-  return SCM_BOOL_F;
+  struct channel_data *cd = _scm_to_channel_data (channel_smob);
+  return cd->session;
 }
 
 size_t
@@ -193,45 +197,8 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
       scm_puts ("(closed) ", port);
     }
   scm_display (_scm_object_hex_address (channel), port);
-  scm_puts (">", port);      
+  scm_puts (">", port);
   return 1;
-}
-
-/* Pack the SSH channel CH to a Scheme port and return newly created
-   port. */
-SCM
-_ssh_channel_to_scm (ssh_channel ch)
-{
-  struct channel_data *channel_data;
-  SCM ptob;
-  scm_port *pt;
-  
-  channel_data = scm_gc_malloc (sizeof (struct channel_data), "channel");
-
-  channel_data->ssh_channel = ch;
-  channel_data->is_stderr = 0;  /* Reading from stderr disabled by default */
-
-  ptob = scm_new_port_table_entry (channel_tag);
-  pt   = SCM_PTAB_ENTRY (ptob);
-
-  pt->rw_random = 0;
-
-  /* Output init */
-  pt->write_buf_size = DEFAULT_PORT_W_BUFSZ;
-  pt->write_buf = scm_gc_malloc (pt->write_buf_size, "port write buffer");
-  pt->write_pos = pt->write_buf;
-  pt->write_end = pt->write_buf;
-
-  /* Input init */
-  pt->read_buf_size = DEFAULT_PORT_R_BUFSZ;
-  pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
-  pt->read_pos = pt->read_buf;
-  pt->read_end = pt->read_buf;
-
-  SCM_SET_CELL_TYPE (ptob, channel_tag | SCM_RDNG | SCM_WRTNG);
-  SCM_SETSTREAM (ptob, channel_data);
-
-  return ptob;
 }
 
 /* Allocate a new SSH channel. */
@@ -247,7 +214,7 @@ Allocate a new SSH channel.\
   if (! ch)
     return SCM_BOOL_F;
 
-  return _ssh_channel_to_scm (ch);
+  return _scm_from_channel_data (ch, arg1);
 }
 
 
@@ -278,6 +245,44 @@ equalp_channel (SCM x1, SCM x2)
 
 
 /* Helper procedures */
+
+/* Pack the SSH channel CH to a Scheme port and return newly created
+   port. */
+SCM
+_scm_from_channel_data (ssh_channel ch, SCM session)
+{
+  struct channel_data *channel_data;
+  SCM ptob;
+  scm_port *pt;
+
+  channel_data = scm_gc_malloc (sizeof (struct channel_data), "channel");
+
+  channel_data->ssh_channel = ch;
+  channel_data->is_stderr = 0;  /* Reading from stderr disabled by default */
+  channel_data->session = session;
+
+  ptob = scm_new_port_table_entry (channel_tag);
+  pt   = SCM_PTAB_ENTRY (ptob);
+
+  pt->rw_random = 0;
+
+  /* Output init */
+  pt->write_buf_size = DEFAULT_PORT_W_BUFSZ;
+  pt->write_buf = scm_gc_malloc (pt->write_buf_size, "port write buffer");
+  pt->write_pos = pt->write_buf;
+  pt->write_end = pt->write_buf;
+
+  /* Input init */
+  pt->read_buf_size = DEFAULT_PORT_R_BUFSZ;
+  pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
+  pt->read_pos = pt->read_buf;
+  pt->read_end = pt->read_buf;
+
+  SCM_SET_CELL_TYPE (ptob, channel_tag | SCM_RDNG | SCM_WRTNG);
+  SCM_SETSTREAM (ptob, channel_data);
+
+  return ptob;
+}
 
 /* Convert X to a SSH channel.  Return the channel data or NULL if the channel
    has been freed. */

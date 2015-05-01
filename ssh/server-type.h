@@ -28,6 +28,7 @@ extern scm_t_bits server_tag;
 /* Smob data. */
 struct server_data {
   ssh_bind bind;
+  SCM options;
 };
 
 extern SCM guile_ssh_is_server_p (SCM arg1);

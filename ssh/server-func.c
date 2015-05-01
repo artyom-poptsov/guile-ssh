@@ -27,6 +27,7 @@
 #include "server-type.h"
 #include "message-type.h"
 #include "error.h"
+#include "log.h"
 
 /* Guile SSH specific options that are aimed to unificate the way of
    server configuration. */
@@ -37,7 +38,7 @@ enum gssh_server_options {
 
 
 /* SSH server options mapping to Guile symbols. */
-static struct symbol_mapping server_options[] = {
+struct symbol_mapping server_options[] = {
   { "bindaddr",           SSH_BIND_OPTIONS_BINDADDR       },
   { "bindport",           SSH_BIND_OPTIONS_BINDPORT       },
   { "hostkey",            SSH_BIND_OPTIONS_HOSTKEY        },
@@ -170,9 +171,29 @@ Return value is undefined.\
                         scm_list_3 (server, option, value));
     }
 
+  server_data->options = scm_assoc_set_x (server_data->options, option, value);
+
   scm_remember_upto_here_1 (server);
 
   return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_server_get, "server-get", 2, 0, 0,
+            (SCM server, SCM option),
+            "\
+Get a Guile-SSH server option.  Return option value, or `#f' if option is\n\
+not set.  Throw `guile-ssh-error' on error.\
+")
+#define FUNC_NAME s_guile_ssh_server_get
+{
+  struct server_data *sd     = _scm_to_server_data (server);
+  struct symbol_mapping *opt = _scm_to_ssh_const (server_options, option);
+
+  if (! opt)
+    guile_ssh_error1 (FUNC_NAME, "No such option", option);
+
+  return scm_assoc_ref (sd->options, option);
 }
 #undef FUNC_NAME
 
@@ -252,6 +273,8 @@ Get a message.\
       scm_gc_free (message_data, sizeof (struct message_data), "message");
       return SCM_BOOL_F;
     }
+
+  message_data->session = session;
 
   SCM_NEWSMOB (smob, message_tag, message_data);
   return smob;

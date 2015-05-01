@@ -82,6 +82,11 @@
     (format #t "  cmd: ~a~%" cmd)
     (let* ((port (open-input-pipe cmd))
            (res  (read-all port)))
+
+      (if (string-null? res)
+          (channel-request-send-exit-status channel 1)
+          (channel-request-send-exit-status channel 0))
+
       (display res channel))))
 
 (define (handle-req-auth session msg msg-type)

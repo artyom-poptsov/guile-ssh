@@ -75,6 +75,13 @@ Set an environment @var{variable} to @var{value}.  Throw
 value is undefined.
 @end deffn
 
+@deffn {Scheme Procedure} channel-request-send-exit-status channel exit-status
+Send an @var{exit-status} to the remote process (as described in RFC 4254,
+section 6.10).  Only SSH-v2 is supported.  Return value is undefined.
+
+The @var{channel} needs to be closed with after this message.
+@end deffn
+
 @deffn {Scheme Procedure} channel-set-pty-size! channel columns rows
 Change size of the @acronym{PTY} to @var{columns} and @var{rows}.  The
 @var{channel} must be open.  Return value is undefined.
@@ -106,9 +113,21 @@ Example:
 @end lisp
 @end deffn
 
+@deffn {Scheme Procedure} channel-get-session channel
+Get the session to which belongs the @var{channel}.  Throw
+@code{guile-ssh-error} on an error.  Return the session.
+@end deffn
+
 @deffn {Scheme Procedure} channel-eof? channel
 Return @code{#t} if remote has sent @acronym{EOF}, @code{#f} otherwise.  Throw
 @code{guile-ssh-error} if the channel has been closed and freed.
+@end deffn
+
+@deffn {Scheme Procedure} channel-get-exit-status channel
+Get the exit status of the @var{channel} (error code from the executed
+instruction).  The @var{channel} must be open.  Return the exist status, or
+@code{#f} if no exit status has been returned (yet).  Throw
+@code{guile-ssh-error} on error.
 @end deffn
 
 @subsection Port forwarding

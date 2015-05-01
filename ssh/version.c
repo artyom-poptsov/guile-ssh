@@ -22,13 +22,14 @@
 #include <libssh/libssh.h>
 
 /* Get version of the libssh. */
-SCM_DEFINE (guile_ssh_get_libssh_version, "get-libssh-version", 0, 0, 0,
+SCM_DEFINE (guile_ssh_get_libssh_version, "%get-libssh-version", 0, 0, 0,
             (),
             "\
 Get version of the libssh.\
 ")
 {
-  return scm_from_locale_string (SSH_STRINGIFY (LIBSSH_VERSION));
+  const char *version = ssh_version (0);
+  return scm_from_locale_string (version);
 }
 
 /* Get version of the Guile-SSH. */

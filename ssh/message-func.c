@@ -138,7 +138,8 @@ Return a new SSH channel.\
   if (! ch)
     return SCM_BOOL_F;
 
-  SCM channel = _ssh_channel_to_scm (ch);
+  SCM channel = _scm_from_channel_data (ch, msg_data->session);
+
   SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
 
   return channel;
@@ -255,7 +256,7 @@ Get type of the message MSG.\
 
 /* <result> = "#(" <user> <WSP> <password> <WSP> <key> ")" */
 static SCM
-get_auth_req (ssh_message msg)
+get_auth_req (ssh_message msg, SCM scm_msg) /* FIXME: accept only SCM */
 {
   SCM result = scm_c_make_vector (4, SCM_UNDEFINED);
   const char *user     = ssh_message_auth_user (msg);
@@ -275,16 +276,7 @@ get_auth_req (ssh_message msg)
   else
     SCM_SIMPLE_VECTOR_SET (result, 1, SCM_BOOL_F);
 
-  pkey_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
-                                                 "ssh key");
-  pkey_data->ssh_key = public_key;
-
-  /* The key will be freed along with the message. */
-  pkey_data->is_to_be_freed = 0;
-
-  SCM_NEWSMOB (pkey_smob, key_tag, pkey_data);
-
-  SCM_SIMPLE_VECTOR_SET (result, 2, pkey_smob);
+  SCM_SIMPLE_VECTOR_SET (result, 2, _scm_from_ssh_key (public_key, scm_msg));
 
   pkey_state = _ssh_const_to_scm (pubkey_state_type,
                                   (int) ssh_message_auth_publickey_state (msg));
@@ -406,7 +398,7 @@ Get a request object from the message MSG\
       return get_service_req (ssh_msg);
 
     case SSH_REQUEST_AUTH:
-      return get_auth_req (ssh_msg);
+      return get_auth_req (ssh_msg, msg);
 
     case SSH_REQUEST_CHANNEL_OPEN:
       {
@@ -496,6 +488,18 @@ Return value is undefined.\
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
+
+
+SCM_DEFINE (guile_ssh_message_get_session,
+            "message-get-session", 1, 0, 0,
+            (SCM message),
+            "\
+Get the session from which the MESSAGE was received.  Return the session.\
+")
+{
+  struct message_data *md = _scm_to_message_data (message);
+  return md->session;
+}
 
 
 void

@@ -78,6 +78,7 @@ print_session (SCM session, SCM port, scm_print_state *pstate)
   struct session_data *sd = _scm_to_session_data (session);
   char *user = NULL;
   char *host = NULL;
+  unsigned int ssh_port;
   uint32_t smob_addr = (uint32_t) scm_object_address (session);
   int res;
 
@@ -94,6 +95,11 @@ print_session (SCM session, SCM port, scm_print_state *pstate)
   scm_display ((res == SSH_OK) ? scm_from_locale_string (host) : SCM_UNDEFINED,
                port);
   ssh_string_free_char (host);
+
+  scm_putc (':', port);
+
+  res = ssh_options_get_port (sd->ssh_session, &ssh_port);
+  scm_display ((res == SSH_OK) ? scm_from_int (ssh_port) : SCM_UNDEFINED, port);
 
   scm_puts (ssh_is_connected (sd->ssh_session) ? " (connected) "
                                                : " (disconnected) ",
@@ -147,7 +153,7 @@ _scm_to_session_data (SCM x)
 void
 init_session_type (void)
 {
-  session_tag = scm_make_smob_type ("session", 
+  session_tag = scm_make_smob_type ("session",
                                     sizeof (struct session_data));
   scm_set_smob_mark (session_tag, mark_session);
   scm_set_smob_free (session_tag, free_session);

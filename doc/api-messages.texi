@@ -152,6 +152,11 @@ are: @code{password}, @code{public-key}, @code{interactive},
 value is undefined.
 @end deffn
 
+@deffn {Scheme Procedure} message-get-session message
+Get the session from which the @var{message} was received.  Return the
+session.
+@end deffn
+
 @node Parsing of Requests
 @subsection Parsing of Requests
 

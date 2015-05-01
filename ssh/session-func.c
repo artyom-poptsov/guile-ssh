@@ -26,6 +26,7 @@
 #include "error.h"
 #include "session-type.h"
 #include "key-type.h"
+#include "log.h"
 
 /* SSH option mapping. */
 struct option {
@@ -63,7 +64,7 @@ static struct symbol_mapping session_options[] = {
 
 /* Blocking flush of the outgoing buffer.
 
-   Return on of the following symbols: 'ok, 'error. 'again. 
+   Return on of the following symbols: 'ok, 'error. 'again.
 
    Asserts:
    - Return value of `ssh_blocking_flush' is one of the valid constants
@@ -285,6 +286,7 @@ Return value is undefined.\
 /* Options whose values can be requested through `session-get' */
 static struct symbol_mapping session_options_getable[] = {
   { "host",         SSH_OPTIONS_HOST         },
+  { "port",         SSH_OPTIONS_PORT         },
   { "user",         SSH_OPTIONS_USER         },
   { "identity",     SSH_OPTIONS_IDENTITY     },
   { "proxycommand", SSH_OPTIONS_PROXYCOMMAND },
@@ -300,7 +302,7 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
 {
   struct session_data*sd     = _scm_to_session_data (session);
   struct symbol_mapping *opt = NULL;
-  char *value                = NULL; /* Value of the option */
+  SCM value;                    /*Value of the option */
   int res;
 
   SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
@@ -309,17 +311,29 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
   if (! opt)
     guile_ssh_error1 (FUNC_NAME, "Wrong option", option);
 
-  res = ssh_options_get (sd->ssh_session, opt->value, &value);
+  if (opt->value == SSH_OPTIONS_PORT)
+    {
+      unsigned int port;
+      res = ssh_options_get_port (sd->ssh_session, &port);
+      value = (res == SSH_OK) ? scm_from_int (port) : SCM_UNDEFINED;
+    }
+  else
+    {
+      char *c_value = NULL;
+      res = ssh_options_get (sd->ssh_session, opt->value, &c_value);
+      value = (res == SSH_OK) ? scm_from_locale_string (c_value) : SCM_UNDEFINED;
+    }
+
   if (res == SSH_ERROR)
     guile_ssh_error1 (FUNC_NAME, "Unable to get value of the option", option);
 
-  return scm_from_locale_string (value);
+  return value;
 }
 #undef FUNC_NAME
 
-/* Connect to the SSH server. 
+/* Connect to the SSH server.
 
-   Return one of the following symbols: 'ok, 'again, 'error 
+   Return one of the following symbols: 'ok, 'again, 'error
 
    Asserts:
    - Return value of `ssh_connect' is one of the valid constants described in
@@ -400,7 +414,7 @@ Retrieve the error text message from the last error.\
   return error;
 }
 
-/* Authenticate the server.  
+/* Authenticate the server.
 
    Return one of the following symbols: 'ok, 'known-changed,
    'found-other, 'not-known, 'file-not-found, 'error
@@ -473,8 +487,6 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to get the server key", session);
 
-  kd->is_to_be_freed = 1; /* The key must be freed by GC. */
-
   SCM_NEWSMOB (key_smob, key_tag, kd);
 
   return key_smob;
@@ -498,7 +510,7 @@ Return value is undefined.\
 
   if (res != SSH_OK)
     guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
-                      
+
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME

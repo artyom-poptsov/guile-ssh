@@ -23,6 +23,7 @@
 #include <libssh/server.h>
 
 #include "server-type.h"
+#include "server-func.h"
 
 scm_t_bits server_tag;          /* Smob tag. */
 
@@ -32,7 +33,8 @@ scm_t_bits server_tag;          /* Smob tag. */
 SCM
 mark_server (SCM server)
 {
-  return SCM_BOOL_F;
+  struct server_data *sd = _scm_to_server_data (server);
+  return sd->options;
 }
 
 size_t
@@ -55,6 +57,7 @@ SCM_DEFINE (guile_ssh_make_server, "%make-server", 0, 0, 0,
     = (struct server_data *) scm_gc_malloc (sizeof (struct server_data),
                                             "server");
   server_data->bind = ssh_bind_new ();
+  server_data->options = SCM_EOL;
   SCM_NEWSMOB (smob, server_tag, server_data);
   return smob;
 }
@@ -83,6 +86,40 @@ equalp_server (SCM x1, SCM x2)
     return SCM_BOOL_T;
 }
 
+static int
+print_server (SCM server, SCM port, scm_print_state *pstate)
+{
+  struct server_data *sd = _scm_to_server_data (server);
+  SCM bindaddr = scm_assoc_ref (sd->options,
+                                _ssh_const_to_scm (server_options,
+                                                   SSH_BIND_OPTIONS_BINDADDR));
+  SCM bindport = scm_assoc_ref (sd->options,
+                                _ssh_const_to_scm (server_options,
+                                                   SSH_BIND_OPTIONS_BINDPORT));
+  scm_puts ("#<server", port);
+  if (scm_is_true (bindaddr))
+    {
+      scm_putc (' ', port);
+      scm_display (bindaddr, port);
+    }
+
+  if (scm_is_true (bindport))
+    {
+      if (scm_is_false (bindaddr))
+        scm_putc (' ', port);
+
+      scm_putc (':', port);
+      scm_display (bindport, port);
+    }
+
+  scm_putc (' ', port);
+  scm_display (_scm_object_hex_address (server), port);
+
+  scm_putc ('>', port);
+
+  return 1;
+}
+
 
 /* Helper procedures. */
 
@@ -102,6 +139,7 @@ init_server_type (void)
   server_tag = scm_make_smob_type ("server", sizeof (struct server_data));
   scm_set_smob_mark (server_tag, mark_server);
   scm_set_smob_free (server_tag, free_server);
+  scm_set_smob_print (server_tag, print_server);
   scm_set_smob_equalp (server_tag, equalp_server);
 
 #include "server-type.x"

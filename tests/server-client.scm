@@ -98,92 +98,128 @@
          body ...)))))
 
 
+(define (run-server-test client-proc server-proc)
+  "Run a CLIENT-PROC in newly created process.  A session is passed to a
+CLIENT-PROC as an argument.  SERVER-PROC is called with a server as an
+argument.  The procedure returns a result of SERVER-PROC call."
+  (let ((server  (make-server-for-test))
+        (session (make-session-for-test))
+        (pid     (primitive-fork)))
+    (if (zero? pid)
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (client-proc session))
+          (lambda ()
+            (primitive-exit 1)))
+        ;; client
+        (server-proc server))))
+
+
 ;;; Testing of basic procedures
 
 (test-assert-with-log "accept, key exchange"
-  (let ((server (make-server-for-test))
-        (session (make-session-for-test))
-        (pid     (primitive-fork)))
+  (run-server-test
 
-    (if (not (= 0 pid))
+   ;; client
+   (lambda (session)
+     (sleep 1)
+     (connect! session)
+     (authenticate-server session)
+     (primitive-exit))
 
-        ;; server
-        (begin
-          (server-listen server)
-          (let ((s (server-accept server)))
-            (catch #t
-              (lambda ()
-                (server-handle-key-exchange s))
-              (lambda (key . args)
-                (display args)
-                (newline)))
-            s))
-
-        ;; client
-        (begin
-          (sleep 1)
-          (connect! session)
-          (authenticate-server session)
-          (primitive-exit)))))
+   ;; server
+   (lambda (server)
+     (server-listen server)
+     (let ((s (server-accept server)))
+       (catch #t
+         (lambda ()
+           (server-handle-key-exchange s))
+         (lambda (key . args)
+           (display args)
+           (newline)))
+       s))))
 
 
 (test-assert-with-log "server-message-get"
-  (let ((session (make-session-for-test))
-        (pid     (primitive-fork)))
+  (run-server-test
 
-    (if (not (= 0 pid))
+   ;; client
+   (lambda (session)
+     (sleep 1)
+     (connect! session)
+     (clnmsg "connected")
+     (authenticate-server session)
+     (clnmsg "server authenticated")
+     (userauth-none! session)
+     (clnmsg "client authenticated")
+     (primitive-exit))
 
-        ;; server
-        (let ((server (make-server-for-test)))
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (let ((msg (server-message-get session)))
-              (message-auth-set-methods! msg '(none))
-              (message-reply-success msg)
-              (message? msg))))
-
-        ;; client
-        (begin
-          (sleep 1)
-          (connect! session)
-          (clnmsg "connected")
-          (authenticate-server session)
-          (clnmsg "server authenticated")
-          (userauth-none! session)
-          (clnmsg "client authenticated")
-          (primitive-exit)))))
+   ;; server
+   (lambda (server)
+     (server-listen server)
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (let ((msg (server-message-get session)))
+         (message-auth-set-methods! msg '(none))
+         (message-reply-success msg)
+         (message? msg))))))
 
 
 (test-assert-with-log "message-get-type"
-  (let ((session (make-session-for-test))
-        (pid     (primitive-fork)))
+  (run-server-test
 
-    (if (not (= 0 pid))
+   ;; client
+   (lambda (session)
+     (sleep 1)
+     (connect! session)
+     (clnmsg "connected")
+     (authenticate-server session)
+     (clnmsg "server authenticated")
+     (userauth-none! session)
+     (clnmsg "client authenticated")
+     (primitive-exit))
 
-        ;; server
-        (let ((server (make-server-for-test)))
-          (server-listen server)
-          (let ((session (server-accept server)))
-            (server-handle-key-exchange session)
-            (let ((msg (server-message-get session)))
-              (let ((msg-type (message-get-type msg))
-                    (expected-type '(request-service)))
-                (message-auth-set-methods! msg '(none))
-                (message-reply-success msg)
-                (disconnect! session)
-                (equal? msg-type expected-type)))))
+   ;; server
+   (lambda (server)
+     (server-listen server)
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (let ((msg (server-message-get session)))
+         (let ((msg-type (message-get-type msg))
+               (expected-type '(request-service)))
+           (message-auth-set-methods! msg '(none))
+           (message-reply-success msg)
+           (disconnect! session)
+           (equal? msg-type expected-type)))))))
 
-        ;; client
-        (begin
-          (sleep 1)
-          (connect! session)
-          (clnmsg "connected")
-          (authenticate-server session)
-          (clnmsg "server authenticated")
-          (userauth-none! session)
-          (clnmsg "client authenticated")
-          (primitive-exit)))))
+
+(test-assert-with-log "message-get-session"
+  (run-server-test
+
+   ;; client
+   (lambda (session)
+     (sleep 1)
+     (connect! session)
+     (clnmsg "connected")
+     (authenticate-server session)
+     (clnmsg "server authenticated")
+     (userauth-none! session)
+     (clnmsg "client authenticated")
+     (primitive-exit))
+
+   ;; server
+   (lambda (server)
+     (server-listen server)
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (let* ((msg (server-message-get session))
+              (x   (message-get-session msg)))
+         (message-auth-set-methods! msg '(none))
+         (message-reply-success msg)
+         (disconnect! x)
+         (equal? x session))))))
 
 
 (test-end "server-client")

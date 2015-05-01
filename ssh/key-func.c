@@ -53,18 +53,15 @@ Throw `guile-ssh-error' on error.\
 ")
 #define FUNC_NAME s_guile_ssh_string_to_public_key
 {
-  struct key_data *kd = NULL;
   char *c_base64_str = NULL;
   struct symbol_mapping *key_type = NULL;
+  ssh_key ssh_public_key = NULL;
   int res;
-  SCM key_smob;
 
   SCM_ASSERT (scm_is_string (base64_str), base64_str, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (scm_is_symbol (type),       type,   SCM_ARG2, FUNC_NAME);
 
   scm_dynwind_begin (0);
-
-  kd = scm_gc_malloc (sizeof (struct key_data), "ssh key");
 
   c_base64_str = scm_to_locale_string (base64_str);
   scm_dynwind_free (c_base64_str);
@@ -75,16 +72,16 @@ Throw `guile-ssh-error' on error.\
 
   res = ssh_pki_import_pubkey_base64 (c_base64_str,
                                       key_type->value,
-                                      &kd->ssh_key);
+                                      &ssh_public_key);
   if (res != SSH_OK)
     {
       const char *msg = "Could not convert the given string to a public key";
       guile_ssh_error1 (FUNC_NAME, msg, scm_list_2 (base64_str, type));
     }
 
-  SCM_NEWSMOB (key_smob, key_tag, kd);
+  scm_dynwind_end ();
 
-  return key_smob;
+  return _scm_from_ssh_key (ssh_public_key, SCM_BOOL_F);
 }
 #undef FUNC_NAME
 
@@ -98,8 +95,7 @@ Return a new SSH key of #f on error.\
 ")
 #define FUNC_NAME s_guile_ssh_private_key_from_file
 {
-  SCM key_smob;
-  struct key_data *key_data;
+  ssh_key ssh_key = NULL;
   char *c_filename;
   /* NULL means that either the public key is unecrypted or the user
      should be asked for the passphrase. */
@@ -110,9 +106,6 @@ Return a new SSH key of #f on error.\
 
   SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG1, FUNC_NAME);
 
-  key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
-                                                "ssh key");
-
   c_filename = scm_to_locale_string (filename);
   scm_dynwind_free (c_filename);
 
@@ -120,9 +113,7 @@ Return a new SSH key of #f on error.\
                                      passphrase,
                                      NULL, /* auth_fn */
                                      NULL, /* auth_data */
-                                     &key_data->ssh_key);
-
-  key_data->is_to_be_freed = 0; /* Key will be freed along with its session. */
+                                     &ssh_key);
 
   if (res == SSH_EOF)
     {
@@ -135,11 +126,47 @@ Return a new SSH key of #f on error.\
       guile_ssh_error1 (FUNC_NAME, msg, filename);
     }
 
-  SCM_NEWSMOB (key_smob, key_tag, key_data);
+  scm_dynwind_end ();
+
+  return _scm_from_ssh_key (ssh_key, SCM_BOOL_F);
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_private_key_to_file,
+            "private-key-to-file", 2, 0, 0,
+            (SCM key, SCM file_name),
+            "\
+Export a private KEY to file FILE_NAME.  Throw `guile-ssh-error' on error. \
+Return value is undefined.\
+")
+#define FUNC_NAME s_guile_ssh_private_key_to_file
+{
+  struct key_data *kd = _scm_to_key_data (key);
+  char *c_file_name = NULL;
+  int res;
+
+  scm_dynwind_begin (0);
+
+  SCM_ASSERT (_private_key_p (kd),       key,       SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (file_name), file_name, SCM_ARG2, FUNC_NAME);
+
+  c_file_name = scm_to_locale_string (file_name);
+  scm_dynwind_free (c_file_name);
+
+  res = ssh_pki_export_privkey_file (kd->ssh_key,
+                                     NULL, /* passphrase */
+                                     NULL, /* auth_fn */
+                                     NULL, /* auth_data */
+                                     c_file_name);
+  if (res == SSH_ERROR)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Unable to export a key to a file",
+                        scm_list_2 (key, file_name));
+    }
 
   scm_dynwind_end ();
 
-  return key_smob;
+  return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
 
@@ -152,26 +179,18 @@ Get public key from a private key KEY.\
 #define FUNC_NAME s_guile_ssh_public_key_from_private_key
 {
   struct key_data *private_key_data = _scm_to_key_data (key);
-  struct key_data *public_key_data;
-  SCM smob;
+  ssh_key ssh_public_key = NULL;
   int res;
 
   SCM_ASSERT (_private_key_p (private_key_data), key, SCM_ARG1, FUNC_NAME);
 
-  public_key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
-                                                       "ssh key");
-
   res = ssh_pki_export_privkey_to_pubkey (private_key_data->ssh_key,
-                                          &public_key_data->ssh_key);
-
-  public_key_data->is_to_be_freed = 1; /* The key must be freed by GC. */
+                                          &ssh_public_key);
 
   if (res != SSH_OK)
     return SCM_BOOL_F;
 
-  SCM_NEWSMOB (smob, key_tag, public_key_data);
-
-  return smob;
+  return _scm_from_ssh_key (ssh_public_key, SCM_BOOL_F);
 }
 #undef FUNC_NAME
 
@@ -186,11 +205,8 @@ Read public key from a file FILENAME.  Return a SSH key.\
 ")
 #define FUNC_NAME s_guile_ssh_public_key_from_file
 {
-  struct key_data *public_key_data;
+  ssh_key ssh_public_key = NULL;
   char *c_filename;
-  ssh_string public_key_str;
-  SCM key_smob;
-  int key_type;
   int res;
 
   scm_dynwind_begin (0);
@@ -200,10 +216,7 @@ Read public key from a file FILENAME.  Return a SSH key.\
   c_filename = scm_to_locale_string (filename);
   scm_dynwind_free (c_filename);
 
-  public_key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
-                                                       "ssh key");
-
-  res = ssh_pki_import_pubkey_file (c_filename, &public_key_data->ssh_key);
+  res = ssh_pki_import_pubkey_file (c_filename, &ssh_public_key);
 
   if (res == SSH_EOF)
     {
@@ -216,14 +229,9 @@ Read public key from a file FILENAME.  Return a SSH key.\
       guile_ssh_error1 (FUNC_NAME, msg, filename);
     }
 
-  /* Key will be freed along with the session. */
-  public_key_data->is_to_be_freed = 0;
-
-  SCM_NEWSMOB (key_smob, key_tag, public_key_data);
-
   scm_dynwind_end ();
 
-  return key_smob;
+  return _scm_from_ssh_key (ssh_public_key, SCM_BOOL_F);
 }
 #undef FUNC_NAME
 

@@ -1,6 +1,6 @@
 ;;; key.scm -- SSH keys management.
 
-;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -24,15 +24,19 @@
 ;;
 ;; These methods are exported:
 ;;
-;;   key
 ;;   key?
 ;;   public-key?
 ;;   private-key?
+;;   make-keypair
 ;;   get-key-type
 ;;   public-key->string
+;;   string->pubilc-key
 ;;   public-key-from-file
 ;;   private-key->public-key
 ;;   private-key-from-file
+;;   private-key-to-file
+;;   get-public-key-hash
+;;   bytevector->hex-string
 
 
 ;;; Code:
@@ -45,12 +49,14 @@
             key?
             public-key?
             private-key?
+            make-keypair
             get-key-type
             public-key->string
             string->public-key
             public-key-from-file
             private-key->public-key
             private-key-from-file
+            private-key-to-file
             get-public-key-hash
             bytevector->hex-string))
 

@@ -34,7 +34,8 @@ scm_t_bits message_tag;         /* Smob tag. */
 SCM
 mark_message (SCM message)
 {
-  return SCM_BOOL_F;
+  struct message_data *md = _scm_to_message_data (message);
+  return md->session;
 }
 
 size_t
