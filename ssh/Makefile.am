@@ -40,7 +40,8 @@ BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 
 SCM_SOURCES = \
 	auth.scm channel.scm key.scm session.scm	\
-	server.scm message.scm version.scm log.scm
+	server.scm message.scm version.scm log.scm	\
+	tunnel.scm
 
 libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
 
