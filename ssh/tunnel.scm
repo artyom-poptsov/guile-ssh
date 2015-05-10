@@ -63,6 +63,12 @@
            (tunnel-remote-port tunnel)
            (number->string (object-address tunnel) 16))))
 
+(define (make-tunnel-channel tunnel)
+  (let ((channel (make-channel (tunnel-session tunnel))))
+    (or channel
+        (error "Could not make a channel" tunnel))
+    channel))
+
 
 ;;; Procedures
 
@@ -105,39 +111,40 @@
     (or (eof-object? data)
         (put-bytevector port-2 data))))
 
+(define (main-loop tunnel sock)
+  (when (connected? (tunnel-session tunnel))
+    (let ((channel (make-tunnel-channel tunnel)))
+      (case (channel-open-forward channel
+                                  #:source-host (tunnel-source-host tunnel)
+                                  #:local-port  (tunnel-local-port  tunnel)
+                                  #:remote-host (tunnel-remote-host tunnel)
+                                  #:remote-port (tunnel-remote-port tunnel))
+        ((error again)
+         (error "Could not start forwarding")))
+      (let* ((client-connection (accept sock))
+             (client            (car client-connection)))
+
+        (while (and (channel-open? channel)
+                    (not (port-closed? client)))
+          (cond-io
+           (client -> channel => transfer)
+           (channel -> client => transfer)
+           (else
+            (usleep 1000)
+            (yield))))
+
+        (format #t "~a~%" channel)
+
+        (close client))
+      (main-loop tunnel sock))))
+
 (define (start-forward tunnel)
   "Start port forwarding for a TUNNEL."
-  (let ((channel (make-channel (tunnel-session tunnel))))
-    (and (not channel)
-         (error "Could not make a channel"))
-
-    (case (channel-open-forward channel
-                                #:source-host (tunnel-source-host tunnel)
-                                #:local-port  (tunnel-local-port  tunnel)
-                                #:remote-host (tunnel-remote-host tunnel)
-                                #:remote-port (tunnel-remote-port tunnel))
-
-      ((error again)
-       (error "Could not start forwarding")))
-
-    (let ((sock (socket PF_INET SOCK_STREAM 0)))
-      (bind sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
-            (tunnel-local-port tunnel))
-      (listen sock 10)
-
-      (while (connected? (tunnel-session tunnel))
-        (let* ((client-connection (accept sock))
-               (client            (car client-connection)))
-
-          (while (and (channel-open? channel)
-                      (not (port-closed? client)))
-            (cond-io
-             (client -> channel => transfer)
-             (channel -> client => transfer)
-             (else
-              (usleep 1000)
-              (yield))))
-
-          (close client))))))
+  (let ((sock (socket PF_INET SOCK_STREAM 0)))
+    (bind sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
+          (tunnel-local-port tunnel))
+    (listen sock 10)
+    (main-loop tunnel sock)
+    (close sock)))
 
 ;;; tunnel.scm ends here.
