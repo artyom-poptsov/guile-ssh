@@ -312,7 +312,7 @@ SCM_DEFINE (guile_ssh_channel_cancel_forward,
   struct session_data *sd = _scm_to_session_data (session);
   char *c_address = NULL;
   int res;
-  
+
   SCM_ASSERT (scm_is_string (address), address, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (scm_is_number (port),    port,    SCM_ARG3, FUNC_NAME);
 
@@ -326,7 +326,7 @@ SCM_DEFINE (guile_ssh_channel_cancel_forward,
 
   if (res != SSH_OK)
     {
-      guile_ssh_error1 (FUNC_NAME, "Unable to cancel forward", 
+      guile_ssh_error1 (FUNC_NAME, "Unable to cancel forward",
                         scm_list_3 (session, address, port));
     }
 
