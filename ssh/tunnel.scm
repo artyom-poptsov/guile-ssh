@@ -37,7 +37,8 @@
             tunnel-source-port
             tunnel-remote-host
             tunnel-remote-port
-            start-forward))
+            start-forward
+            call-with-ssh-forward))
 
 
 ;;; Tunnel type
@@ -167,5 +168,18 @@ PORT-1 returns EOF."
     (listen sock 10)
     (main-loop tunnel sock idle-proc)
     (close sock)))
+
+(define (call-with-ssh-forward tunnel proc)
+  (let ((sock   (socket PF_INET SOCK_STREAM 0))
+        (thread (call-with-new-thread
+                 (lambda ()
+                   (start-forward tunnel)))))
+
+    (connect sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
+             (tunnel-local-port tunnel))
+
+    (proc sock)
+
+    (cancel-thread thread)))
 
 ;;; tunnel.scm ends here.
