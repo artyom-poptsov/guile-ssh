@@ -107,9 +107,14 @@
 
 (define (transfer port-1 port-2)
   "Transfer data from PORT-1 to PORT-2"
+  ;; (format #t "transfer: port-1: ~a; port-2: ~a~%" port-1 port-2)
   (let ((data (get-bytevector-some port-1)))
-    (or (eof-object? data)
-        (put-bytevector port-2 data))))
+    ;; (format #t "transfer: data: ~a\n" data)
+    (if (not (eof-object? data))
+        (put-bytevector port-2 data)
+        (begin
+          (close port-1)
+          (close port-2)))))
 
 (define (main-loop tunnel sock)
   (when (connected? (tunnel-session tunnel))
@@ -124,23 +129,22 @@
       (let* ((client-connection (accept sock))
              (client            (car client-connection)))
 
-        (while (and (channel-open? channel)
-                    (not (port-closed? client)))
+        (while (channel-open? channel)
           (cond-io
            (client -> channel => transfer)
            (channel -> client => transfer)
            (else
-            (usleep 1000)
+            ;; (display "ZZzzz...\n")
+            (select (list client) '() '() 1)
             (yield))))
 
-        (format #t "~a~%" channel)
-
-        (close client))
+        (format #t "~a~%" channel))
       (main-loop tunnel sock))))
 
 (define (start-forward tunnel)
   "Start port forwarding for a TUNNEL."
   (let ((sock (socket PF_INET SOCK_STREAM 0)))
+    (setsockopt sock SOL_SOCKET SO_REUSEADDR 1) ; DEBUG
     (bind sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
           (tunnel-local-port tunnel))
     (listen sock 10)
