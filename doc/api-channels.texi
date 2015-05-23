@@ -6,6 +6,15 @@
 @node Channels
 @section Channels
 
+@menu
+* Channel Management::
+* Port Forwarding::
+* Tunnels::
+@end menu
+
+@node Channel Management
+@subsection Channel Management
+
 @cindex data transferring
 @tindex channel
 
@@ -130,36 +139,127 @@ instruction).  The @var{channel} must be open.  Return the exist status, or
 @code{guile-ssh-error} on error.
 @end deffn
 
-@subsection Port forwarding
+@node Port Forwarding
+@subsection Port Forwarding
+
 @cindex Port forwarding
 
-@deffn {Scheme Procedure} channel-open-forward channel #:key source-host local-port remote-host remote-port
-Open a TCP/IP forwarding channel.  Connect to a @var{remote-host} and
-@var{remote-port}, and use @var{source-host} and @var{local-port} as
-origination of connections.
+Low-level API from @code{(ssh channel)} module to manage SSH port
+forwarding. These procedures @strong{do not} bind the ports and do not
+automatically forward the content of a socket to the channel.  You should
+either implement binding and data forwarding in your application or use the
+tunnel API (@pxref{Tunnels, Guile-SSH tunnel API})
 
-If the @var{source-host} is not set, then "localhost" is used.  If
-@var{remote-port} is not set, then it will be set to @var{local-port} value.
+@deffn {Scheme Procedure} channel-open-forward channel [#:source-host=''localhost''] #:local-port #:remote-host [#:remote-port=local-port]
+Open a (local) TCP/IP forwarding @var{channel}.  Connect to a
+@var{remote-host} and @var{remote-port}, and use @var{source-host} and
+@var{local-port} as origination of connections.
 
-Please @strong{note} that the procedure does not bind the @var{local-port} and
-does not automatically forward the content of a socket to the channel.
+The local port forwarding works as follows:
+
+@example
+local-host               remote-host
+,...............,        ,.................
+:               :        :                :
+:  [a browser]  :        : [a web server] :
+:       |       :        :        A       :
+:       |       :        :        |       :
+:   port 8080   :        :     port 80    :
+:       |       :        :        |       :
+:       V       :        :        |       :
+:  [SSH client]===========>[SSH server]   :
+:               :        :                :
+'...............'        '................'
+@end example
+
+Where port 8080 is an arbitrary @var{local-port} and port 80 is a
+@var{remote-port}.
+
+Also in our case, ``SSH client'' is an application that uses Guile-SSH and
+calls @code{channel-open-forward}.
 
 Example:
 
 @lisp
 (channel-open-forward channel
                       #:local-port  8080
-                      #:remote-host "www.example.com"
+                      #:remote-host "www.example.org"
                       #:remote-port 80)
 @end lisp
 @end deffn
 
-@deffn {Scheme Procedure} channel-open-forward/reverse channel #:key source-host local-port remote-host remote-port
-Open a TCP/IP reverse forwarding channel.
+@deffn {Scheme Procedure} channel-open-forward/reverse channel [#:source-host=''localhost''] #:local-port #:remote-host [#:remote-port=local-port]
+Open a TCP/IP reverse (remote) forwarding @var{channel}.  Connect to a
+@var{remote-host} and port @var{remote-port} and forward connections on the
+@var{remote-port} to a @var{source-host} and @var{local-port}.
 
-Please @strong{note} that the procedure does not bind the @var{local-port} and
-does not automatically forward the content of a socket to the channel.
+Reverse port forwarding looks as follows:
+
+@example
+local-host                remote-host
+,................,        ,.................
+:                :        :                :
+: [a web server] :        :  [a browser]   :
+:        A       :        :       |        :
+:        |       :        :       |        :
+:     port 80    :        :   port 8080    :
+:        |       :        :       |        :
+:        |       :        :       V        :
+:   [SSH client]===========>[SSH server]   :
+:                :        :                :
+'................'        '................'
+@end example
+
 @end deffn
+
+@node Tunnels
+@subsection Tunnels
+
+@cindex Tunnels
+
+The following procedures from @code{(ssh tunnel)} module are a high-level API
+built upon the basic port forwarding facilities for managing port forwards.
+
+@deffn {Scheme Procedure} make-tunnel session [#:source-host=''127.0.0.1''] #:local-port #:remote-host [#:remote-port=local-port]
+Make a new SSH tunnel using @var{session} from @var{source-host} and @var{local-port} to a @var{remote-host} and @var{remote-port}.
+
+Return a new tunnel object.
+@end deffn
+
+@deffn {Scheme Procedure} start-forward tunnel
+Start port forwarding on @var{tunnel}.  The procedure actually binds tunnel
+ports and forwards data.
+@end deffn
+
+@subsection Example
+
+Here is a simple Guile program that connects to ``www.example.org'' and starts
+port forwading from the local port 8080 to the port 80 on the remote host:
+
+@lisp
+#!/usr/bin/guile \
+-e main
+!#
+
+(use-modules (ssh session)
+             (ssh auth)
+             (ssh key)
+             (ssh tunnel))
+
+(define (main args)
+  (let ((s (make-session #:user          "alice"
+                         #:host          "localhost"
+                         #:port          22
+                         #:log-verbosity 'nolog))
+        (k (private-key-from-file "/home/alice/.ssh/id_rsa")))
+    (connect! s)
+    (userauth-public-key! s k)
+    (let ((t (make-tunnel s
+                          #:local-port  8080
+                          #:remote-host "www.example.org"
+                          #:remote-port 80)))
+      (start-forward t))))
+@end lisp
 
 @c Local Variables:
 @c TeX-master: "guile-ssh.texi"
