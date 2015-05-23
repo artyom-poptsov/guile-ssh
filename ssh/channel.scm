@@ -92,7 +92,7 @@ automatically forward the content of a socket to the channel."
   (%channel-open-forward/reverse channel
                                  remote-host remote-port
                                  source-host local-port))
-                               
+
 
 (load-extension "libguile-ssh" "init_channel")
 
