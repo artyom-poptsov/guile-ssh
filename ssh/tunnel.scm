@@ -124,7 +124,7 @@ PORT-1 returns EOF."
           (close port-1)
           (close port-2)))))
 
-(define (main-loop tunnel sock)
+(define (main-loop tunnel sock idle-proc)
 
   (define timeout-s  (and (tunnel-timeout tunnel)
                           (quotient  (tunnel-timeout tunnel) 1000000)))
@@ -149,20 +149,23 @@ PORT-1 returns EOF."
            (channel -> client => transfer)
            (else
             ;; (display "ZZzzz...\n")
-            (select (list client) '() '() timeout-s timeout-us)
+            (let ((selected (select (list client) '() '()
+                                    timeout-s timeout-us)))
+              (if (null? (car selected))
+                  (idle-proc client channel)))
             (yield))))
 
         (format #t "~a~%" channel))
-      (main-loop tunnel sock))))
+      (main-loop tunnel sock idle-proc))))
 
-(define (start-forward tunnel)
+(define* (start-forward tunnel #:optional (idle-proc (const #f)))
   "Start port forwarding for a TUNNEL."
   (let ((sock (socket PF_INET SOCK_STREAM 0)))
     (setsockopt sock SOL_SOCKET SO_REUSEADDR 1) ; DEBUG
     (bind sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
           (tunnel-local-port tunnel))
     (listen sock 10)
-    (main-loop tunnel sock)
+    (main-loop tunnel sock idle-proc)
     (close sock)))
 
 ;;; tunnel.scm ends here.
