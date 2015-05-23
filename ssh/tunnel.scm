@@ -43,10 +43,11 @@
 ;;; Tunnel type
 
 (define-immutable-record-type <tunnel>
-  (%make-tunnel session source-host local-port
+  (%make-tunnel session timeout source-host local-port
                 remote-host remote-port)
   tunnel?
   (session     tunnel-session)
+  (timeout     tunnel-timeout)          ; number
   (source-host tunnel-source-host)
   (local-port  tunnel-local-port)
   (remote-host tunnel-remote-host)
@@ -74,9 +75,15 @@
 
 (define* (make-tunnel session
                       #:key (source-host "127.0.0.1") local-port
-                      remote-host (remote-port local-port))
+                      remote-host (remote-port local-port)
+                      (timeout 1000))
   "Make a new tunnel using SESSION."
-  (%make-tunnel session source-host local-port remote-host remote-port))
+  (let ((timeout (if (and timeout (> timeout 0))
+                     timeout
+                     1)))
+    (%make-tunnel session timeout
+                  source-host local-port
+                  remote-host remote-port)))
 
 
 (define-syntax cond-io
@@ -118,6 +125,12 @@ PORT-1 returns EOF."
           (close port-2)))))
 
 (define (main-loop tunnel sock)
+
+  (define timeout-s  (and (tunnel-timeout tunnel)
+                          (quotient  (tunnel-timeout tunnel) 1000000)))
+  (define timeout-us (and (tunnel-timeout tunnel)
+                          (remainder (tunnel-timeout tunnel) 1000000)))
+
   (when (connected? (tunnel-session tunnel))
     (let ((channel (make-tunnel-channel tunnel)))
       (case (channel-open-forward channel
@@ -136,7 +149,7 @@ PORT-1 returns EOF."
            (channel -> client => transfer)
            (else
             ;; (display "ZZzzz...\n")
-            (select (list client) '() '() 1)
+            (select (list client) '() '() timeout-s timeout-us)
             (yield))))
 
         (format #t "~a~%" channel))
