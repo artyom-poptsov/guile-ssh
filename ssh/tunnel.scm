@@ -139,8 +139,7 @@ PORT-1 returns EOF."
               (let ((selected (select (list client) '() '()
                                       timeout-s timeout-us)))
                 (and (null? (car selected))
-                     (idle-proc client channel)))
-              (yield)))))))))
+                     (idle-proc client channel)))))))))))
 
 (define* (start-forward tunnel #:optional (idle-proc (const #f)))
   "Start port forwarding for a TUNNEL."
