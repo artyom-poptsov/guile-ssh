@@ -132,7 +132,7 @@ PORT-1 returns EOF."
   (define timeout-us (and (tunnel-timeout tunnel)
                           (remainder (tunnel-timeout tunnel) 1000000)))
 
-  (when (connected? (tunnel-session tunnel))
+  (while (connected? (tunnel-session tunnel))
     (let ((channel (make-tunnel-channel tunnel)))
       (case (channel-open-forward channel
                                   #:source-host (tunnel-source-host tunnel)
@@ -153,9 +153,7 @@ PORT-1 returns EOF."
                                     timeout-s timeout-us)))
               (and (null? (car selected))
                    (idle-proc client channel)))
-            (yield)))))
-
-      (main-loop tunnel sock idle-proc))))
+            (yield))))))))
 
 (define* (start-forward tunnel #:optional (idle-proc (const #f)))
   "Start port forwarding for a TUNNEL."
