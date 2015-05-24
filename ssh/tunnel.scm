@@ -71,6 +71,20 @@
         (error "Could not make a channel" tunnel))
     channel))
 
+(define (tunnel-open-forward-channel tunnel)
+  "Open a new forward channel for a TUNNEL.  Return the newly created open
+channel, or throw an error if a channel could not be opened."
+  (let ((channel (make-tunnel-channel tunnel)))
+    (case (channel-open-forward channel
+                                #:source-host (tunnel-source-host tunnel)
+                                #:local-port  (tunnel-local-port  tunnel)
+                                #:remote-host (tunnel-remote-host tunnel)
+                                #:remote-port (tunnel-remote-port tunnel))
+      ((ok)
+       channel)
+      (else =>
+            (lambda (res) (error "Could not open forward channel" tunnel res))))))
+
 
 ;;; Procedures
 
@@ -120,16 +134,9 @@ PORT-1 returns EOF."
          (timeout-s  (and timeout (quotient  timeout 1000000)))
          (timeout-us (and timeout (remainder timeout 1000000))))
     (while (connected? (tunnel-session tunnel))
-      (let ((channel (make-tunnel-channel tunnel)))
-        (case (channel-open-forward channel
-                                    #:source-host (tunnel-source-host tunnel)
-                                    #:local-port  (tunnel-local-port  tunnel)
-                                    #:remote-host (tunnel-remote-host tunnel)
-                                    #:remote-port (tunnel-remote-port tunnel))
-          ((error again)
-           (error "Could not start forwarding")))
-        (let* ((client-connection (accept sock))
-               (client            (car client-connection)))
+      (let* ((channel           (tunnel-open-forward-channel tunnel))
+             (client-connection (accept sock))
+             (client            (car client-connection)))
 
           (while (channel-open? channel)
             (cond-io
@@ -139,7 +146,7 @@ PORT-1 returns EOF."
               (let ((selected (select (list client) '() '()
                                       timeout-s timeout-us)))
                 (and (null? (car selected))
-                     (idle-proc client channel)))))))))))
+                     (idle-proc client channel))))))))))
 
 (define* (start-forward tunnel #:optional (idle-proc (const #f)))
   "Start port forwarding for a TUNNEL."
