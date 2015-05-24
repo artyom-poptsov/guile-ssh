@@ -47,12 +47,12 @@
   (%make-tunnel session timeout source-host local-port
                 remote-host remote-port)
   tunnel?
-  (session     tunnel-session)
+  (session     tunnel-session)          ; session
   (timeout     tunnel-timeout)          ; number
-  (source-host tunnel-source-host)
-  (local-port  tunnel-local-port)
-  (remote-host tunnel-remote-host)
-  (remote-port tunnel-remote-port))
+  (source-host tunnel-source-host)      ; string
+  (local-port  tunnel-local-port)       ; number
+  (remote-host tunnel-remote-host)      ; string
+  (remote-port tunnel-remote-port))     ; number
 
 (set-record-type-printer!
  <tunnel>
