@@ -87,30 +87,20 @@
                   remote-host remote-port)))
 
 
+(define-syntax-rule (p1->p2? p1 p2)
+  (and (not (or (port-closed? p1) (port-closed? p2)))
+       (char-ready? p1)))
+
 (define-syntax cond-io
   (syntax-rules (else <- -> =>)
     ((_ (p1 -> p2 => proc) ...)
-     (cond
-      ((and (not (or (port-closed? p1) (port-closed? p2)))
-            (char-ready? p1))
-       (proc p1 p2)) ...))
+     (cond ((p1->p2? p1 p2) (proc p1 p2)) ...))
     ((_ (p1 <- p2 => proc) ...)
-     (cond
-      ((and (not (or (port-closed? p1) (port-closed? p2)))
-            (char-ready? p2))
-       (proc p1 p2)) ...))
+     (cond ((p1->p2? p2 p1) (proc p1 p2)) ...))
     ((_ (p1 -> p2 => proc) ... (else exp ...))
-     (cond
-      ((and (not (or (port-closed? p1) (port-closed? p2)))
-            (char-ready? p1))
-       (proc p1 p2)) ...
-      (else exp ...)))
+     (cond ((p1->p2? p1 p2) (proc p1 p2)) ... (else exp ...)))
     ((_ (p1 <- p2 => proc) ... (else exp ...))
-     (cond
-      ((and (not (or (port-closed? p1) (port-closed? p2)))
-            (char-ready? p2))
-       (proc p1 p2)) ...
-      (else exp ...)))))
+     (cond ((p1->p2? p2 p1) (proc p1 p2)) ... (else exp ...)))))
 
 
 (define (transfer port-1 port-2)
