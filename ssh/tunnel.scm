@@ -149,14 +149,12 @@ PORT-1 returns EOF."
            (client -> channel => transfer)
            (channel -> client => transfer)
            (else
-            ;; (display "ZZzzz...\n")
             (let ((selected (select (list client) '() '()
                                     timeout-s timeout-us)))
-              (if (null? (car selected))
-                  (idle-proc client channel)))
-            (yield))))
+              (and (null? (car selected))
+                   (idle-proc client channel)))
+            (yield)))))
 
-        (format #t "~a~%" channel))
       (main-loop tunnel sock idle-proc))))
 
 (define* (start-forward tunnel #:optional (idle-proc (const #f)))
