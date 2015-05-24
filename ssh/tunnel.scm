@@ -180,6 +180,7 @@ PORT-1 returns EOF."
 
     (proc sock)
 
+    (close-port sock)
     (cancel-thread thread)))
 
 ;;; tunnel.scm ends here.
