@@ -221,14 +221,61 @@ The following procedures from @code{(ssh tunnel)} module are a high-level API
 built upon the basic port forwarding facilities for managing port forwards.
 
 @deffn {Scheme Procedure} make-tunnel session [#:source-host=''127.0.0.1''] #:local-port #:remote-host [#:remote-port=local-port]
-Make a new SSH tunnel using @var{session} from @var{source-host} and @var{local-port} to a @var{remote-host} and @var{remote-port}.
+Make a new SSH tunnel using @var{session} from @var{source-host} and
+@var{local-port} to a @var{remote-host} and @var{remote-port}.
 
 Return a new tunnel object.
+@end deffn
+
+@deffn {Scheme Procedure} tunnel? x
+Return @code{#t} if @var{x} is an Guile-SSH tunnel, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme procedure} tunnel-session tunnel
+Get a session associated with a @var{tunnel}.
+@end deffn
+
+@deffn {Scheme Procedure} tunnel-source-host tunnel
+Get a source host of a @var{tunnel}.
+@end deffn
+
+@deffn {Scheme Procedure} tunnel-local-port tunnel
+Get a local port of a @var{tunnel}.
+@end deffn
+
+@deffn {Scheme Procedure} tunnel-remote-host tunnel
+Get a remote host of a @var{tunnel}.
+@end deffn
+
+@deffn {Scheme Procedure} tunnel-remote-port tunnel
+Get a remote port of a @var{tunnel}.
 @end deffn
 
 @deffn {Scheme Procedure} start-forward tunnel
 Start port forwarding on @var{tunnel}.  The procedure actually binds tunnel
 ports and forwards data.
+@end deffn
+
+@deffn {Scheme Procedure} call-with-ssh-forward tunnel proc
+Open a new @var{tunnel} and start port forwarding.  @var{proc} is called with
+a socket as an argument.  All I/O on the socket will be forwarded to the
+remote host and port of a @var{tunnel}.
+
+As a practical example, let's say you want to use
+@url{https://www.gnu.org/software/guile-rpc/, Guile-RPC} over SSH.  Here's how
+you can implement an RPC call using @code{call-with-ssh-forward}:
+
+@lisp
+(let ((t (make-tunnel session
+                      #:local-port  12345
+                      ;; Suppose a Guile-RPC server listens on
+                      ;; 127.0.0.1:23456 on the remote host:
+                      #:remote-host "127.0.0.1"
+                      #:remote-port 23456)))
+  (call-with-ssh-forward t
+    (lambda (socket)
+      (RPC-PROGRAM-proc some-data #x123 socket))))
+@end lisp
 @end deffn
 
 @subsection Example
