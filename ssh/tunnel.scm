@@ -126,34 +126,31 @@ PORT-1 returns EOF."
           (close port-2)))))
 
 (define (main-loop tunnel sock idle-proc)
+  (let* ((timeout    (tunnel-timeout tunnel))
+         (timeout-s  (and timeout (quotient  timeout 1000000)))
+         (timeout-us (and timeout (remainder timeout 1000000))))
+    (while (connected? (tunnel-session tunnel))
+      (let ((channel (make-tunnel-channel tunnel)))
+        (case (channel-open-forward channel
+                                    #:source-host (tunnel-source-host tunnel)
+                                    #:local-port  (tunnel-local-port  tunnel)
+                                    #:remote-host (tunnel-remote-host tunnel)
+                                    #:remote-port (tunnel-remote-port tunnel))
+          ((error again)
+           (error "Could not start forwarding")))
+        (let* ((client-connection (accept sock))
+               (client            (car client-connection)))
 
-  (define timeout-s  (and (tunnel-timeout tunnel)
-                          (quotient  (tunnel-timeout tunnel) 1000000)))
-  (define timeout-us (and (tunnel-timeout tunnel)
-                          (remainder (tunnel-timeout tunnel) 1000000)))
-
-  (while (connected? (tunnel-session tunnel))
-    (let ((channel (make-tunnel-channel tunnel)))
-      (case (channel-open-forward channel
-                                  #:source-host (tunnel-source-host tunnel)
-                                  #:local-port  (tunnel-local-port  tunnel)
-                                  #:remote-host (tunnel-remote-host tunnel)
-                                  #:remote-port (tunnel-remote-port tunnel))
-        ((error again)
-         (error "Could not start forwarding")))
-      (let* ((client-connection (accept sock))
-             (client            (car client-connection)))
-
-        (while (channel-open? channel)
-          (cond-io
-           (client -> channel => transfer)
-           (channel -> client => transfer)
-           (else
-            (let ((selected (select (list client) '() '()
-                                    timeout-s timeout-us)))
-              (and (null? (car selected))
-                   (idle-proc client channel)))
-            (yield))))))))
+          (while (channel-open? channel)
+            (cond-io
+             (client -> channel => transfer)
+             (channel -> client => transfer)
+             (else
+              (let ((selected (select (list client) '() '()
+                                      timeout-s timeout-us)))
+                (and (null? (car selected))
+                     (idle-proc client channel)))
+              (yield)))))))))
 
 (define* (start-forward tunnel #:optional (idle-proc (const #f)))
   "Start port forwarding for a TUNNEL."
