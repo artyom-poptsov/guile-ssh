@@ -18,6 +18,7 @@
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
 (use-modules (srfi srfi-64)
+             (srfi srfi-26)
              (ice-9 threads)
              (ice-9 rdelim)
              (rnrs bytevectors)
@@ -634,6 +635,38 @@ CLIENT-PROC call."
                  (uniform-array-read! res channel)
                  (equal? res vect))
                (poll (char-ready? channel)))))))))
+
+
+;;; Port Forwarding
+
+(define (make-channel/pf-test session)
+  (let ((channel (make-channel session)))
+    (case (channel-open-forward channel
+                                #:source-host "localhost"
+                                #:local-port  12345
+                                #:remote-host "localhost"
+                                #:remote-port 12321)
+      ((ok)
+       channel)
+      (else => (cut error "Could not open forward" <>)))))
+
+(test-assert-with-log "port forwarding, direct"
+  (run-client-test
+
+   ;; server
+   (lambda (server)
+     (start-server/dt-test server
+                           (lambda (channel)
+                             (write-line (read-line channel) channel))))
+
+   ;; client
+   (lambda ()
+     (let* ((session (make-session/channel-test))
+            (channel (make-channel/pf-test session))
+            (str     "hello world"))
+       (write-line str channel)
+       (while (not (char-ready? channel)))
+       (string=? str (read-line channel))))))
 
 
 (test-end "client-server")
