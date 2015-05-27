@@ -120,9 +120,7 @@ channel, or throw an error if a channel could not be opened."
 (define (transfer port-1 port-2)
   "Transfer data from PORT-1 to PORT-2.  Close both ports if reading from
 PORT-1 returns EOF."
-  ;; (format #t "transfer: port-1: ~a; port-2: ~a~%" port-1 port-2)
   (let ((data (get-bytevector-some port-1)))
-    ;; (format #t "transfer: data: ~a\n" data)
     (if (not (eof-object? data))
         (put-bytevector port-2 data)
         (begin
