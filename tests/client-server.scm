@@ -29,6 +29,7 @@
              (ssh key)
              (ssh channel)
              (ssh log)
+             (ssh tunnel)
              (srfi srfi-4))
 
 (test-begin "client-server")
@@ -66,6 +67,7 @@
 
 
 ;;; Helper procedures and macros
+
 
 (define (make-session-for-test)
   "Make a session with predefined parameters for a test."
@@ -667,6 +669,20 @@ CLIENT-PROC call."
        (write-line str channel)
        (while (not (char-ready? channel)))
        (string=? str (read-line channel))))))
+
+;; Create a tunnel, check the result.
+(test-assert-with-log "make-tunnel"
+  (let* ((session (make-session-for-test))
+         (local-port  12345)
+         (remote-host "www.example.org")
+         (tunnel  (make-tunnel session
+                               #:local-port  local-port
+                               #:remote-host remote-host)))
+    (and (eq?      (tunnel-session tunnel) session)
+         (string=? (tunnel-source-host tunnel) "127.0.0.1")
+         (eq? (tunnel-local-port tunnel)  local-port)
+         (eq? (tunnel-remote-port tunnel) local-port)
+         (eq? (tunnel-remote-host tunnel) remote-host))))
 
 
 (test-end "client-server")
