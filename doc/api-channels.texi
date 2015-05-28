@@ -155,6 +155,16 @@ Open a (local) TCP/IP forwarding @var{channel}.  Connect to a
 @var{remote-host} and @var{remote-port}, and use @var{source-host} and
 @var{local-port} as origination of connections.
 
+The procedure returns one of the following symbols:
+@table @samp
+@item ok
+Success.
+@item again
+We are in the nonblocking mode and the call to be done again.
+@item error
+An error occured.
+@end table
+
 The local port forwarding works as follows:
 
 @example
@@ -192,6 +202,16 @@ Example:
 Open a TCP/IP reverse (remote) forwarding @var{channel}.  Connect to a
 @var{remote-host} and port @var{remote-port} and forward connections on the
 @var{remote-port} to a @var{source-host} and @var{local-port}.
+
+The procedure returns one of the following symbols:
+@table @samp
+@item ok
+Success.
+@item again
+We are in the nonblocking mode and the call to be done again.
+@item error
+An error occured.
+@end table
 
 Reverse port forwarding looks as follows:
 
