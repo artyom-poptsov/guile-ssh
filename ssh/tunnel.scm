@@ -92,7 +92,15 @@ channel, or throw an error if a channel could not be opened."
                       #:key (source-host "127.0.0.1") local-port
                       remote-host (remote-port local-port)
                       (timeout 1000))
-  "Make a new tunnel using SESSION."
+  "Make a new SSH tunnel using SESSION.  The procedure returns a new <tunnel>
+object.  In case of direct port forwarding, a SOURCE-HOST is a host from which
+the connections are originated, and a LOCAL-PORT is a port on which the tunnel
+will be listening the incoming connections.  A REMOTE-HOST and a REMOTE-PORT
+is a host and port to which the connections are forwarded.
+
+The procedure does not binds the LOCAL-PORT, you should start port forwarding
+by means of the procedures that operate on a <tunnel> object -- e.g.
+'start-forward' or 'call-with-ssh-forward'."
   (let ((timeout (if (and timeout (> timeout 0))
                      timeout
                      1)))
@@ -102,6 +110,8 @@ channel, or throw an error if a channel could not be opened."
 
 
 (define-syntax-rule (p1->p2? p1 p2)
+  "Return #t if P1 and P2 are open ports and P1 has data that can be read, #f
+otherwise."
   (and (not (or (port-closed? p1) (port-closed? p2)))
        (char-ready? p1)))
 
@@ -118,8 +128,8 @@ channel, or throw an error if a channel could not be opened."
 
 
 (define (transfer port-1 port-2)
-  "Transfer data from PORT-1 to PORT-2.  Close both ports if reading from
-PORT-1 returns EOF."
+  "Transfer data from a PORT-1 to a PORT-2.  Close both ports if reading from
+the PORT-1 returns EOF."
   (let ((data (get-bytevector-some port-1)))
     (if (not (eof-object? data))
         (put-bytevector port-2 data)
@@ -128,6 +138,12 @@ PORT-1 returns EOF."
           (close port-2)))))
 
 (define (main-loop tunnel sock idle-proc)
+  "Start the main loop of a TUNNEL.  Accept connections on SOCK, transfer data
+between SOCK and the remote side.  Call IDLE-PROC as
+
+  (idle-proc client-socket channel)
+
+when no data is available."
   (let* ((timeout    (tunnel-timeout tunnel))
          (timeout-s  (and timeout (quotient  timeout 1000000)))
          (timeout-us (and timeout (remainder timeout 1000000))))
@@ -147,7 +163,12 @@ PORT-1 returns EOF."
                      (idle-proc client channel))))))))))
 
 (define* (start-forward tunnel #:optional (idle-proc (const #f)))
-  "Start port forwarding for a TUNNEL."
+  "Start port forwarding for a TUNNEL.  Call IDLE-PROC as
+
+  (idle-proc client-socket channel)
+
+when no data is available to forward.  If no IDLE-PROC is specified then a
+procedure that always returns #f is used instead."
   (let ((sock (socket PF_INET SOCK_STREAM 0)))
     (setsockopt sock SOL_SOCKET SO_REUSEADDR 1) ; DEBUG
     (bind sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
@@ -157,6 +178,8 @@ PORT-1 returns EOF."
     (close sock)))
 
 (define (call-with-ssh-forward tunnel proc)
+  "Call a procedure PROC as (proc sock) where SOCK is a socket that forwards
+all the received data to a remote side through a TUNNEL, and vice versa."
   (let ((sock   (socket PF_INET SOCK_STREAM 0))
         (thread (call-with-new-thread
                  (lambda ()
