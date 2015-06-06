@@ -298,6 +298,32 @@ SCM_DEFINE (guile_ssh_channel_listen_forward,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_accept_forward,
+            "%channel-accept-forward", 2, 0, 0,
+            (SCM session, SCM timeout),
+            "")
+#define FUNC_NAME s_guile_ssh_channel_accept_forward
+{
+  struct session_data *sd = _scm_to_session_data (session);
+  ssh_channel c_channel = NULL;
+  int port;
+
+  SCM_ASSERT (scm_is_number (timeout), timeout, SCM_ARG2, FUNC_NAME);
+
+  c_channel = ssh_channel_accept_forward (sd->ssh_session,
+                                          scm_to_int (timeout),
+                                          &port);
+  if (! c_channel)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not accept a reverse connection",
+                        scm_list_2 (session, timeout));
+    }
+
+  return scm_values (scm_list_2 (_scm_from_channel_data (c_channel, session),
+                                 scm_from_int (port)));
+}
+#undef FUNC_NAME
+
 /* FIXME: Should it be defined in some other module? */
 SCM_DEFINE (guile_ssh_channel_cancel_forward,
             "channel-cancel-forward", 3, 0, 0,

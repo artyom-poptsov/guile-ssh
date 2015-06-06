@@ -57,6 +57,7 @@
             channel-request-shell
             channel-open-forward
             channel-listen-forward
+            channel-accept-forward
             channel-cancel-forward
             channel-request-send-exit-status
             channel-set-pty-size!
@@ -94,6 +95,13 @@ The procedure returns two values: the first value is the result of the
 operation (either 'ok', 'again' or 'error'), and the second value is the bound
 port number (if PORT was set to 0)."
   (%channel-listen-forward session address port))
+
+(define* (channel-accept-forward session #:optional (timeout 0))
+  "Accept an incoming TCP/IP forwarding channel and get information about
+incoming connection.  Return two values: the first value is the incoming
+channel, and the second value is a port number on which the connection was
+issued."
+  (%channel-accept-forward session timeout))
 
 
 (load-extension "libguile-ssh" "init_channel")

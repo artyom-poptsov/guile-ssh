@@ -240,6 +240,13 @@ local-host                remote-host
 
 @end deffn
 
+@deffn {Scheme Procedure} channel-accept-forward session [timeout=0]
+Accept an incoming TCP/IP forwarding channel and get information about
+incoming connection.  Return two values: the first value is the incoming
+channel, and the second value is a port number on which the connection was
+issued.
+@end deffn
+
 @node Tunnels
 @subsection Tunnels
 
