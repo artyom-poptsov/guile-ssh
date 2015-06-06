@@ -7,6 +7,14 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Implement port forwarding
+** New module: (ssh tunnel)
+** New procedure 'channel-accept-forward' in (ssh channel)
+** New procedure 'channel-listen-forward' in (ssh channel)
+** Remove 'channel-open-forward/reverse' procedure from (ssh channel)
+** Update documentation
+
 * Changes in version 0.7.2 (2015-02-24)
 ** Remove dependency on libgcrypt added by a mistake
 ** Fix "double free or corruption" error on GC'ing of keys
