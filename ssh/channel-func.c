@@ -315,7 +315,10 @@ SCM_DEFINE (guile_ssh_channel_accept_forward,
                                           scm_to_int (timeout),
                                           &port);
   if (c_channel)
-    channel = _scm_from_channel_data (c_channel, session);
+    {
+      channel = _scm_from_channel_data (c_channel, session);
+      SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
+    }
 
   return scm_values (scm_list_2 (channel, scm_from_int (port)));
 }
