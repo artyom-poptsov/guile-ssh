@@ -64,15 +64,22 @@
  <tunnel>
  (lambda (tunnel port)
    "Print information about a TUNNEL to a PORT."
-   (format port "#<tunnel ~a:~a ~a ~a:~a ~a>"
-           (tunnel-bind-address tunnel)
-           (tunnel-port  tunnel)
-           (if (tunnel-reverse? tunnel) "<-" "->")
-           (if (tunnel-host tunnel)
-               (tunnel-host tunnel)
-               "*")
-           (tunnel-host-port tunnel)
-           (number->string (object-address tunnel) 16))))
+   (let ((tunnel-address (number->string (object-address tunnel) 16)))
+     (if (tunnel-reverse? tunnel)
+         (format port "#<tunnel ~a:~a <- ~a:~a ~a>"
+                 (tunnel-host tunnel)
+                 (tunnel-host-port tunnel)
+                 (if (tunnel-bind-address tunnel)
+                     (tunnel-bind-address tunnel)
+                     "*")
+                 (tunnel-port tunnel)
+                 tunnel-address)
+         (format port "#<tunnel ~a:~a -> ~a:~a ~a>"
+                 (tunnel-bind-address tunnel)
+                 (tunnel-port tunnel)
+                 (tunnel-host tunnel)
+                 (tunnel-host-port tunnel)
+                 tunnel-address)))))
 
 (define (make-tunnel-channel tunnel)
   (let ((channel (make-channel (tunnel-session tunnel))))
