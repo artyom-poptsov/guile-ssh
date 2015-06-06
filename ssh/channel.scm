@@ -58,6 +58,7 @@
             channel-request-shell
             channel-open-forward
             channel-open-forward/reverse
+            channel-listen-forward
             channel-cancel-forward
             channel-request-send-exit-status
             channel-set-pty-size!
@@ -92,6 +93,18 @@ automatically forward the content of a socket to the channel."
   (%channel-open-forward/reverse channel
                                  remote-host remote-port
                                  source-host local-port))
+
+(define* (channel-listen-forward session #:key (address #f) (port 0))
+  "Send the \"tcpip-forward\" global request using SESSION to ask the server
+to begin listening for inbound connections on the specified ADDRESS and PORT.
+If ADDRESS is not specified (or set to #f) then the server binds all addresses
+on all protocol families supported by the server.  When 0 is passed as a PORT
+then server allocates the next unprivileged port.
+
+The procedure returns two values: the first value is the result of the
+operation (either 'ok', 'again' or 'error'), and the second value is the bound
+port number (if PORT was set to 0)."
+  (%channel-listen-forward session address port))
 
 
 (load-extension "libguile-ssh" "init_channel")

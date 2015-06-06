@@ -261,6 +261,43 @@ SCM_DEFINE (guile_ssh_channel_open_forward,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_channel_listen_forward,
+            "%channel-listen-forward", 3, 0, 0,
+            (SCM session, SCM address, SCM port),
+            "")
+#define FUNC_NAME s_guile_ssh_channel_listen_forward
+{
+  struct session_data *sd = _scm_to_session_data (session);
+  char *c_address = NULL;
+  int bound_port;
+  int res;
+
+  SCM_ASSERT (scm_is_string (address) || scm_is_bool (address),
+              address, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (port), port, SCM_ARG3, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  if (scm_is_string (address))
+    {
+      c_address = scm_to_locale_string (address);
+      scm_dynwind_free (c_address);
+    }
+
+  res = ssh_channel_listen_forward (sd->ssh_session,
+                                    c_address,
+                                    scm_to_int (port),
+                                    &bound_port);
+  if (res != SSH_OK)
+    bound_port = -1;
+
+  scm_dynwind_end ();
+
+  return scm_values (scm_list_2 (_ssh_result_to_symbol (res),
+                                 scm_from_int (bound_port)));
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (guile_ssh_channel_open_reverse_forward,
             "%channel-open-forward/reverse", 5, 0, 0,
             (SCM channel, SCM remote_host, SCM remote_port,
