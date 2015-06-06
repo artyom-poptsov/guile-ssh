@@ -7,6 +7,14 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Implement port forwarding
+** New module: (ssh tunnel)
+** New procedure 'channel-accept-forward' in (ssh channel)
+** New procedure 'channel-listen-forward' in (ssh channel)
+** Remove 'channel-open-forward/reverse' procedure from (ssh channel)
+** Update documentation
+
 * Changes in version 0.7.2 (2015-02-24)
 ** Remove dependency on libgcrypt added by a mistake
 ** Fix "double free or corruption" error on GC'ing of keys
@@ -117,6 +125,8 @@ ERROR: In procedure scm_i_lreadparen: /path/to/guile-ssh/sources/tests/./client-
 ** Rename `userauth-pubkey-auto!' to `userauth-public-key/auto!'
 ** New `userauth-public-key/try' procedure in (ssh auth)
 ** New `bytevector->hex-string' procedure in (ssh key)
+** New `channel-open-forward' procedure in (ssh channel)
+** New `channel-open-forward/reverse' procedure in (ssh channel)
 ** New `session-get' procedure in (ssh session)
 ** New `channel-get-session' procedure in (ssh channel)
 ** New `message-get-session' procedure in (ssh message)

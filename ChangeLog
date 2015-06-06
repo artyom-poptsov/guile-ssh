@@ -336,6 +336,11 @@
 	* ssh/message-func.c
 	(guile_ssh_message_channel_request_open_reply_accept): Update.
 
+	* ssh/channel-func.c (guile_ssh_channel_open_forward)
+	(guile_ssh_channel_open_reverse_forward)
+	(guile_ssh_channel_cancel_forward): Fix a bug: Rename
+	`_scm_to_ssh_session' to `_scm_to_session_data'.
+
 2014-07-20  Artyom Poptsov  <poptsov.artyom@gmail.com>
 
 	* ssh/session-func.c: Improve docstrings.  Remove extra comments.
@@ -634,7 +639,24 @@
 
 	* .dir-locals.el: Add to the repository.
 
+	* ssh/channel.scm (%channel-open-forward)
+	(%channel-open-forward/reverse): Don't export primitive procedures.
+	* doc/api-channels.texi (Channels): Update.
+	* NEWS: Update.
+
 2014-06-15  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* doc/api-channels.texi (Channels): Add subsection on port forwarding.
+
+	* ssh/channel-func.c (channel-open-forward): Rename to
+	`%channel-open-forward'.  Rename arguments.
+	(channel-open-reverse-forward): Rename to
+	`%channel-open-forward/reverse'.  Rename arguments.
+	* ssh/channel.scm (channel-open-forward): Rename to
+	`%channel-open-forward'.
+	(channel-open-reverse-forward): Rename to
+	`%channel-open-forward/reverse'.
+	(channel-open-forward, channel-open-forward/reverse): New procedures.
 
 	* ssh/message-func.c (get_auth_req): Fix a bug with assignment of
 	`ssh_public_key' type to `ssh_key' variable: Use
@@ -744,6 +766,13 @@
 	* ssh/key-type.h (KEY_TYPE): Remove.
 
 2014-05-31  Artyom Poptsov  <poptsov.artyom@gmail.com>
+
+	* ssh/channel-func.c (_ssh_result_to_symbol): New procedure.
+	(guile_ssh_channel_open_forward, channel-open-reverse-forward)
+	(guile_ssh_channel_cancel_forward): New procedures.
+	* ssh/channel.scm (channel-open-forward)
+	(channel-open-reverse-forward, channel-cancel-forward): New
+	procedures.
 
 	* ssh/key-type.h (key_data): Remove `key_type' field.
 	* ssh/key-func.c (guile_ssh_public_key_from_private_key): Update.

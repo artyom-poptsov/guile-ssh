@@ -23,6 +23,7 @@
 
 #include "error.h"
 #include "channel-type.h"
+#include "session-type.h"
 
 
 /* Procedures */
@@ -203,6 +204,156 @@ Return value is undefined.\
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
       guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
+SCM
+_ssh_result_to_symbol (int res)
+{
+  switch (res)
+    {
+    case SSH_OK:
+      return scm_from_locale_symbol ("ok");
+    case SSH_AGAIN:
+      return scm_from_locale_symbol ("again");
+    case SSH_ERROR:
+      return scm_from_locale_symbol ("error");
+    }
+}
+
+SCM_DEFINE (guile_ssh_channel_open_forward,
+            "%channel-open-forward", 5, 0, 0,
+            (SCM channel, SCM remote_host, SCM remote_port,
+             SCM source_host, SCM local_port),
+            "")
+#define FUNC_NAME s_guile_ssh_channel_open_forward
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  char *c_remote_host = NULL;
+  char *c_source_host = NULL;
+  int res;
+
+  SCM_ASSERT (scm_is_string (remote_host), remote_host, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (remote_port), remote_port, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (source_host), source_host, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (local_port),  local_port,  SCM_ARG5, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  c_remote_host = scm_to_locale_string (remote_host);
+  scm_dynwind_free (c_remote_host);
+
+  c_source_host = scm_to_locale_string (source_host);
+  scm_dynwind_free (c_source_host);
+
+  res = ssh_channel_open_forward (cd->ssh_channel,
+                                  c_remote_host, scm_to_int32 (remote_port),
+                                  c_source_host, scm_to_int32 (local_port));
+
+  if (res == SSH_OK)
+    SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
+
+  scm_dynwind_end ();
+
+  return _ssh_result_to_symbol (res);
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_channel_listen_forward,
+            "%channel-listen-forward", 3, 0, 0,
+            (SCM session, SCM address, SCM port),
+            "")
+#define FUNC_NAME s_guile_ssh_channel_listen_forward
+{
+  struct session_data *sd = _scm_to_session_data (session);
+  char *c_address = NULL;
+  int bound_port;
+  int res;
+
+  SCM_ASSERT (scm_is_string (address) || scm_is_bool (address),
+              address, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (port), port, SCM_ARG3, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  if (scm_is_string (address))
+    {
+      c_address = scm_to_locale_string (address);
+      scm_dynwind_free (c_address);
+    }
+
+  res = ssh_forward_listen (sd->ssh_session,
+                            c_address,
+                            scm_to_int (port),
+                            &bound_port);
+  if (res != SSH_OK)
+    bound_port = -1;
+
+  scm_dynwind_end ();
+
+  return scm_values (scm_list_2 (_ssh_result_to_symbol (res),
+                                 scm_from_int (bound_port)));
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_channel_accept_forward,
+            "%channel-accept-forward", 2, 0, 0,
+            (SCM session, SCM timeout),
+            "")
+#define FUNC_NAME s_guile_ssh_channel_accept_forward
+{
+  struct session_data *sd = _scm_to_session_data (session);
+  ssh_channel c_channel = NULL;
+  SCM channel = SCM_BOOL_F;
+  int port;
+
+  SCM_ASSERT (scm_is_number (timeout), timeout, SCM_ARG2, FUNC_NAME);
+
+  c_channel = ssh_channel_accept_forward (sd->ssh_session,
+                                          scm_to_int (timeout),
+                                          &port);
+  if (c_channel)
+    {
+      channel = _scm_from_channel_data (c_channel, session);
+      SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
+    }
+
+  return scm_values (scm_list_2 (channel, scm_from_int (port)));
+}
+#undef FUNC_NAME
+
+/* FIXME: Should it be defined in some other module? */
+SCM_DEFINE (guile_ssh_channel_cancel_forward,
+            "channel-cancel-forward", 3, 0, 0,
+            (SCM session, SCM address, SCM port),
+            "Throw `guile-ssh-error' on error.\n"
+            "Return value is undefined.")
+#define FUNC_NAME s_guile_ssh_channel_cancel_forward
+{
+  struct session_data *sd = _scm_to_session_data (session);
+  char *c_address = NULL;
+  int res;
+
+  SCM_ASSERT (scm_is_string (address), address, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (port),    port,    SCM_ARG3, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  c_address = scm_to_locale_string (address);
+  scm_dynwind_free (c_address);
+
+  res = ssh_channel_cancel_forward (sd->ssh_session,
+                                    c_address, scm_to_int32 (port));
+
+  if (res != SSH_OK)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Unable to cancel forward",
+                        scm_list_3 (session, address, port));
+    }
+
+  scm_dynwind_end ();
 
   return SCM_UNDEFINED;
 }

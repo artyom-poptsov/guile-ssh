@@ -33,6 +33,8 @@
 ;;   channel-request-exec
 ;;   channel-request-pty
 ;;   channel-request-shell
+;;   channel-open-forward
+;;   channel-cancel-forward
 ;;   channel-set-pty-size!
 ;;   channel-set-stream!
 ;;   channel-get-stream
@@ -53,6 +55,10 @@
             channel-request-exec
             channel-request-pty
             channel-request-shell
+            channel-open-forward
+            channel-listen-forward
+            channel-accept-forward
+            channel-cancel-forward
             channel-request-send-exit-status
             channel-set-pty-size!
             channel-set-stream!
@@ -62,6 +68,42 @@
             channel-open?
             channel-eof?))
 
+
+(define* (channel-open-forward channel
+                               #:key (source-host "localhost") local-port
+                               remote-host (remote-port local-port))
+  "Open a TCP/IP forwarding channel.  Connect to a REMOTE-HOST and REMOTE-PORT,
+and use SOURCE-HOST and LOCAL-PORT as origination of connections.
+
+If the SOURCE-HOST is not set, then \"localhost\" is used.  If REMOTE-PORT is
+not set, then it will be set to LOCAL-PORT value.
+
+Please note that the procedure does not bind the LOCAL-PORT and does not
+automatically forward the content of a socket to the channel."
+  (%channel-open-forward channel
+                         remote-host remote-port
+                         source-host local-port))
+
+(define* (channel-listen-forward session #:key (address #f) (port 0))
+  "Send the \"tcpip-forward\" global request using SESSION to ask the server
+to begin listening for inbound connections on the specified ADDRESS and PORT.
+If ADDRESS is not specified (or set to #f) then the server binds all addresses
+on all protocol families supported by the server.  When 0 is passed as a PORT
+then server allocates the next unprivileged port.
+
+The procedure returns two values: the first value is the result of the
+operation (either 'ok', 'again' or 'error'), and the second value is the bound
+port number (if PORT was set to 0)."
+  (%channel-listen-forward session address port))
+
+(define* (channel-accept-forward session #:optional (timeout 0))
+  "Accept an incoming TCP/IP forwarding channel and get information about
+incoming connection.  Return two values: the first value is the incoming
+channel, and the second value is a port number on which the connection was
+issued."
+  (%channel-accept-forward session timeout))
+
+
 (load-extension "libguile-ssh" "init_channel")
 
 ;;; channel.scm ends here.
