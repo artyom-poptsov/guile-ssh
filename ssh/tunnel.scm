@@ -35,10 +35,10 @@
             tunnel?
             tunnel-reverse?
             tunnel-session
-            tunnel-source-host
-            tunnel-local-port
-            tunnel-remote-host
-            tunnel-remote-port
+            tunnel-bind-address
+            tunnel-port
+            tunnel-host
+            tunnel-host-port
             start-forward
             call-with-ssh-forward))
 
@@ -46,29 +46,29 @@
 ;;; Tunnel type
 
 (define-immutable-record-type <tunnel>
-  (%make-tunnel session timeout source-host local-port
-                remote-host remote-port reverse?)
+  (%make-tunnel session timeout bind-address port
+                host host-port reverse?)
   tunnel?
-  (session     tunnel-session)          ; session
-  (timeout     tunnel-timeout)          ; number
-  (source-host tunnel-source-host)      ; string
-  (local-port  tunnel-local-port)       ; number
-  (remote-host tunnel-remote-host)      ; string
-  (remote-port tunnel-remote-port)      ; number
-  (reverse?    tunnel-reverse?))        ; boolean
+  (session      tunnel-session)          ; session
+  (timeout      tunnel-timeout)          ; number
+  (bind-address tunnel-bind-address)     ; string
+  (port         tunnel-port)             ; number
+  (host         tunnel-host)             ; string
+  (host-port    tunnel-host-port)        ; number
+  (reverse?     tunnel-reverse?))        ; boolean
 
 (set-record-type-printer!
  <tunnel>
  (lambda (tunnel port)
    "Print information about a TUNNEL to a PORT."
    (format port "#<tunnel ~a:~a ~a ~a:~a ~a>"
-           (tunnel-source-host tunnel)
-           (tunnel-local-port  tunnel)
+           (tunnel-bind-address tunnel)
+           (tunnel-port  tunnel)
            (if (tunnel-reverse? tunnel) "<-" "->")
-           (if (tunnel-remote-host tunnel)
-               (tunnel-remote-host tunnel)
+           (if (tunnel-host tunnel)
+               (tunnel-host tunnel)
                "*")
-           (tunnel-remote-port tunnel)
+           (tunnel-host-port tunnel)
            (number->string (object-address tunnel) 16))))
 
 (define (make-tunnel-channel tunnel)
@@ -82,10 +82,10 @@
 channel, or throw an error if a channel could not be opened."
   (let ((channel (make-tunnel-channel tunnel)))
     (case (channel-open-forward channel
-                                #:source-host (tunnel-source-host tunnel)
-                                #:local-port  (tunnel-local-port  tunnel)
-                                #:remote-host (tunnel-remote-host tunnel)
-                                #:remote-port (tunnel-remote-port tunnel))
+                                #:source-host (tunnel-bind-address tunnel)
+                                #:local-port  (tunnel-port tunnel)
+                                #:remote-host (tunnel-host tunnel)
+                                #:remote-port (tunnel-host-port tunnel))
       ((ok)
        channel)
       (else =>
@@ -95,8 +95,8 @@ channel, or throw an error if a channel could not be opened."
   "Return value is undefined."
   (receive (result port)
       (channel-listen-forward (tunnel-session tunnel)
-                              #:address (tunnel-remote-host tunnel)
-                              #:port    (tunnel-remote-port tunnel))
+                              #:address (tunnel-bind-address tunnel)
+                              #:port    (tunnel-port tunnel))
     ;; TODO: Handle port
     (or (eq? result 'ok)
         (error "Could not open forward channel" tunnel result))))
@@ -105,37 +105,37 @@ channel, or throw an error if a channel could not be opened."
 ;;; Procedures
 
 (define* (make-tunnel session
-                      #:key (source-host "127.0.0.1") local-port
-                      remote-host (remote-port local-port)
+                      #:key (bind-address "127.0.0.1") port
+                      host (host-port port)
                       (timeout 1000)
                       (reverse? #f))
   "Make a new SSH tunnel using SESSION.  The procedure returns a new <tunnel>
 object.
 
-In case of direct port forwarding (when REVERSE? is set to #f), a SOURCE-HOST
-is a host from which the connections are originated, and a LOCAL-PORT is a
-port on which the tunnel will be listening to the incoming connections.  A
-REMOTE-HOST and a REMOTE-PORT is a host and port to which the connections are
-forwarded.
+In case of direct port forwarding (when REVERSE? is set to #f), a BIND-ADDRESS
+is a host from which the connections are originated, and a PORT is a port on
+which the tunnel will be listening to the incoming connections.  A HOST and a
+HOST-PORT is a host and port to which the connections are forwarded.
 
-Setting REVERSE? to #t changes the direction of the tunnel, so a reverse port
-forwarding tunnel will be created.  In this case a SOURCE-HOST and a
-LOCAL-PORT specifies the host and the port to which remote connections should
-be forwarded.  A server binds REMOTE-HOST and REMOTE-PORT and begins listening
-for inbound connections.  REMOTE-HOST can be set to #f to tell the server to
-listen on all addresses and known protocol families.  Setting a PORT to 0
-tells the server to bind the first unprivileged port.
+Setting REVERSE? to #t changes the direction of the tunnel and a reverse port
+forwarding tunnel will be created.  In this case a server allocates a socket
+to listen to PORT on the remote side, and whenever a connection is made to
+this port, the connection is forwarded over the secure channel, and a
+connection is made to HOST and HOST-PORT from the local machine.  HOST can be
+set to #f to tell the server to listen on all addresses and known protocol
+families.  Setting a PORT to 0 tells the server to bind the first unprivileged
+port.
 
-The procedure does not binds a LOCAL-PORT nor transfers data to the port (in
-case of reverse port forwarding), you should start port forwarding by means of
-the procedures that operate on a <tunnel> object -- e.g.  'start-forward' or
+The procedure does not binds ports nor transfers data to the port (in case of
+reverse port forwarding), you should start port forwarding by means of the
+procedures that operate on a <tunnel> object -- e.g.  'start-forward' or
 'call-with-ssh-forward'."
   (let ((timeout (if (and timeout (> timeout 0))
                      timeout
                      1)))
     (%make-tunnel session timeout
-                  source-host local-port
-                  remote-host remote-port
+                  bind-address port
+                  host host-port
                   reverse?)))
 
 
@@ -202,8 +202,8 @@ when no data is available."
         (and channel
              (let* ((sock (socket PF_INET SOCK_STREAM 0)))
                (connect sock AF_INET
-                        (inet-aton (tunnel-source-host tunnel))
-                        (tunnel-local-port tunnel))
+                        (inet-aton (tunnel-host tunnel))
+                        (tunnel-host-port tunnel))
                (while (channel-open? channel)
                  (cond-io
                   (channel -> sock => transfer)
@@ -229,8 +229,8 @@ procedure that always returns #f is used instead."
         (main-loop/reverse tunnel idle-proc))
       (let ((sock (socket PF_INET SOCK_STREAM 0)))
         (setsockopt sock SOL_SOCKET SO_REUSEADDR 1) ; DEBUG
-        (bind sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
-              (tunnel-local-port tunnel))
+        (bind sock AF_INET (inet-pton AF_INET (tunnel-bind-address tunnel))
+              (tunnel-port tunnel))
         (listen sock 10)
         (main-loop tunnel sock idle-proc)
         (close sock))))
@@ -243,8 +243,8 @@ all the received data to a remote side through a TUNNEL, and vice versa."
                  (lambda ()
                    (start-forward tunnel)))))
 
-    (connect sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
-             (tunnel-local-port tunnel))
+    (connect sock AF_INET (inet-pton AF_INET (tunnel-bind-address tunnel))
+             (tunnel-port tunnel))
 
     (proc sock)
 

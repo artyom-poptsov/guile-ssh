@@ -255,20 +255,28 @@ issued.
 The following procedures from @code{(ssh tunnel)} module are a high-level API
 built upon the basic port forwarding facilities for managing port forwards.
 
-@deffn {Scheme Procedure} make-tunnel session [#:source-host=''127.0.0.1''] #:local-port #:remote-host [#:remote-port=local-port] [#:reverse?=#f]
-Make a new SSH tunnel using @var{session} from @var{source-host} and
-@var{local-port} to a @var{remote-host} and @var{remote-port}.
+@deffn {Scheme Procedure} make-tunnel session [#:bind-address=''127.0.0.1''] #:port #:host [#:host-port=port] [#:reverse?=#f]
+Make a new SSH tunnel using @var{session} from @var{bind-address} and
+@var{port} to a @var{host} and @var{host-port}.
 
 The procedure is capable of creating both direct and reverse port forwarding
 tunnels; the type of a tunnel is determined by @var{reverse?} argument.  If
 @var{reverse?} is set to @code{#f} then a reverse port forwarding tunnel will
 be created.
 
-In case of reverse port forwarding, arguments slightly change their meanings:
-@var{source-host} and @var{local-port} determine respectively the host and the
-port to which remote connecitons should be forwarded, and @var{remote-host}
-and @var{remote-port} is the host and the port on which a SSH server on the
-remote machine should listen to incoming connections.
+Setting @var{reverse?} to @code{#t} changes the direction of the tunnel and a
+reverse port forwarding tunnel will be created.  In this case a server
+allocates a socket to listen to @var{port} on the remote side, and whenever a
+connection is made to this port, the connection is forwarded over the secure
+channel, and a connection is made to @var{host} and @var{host-port} from the
+local machine.  @var{host} can be set to @code{#f} to tell the server to
+listen on all addresses and known protocol families.  Setting a @var{port} to
+0 tells the server to bind the first unprivileged port.
+
+The procedure does not binds ports nor transfers data to the port (in case of
+reverse port forwarding), you should start port forwarding by means of the
+procedures that operate on a <tunnel> object -- e.g.  @code{start-forward} or
+@code{call-with-ssh-forward}.
 
 Return a new tunnel object.
 @end deffn

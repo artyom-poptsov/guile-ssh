@@ -676,13 +676,13 @@ CLIENT-PROC call."
          (local-port  12345)
          (remote-host "www.example.org")
          (tunnel  (make-tunnel session
-                               #:local-port  local-port
-                               #:remote-host remote-host)))
-    (and (eq?      (tunnel-session tunnel) session)
-         (string=? (tunnel-source-host tunnel) "127.0.0.1")
-         (eq? (tunnel-local-port tunnel)  local-port)
-         (eq? (tunnel-remote-port tunnel) local-port)
-         (eq? (tunnel-remote-host tunnel) remote-host))))
+                               #:port  local-port
+                               #:host remote-host)))
+    (and (eq?      (tunnel-session tunnel)      session)
+         (string=? (tunnel-bind-address tunnel) "127.0.0.1")
+         (eq?      (tunnel-port tunnel)         local-port)
+         (eq?      (tunnel-host-port tunnel)    local-port)
+         (eq?      (tunnel-host tunnel)         remote-host))))
 
 
 (test-end "client-server")
