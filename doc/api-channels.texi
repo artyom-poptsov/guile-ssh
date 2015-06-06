@@ -255,15 +255,30 @@ issued.
 The following procedures from @code{(ssh tunnel)} module are a high-level API
 built upon the basic port forwarding facilities for managing port forwards.
 
-@deffn {Scheme Procedure} make-tunnel session [#:source-host=''127.0.0.1''] #:local-port #:remote-host [#:remote-port=local-port]
+@deffn {Scheme Procedure} make-tunnel session [#:source-host=''127.0.0.1''] #:local-port #:remote-host [#:remote-port=local-port] [#:reverse?=#f]
 Make a new SSH tunnel using @var{session} from @var{source-host} and
 @var{local-port} to a @var{remote-host} and @var{remote-port}.
+
+The procedure is capable of creating both direct and reverse port forwarding
+tunnels; the type of a tunnel is determined by @var{reverse?} argument.  If
+@var{reverse?} is set to @code{#f} then a reverse port forwarding tunnel will
+be created.
+
+In case of reverse port forwarding, arguments slightly change their meanings:
+@var{source-host} and @var{local-port} determine respectively the host and the
+port to which remote connecitons should be forwarded, and @var{remote-host}
+and @var{remote-port} is the host and the port on which a SSH server on the
+remote machine should listen to incoming connections.
 
 Return a new tunnel object.
 @end deffn
 
 @deffn {Scheme Procedure} tunnel? x
 Return @code{#t} if @var{x} is an Guile-SSH tunnel, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme procedure} tunnel-reverse? x
+Check if @var{x} is a reverse port forwarding tunnel.
 @end deffn
 
 @deffn {Scheme procedure} tunnel-session tunnel
