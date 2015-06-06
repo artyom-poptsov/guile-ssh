@@ -293,19 +293,19 @@ Check if @var{x} is a reverse port forwarding tunnel.
 Get a session associated with a @var{tunnel}.
 @end deffn
 
-@deffn {Scheme Procedure} tunnel-source-host tunnel
+@deffn {Scheme Procedure} tunnel-bind-address tunnel
 Get a source host of a @var{tunnel}.
 @end deffn
 
-@deffn {Scheme Procedure} tunnel-local-port tunnel
+@deffn {Scheme Procedure} tunnel-port tunnel
 Get a local port of a @var{tunnel}.
 @end deffn
 
-@deffn {Scheme Procedure} tunnel-remote-host tunnel
+@deffn {Scheme Procedure} tunnel-host tunnel
 Get a remote host of a @var{tunnel}.
 @end deffn
 
-@deffn {Scheme Procedure} tunnel-remote-port tunnel
+@deffn {Scheme Procedure} tunnel-host-port tunnel
 Get a remote port of a @var{tunnel}.
 @end deffn
 
