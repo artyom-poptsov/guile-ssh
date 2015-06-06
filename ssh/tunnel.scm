@@ -45,23 +45,27 @@
 
 (define-immutable-record-type <tunnel>
   (%make-tunnel session timeout source-host local-port
-                remote-host remote-port)
+                remote-host remote-port reverse?)
   tunnel?
   (session     tunnel-session)          ; session
   (timeout     tunnel-timeout)          ; number
   (source-host tunnel-source-host)      ; string
   (local-port  tunnel-local-port)       ; number
   (remote-host tunnel-remote-host)      ; string
-  (remote-port tunnel-remote-port))     ; number
+  (remote-port tunnel-remote-port)      ; number
+  (reverse?    tunnel-reverse?))        ; boolean
 
 (set-record-type-printer!
  <tunnel>
  (lambda (tunnel port)
    "Print information about a TUNNEL to a PORT."
-   (format port "#<tunnel ~a:~a -> ~a:~a ~a>"
+   (format port "#<tunnel ~a:~a ~a ~a:~a ~a>"
            (tunnel-source-host tunnel)
            (tunnel-local-port  tunnel)
-           (tunnel-remote-host tunnel)
+           (if (tunnel-reverse? tunnel) "<-" "->")
+           (if (tunnel-remote-host tunnel)
+               (tunnel-remote-host tunnel)
+               "*")
            (tunnel-remote-port tunnel)
            (number->string (object-address tunnel) 16))))
 
@@ -91,22 +95,36 @@ channel, or throw an error if a channel could not be opened."
 (define* (make-tunnel session
                       #:key (source-host "127.0.0.1") local-port
                       remote-host (remote-port local-port)
-                      (timeout 1000))
+                      (timeout 1000)
+                      (reverse? #f))
   "Make a new SSH tunnel using SESSION.  The procedure returns a new <tunnel>
-object.  In case of direct port forwarding, a SOURCE-HOST is a host from which
-the connections are originated, and a LOCAL-PORT is a port on which the tunnel
-will be listening the incoming connections.  A REMOTE-HOST and a REMOTE-PORT
-is a host and port to which the connections are forwarded.
+object.
 
-The procedure does not binds the LOCAL-PORT, you should start port forwarding
-by means of the procedures that operate on a <tunnel> object -- e.g.
-'start-forward' or 'call-with-ssh-forward'."
+In case of direct port forwarding (when REVERSE? is set to #f), a SOURCE-HOST
+is a host from which the connections are originated, and a LOCAL-PORT is a
+port on which the tunnel will be listening to the incoming connections.  A
+REMOTE-HOST and a REMOTE-PORT is a host and port to which the connections are
+forwarded.
+
+Setting REVERSE? to #t changes the direction of the tunnel, so a reverse port
+forwarding tunnel will be created.  In this case a SOURCE-HOST and a
+LOCAL-PORT specifies the host and the port to which remote connections should
+be forwarded.  A server binds REMOTE-HOST and REMOTE-PORT and begins listening
+for inbound connections.  REMOTE-HOST can be set to #f to tell the server to
+listen on all addresses and known protocol families.  Setting a PORT to 0
+tells the server to bind the first unprivileged port.
+
+The procedure does not binds a LOCAL-PORT nor transfers data to the port (in
+case of reverse port forwarding), you should start port forwarding by means of
+the procedures that operate on a <tunnel> object -- e.g.  'start-forward' or
+'call-with-ssh-forward'."
   (let ((timeout (if (and timeout (> timeout 0))
                      timeout
                      1)))
     (%make-tunnel session timeout
                   source-host local-port
-                  remote-host remote-port)))
+                  remote-host remote-port
+                  reverse?)))
 
 
 (define-syntax-rule (p1->p2? p1 p2)
