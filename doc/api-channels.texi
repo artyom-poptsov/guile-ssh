@@ -198,12 +198,20 @@ Example:
 @end lisp
 @end deffn
 
-@deffn {Scheme Procedure} channel-open-forward/reverse channel [#:source-host=''localhost''] #:local-port #:remote-host [#:remote-port=local-port]
-Open a TCP/IP reverse (remote) forwarding @var{channel}.  Connect to a
-@var{remote-host} and port @var{remote-port} and forward connections on the
-@var{remote-port} to a @var{source-host} and @var{local-port}.
+@deffn {Scheme Procedure} channel-listen-forward session [#:address=#f] [#:port=0]
+Start a TCP/IP reverse (remote) port forwarding.  Send the ``tcpip-forward''
+global request using @var{session} to ask the server to begin listening for
+inbound connections on the specified @var{address} and @var{port}.
 
-The procedure returns one of the following symbols:
+If @var{address} is not specified (or set to @code{#f}) then the server binds
+all addresses on all protocol families supported by the server.  When 0 is
+passed as a @var{port} then server allocates the next unprivileged port.
+
+The procedure returns two values: the first value is the result of the
+operation, and the second value is the bound port number (if @var{port} was
+set to 0).
+
+The result of the operation can be one of the following symbols:
 @table @samp
 @item ok
 Success.
@@ -225,7 +233,7 @@ local-host                remote-host
 :     port 80    :        :   port 8080    :
 :        |       :        :       |        :
 :        |       :        :       V        :
-:   [SSH client]===========>[SSH server]   :
+:   [SSH client]<===========[SSH server]   :
 :                :        :                :
 '................'        '................'
 @end example
