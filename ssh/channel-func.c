@@ -284,10 +284,10 @@ SCM_DEFINE (guile_ssh_channel_listen_forward,
       scm_dynwind_free (c_address);
     }
 
-  res = ssh_channel_listen_forward (sd->ssh_session,
-                                    c_address,
-                                    scm_to_int (port),
-                                    &bound_port);
+  res = ssh_forward_listen (sd->ssh_session,
+                            c_address,
+                            scm_to_int (port),
+                            &bound_port);
   if (res != SSH_OK)
     bound_port = -1;
 
@@ -306,6 +306,7 @@ SCM_DEFINE (guile_ssh_channel_accept_forward,
 {
   struct session_data *sd = _scm_to_session_data (session);
   ssh_channel c_channel = NULL;
+  SCM channel = SCM_BOOL_F;
   int port;
 
   SCM_ASSERT (scm_is_number (timeout), timeout, SCM_ARG2, FUNC_NAME);
@@ -313,14 +314,10 @@ SCM_DEFINE (guile_ssh_channel_accept_forward,
   c_channel = ssh_channel_accept_forward (sd->ssh_session,
                                           scm_to_int (timeout),
                                           &port);
-  if (! c_channel)
-    {
-      guile_ssh_error1 (FUNC_NAME, "Could not accept a reverse connection",
-                        scm_list_2 (session, timeout));
-    }
+  if (c_channel)
+    channel = _scm_from_channel_data (c_channel, session);
 
-  return scm_values (scm_list_2 (_scm_from_channel_data (c_channel, session),
-                                 scm_from_int (port)));
+  return scm_values (scm_list_2 (channel, scm_from_int (port)));
 }
 #undef FUNC_NAME
 
