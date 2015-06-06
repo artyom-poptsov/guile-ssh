@@ -33,6 +33,7 @@
   #:use-module (ssh channel)
   #:export (make-tunnel
             tunnel?
+            tunnel-reverse?
             tunnel-session
             tunnel-source-host
             tunnel-local-port
