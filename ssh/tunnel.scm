@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;; High-level API build upon the basic port forwarding facilities for managing
+;; High-level API built upon the basic port forwarding facilities for managing
 ;; port forwards.
 
 
