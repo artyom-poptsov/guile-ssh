@@ -27,6 +27,7 @@
   #:use-module (rnrs io ports)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (ice-9 iconv)
+  #:use-module (ice-9 receive)
   #:use-module (rnrs bytevectors)
   #:use-module (ssh session)
   #:use-module (ssh channel)
@@ -88,6 +89,16 @@ channel, or throw an error if a channel could not be opened."
        channel)
       (else =>
             (lambda (res) (error "Could not open forward channel" tunnel res))))))
+
+(define (tunnel-listen-forward tunnel)
+  "Return value is undefined."
+  (receive (result port)
+      (channel-listen-forward (tunnel-session tunnel)
+                              #:address (tunnel-remote-host tunnel)
+                              #:port    (tunnel-remote-port tunnel))
+    ;; TODO: Handle port
+    (or (eq? result 'ok)
+        (error "Could not open forward channel" tunnel result))))
 
 
 ;;; Procedures
@@ -180,6 +191,30 @@ when no data is available."
                 (and (null? (car selected))
                      (idle-proc client channel))))))))))
 
+(define (main-loop/reverse tunnel idle-proc)
+  (let* ((timeout    (tunnel-timeout tunnel))
+         (timeout-s  (and timeout (quotient  timeout 1000000)))
+         (timeout-us (and timeout (remainder timeout 1000000))))
+    (while (connected? (tunnel-session tunnel))
+      (receive (channel port)
+          (channel-accept-forward (tunnel-session tunnel) 1000)
+        (and channel
+             (let* ((sock (socket PF_INET SOCK_STREAM 0)))
+               (connect sock AF_INET
+                        (inet-aton (tunnel-source-host tunnel))
+                        (tunnel-local-port tunnel))
+               (while (channel-open? channel)
+                 (cond-io
+                  (channel -> sock => transfer)
+                  (sock -> channel => transfer)
+                  (else
+                   ;; XXX: Very hacky.  We should use something like 'select'
+                   ;; here.
+                   (when (channel-open? channel)
+                     (usleep timeout)
+                     (idle-proc sock channel)))))))))))
+
+
 (define* (start-forward tunnel #:optional (idle-proc (const #f)))
   "Start port forwarding for a TUNNEL.  Call IDLE-PROC as
 
@@ -187,13 +222,17 @@ when no data is available."
 
 when no data is available to forward.  If no IDLE-PROC is specified then a
 procedure that always returns #f is used instead."
-  (let ((sock (socket PF_INET SOCK_STREAM 0)))
-    (setsockopt sock SOL_SOCKET SO_REUSEADDR 1) ; DEBUG
-    (bind sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
-          (tunnel-local-port tunnel))
-    (listen sock 10)
-    (main-loop tunnel sock idle-proc)
-    (close sock)))
+  (if (tunnel-reverse? tunnel)
+      (begin
+        (tunnel-listen-forward tunnel)
+        (main-loop/reverse tunnel idle-proc))
+      (let ((sock (socket PF_INET SOCK_STREAM 0)))
+        (setsockopt sock SOL_SOCKET SO_REUSEADDR 1) ; DEBUG
+        (bind sock AF_INET (inet-pton AF_INET (tunnel-source-host tunnel))
+              (tunnel-local-port tunnel))
+        (listen sock 10)
+        (main-loop tunnel sock idle-proc)
+        (close sock))))
 
 (define (call-with-ssh-forward tunnel proc)
   "Call a procedure PROC as (proc sock) where SOCK is a socket that forwards
