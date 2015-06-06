@@ -34,7 +34,6 @@
 ;;   channel-request-pty
 ;;   channel-request-shell
 ;;   channel-open-forward
-;;   channel-open-reverse-forward
 ;;   channel-cancel-forward
 ;;   channel-set-pty-size!
 ;;   channel-set-stream!
@@ -57,7 +56,6 @@
             channel-request-pty
             channel-request-shell
             channel-open-forward
-            channel-open-forward/reverse
             channel-listen-forward
             channel-cancel-forward
             channel-request-send-exit-status
@@ -84,15 +82,6 @@ automatically forward the content of a socket to the channel."
   (%channel-open-forward channel
                          remote-host remote-port
                          source-host local-port))
-
-(define* (channel-open-forward/reverse channel
-                                       #:key (source-host "localhost") local-port
-                                       remote-host (remote-port local-port))
-  ;; TODO: Write more detailed docstring.
-  "Open a TCP/IP reverse forwarding channel."
-  (%channel-open-forward/reverse channel
-                                 remote-host remote-port
-                                 source-host local-port))
 
 (define* (channel-listen-forward session #:key (address #f) (port 0))
   "Send the \"tcpip-forward\" global request using SESSION to ask the server
