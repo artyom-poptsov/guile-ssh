@@ -30,7 +30,7 @@
   #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-26)
   #:use-module (ssh dist node)
-  #:export (%make-job
+  #:export (make-job
             job?
             job-type
             job-node
@@ -42,7 +42,7 @@
 
 
 (define-immutable-record-type <job>
-  (%make-job type node data proc)
+  (make-job type node data proc)
   job?
   (type job-type)
   (node job-node)
@@ -61,7 +61,7 @@
 (define (%assign-jobs nodes lst proc)
   "Split the work to nearly equal parts according to length of NODES list and
 assign each part of work to a node.  Return list of assigned jobs."
-  (map (cut %make-job 'map <> <> proc)
+  (map (cut make-job 'map <> <> proc)
        nodes
        (%split lst (length nodes))))
 
