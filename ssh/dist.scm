@@ -28,54 +28,67 @@
 ;;; Code:
 
 (define-module (ssh dist)
-  #:use-module (ssh   channel)
   #:use-module (ice-9 iconv)
   #:use-module (ice-9 rdelim)
+  #:use-module (ice-9 receive)
+  #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-26)
+  #:use-module (ssh dist node)
+  #:re-export (node? node-session node-repl-port make-node node-eval
+                     %node-open-repl-channel)
   #:export (dist-map
 
             ;; Low-level procedures
-            %send-message %recv-message
-            %dist-job %handle-job))
+            %flatten-1
+            %split
+            %split-job
+            %hand-out-jobs))
 
-(define %delimiter "\0")
+(define (%flatten-1 lst)
+  "Flatten a list LST one level down.  Return a flattened list."
+  (fold-right append '() lst))
+
+(define (%split lst count)
+  "Split a list LST into COUNT chunks.  Return a list of chunks."
+  (receive (chunk-size-q chunk-size-r)
+      (round/ (length lst) count)
+    (let loop ((l   lst)
+               (n   count)
+               (res '()))
+      (if (> n 0)
+          (if (> (length l) 1)
+              (loop (list-tail l chunk-size-q)
+                    (1- n)
+                    (append res
+                            (list (list-head l
+                                             (if (and (= n 1)
+                                                      (> chunk-size-r 0))
+                                                 (+ chunk-size-q chunk-size-r)
+                                                 chunk-size-q)))))
+              (loop l (1- n) (append res (list l))))
+          res))))
+
+(define (%split-job nodes lst)
+  "Split job to nearly equal parts according to length of NODES list.  Return
+list of jobs."
+  (map (cut list <> <>)
+       nodes
+       (%split lst (length nodes))))
+
+(define (%hand-out-jobs jobs proc)
+  "Hand out JOBS to nodes and return the result of computation."
+  (map-in-order (lambda (job)
+                  (node-eval (car job)
+                             `(,(quote map) ,proc (quote ,(cadr job)))))
+                jobs))
 
 
-(define (%send-message message channel)
-  "Send MESSAGE to CHANNEL."
-  (write message channel)
-  (write-char #\nul channel))
-
-(define (%recv-message channel)
-  "Receive server response from the CHANNEL."
-  (read-delimited %delimiter channel))
-
-
-(define (%dist-job channel quoted-proc lst)
-  "Distribute computation job to a job server over the CHANNEL."
-  (%send-message (list quoted-proc lst) channel))
-
-(define (%handle-job channel)
-  "Receive and handle distributed job from CHANNEL."
-  (let* ((data (read (open-input-string (%recv-message channel))))
-         (proc (primitive-eval (car data))))
-    (format #t "proc: ~a; list: ~a~%" proc (cadr data))
-    (%send-message (map proc (cadr data)) channel)))
-
-
-(define-syntax dist-map
-  (syntax-rules ()
-    "Distributed version of the `map' high-order procedure."
-    ((_ session proc arg)
-     (let ((channel     (make-channel session))
-           (split-point (round (/ (length arg) 2))))
-
-       (channel-open-session channel)
-
-       (%dist-job channel (quote proc) (list-tail arg split-point))
-
-       (let ((res     (map proc (list-head arg split-point)))
-             (job-res (read (open-input-string (%recv-message channel)))))
-         (append res job-res))))))
+(define-syntax-rule (dist-map nodes proc lst)
+  "Do list mapping using distributed computation.  The job is splitted to
+nearly equal parts and hand out resulting jobs to NODES.  Return the result of
+computation."
+    (let ((jobs (%split-job nodes lst)))
+      (%flatten-1 (%hand-out-jobs jobs (quote proc)))))
 
 ;;; dist.scm ends here
 
