@@ -32,8 +32,7 @@
   #:use-module (srfi srfi-1)
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
-  #:re-export (node? node-session node-repl-port make-node node-eval
-                     node-open-repl-channel)
+  #:re-export (node? node-session node-repl-port make-node node-eval)
   #:export (dist-map))
 
 
