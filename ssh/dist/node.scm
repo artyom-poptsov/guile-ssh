@@ -2,148 +2,77 @@
 
 (define-module (ssh dist node)
   #:use-module (ice-9 rdelim)
+  #:use-module (ice-9 regex)
+  #:use-module (srfi srfi-9 gnu)
   #:use-module (ssh session)
-  #:use-module (ssh server)
-  #:use-module (ssh message)
   #:use-module (ssh session)
   #:use-module (ssh channel)
-  #:use-module (ssh key)
-  #:use-module (ssh dist)
+  #:use-module (ssh tunnel)
   #:export (node?
+            node-session
+            node-repl-port
             make-node
-            run-node
+            node-eval
 
-            %node-default-port))
+            %node-open-repl-channel))
 
-(define %node-default-port 2223)
+
+(define-immutable-record-type <node>
+  (%make-node tunnel repl-port)
+  node?
+  (tunnel node-tunnel)
+  (repl-port node-repl-port))
 
-(define <node>
-  (make-vtable "pw"
-               (lambda (struct port)
-                 (let* ((server   (struct-ref struct 0))
-                        (bindaddr (server-get server 'bindaddr))
-                        (bindport (server-get server 'bindport)))
-                   (format port "#<node ~a:~a>"
-                           (if bindaddr
-                               bindaddr
-                               "")
-                           bindport)))))
+(define (node-session node)
+  "Get node session."
+  (tunnel-session (node-tunnel node)))
 
-(define (node? x)
-  "Check if X is a <node> instance."
-  (and (struct? x)
-       (eq? (struct-vtable x) <node>)))
+(define (%node-open-repl-channel node)
+  "Open a new REPL channel."
+  (tunnel-open-forward-channel (node-tunnel node)))
 
-(define* (make-node #:key (allow           '())
-                          (potential-hosts '())
-                          (bindaddr        #f)
-                          (bindport        %node-default-port)
-                          (rsakey          #f)
-                          (dsakey          #f)
-                          (log-verbosity   'nolog))
-  "Make a new distributed computing node.  Return the new <node> instance."
-  (let ((server (make-server #:bindaddr      bindaddr
-                             #:bindport      bindport
-                             #:rsakey        rsakey
-                             #:dsakey        dsakey
-                             #:log-verbosity log-verbosity)))
-    (make-struct/no-tail <node> server)))
+(set-record-type-printer!
+ <node>
+ (lambda (node port)
+   (let ((s (node-session node)))
+     (format port "#<node ~a@~a:~a/~a ~a>"
+             (session-get s 'user)
+             (session-get s 'host)
+             (session-get s 'port)
+             (node-repl-port node)
+             (number->string (object-address node) 16)))))
 
-(define (accept-and-catch server)
-  "Accept new client connection to a SERVER.  Catch errors, return #f on
-error."
-  (catch 'guile-ssh-error
-    (lambda ()
-      (server-accept server))
-    (lambda (key . args)
-      (format #t "~a: ~a~%" key args)
-      #f)))
+
+(define* (make-node session #:optional (repl-port 37146))
+  "Make a new distributed computing node."
+  (let ((tunnel (make-tunnel session
+                             #:port 0          ;Won't be used
+                             #:host (session-get session 'host)
+                             #:host-port repl-port)))
+    (%make-node tunnel repl-port)))
 
-(define (read-all port)
-  "Read all lines from the PORT."
-  (let r ((res (read-line port 'concat))
-          (str ""))
-    (if (and (not (eof-object? str)) (char-ready? port))
-        (r (string-append res str) (read-line port 'concat))
-        res)))
+(define (skip-to-prompt repl-channel)
+  "Read from REPL-CHANNEL until REPL is observed."
+  (let loop ((line (read-line repl-channel)))
+    (or (string=? "Enter `,help' for help." line)
+        (loop (read-line repl-channel)))))
 
-(define (handle-req-channel-open msg msg-type)
-  (let ((subtype (cadr msg-type)))
-    (format #t "  subtype: ~a~%" subtype)
-    (case subtype
-      ((channel-session)
-       (message-channel-request-open-reply-accept msg))
-      (else
-       (message-reply-default msg)
-       #f))))
+(define (get-result repl-channel)
+  "Get result of evaluation form REPL-CHANNEL."
+  (let* ((result (read-line repl-channel))
+         (pattern "scheme@\\(guile-user\\)> \\$[0-9]+ = (.*)")
+         (match  (string-match pattern result)))
+    (or match
+        (error "Could not read data from REPL channel" repl-channel result))
+    (match:substring match 1)))
 
-(define (handle-req-auth session msg msg-type)
-  (let ((subtype (cadr msg-type)))
-
-    (format #t "  subtype: ~a~%" subtype)
-
-    ;; Allowed authentication methods
-    (message-auth-set-methods! msg '(public-key))
-
-    (case subtype
-      ((auth-method-publickey)
-       (let* ((req          (message-get-req msg))
-              (user         (auth-req:user req))
-              (pubkey       (auth-req:pubkey req))
-              (pubkey-state (auth-req:pubkey-state req)))
-         (format #t
-                 (string-append "  User ~a wants to authenticate with a public key (~a)~%"
-                                "  Public key state: ~a~%")
-                 user (get-key-type pubkey) pubkey-state)
-
-         (case pubkey-state
-           ((none)
-            (message-auth-reply-public-key-ok msg))
-
-           ((valid)
-            (message-reply-success msg))
-
-           (else
-            (format #t "  Bad public key state: ~a~%" pubkey-state)
-            (message-reply-default msg)))))
-
-      (else
-       (message-reply-default msg)))))
-
-(define (run-session-loop session)
-  (display "Session loop\n")
-  (while #t
-    (let ((msg (server-message-get session)))
-      (format #t "Message: ~a~%" msg)
-      (and msg
-           (let ((msg-type (message-get-type msg)))
-             (format #t "Message: ~a~%" msg-type)
-             (case (car msg-type)
-               ((request-service)
-                (message-reply-success msg))
-               ((request-auth)
-                (handle-req-auth session msg msg-type))
-               ((request-channel-open)
-                (let* ((channel (handle-req-channel-open msg msg-type)))
-                  (%handle-job channel)
-                  (close channel)
-                  (message-reply-success msg)
-                  (break)))
-               (else
-                (message-reply-default msg))))))))
-
-(define (run-node node)
-  (let ((server (struct-ref node 0)))
-    (server-listen server)
-    (while #t
-      (let ((session (accept-and-catch server)))
-        (format #t "Session: ~a~%" session)
-        (or session
-            (begin
-              (sleep 1)
-              (continue)))
-        (server-handle-key-exchange session)
-        (run-session-loop session)
-        (disconnect! session)))))
+(define (node-eval node quoted-exp)
+  "Evaluate QUOTED-EXP on the node and return the evaluated result."
+  (let ((repl-channel (%node-open-repl-channel node)))
+    (skip-to-prompt repl-channel)
+    (write quoted-exp repl-channel)
+    (newline repl-channel)
+    (call-with-input-string (get-result repl-channel)
+                            read)))
 
 ;;; node.scm ends here
