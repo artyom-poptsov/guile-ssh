@@ -29,6 +29,7 @@
 
 (define-module (ssh dist)
   #:use-module (ice-9 receive)
+  #:use-module (ice-9 threads)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
@@ -104,7 +105,7 @@ assign each part of work to a node.  Return list of assigned jobs."
 nearly equal parts and hand out resulting jobs to NODES.  Return the result of
 computation."
     (let ((jobs (%assign-jobs nodes lst (quote proc))))
-      (%flatten-1 (map %hand-out-job jobs))))
+      (%flatten-1 (n-par-map (length nodes) %hand-out-job jobs))))
 
 ;;; dist.scm ends here
 
