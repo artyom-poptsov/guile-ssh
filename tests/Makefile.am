@@ -24,7 +24,8 @@ SCM_TESTS = \
 	client-server.scm \
 	server-client.scm \
 	sssh-ssshd.scm \
-	key.scm
+	key.scm \
+	dist.scm
 
 TESTS = ${SCM_TESTS}
 
