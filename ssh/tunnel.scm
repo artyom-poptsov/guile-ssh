@@ -43,7 +43,11 @@
             tunnel-host
             tunnel-host-port
             start-forward
-            call-with-ssh-forward))
+            call-with-ssh-forward
+
+            ;; Helper procedures
+            make-tunnel-channel
+            tunnel-open-forward-channel))
 
 
 ;;; Tunnel type
