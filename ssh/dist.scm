@@ -28,8 +28,6 @@
 ;;; Code:
 
 (define-module (ssh dist)
-  #:use-module (ice-9 iconv)
-  #:use-module (ice-9 rdelim)
   #:use-module (ice-9 receive)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-1)
