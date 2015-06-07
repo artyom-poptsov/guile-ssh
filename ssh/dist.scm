@@ -21,7 +21,7 @@
 
 ;;; Commentary:
 
-;; This module contains disrtibuted forms of some useful procedures such as
+;; This module contains distributed forms of some useful procedures such as
 ;; `map'.
 
 
