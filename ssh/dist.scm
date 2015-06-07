@@ -37,7 +37,7 @@
   #:export (dist-map))
 
 
-(define (%flatten-1 lst)
+(define (flatten-1 lst)
   "Flatten a list LST one level down.  Return a flattened list."
   (fold-right append '() lst))
 
@@ -47,7 +47,7 @@
 nearly equal parts and hand out resulting jobs to NODES.  Return the result of
 computation."
     (let ((jobs (assign-jobs nodes lst (quote proc))))
-      (%flatten-1 (n-par-map (length nodes) hand-out-job jobs))))
+      (flatten-1 (n-par-map (length nodes) hand-out-job jobs))))
 
 ;;; dist.scm ends here
 
