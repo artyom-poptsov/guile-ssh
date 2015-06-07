@@ -37,8 +37,8 @@
             job-data
             job-proc
 
-            %assign-jobs
-            %hand-out-job))
+            assign-jobs
+            hand-out-job))
 
 
 (define-immutable-record-type <job>
@@ -58,14 +58,14 @@
            (number->string (object-address job) 16))))
 
 
-(define (%assign-jobs nodes lst proc)
+(define (assign-jobs nodes lst proc)
   "Split the work to nearly equal parts according to length of NODES list and
 assign each part of work to a node.  Return list of assigned jobs."
   (map (cut make-job 'map <> <> proc)
        nodes
        (%split lst (length nodes))))
 
-(define (%hand-out-job job)
+(define (hand-out-job job)
   "Hand out JOB to the assigned node and return the result of computation."
   (node-eval (job-node job)
              `(,(job-type job) ,(job-proc job) (quote ,(job-data job)))))

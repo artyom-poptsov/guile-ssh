@@ -46,8 +46,8 @@
   "Do list mapping using distributed computation.  The job is splitted to
 nearly equal parts and hand out resulting jobs to NODES.  Return the result of
 computation."
-    (let ((jobs (%assign-jobs nodes lst (quote proc))))
-      (%flatten-1 (n-par-map (length nodes) %hand-out-job jobs))))
+    (let ((jobs (assign-jobs nodes lst (quote proc))))
+      (%flatten-1 (n-par-map (length nodes) hand-out-job jobs))))
 
 ;;; dist.scm ends here
 
