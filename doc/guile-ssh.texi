@@ -152,6 +152,9 @@ Guile-SSH Server API
 * Servers::      Creating and managing Guile-SSH servers
 * Messages::     Handling of messages
 
+Distributed Computing
+* Distributed Forms::
+
 @end menu
 
 @include api-auth.texi
@@ -162,6 +165,7 @@ Guile-SSH Server API
 @include api-servers.texi
 @include api-logging.texi
 @include api-version.texi
+@include api-dist.texi
 
 @include examples.texi
 

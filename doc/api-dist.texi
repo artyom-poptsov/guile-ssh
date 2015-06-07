@@ -1,0 +1,57 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2015 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Distributed Forms
+@section Distributed Forms
+
+@cindex secure distributed computing
+
+The @code{(ssh dist)} module provides the spirit of distributed computing for
+Guile.
+
+@deffn {Scheme Procedure} dist-map nodes proc lst
+Do list mapping using distributed computation.  Split the work to nearly equal
+parts and hand out the resulting jobs to @var{nodes}.  Return the result of
+computation.
+@end deffn
+
+@subsection Low-level Procedrues
+
+@deffn {Scheme Procedure} %flatten-1 lst
+Flatten a list @var{lst} one level down.  Return a flattened list.
+
+Example:
+@lisp
+(%flatten-1 '((a b) (c d)))
+@result{} '(a b c d)
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} %split lst count
+Split a list @var{lst} into @var{count} chunks.  Return a list of chunks.
+
+Example:
+@lisp
+(%split '(a b c d) 2)
+@result{} '((a b) (c d))
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} %make-job type node data proc
+Make a new job of @var{type} using @var{node}.
+@end deffn
+
+@deffn {Scheme Procedure} %assign-jobs nodes lst proc
+Split the work to nearly equal parts according to length of @var{nodes} list
+and assign each part of work to a node.  Return list of assigned jobs.
+@end deffn
+
+@deffn {Scheme Procedure} %hand-out-job job
+Hand out @var{job} to the assigned node and return the result of computation.
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:
