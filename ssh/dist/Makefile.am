@@ -1,5 +1,6 @@
 SCM_SOURCES = \
-	node.scm
+	node.scm	\
+	job.scm
 
 EXTRA_DIST = \
 	$(SCM_SOURCES)

@@ -28,76 +28,18 @@
 ;;; Code:
 
 (define-module (ssh dist)
-  #:use-module (ice-9 receive)
   #:use-module (ice-9 threads)
-  #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-1)
-  #:use-module (srfi srfi-26)
   #:use-module (ssh dist node)
+  #:use-module (ssh dist job)
   #:re-export (node? node-session node-repl-port make-node node-eval
                      %node-open-repl-channel)
-  #:export (dist-map
-
-            ;; Low-level procedures
-            %make-job
-            %flatten-1
-            %split
-            %assign-jobs
-            %hand-out-job))
-
-
-(define-immutable-record-type <job>
-  (%make-job type node data proc)
-  job?
-  (type job-type)
-  (node job-node)
-  (data job-data)
-  (proc job-proc))
-
-(set-record-type-printer!
- <job>
- (lambda (job port)
-   (format port "#<job ~a ~a ~a>"
-           (job-type job)
-           (job-node job)
-           (number->string (object-address job) 16))))
+  #:export (dist-map))
 
 
 (define (%flatten-1 lst)
   "Flatten a list LST one level down.  Return a flattened list."
   (fold-right append '() lst))
-
-(define (%split lst count)
-  "Split a list LST into COUNT chunks.  Return a list of chunks."
-  (receive (chunk-size-q chunk-size-r)
-      (round/ (length lst) count)
-    (let loop ((l   lst)
-               (n   count)
-               (res '()))
-      (if (> n 0)
-          (if (> (length l) 1)
-              (loop (list-tail l chunk-size-q)
-                    (1- n)
-                    (append res
-                            (list (list-head l
-                                             (if (and (= n 1)
-                                                      (> chunk-size-r 0))
-                                                 (+ chunk-size-q chunk-size-r)
-                                                 chunk-size-q)))))
-              (loop l (1- n) (append res (list l))))
-          res))))
-
-(define (%assign-jobs nodes lst proc)
-  "Split the work to nearly equal parts according to length of NODES list and
-assign each part of work to a node.  Return list of assigned jobs."
-  (map (cut %make-job 'map <> <> proc)
-       nodes
-       (%split lst (length nodes))))
-
-(define (%hand-out-job job)
-  "Hand out JOB to the assigned node and return the result of computation."
-  (node-eval (job-node job)
-             `(,(job-type job) ,(job-proc job) (quote ,(job-data job)))))
 
 
 (define-syntax-rule (dist-map nodes proc lst)
