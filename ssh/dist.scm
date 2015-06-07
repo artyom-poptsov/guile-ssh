@@ -33,7 +33,7 @@
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
   #:re-export (node? node-session node-repl-port make-node node-eval
-                     %node-open-repl-channel)
+                     node-open-repl-channel)
   #:export (dist-map))
 
 

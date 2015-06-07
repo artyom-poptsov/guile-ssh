@@ -14,7 +14,7 @@
             make-node
             node-eval
 
-            %node-open-repl-channel))
+            node-open-repl-channel))
 
 
 (define-immutable-record-type <node>
@@ -27,7 +27,7 @@
   "Get node session."
   (tunnel-session (node-tunnel node)))
 
-(define (%node-open-repl-channel node)
+(define (node-open-repl-channel node)
   "Open a new REPL channel."
   (tunnel-open-forward-channel (node-tunnel node)))
 
@@ -68,7 +68,7 @@
 
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
-  (let ((repl-channel (%node-open-repl-channel node)))
+  (let ((repl-channel (node-open-repl-channel node)))
     (skip-to-prompt repl-channel)
     (write quoted-exp repl-channel)
     (newline repl-channel)
