@@ -47,7 +47,7 @@
   "Make a new distributed computing node."
   (let ((tunnel (make-tunnel session
                              #:port 0          ;Won't be used
-                             #:host (session-get session 'host)
+                             #:host "localhost"
                              #:host-port repl-port)))
     (%make-node tunnel repl-port)))
 
