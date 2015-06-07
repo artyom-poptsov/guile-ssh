@@ -70,12 +70,14 @@
                (res '()))
       (if (> n 0)
           (if (> (length l) 1)
-              (loop (list-tail l chunk-size-q)
+              (loop (if (< chunk-size-q (length l))
+                        (list-tail l chunk-size-q)
+                        l)
                     (1- n)
                     (append res
                             (list (list-head l
                                              (if (and (= n 1)
-                                                      (> chunk-size-r 0))
+                                                      (not (= chunk-size-r 0)))
                                                  (+ chunk-size-q chunk-size-r)
                                                  chunk-size-q)))))
               (loop l (1- n) (append res (list l))))
