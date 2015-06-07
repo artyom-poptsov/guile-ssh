@@ -54,6 +54,10 @@
 (define (skip-to-prompt repl-channel)
   "Read from REPL-CHANNEL until REPL is observed."
   (let loop ((line (read-line repl-channel)))
+
+    (and (eof-object? line)
+         (error "Could not read the REPL server response" repl-channel))
+
     (or (string=? "Enter `,help' for help." line)
         (loop (read-line repl-channel)))))
 
