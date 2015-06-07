@@ -38,7 +38,10 @@
             job-proc
 
             assign-jobs
-            hand-out-job))
+            hand-out-job
+
+            ;; Helper procedures
+            split))
 
 
 (define-immutable-record-type <job>
@@ -58,19 +61,7 @@
            (number->string (object-address job) 16))))
 
 
-(define (assign-jobs nodes lst proc)
-  "Split the work to nearly equal parts according to length of NODES list and
-assign each part of work to a node.  Return list of assigned jobs."
-  (map (cut make-job 'map <> <> proc)
-       nodes
-       (%split lst (length nodes))))
-
-(define (hand-out-job job)
-  "Hand out JOB to the assigned node and return the result of computation."
-  (node-eval (job-node job)
-             `(,(job-type job) ,(job-proc job) (quote ,(job-data job)))))
-
-(define (%split lst count)
+(define (split lst count)
   "Split a list LST into COUNT chunks.  Return a list of chunks."
   (receive (chunk-size-q chunk-size-r)
       (round/ (length lst) count)
@@ -89,5 +80,17 @@ assign each part of work to a node.  Return list of assigned jobs."
                                                  chunk-size-q)))))
               (loop l (1- n) (append res (list l))))
           res))))
+
+(define (assign-jobs nodes lst proc)
+  "Split the work to nearly equal parts according to length of NODES list and
+assign each part of work to a node.  Return list of assigned jobs."
+  (map (cut make-job 'map <> <> proc)
+       nodes
+       (split lst (length nodes))))
+
+(define (hand-out-job job)
+  "Hand out JOB to the assigned node and return the result of computation."
+  (node-eval (job-node job)
+             `(,(job-type job) ,(job-proc job) (quote ,(job-data job)))))
 
 ;;; job.scm ends here.
