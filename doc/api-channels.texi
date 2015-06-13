@@ -247,6 +247,22 @@ channel, and the second value is a port number on which the connection was
 issued.
 @end deffn
 
+@deffn {Scheme Procedure} channel-cancel-forward session address port
+Send ``cancel-tcpip-forward'' global request to @var{session} to ask the
+server to cancel the tcpip-forward request on the bound @var{address} and
+@var{port}.
+
+The result of the operation can be one of the following symbols:
+@table @samp
+@item ok
+Success.
+@item again
+We are in the nonblocking mode and the call to be done again.
+@item error
+An error occured.
+@end table
+@end deffn
+
 @node Tunnels
 @subsection Tunnels
 
