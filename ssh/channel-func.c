@@ -328,8 +328,7 @@ SCM_DEFINE (guile_ssh_channel_accept_forward,
 SCM_DEFINE (guile_ssh_channel_cancel_forward,
             "channel-cancel-forward", 3, 0, 0,
             (SCM session, SCM address, SCM port),
-            "Throw `guile-ssh-error' on error.\n"
-            "Return value is undefined.")
+            "")
 #define FUNC_NAME s_guile_ssh_channel_cancel_forward
 {
   struct session_data *sd = _scm_to_session_data (session);
@@ -347,15 +346,9 @@ SCM_DEFINE (guile_ssh_channel_cancel_forward,
   res = ssh_forward_cancel (sd->ssh_session,
                             c_address, scm_to_int32 (port));
 
-  if (res != SSH_OK)
-    {
-      guile_ssh_error1 (FUNC_NAME, "Unable to cancel forward",
-                        scm_list_3 (session, address, port));
-    }
-
   scm_dynwind_end ();
 
-  return SCM_UNDEFINED;
+  return _ssh_result_to_symbol (res);
 }
 #undef FUNC_NAME
 
