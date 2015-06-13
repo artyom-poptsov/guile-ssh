@@ -574,8 +574,8 @@ CLIENT-PROC call."
                (set! channel (message-channel-request-open-reply-accept msg))
                (let poll ((ready? #f))
                  (if ready?
-                     (rwproc channel))
-                 (poll (char-ready? channel))))
+                     (rwproc channel)
+                     (poll (char-ready? channel)))))
               ((request-channel)
                (message-reply-success msg))
               (else
