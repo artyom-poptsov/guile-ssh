@@ -344,8 +344,8 @@ SCM_DEFINE (guile_ssh_channel_cancel_forward,
   c_address = scm_to_locale_string (address);
   scm_dynwind_free (c_address);
 
-  res = ssh_channel_cancel_forward (sd->ssh_session,
-                                    c_address, scm_to_int32 (port));
+  res = ssh_forward_cancel (sd->ssh_session,
+                            c_address, scm_to_int32 (port));
 
   if (res != SSH_OK)
     {
