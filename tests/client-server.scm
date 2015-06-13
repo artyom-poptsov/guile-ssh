@@ -681,7 +681,8 @@ CLIENT-PROC call."
          (string=? (tunnel-bind-address tunnel) "127.0.0.1")
          (eq?      (tunnel-port tunnel)         local-port)
          (eq?      (tunnel-host-port tunnel)    local-port)
-         (eq?      (tunnel-host tunnel)         remote-host))))
+         (eq?      (tunnel-host tunnel)         remote-host)
+         (eq?      (tunnel-reverse? tunnel)     #f))))
 
 
 (test-end "client-server")
