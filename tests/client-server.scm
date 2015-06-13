@@ -22,6 +22,7 @@
              (ice-9 threads)
              (ice-9 rdelim)
              (rnrs bytevectors)
+             (rnrs io ports)
              (ssh server)
              (ssh session)
              (ssh auth)
@@ -573,8 +574,8 @@ CLIENT-PROC call."
                (set! channel (message-channel-request-open-reply-accept msg))
                (let poll ((ready? #f))
                  (if ready?
-                     (rwproc channel))
-                 (poll (char-ready? channel))))
+                     (rwproc channel)
+                     (poll (char-ready? channel)))))
               ((request-channel)
                (message-reply-success msg))
               (else
@@ -621,20 +622,18 @@ CLIENT-PROC call."
      (lambda (server)
        (start-server/dt-test server
                              (lambda (channel)
-                               (let ((v (make-u8vector vect-size 0)))
-                                 (uniform-array-read! v channel)
-                                 (uniform-array-write v channel)))))
+                               (let ((v (get-bytevector-n channel vect-size)))
+                                 (put-bytevector channel v)))))
 
      ;; client
      (lambda ()
        (let* ((session (make-session/channel-test))
               (channel (make-channel/dt-test session))
-              (vect    (make-u8vector vect-size vect-fill)))
-         (uniform-array-write vect channel)
+              (vect    (make-bytevector vect-size vect-fill)))
+         (put-bytevector channel vect)
          (let poll ((ready? #f))
            (if ready?
-               (let ((res (make-u8vector vect-size 0)))
-                 (uniform-array-read! res channel)
+               (let ((res (get-bytevector-n channel vect-size)))
                  (equal? res vect))
                (poll (char-ready? channel)))))))))
 
