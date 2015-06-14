@@ -50,6 +50,7 @@ AM_SCM_LOG_FLAGS = \
 
 EXTRA_DIST = \
 	${SCM_TESTS}		\
+	common.scm		\
 	dsakey			\
 	dsakey.pub		\
 	ecdsakey		\

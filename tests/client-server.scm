@@ -50,6 +50,10 @@
 (define %libssh-log-file "client-server-libssh.log")
 (define %error-log-file  "client-server-errors.log")
 
+;;; Load helper procedures
+
+(load (format #f "~a/tests/common.scm" topdir))
+
 (set-current-error-port (open-output-file %error-log-file))
 
 
@@ -68,7 +72,6 @@
 
 
 ;;; Helper procedures and macros
-
 
 (define (make-session-for-test)
   "Make a session with predefined parameters for a test."
@@ -97,22 +100,6 @@
 (define (srvmsg message)
   "Print a server MESSAGE to the test log."
   (format log "    server: ~a~%" message))
-
-(define-macro (make-session-loop session . body)
-  `(let session-loop ((msg (server-message-get ,session)))
-     (and msg (begin ,@body))
-     (and (connected? session)
-          (session-loop (server-message-get ,session)))))
-
-
-;; Pass the test case NAME as the userdata to the libssh log
-(define-syntax test-assert-with-log
-  (syntax-rules ()
-    ((_ name body ...)
-     (test-assert name
-       (begin
-         (set-log-userdata! name)
-         body ...)))))
 
 
 (define (run-client-test server-proc client-proc)
