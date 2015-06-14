@@ -333,7 +333,8 @@ ports and forwards data.
 @deffn {Scheme Procedure} call-with-ssh-forward tunnel proc
 Open a new @var{tunnel} and start port forwarding.  @var{proc} is called with
 a socket as an argument.  All I/O on the socket will be forwarded to the
-remote host and port of a @var{tunnel}.
+remote host and port of a @var{tunnel}.  Return the result the @var{proc}
+call.
 
 As a practical example, let's say you want to use
 @url{https://www.gnu.org/software/guile-rpc/, Guile-RPC} over SSH.  Here's how

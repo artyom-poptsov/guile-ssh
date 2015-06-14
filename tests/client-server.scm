@@ -38,17 +38,17 @@
 
 ;;; Global symbols
 
-(define addr   "127.0.0.1")
-(define port   12400)
 (define topdir (getenv "abs_top_srcdir"))
-(define rsakey (format #f "~a/tests/rsakey" topdir))
-(define %knownhosts (format #f "~a/tests/knownhosts"
-                            (getenv "abs_top_builddir")))
+
 (define log    (test-runner-aux-value (test-runner-current)))
 (define *server-thread* #f)
 
 (define %libssh-log-file "client-server-libssh.log")
 (define %error-log-file  "client-server-errors.log")
+
+;;; Load helper procedures
+
+(load (format #f "~a/tests/common.scm" topdir))
 
 (set-current-error-port (open-output-file %error-log-file))
 
@@ -69,50 +69,9 @@
 
 ;;; Helper procedures and macros
 
-
-(define (make-session-for-test)
-  "Make a session with predefined parameters for a test."
-  (make-session
-   #:host    addr
-   #:port    port
-   #:timeout 10        ;seconds
-   #:user    "bob"
-   #:knownhosts %knownhosts
-   #:log-verbosity 'rare))
-
-(define (make-server-for-test)
-  "Make a server with predefined parameters for a test."
-
-  ;; FIXME: This hack is aimed to give every server its own unique
-  ;; port to listen to.  Clients will pick up new port number
-  ;; automatically through global `port' symbol as well.
-  (set! port (1+ port))
-
-  (make-server
-   #:bindaddr addr
-   #:bindport port
-   #:rsakey   rsakey
-   #:log-verbosity 'nolog))
-
 (define (srvmsg message)
   "Print a server MESSAGE to the test log."
   (format log "    server: ~a~%" message))
-
-(define-macro (make-session-loop session . body)
-  `(let session-loop ((msg (server-message-get ,session)))
-     (and msg (begin ,@body))
-     (and (connected? session)
-          (session-loop (server-message-get ,session)))))
-
-
-;; Pass the test case NAME as the userdata to the libssh log
-(define-syntax test-assert-with-log
-  (syntax-rules ()
-    ((_ name body ...)
-     (test-assert name
-       (begin
-         (set-log-userdata! name)
-         body ...)))))
 
 
 (define (run-client-test server-proc client-proc)
@@ -681,7 +640,108 @@ CLIENT-PROC call."
          (string=? (tunnel-bind-address tunnel) "127.0.0.1")
          (eq?      (tunnel-port tunnel)         local-port)
          (eq?      (tunnel-host-port tunnel)    local-port)
-         (eq?      (tunnel-host tunnel)         remote-host))))
+         (eq?      (tunnel-host tunnel)         remote-host)
+         (eq?      (tunnel-reverse? tunnel)     #f))))
+
+
+;; Client calls 'call-with-ssh-forward' with a procedure which sends a string
+;; to a server; server echoes the string back.  Client checks if the sent
+;; string and the result of 'call-with-ssh-forward' matches.
+;;
+;; Note that the main part of the test is done in "call/pf" process, only
+;; comparison of the original string and the call result is done in the main
+;; process of the test case.  The reason for this is srfi-64 tests go bananas
+;; when a thread is spawn in a test: the thread shares memory with the parent,
+;; and it inherits the test environment, which in turn leads to errors.
+;;
+;; XXX: This test case contains operations that potentially can block it
+;; forever.
+;;
+;; Here's a schematic representation of the test case:
+;;
+;; test
+;;  |
+;;  o                                      Fork.
+;;  |______________
+;;  |              \
+;;  |               |
+;;  |               o                      Fork.
+;;  |               |___________________
+;;  |               |                   \
+;;  |               |                    |
+;;  |            call/pf               server
+;;  |               |                    |
+;;  |               o                    | 'call-with-ssh-forward'
+;;  |               |______________      |
+;;  |               |              \     |
+;;  |               | "hello world" :    |
+;;  |               |-------------->:    |
+;;  |               |               o    | Re-send the message
+;;  |               |               :--->|   to the server.
+;;  |               |               :    o Echoing back.
+;;  |               | "hello world" :<---|
+;;  |               |               o    | Re-send the message
+;;  |               |<--------------:    |   to the caller.
+;;  |               |               o    | Stop the thread.
+;;  |               o                    | Bind/listen a socket.
+;;  | "hello world" |                    |
+;;  |<--------------|                    |
+;;  o               |                    | Check the result.
+;;  |               |                    |
+;;
+(test-assert-with-log "call-with-ssh-forward"
+  (let ((sock-path (tmpnam)))
+    (run-client-test
+
+     ;; server
+     (lambda (server)
+       (let ((pid (primitive-fork)))
+         ;; Guile-SSH server
+         (when (zero? pid)
+           (set-log-userdata! (string-append (get-log-userdata) " (server)"))
+           (server-set! server 'log-verbosity 'rare)
+           (start-server/dt-test server
+                                 (lambda (channel)
+                                   (write-line (read-line channel) channel))))
+         ;; call/pf process
+         (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
+         (let* ((session     (make-session/channel-test))
+                (local-port  12345)
+                (remote-host "www.example.org")
+                (tunnel      (make-tunnel session
+                                          #:port local-port
+                                          #:host remote-host))
+                (str         "hello world")
+                (result (call-with-ssh-forward tunnel
+                                               (lambda (sock)
+                                                 (write-line str sock)
+                                                 (while (not (char-ready? sock)))
+                                                 (read-line sock))))
+                (call-pf-sock (socket PF_UNIX SOCK_STREAM 0)))
+           (bind call-pf-sock AF_UNIX sock-path)
+           (listen call-pf-sock 1)
+           (let ((client (car (accept call-pf-sock))))
+             (write-line result client)
+             (sleep 10)
+             (close client)))))
+
+     ;; client
+     (lambda ()
+       (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
+
+         ;; XXX: This operation can potentially block the process forever.
+         (while (not (file-exists? sock-path)))
+
+         (format log "    client: sock-path: ~a~%" sock-path)
+
+         (connect sock AF_UNIX sock-path)
+
+         ;; XXX: This too.
+         (while (not (char-ready? sock)))
+
+         (let ((result (read-line sock)))
+           (close sock)
+           (string=? result "hello world")))))))
 
 
 (test-end "client-server")
