@@ -247,7 +247,8 @@ procedure that always returns #f is used instead."
 
 (define (call-with-ssh-forward tunnel proc)
   "Call a procedure PROC as (proc sock) where SOCK is a socket that forwards
-all the received data to a remote side through a TUNNEL, and vice versa."
+all the received data to a remote side through a TUNNEL, and vice versa.
+Return the result the PROC call."
   (let ((sock   (socket PF_INET SOCK_STREAM 0))
         (thread (call-with-new-thread
                  (lambda ()
@@ -256,9 +257,9 @@ all the received data to a remote side through a TUNNEL, and vice versa."
     (connect sock AF_INET (inet-pton AF_INET (tunnel-bind-address tunnel))
              (tunnel-port tunnel))
 
-    (proc sock)
-
-    (close-port sock)
-    (cancel-thread thread)))
+    (let ((result (proc sock)))
+      (close-port sock)
+      (cancel-thread thread)
+      result)))
 
 ;;; tunnel.scm ends here.
