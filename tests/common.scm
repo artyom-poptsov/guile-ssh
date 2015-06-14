@@ -23,6 +23,13 @@
              (ssh log))
 
 
+(define %addr   "127.0.0.1")
+(define *port*  12400)
+(define rsakey (format #f "~a/tests/rsakey" topdir))
+(define %knownhosts (format #f "~a/tests/knownhosts"
+                            (getenv "abs_top_builddir")))
+
+
 ;; Pass the test case NAME as the userdata to the libssh log
 (define-syntax test-assert-with-log
   (syntax-rules ()
@@ -37,5 +44,29 @@
      (and msg (begin ,@body))
      (and (connected? session)
           (session-loop (server-message-get ,session)))))
+
+(define (make-session-for-test)
+  "Make a session with predefined parameters for a test."
+  (make-session
+   #:host    %addr
+   #:port    *port*
+   #:timeout 10        ;seconds
+   #:user    "bob"
+   #:knownhosts %knownhosts
+   #:log-verbosity 'rare))
+
+(define (make-server-for-test)
+  "Make a server with predefined parameters for a test."
+
+  ;; FIXME: This hack is aimed to give every server its own unique
+  ;; port to listen to.  Clients will pick up new port number
+  ;; automatically through global `port' symbol as well.
+  (set! *port* (1+ *port*))
+
+  (make-server
+   #:bindaddr %addr
+   #:bindport *port*
+   #:rsakey   rsakey
+   #:log-verbosity 'nolog))
 
 ;;; common.scm ends here
