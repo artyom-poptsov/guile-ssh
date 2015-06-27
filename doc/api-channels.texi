@@ -249,7 +249,7 @@ issued.
 
 @deffn {Scheme Procedure} channel-cancel-forward session address port
 Send ``cancel-tcpip-forward'' global request to @var{session} to ask the
-server to cancel the tcpip-forward request on the bound @var{address} and
+server to cancel a ``tcpip-forward'' request on the bound @var{address} and
 @var{port}.
 
 The result of the operation can be one of the following symbols:
@@ -261,6 +261,37 @@ We are in the nonblocking mode and the call to be done again.
 @item error
 An error occured.
 @end table
+
+Here's an example Guile program that uses @code{channel-cancel-forward} to
+cancel reverse port forwarding on a server:
+
+@lisp
+#!/usr/bin/guile \
+-e main
+!#
+
+(use-modules (ssh session)
+             (ssh auth)
+             (ssh channel))
+
+(define (main args)
+  (let ((session (make-session #:user          "alice"
+                               #:host          "127.0.0.1"
+                               #:port          22
+                               #:log-verbosity 'rare)))
+    (connect! session)
+    (userauth-agent! session)
+
+    ;; Send "tcpip-forward" request to an SSH server
+    (channel-listen-forward session #:address "localhost" #:port 12345)
+
+    ;; Accept incoming reverse port forwarding requests with
+    ;; 'channel-accept-forward' in some kind of loop...
+
+    ;; Cancel the issued "tcpip-forward" request with
+    ;; "cancel-tcpip-forward" request
+    (channel-cancel-forward session "localhost" 12345)))
+@end lisp
 @end deffn
 
 @node Tunnels
