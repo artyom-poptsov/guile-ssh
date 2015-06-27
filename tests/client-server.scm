@@ -86,6 +86,8 @@ CLIENT-PROC call."
         (dynamic-wind
           (const #f)
           (lambda ()
+            (set-log-userdata! (string-append (get-log-userdata) " (server)"))
+            (server-set! server 'log-verbosity 'rare)
             (server-proc server))
           (lambda ()
             (primitive-exit 1)))
@@ -698,8 +700,6 @@ CLIENT-PROC call."
        (let ((pid (primitive-fork)))
          ;; Guile-SSH server
          (when (zero? pid)
-           (set-log-userdata! (string-append (get-log-userdata) " (server)"))
-           (server-set! server 'log-verbosity 'rare)
            (start-server/dt-test server
                                  (lambda (channel)
                                    (write-line (read-line channel) channel))))
