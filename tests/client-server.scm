@@ -679,8 +679,8 @@ CLIENT-PROC call."
 ;;  |               |               o    | Re-send the message
 ;;  |               |               :--->|   to the server.
 ;;  |               |               :    o Echoing back.
-;;  |               | "hello world" :<---|
-;;  |               |               o    | Re-send the message
+;;  |               |               :<---|
+;;  |               | "hello world" o    | Re-send the message
 ;;  |               |<--------------:    |   to the caller.
 ;;  |               |               o    | Stop the thread.
 ;;  |               o                    | Bind/listen a socket.
