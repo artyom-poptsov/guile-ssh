@@ -67,7 +67,11 @@
          (pattern "scheme@\\(guile-user\\)> \\$[0-9]+ = (.*)")
          (match  (string-match pattern result)))
     (or match
-        (error "Could not read data from REPL channel" repl-channel result))
+        (let loop ((line   (read-line repl-channel))
+                   (result result))
+          (if (or (eof-object? line) (string-null? line))
+              (error "Could not read data from REPL channel" repl-channel result)
+              (loop (read-line repl-channel) (string-append result "\n" line)))))
     (match:substring match 1)))
 
 (define (node-eval node quoted-exp)
