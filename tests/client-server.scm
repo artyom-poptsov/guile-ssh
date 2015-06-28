@@ -1,6 +1,6 @@
 ;;; client-server.scm -- Guile-SSH client is SUT.
 
-;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -86,6 +86,8 @@ CLIENT-PROC call."
         (dynamic-wind
           (const #f)
           (lambda ()
+            (set-log-userdata! (string-append (get-log-userdata) " (server)"))
+            (server-set! server 'log-verbosity 'rare)
             (server-proc server))
           (lambda ()
             (primitive-exit 1)))
@@ -679,8 +681,8 @@ CLIENT-PROC call."
 ;;  |               |               o    | Re-send the message
 ;;  |               |               :--->|   to the server.
 ;;  |               |               :    o Echoing back.
-;;  |               | "hello world" :<---|
-;;  |               |               o    | Re-send the message
+;;  |               |               :<---|
+;;  |               | "hello world" o    | Re-send the message
 ;;  |               |<--------------:    |   to the caller.
 ;;  |               |               o    | Stop the thread.
 ;;  |               o                    | Bind/listen a socket.
@@ -698,8 +700,6 @@ CLIENT-PROC call."
        (let ((pid (primitive-fork)))
          ;; Guile-SSH server
          (when (zero? pid)
-           (set-log-userdata! (string-append (get-log-userdata) " (server)"))
-           (server-set! server 'log-verbosity 'rare)
            (start-server/dt-test server
                                  (lambda (channel)
                                    (write-line (read-line channel) channel))))
