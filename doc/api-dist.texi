@@ -26,9 +26,70 @@ non-recoverable (eg. when evaluation of @var{proc} on a node failed due to an
 unbound variable) then execution of a job stops immediately.
 @end deffn
 
-@subsection Low-level Procedures
+@subsection Low-level API
 
-In @code{(ssh dist job)}:
+@subsubsection Nodes
+@tindex node
+
+The module @code{(ssh dist node)} provides low-level API for node management.
+Here's the description of the format of node type printed representation:
+
+@example
+#<node avp@@127.0.0.1:22/37146 a0dbdc0>
+       A   A         A  A     A
+       |   |         |  |     |
+   ,---'   |       ,-'  '---. '-----------.
+   |       |       |        |             |
+ user     host   port   REPL port    object address
+@end example
+
+@deffn {Scheme Procedure} make-node session [repl-port=37146]
+Make a new node that uses an SSH @var{session} to connec to a @var{repl-port}
+number on the remote side.  Return a new node.
+@end deffn
+
+@deffn {Scheme Procedure} node? x
+Return @code{#t} if @var{x} is a node object, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} node-session node
+Get underlying SSH session from @var{node}.
+@end deffn
+
+@deffn {Scheme Procedure} node-repl-port node
+Get REPL port number from a @var{node}.
+@end deffn
+
+@deffn {Scheme Procedure} node-open-repl-channel node
+Open a new REPL channel using a @var{node}.  Return a new open channel.
+@end deffn
+
+@deffn {Scheme Procedure} node-eval node quoted-exp
+Evaluate a @var{quoted-exp} on a @var{node} and return the result of
+evaluation.  Throw @code{node-repl-error} if a non-recoverable error occured,
+or @code{node-error} if the evaluation potentially could be succesfully
+evaluated on another node.
+@end deffn
+
+@deffn {Scheme Procedure} 
+
+@end deffn
+
+@subsubsection Jobs
+@tindex job
+
+The module @code{(ssh dist job)} provides low-level API for job management.
+
+Here's the descriptionof the format of node type printed representation:
+
+@example
+#<job map #<node avp@@127.0.0.1:22/37147 a0dbdc0> a1345a0>
+      A   A                                      A
+      |   |                                      |
+      |   '----------.                           |
+      |              |                           |
+   job type   node (see above)           job object address
+@end example
 
 @deffn {Scheme Procedure} split lst count
 Split a list @var{lst} into @var{count} chunks.  Return a list of chunks.
