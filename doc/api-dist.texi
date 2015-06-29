@@ -12,12 +12,12 @@ The @code{(ssh dist)} module provides the spirit of distributed computing for
 Guile.
 
 @deffn {Scheme Procedure} dist-map nodes proc lst
-Do list mapping using distributed computation.  Split the work to nearly equal
-parts and hand out the resulting jobs to @var{nodes}.  Return the result of
-computation.
+Do list mapping using distributed computation.  Split the work into nearly
+equal parts and hand out the resulting jobs to @var{nodes}.  Return the result
+of computation.
 
 If for some reason a job could not be executed on a node (for example, if
-connection to a remote REPL failes), @code{dist-map} transfers the job to
+connection to a remote REPL fails), @code{dist-map} transfers the job to
 another node from the @var{nodes} list.  When job execution failed on all
 nodes, an error is reported.
 
