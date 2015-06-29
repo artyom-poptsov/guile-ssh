@@ -17,9 +17,17 @@
             node-open-repl-channel))
 
 
+;;; Error reporting
+
+(define (node-error . args)
+  "Raise a node error."
+  (apply throw (cons 'node-error args)))
+
 (define (node-repl-error . args)
   "Raise a REPL error."
   (apply throw (cons 'node-repl-error args)))
+
+;;;
 
 
 (define-immutable-record-type <node>
@@ -57,11 +65,12 @@
     (%make-node tunnel repl-port)))
 
 (define (skip-to-prompt repl-channel)
-  "Read from REPL-CHANNEL until REPL is observed."
+  "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
+error."
   (let loop ((line (read-line repl-channel)))
 
     (and (eof-object? line)
-         (error "Could not read the REPL server response" repl-channel))
+         (node-error "Could not read the REPL server response" repl-channel))
 
     (or (string=? "Enter `,help' for help." line)
         (loop (read-line repl-channel)))))
