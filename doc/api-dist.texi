@@ -35,7 +35,7 @@ Split a list @var{lst} into @var{count} chunks.  Return a list of chunks.
 
 Example:
 @lisp
-(%split '(a b c d) 2)
+(split '(a b c d) 2)
 @result{} '((a b) (c d))
 @end lisp
 @end deffn
