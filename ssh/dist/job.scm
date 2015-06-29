@@ -33,7 +33,7 @@
   #:export (make-job
             job?
             job-type
-            job-node
+            job-node set-job-node
             job-data
             job-proc
 
@@ -48,7 +48,7 @@
   (make-job type node data proc)
   job?
   (type job-type)
-  (node job-node)
+  (node job-node set-job-node)
   (data job-data)
   (proc job-proc))
 

@@ -30,6 +30,7 @@
 (define-module (ssh dist)
   #:use-module (ice-9 threads)
   #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-26)
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
   #:re-export (node? node-session node-repl-port make-node node-eval)
@@ -40,16 +41,23 @@
   "Flatten a list LST one level down.  Return a flattened list."
   (fold-right append '() lst))
 
-(define (execute-job job)
+(define (execute-job nodes job)
   "Execute a JOB, handle errors."
-  (catch 'node-repl-error
+  (catch 'node-error
     (lambda ()
-      (hand-out-job job))
+      (catch 'node-repl-error
+        (lambda ()
+          (hand-out-job job))
+        (lambda args
+          (format (current-error-port)
+                  "ERROR: In ~a:~%~a:~%~a~%"
+                  job (cadr args) (caddr args))
+          (error "Could not execute a job" job))))
     (lambda args
-      (format (current-error-port)
-              "ERROR: In ~a:~%~a:~%~a~%"
-              job (cadr args) (caddr args))
-      (error "Could not execute a job" job))))
+      (let ((nodes (delete (job-node job) nodes)))
+        (and (null? nodes)
+             (error "Could not execute a job" job))
+        (execute-job nodes (set-job-node job (car nodes)))))))
 
 
 (define-syntax-rule (dist-map nodes proc lst)
@@ -57,7 +65,7 @@
 nearly equal parts and hand out resulting jobs to NODES.  Return the result of
 computation."
     (let ((jobs (assign-jobs nodes lst (quote proc))))
-      (flatten-1 (n-par-map (length nodes) execute-job jobs))))
+      (flatten-1 (n-par-map (length nodes) (cut execute-job nodes <>) jobs))))
 
 ;;; dist.scm ends here
 
