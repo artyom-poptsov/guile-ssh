@@ -15,6 +15,15 @@ Guile.
 Do list mapping using distributed computation.  Split the work to nearly equal
 parts and hand out the resulting jobs to @var{nodes}.  Return the result of
 computation.
+
+If for some reason a job could not be executed on a node (for example, if
+connection to a remote REPL failes), @code{dist-map} transfers the job to
+another node from the @var{nodes} list.  When job execution failed on all
+nodes, an error is reported.
+
+In a case when an error that occured during job execution is considered
+non-recoverable (eg. when evaluation of @var{proc} on a node failed due to an
+unbound variable) then execution of a job stops immediately.
 @end deffn
 
 @subsection Low-level Procedures
