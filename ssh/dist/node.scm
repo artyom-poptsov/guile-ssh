@@ -70,7 +70,7 @@ error."
   (let loop ((line (read-line repl-channel)))
 
     (and (eof-object? line)
-         (node-error "Could not read the REPL server response" repl-channel))
+         (node-error "Could not locate REPL prompt" repl-channel))
 
     (or (string=? "Enter `,help' for help." line)
         (loop (read-line repl-channel)))))
