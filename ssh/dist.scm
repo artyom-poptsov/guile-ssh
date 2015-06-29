@@ -41,6 +41,9 @@
   "Flatten a list LST one level down.  Return a flattened list."
   (fold-right append '() lst))
 
+(define (warning fmt . args)
+  (apply format (current-error-port) (string-append "WARNING: " fmt) args))
+
 (define (execute-job nodes job)
   "Execute a JOB, handle errors."
   (catch 'node-error
@@ -54,9 +57,11 @@
                   job (cadr args) (caddr args))
           (error "Could not execute a job" job))))
     (lambda args
+      (warning "Could not execute a job ~a~%" job)
       (let ((nodes (delete (job-node job) nodes)))
         (and (null? nodes)
              (error "Could not execute a job" job))
+        (warning "Passing a job ~a to a node ~a ...~%" job (car nodes))
         (execute-job nodes (set-job-node job (car nodes)))))))
 
 
