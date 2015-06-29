@@ -17,6 +17,11 @@
             node-open-repl-channel))
 
 
+(define (node-repl-error . args)
+  "Raise a REPL error."
+  (apply throw (cons 'node-repl-error args)))
+
+
 (define-immutable-record-type <node>
   (%make-node tunnel repl-port)
   node?
@@ -62,7 +67,8 @@
         (loop (read-line repl-channel)))))
 
 (define (get-result repl-channel)
-  "Get result of evaluation form REPL-CHANNEL."
+  "Get result of evaluation form REPL-CHANNEL, throw 'node-repl-error' on an
+error."
   (let* ((result (read-line repl-channel))
          (pattern "scheme@\\(guile-user\\)> \\$[0-9]+ = (.*)")
          (match  (string-match pattern result)))
@@ -70,7 +76,7 @@
         (let loop ((line   (read-line repl-channel))
                    (result result))
           (if (or (eof-object? line) (string-null? line))
-              (error "Could not read data from REPL channel" repl-channel result)
+              (node-repl-error "Could not read data from REPL channel" result)
               (loop (read-line repl-channel) (string-append result "\n" line)))))
     (match:substring match 1)))
 
