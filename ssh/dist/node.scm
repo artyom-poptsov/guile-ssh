@@ -85,7 +85,7 @@ error."
         (let loop ((line   (read-line repl-channel))
                    (result result))
           (if (or (eof-object? line) (string-null? line))
-              (node-repl-error "Could not read data from REPL channel" result)
+              (node-repl-error "Evaluation failed" result)
               (loop (read-line repl-channel) (string-append result "\n" line)))))
     (match:substring match 1)))
 
