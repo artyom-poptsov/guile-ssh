@@ -40,13 +40,24 @@
   "Flatten a list LST one level down.  Return a flattened list."
   (fold-right append '() lst))
 
+(define (execute-job job)
+  "Execute a JOB, handle errors."
+  (catch 'node-repl-error
+    (lambda ()
+      (hand-out-job job))
+    (lambda args
+      (format (current-error-port)
+              "ERROR: In ~a:~%~a:~%~a~%"
+              job (cadr args) (caddr args))
+      (error "Could not execute a job" job))))
+
 
 (define-syntax-rule (dist-map nodes proc lst)
   "Do list mapping using distributed computation.  The job is splitted to
 nearly equal parts and hand out resulting jobs to NODES.  Return the result of
 computation."
     (let ((jobs (assign-jobs nodes lst (quote proc))))
-      (flatten-1 (n-par-map (length nodes) hand-out-job jobs))))
+      (flatten-1 (n-par-map (length nodes) execute-job jobs))))
 
 ;;; dist.scm ends here
 
