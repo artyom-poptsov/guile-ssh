@@ -71,10 +71,6 @@ or @code{node-error} if the evaluation potentially could be succesfully
 evaluated on another node.
 @end deffn
 
-@deffn {Scheme Procedure} 
-
-@end deffn
-
 @subsubsection Jobs
 @tindex job
 
