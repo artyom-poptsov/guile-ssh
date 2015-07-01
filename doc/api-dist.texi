@@ -11,6 +11,13 @@
 The @code{(ssh dist)} module provides the spirit of distributed computing for
 Guile.
 
+@deffn {Scheme Procedure} distributed nodes expr ...
+Evaluate each @var{expr} in parallel, using distributed computation.  Split
+the job to nearly equal parts and hand out each of resulting sub-jobs to
+@var{nodes}.  Return the results of N expressions as a set of N multiple
+values (@pxref{Multiple Values,,, guile, The GNU Guile Reference Manual}).
+@end deffn
+
 @deffn {Scheme Procedure} dist-map nodes proc lst
 Do list mapping using distributed computation.  Split the work into nearly
 equal parts and hand out the resulting jobs to @var{nodes}.  Return the result
