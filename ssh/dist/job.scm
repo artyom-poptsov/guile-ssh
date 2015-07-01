@@ -37,6 +37,7 @@
             job-data
             job-proc
 
+            assign-eval
             assign-jobs
             hand-out-job
 
@@ -83,6 +84,11 @@
               (loop l (1- n) (append res (list l))))
           res))))
 
+(define (assign-eval nodes expressions)
+  (map (cut make-job 'eval <> #f <>)
+       nodes
+       (split expressions (length nodes))))
+
 (define (assign-jobs nodes lst proc)
   "Split the work to nearly equal parts according to length of NODES list and
 assign each part of work to a node.  Return list of assigned jobs."
@@ -92,7 +98,13 @@ assign each part of work to a node.  Return list of assigned jobs."
 
 (define (hand-out-job job)
   "Hand out JOB to the assigned node and return the result of computation."
-  (node-eval (job-node job)
-             `(,(job-type job) ,(job-proc job) (quote ,(job-data job)))))
+  (case (job-type job)
+    ((map)
+     (node-eval (job-node job)
+                `(,(job-type job) ,(job-proc job) (quote ,(job-data job)))))
+    ((eval)
+     (map (lambda (expr)
+            (node-eval (job-node job) expr))
+          (job-proc job)))))
 
 ;;; job.scm ends here.

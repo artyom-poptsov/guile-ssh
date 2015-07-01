@@ -34,7 +34,7 @@
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
   #:re-export (node? node-session node-repl-port make-node node-eval)
-  #:export (dist-map))
+  #:export (distributed dist-map))
 
 
 (define (flatten-1 lst)
@@ -65,6 +65,14 @@
         (execute-job nodes (set-job-node job (car nodes)))))))
 
 
+(define-syntax-rule (distributed nodes expr ...)
+  "Evaluate each EXPR in parallel, using distributed computation.  Split the
+job to nearly equal parts and hand out each of resulting sub-jobs to NODES.
+Return the results of N expressions as a set of N multiple values."
+  (let ((jobs (assign-eval nodes (list (quote expr) ...))))
+    (apply values (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>)
+                                        jobs)))))
+
 (define-syntax-rule (dist-map nodes proc lst)
   "Do list mapping using distributed computation.  The job is splitted to
 nearly equal parts and hand out resulting jobs to NODES.  Return the result of
