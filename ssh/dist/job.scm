@@ -42,6 +42,7 @@
             hand-out-job
 
             ;; Helper procedures
+            job->sexp
             split))
 
 
@@ -60,6 +61,16 @@
            (job-type job)
            (job-node job)
            (number->string (object-address job) 16))))
+
+(define (job->sexp job)
+  "Convert a JOB to a analogous symbolic expression."
+  (case (job-type job)
+    ((map)
+     `(map ,(job-proc job) ',(job-data job)))
+    ((eval)
+     `(parallel ,@(job-proc job)))
+    (else
+     (error "Unknown job type" job))))
 
 
 (define (split lst count)

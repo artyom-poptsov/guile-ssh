@@ -141,6 +141,10 @@ and assign each part of work to a node.  Return list of assigned jobs.
 Hand out @var{job} to the assigned node and return the result of computation.
 @end deffn
 
+@deffn {Scheme Procedure} job->sexp job
+Convert a @var{job} to a analogous symbolic expression.
+@end deffn
+
 @c Local Variables:
 @c TeX-master: "guile-ssh.texi"
 @c End:
