@@ -38,7 +38,7 @@
             job-proc
 
             assign-eval
-            assign-jobs
+            assign-map
             hand-out-job
 
             ;; Helper procedures
@@ -100,7 +100,7 @@
        (list-head nodes (length expressions))
        (split expressions (length nodes))))
 
-(define (assign-jobs nodes lst proc)
+(define (assign-map nodes lst proc)
   "Split the work to nearly equal parts according to length of NODES list and
 assign each part of work to a node.  Return list of assigned jobs."
   (map (cut make-job 'map <> <> proc)

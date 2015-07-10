@@ -77,7 +77,7 @@ Return the results of N expressions as a set of N multiple values."
   "Do list mapping using distributed computation.  The job is splitted to
 nearly equal parts and hand out resulting jobs to NODES.  Return the result of
 computation."
-  (let ((jobs (assign-jobs nodes lst (quote proc))))
+  (let ((jobs (assign-map nodes lst (quote proc))))
     (flatten-1 (n-par-map (length nodes) (cut execute-job nodes <>) jobs))))
 
 ;;; dist.scm ends here
