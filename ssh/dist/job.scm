@@ -97,14 +97,14 @@
 
 (define (assign-eval nodes expressions)
   (map (cut make-job 'eval <> #f <>)
-       nodes
+       (list-head nodes (length expressions))
        (split expressions (length nodes))))
 
 (define (assign-jobs nodes lst proc)
   "Split the work to nearly equal parts according to length of NODES list and
 assign each part of work to a node.  Return list of assigned jobs."
   (map (cut make-job 'map <> <> proc)
-       nodes
+       (list-head nodes (length expressions))
        (split lst (length nodes))))
 
 (define (hand-out-job job)
