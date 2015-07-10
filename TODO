@@ -3,5 +3,7 @@
 * Ideas
 ** Make channel buffers configurable.
 ** Make use of libssh callbacks to track asynchronous events on channels
+** Allow to specify the load coefficient for each node
+   in (ssh dist node)
 
 * Known Bugs
