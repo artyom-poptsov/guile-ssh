@@ -33,7 +33,7 @@
   #:use-module (srfi srfi-26)
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
-  #:re-export (node? node-session node-repl-port make-node node-eval)
+  #:re-export (node? node-session node-repl-port make-node)
   #:export (distribute dist-map))
 
 
