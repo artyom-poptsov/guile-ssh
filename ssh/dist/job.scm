@@ -92,7 +92,7 @@
                                                       (not (= chunk-size-r 0)))
                                                  (+ chunk-size-q chunk-size-r)
                                                  chunk-size-q)))))
-              (loop l (1- n) (append res (list l))))
+              (append res (list l)))
           res))))
 
 (define (assign-eval nodes expressions)

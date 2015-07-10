@@ -52,7 +52,8 @@
          (eq? (node-session n)   s))))
 
 (test-assert "split"
-  (equal? (split '(a b c d e f g) 3) '((a b) (c d) (e f g))))
+  (and (equal? (split '(a b c d e f g) 3) '((a b) (c d) (e f g)))
+       (equal? (split '(a) 2) '((a)))))
 
 (test-assert "make-job"
   (let* ((s (make-session-for-test))
