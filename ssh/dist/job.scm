@@ -116,6 +116,8 @@ assign each part of work to a node.  Return list of assigned jobs."
     ((eval)
      (map (lambda (expr)
             (node-eval (job-node job) expr))
-          (job-proc job)))))
+          (job-proc job)))
+    (else
+     (error "Unknown job type" job))))
 
 ;;; job.scm ends here.
