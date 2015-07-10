@@ -104,7 +104,7 @@
   "Split the work to nearly equal parts according to length of NODES list and
 assign each part of work to a node.  Return list of assigned jobs."
   (map (cut make-job 'map <> <> proc)
-       (list-head nodes (length expressions))
+       (list-head nodes (length lst))
        (split lst (length nodes))))
 
 (define (hand-out-job job)
