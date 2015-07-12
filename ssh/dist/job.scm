@@ -27,6 +27,7 @@
 
 (define-module (ssh dist job)
   #:use-module (ice-9 receive)
+  #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-26)
   #:use-module (ssh dist node)
@@ -97,18 +98,14 @@
 
 (define (assign-eval nodes expressions)
   (map (cut make-job 'eval <> #f <>)
-       (if (> (length nodes) (length expressions))
-           (list-head nodes (length expressions))
-           nodes)
+       nodes
        (split expressions (length nodes))))
 
 (define (assign-map nodes lst proc)
   "Split the work to nearly equal parts according to length of NODES list and
 assign each part of work to a node.  Return list of assigned jobs."
   (map (cut make-job 'map <> <> proc)
-       (if (> (length nodes) (length lst))
-           (list-head nodes (length lst))
-           nodes)
+       nodes
        (split lst (length nodes))))
 
 (define (hand-out-job job)
