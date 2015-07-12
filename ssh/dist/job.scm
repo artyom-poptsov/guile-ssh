@@ -97,7 +97,7 @@
 
 (define (assign-eval nodes expressions)
   (map (cut make-job 'eval <> #f <>)
-       (if (> (length nodes) (length lst))
+       (if (> (length nodes) (length expressions))
            (list-head nodes (length expressions))
            nodes)
        (split expressions (length nodes))))
