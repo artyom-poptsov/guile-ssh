@@ -69,7 +69,7 @@
     ((map)
      `(map ,(job-proc job) ',(job-data job)))
     ((eval)
-     `(parallel ,@(job-proc job)))
+     `(map primitive-eval ',(job-proc job)))
     (else
      (error "Unknown job type" job))))
 
