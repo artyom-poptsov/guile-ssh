@@ -96,6 +96,9 @@
 
 (define (split lst count)
   "Split a list LST into COUNT chunks.  Return a list of chunks."
+  (define (append-list lst . items)
+    "Append ITEMS list to LST."
+    (append lst items))
   (receive (chunk-size-q chunk-size-r)
       (round/ (length lst) count)
     (let ((chunk-size-q+r (+ chunk-size-q chunk-size-r)))
@@ -109,13 +112,13 @@
                             (list-tail l chunk-size-q)
                             l)
                         (1- n)
-                        (append res
-                                (list (list-head l
-                                                 (if (and (= n 1)
-                                                          (> chunk-size-r 0))
-                                                     chunk-size-q+r
-                                                     chunk-size-q)))))
-                  (append res (list l)))
+                        (append-list res
+                                     (list-head l
+                                                (if (and (= n 1)
+                                                         (> chunk-size-r 0))
+                                                    chunk-size-q+r
+                                                    chunk-size-q))))
+                  (append-list res l))
               res))))))
 
 (define (assign-eval nodes expressions)
