@@ -118,12 +118,15 @@ error."
     (or (string=? "Enter `,help' for help." line)
         (loop (read-line repl-channel)))))
 
+
+(define %repl-result-regexp
+  (make-regexp "scheme@\\(guile-user\\)> \\$[0-9]+ = (.*)"))
+
 (define (get-result repl-channel)
   "Get result of evaluation form REPL-CHANNEL, throw 'node-repl-error' on an
 error."
   (let* ((result (read-line repl-channel))
-         (pattern "scheme@\\(guile-user\\)> \\$[0-9]+ = (.*)")
-         (match  (string-match pattern result)))
+         (match  (regexp-exec %repl-result-regexp result)))
     (or match
         (let loop ((line   (read-line repl-channel))
                    (result result))
