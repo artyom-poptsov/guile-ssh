@@ -98,24 +98,25 @@
   "Split a list LST into COUNT chunks.  Return a list of chunks."
   (receive (chunk-size-q chunk-size-r)
       (round/ (length lst) count)
-    (let loop ((l   lst)
-               (n   count)
-               (res '()))
-      (let ((l-len (length l)))
-        (if (> n 0)
-            (if (> l-len 1)
-                (loop (if (< chunk-size-q l-len)
-                          (list-tail l chunk-size-q)
-                          l)
-                      (1- n)
-                      (append res
-                              (list (list-head l
-                                               (if (and (= n 1)
-                                                        (not (= chunk-size-r 0)))
-                                                   (+ chunk-size-q chunk-size-r)
-                                                   chunk-size-q)))))
-                (append res (list l)))
-            res)))))
+    (let ((chunk-size-q+r (+ chunk-size-q chunk-size-r)))
+      (let loop ((l   lst)
+                 (n   count)
+                 (res '()))
+        (let ((l-len (length l)))
+          (if (> n 0)
+              (if (> l-len 1)
+                  (loop (if (< chunk-size-q l-len)
+                            (list-tail l chunk-size-q)
+                            l)
+                        (1- n)
+                        (append res
+                                (list (list-head l
+                                                 (if (and (= n 1)
+                                                          (> chunk-size-r 0))
+                                                     chunk-size-q+r
+                                                     chunk-size-q)))))
+                  (append res (list l)))
+              res))))))
 
 (define (assign-eval nodes expressions)
   "Split an EXPRESSIONS list to nearly equal parts according to the length of
