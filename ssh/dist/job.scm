@@ -21,6 +21,26 @@
 
 ;;; Commentary:
 
+;; This module describes a job object that holds information on a distributed
+;; computing job.  This information includes the job type, the node that is
+;; assigned for execution of the job (see (ssh dist node)), job data and
+;; procedure(s) to process the data.
+;;
+;; The module exports the following procedures:
+;;   make-job
+;;   job?
+;;   job-type
+;;   job-node
+;;   set-job-node
+;;   job-data
+;;   job-proc
+;;   assign-eval
+;;   assign-map
+;;   hand-out-job
+;;   job->sexp
+;;   split
+;;
+;; See the Info documentation for detailed description of these procedures.
 
 
 ;;; Code:
