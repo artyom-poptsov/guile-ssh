@@ -50,6 +50,16 @@ Here's the description of the format of node type printed representation:
  user     host   port   REPL port    object address
 @end example
 
+There are two types of node errors: recoverable and non-recoverable.  The
+first group is represented by @code{node-error} exceptions.  If an exception
+of this kind is occured then there is a chance that a job can be executed on
+another node.  That's because such an exception occures in cases when a node
+is unreachable, for example.  The second group is represented by
+@code{node-repl-error} exceptions.  Such exceptions mean that an error is
+occured during execution of a job on a node's REPL -- eg. due to the malformed
+job.  Those errors are non-recoverable because if the job is broken it will
+likely fail on another nodes as well.
+
 @deffn {Scheme Procedure} make-node session [repl-port=37146]
 Make a new node that uses an SSH @var{session} to connec to a @var{repl-port}
 number on the remote side.  Return a new node.
