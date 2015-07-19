@@ -22,7 +22,18 @@
 ;;; Commentary:
 
 ;; This module contains distributed forms of some useful procedures such as
-;; `map'.
+;; 'map'.
+;;
+;; The module exports:
+;;   distribute
+;;   dist-map
+;;   make-node
+;;   node?
+;;   node-session
+;;   node-repl-port
+;;
+;; See the Info documentation for the detailed description of these
+;; procedures.
 
 
 ;;; Code:
