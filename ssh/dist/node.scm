@@ -21,6 +21,24 @@
 
 ;;; Commentary:
 
+;; This module describes the distributed node object.  This object holds an
+;; SSH tunnel to a remote host and remote REPL port, thus it can be used to
+;; execute jobs (see (ssh dist job)).
+;;
+;; The module provides the following procedures:
+;;   node?
+;;   node-session
+;;   node-repl-port
+;;   make-node
+;;   node-eval
+;;   node-open-repl-channel
+;;
+;; There are two specific exceptions that the module procedures can throw:
+;;   node-error
+;;   node-repl-error
+;;
+;; See the Info documentation for detailed description of these exceptions and
+;; aforementioned procedures.
 
 
 ;;; Code:
