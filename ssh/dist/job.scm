@@ -99,6 +99,13 @@
   (define (append-list lst . items)
     "Append ITEMS list to LST."
     (append lst items))
+  (define (list-rest lst lst-len k)
+    "Skip the first K elements of LST, return the list with the rest of the
+LST elements.  If K is lesser than LST-LEN then return all the elements of
+LST."
+    (if (< k lst-len)
+        (list-tail lst k)
+        lst))
   (receive (chunk-size-q chunk-size-r)
       (round/ (length lst) count)
     (let ((chunk-size-q+r (+ chunk-size-q chunk-size-r)))
@@ -108,9 +115,7 @@
         (let ((l-len (length l)))
           (if (> n 0)
               (if (> l-len 1)
-                  (loop (if (< chunk-size-q l-len)
-                            (list-tail l chunk-size-q)
-                            l)
+                  (loop (list-rest l l-len chunk-size-q)
                         (1- n)
                         (append-list res
                                      (list-head l
