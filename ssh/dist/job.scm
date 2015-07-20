@@ -118,11 +118,9 @@ LST."
                   (loop (list-rest l l-len chunk-size-q)
                         (1- n)
                         (append-list res
-                                     (list-head l
-                                                (if (and (= n 1)
-                                                         (> chunk-size-r 0))
-                                                    chunk-size-q+r
-                                                    chunk-size-q))))
+                                     (if (> n 1)
+                                         (list-head l chunk-size-q)
+                                         l)))
                   (append-list res l))
               res))))))
 
