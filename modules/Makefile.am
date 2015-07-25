@@ -1,9 +1,7 @@
-## Config file for GNU Automake. 
-##
-## Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of Guile-SSH.
-## 
+##
 ## Guile-SSH is free software: you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
 ## published by the Free Software Foundation, either version 3 of the
@@ -17,27 +15,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4 --install
-
-SUBDIRS = am ssh examples build-aux m4 doc tests modules
-
 EXTRA_DIST = \
-	.dir-locals.el			\
-	TODO
+	srfi/srfi-64.scm		\
+	srfi/srfi-64.upstream.scm
 
-gen-ChangeLog:
-	if test -d .git; then				\
-	  $(top_srcdir)/build-aux/gitlog-to-changelog	\
-	    194fd7d..HEAD > $(distdir)/cl-t;		\
-	  rm -f $(distdir)/ChangeLog;			\
-	  mv $(distdir)/cl-t $(distdir)/ChangeLog;	\
-	fi
-
-dist-hook: gen-ChangeLog
-.PHONY: gen-ChangeLog
-
-clean-go:
-	@cd ssh; make clean-go
-.PHONY: clean-go
-
-## Makefile.am ends here
+## Makefile.am ends here.

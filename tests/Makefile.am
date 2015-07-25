@@ -47,6 +47,7 @@ SCM_LOG_COMPILER = \
 
 AM_SCM_LOG_FLAGS = \
 	-L "$(top_srcdir)" \
+	-L "$(top_srcdir)/modules"	\
 	-s
 
 EXTRA_DIST = \
