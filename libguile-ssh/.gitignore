@@ -1,8 +1,5 @@
 # -*- shell-script -*-
 
-# Compiled Scheme files
-*.go
-
 # Object files and libraries
 .deps
 .libs
