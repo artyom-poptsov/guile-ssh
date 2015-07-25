@@ -10,6 +10,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 * Unreleased
 ** Implement port forwarding
 ** New module: (ssh tunnel)
+** New module: (ssh dist)
+** New module: (ssh dist job)
+** New module: (ssh dist node)
 ** New procedure 'channel-accept-forward' in (ssh channel)
 ** New procedure 'channel-listen-forward' in (ssh channel)
 ** Remove 'channel-open-forward/reverse' procedure from (ssh channel)
