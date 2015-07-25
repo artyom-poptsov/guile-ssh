@@ -141,10 +141,10 @@ and it will give you a suggestion.
 @chapter API Reference
 
 @menu
-* Auth::         Authentication procedures
-* Channels::     Channel manipulation procedures
 * Sessions::     Session management
+* Auth::         Authentication procedures
 * Keys::         Public and private keys
+* Channels::     Channel manipulation procedures
 * Logging::      Interface to the libssh logging
 * Version::      Get information about versions
 
