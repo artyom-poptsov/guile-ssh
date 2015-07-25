@@ -42,7 +42,7 @@ libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
 libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads -lssh \
 	-version-info $(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)
 
-AM_CPPFLAGS = -I$(top_srcdir)/ssh -I$(top_builddir)/ssh
+AM_CPPFLAGS = -I$(top_srcdir)/libguile-ssh -I$(top_builddir)/libguile-ssh
 
 snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(GUILE_CFLAGS) \
 	$(AM_CPPFLAGS)

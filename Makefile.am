@@ -19,7 +19,7 @@
 
 ACLOCAL_AMFLAGS = -I m4 --install
 
-SUBDIRS = am ssh examples build-aux m4 doc tests modules
+SUBDIRS = am libguile-ssh examples build-aux m4 doc tests modules
 
 EXTRA_DIST = \
 	.dir-locals.el			\

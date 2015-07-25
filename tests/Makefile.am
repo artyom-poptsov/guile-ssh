@@ -42,7 +42,7 @@ AM_TESTS_ENVIRONMENT = \
 # check" or "make distcheck" to work with earlier versions.
 SCM_LOG_COMPILER = \
 	${top_builddir}/libtool \
-	-dlopen ${top_builddir}/ssh/libguile-ssh.la \
+	-dlopen ${top_builddir}/libguile-ssh/libguile-ssh.la \
 	--mode=execute $(GUILE)
 
 AM_SCM_LOG_FLAGS = \
