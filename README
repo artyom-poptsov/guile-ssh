@@ -21,10 +21,11 @@ Files:
  - TODO contains plans for the further development and list of known bugs.
 
 Directories:
- - examples -- Examples of Guile-SSH usage.
- - ssh      -- Sources of the Guile-SSH library.
- - doc      -- Documentation in Texinfo format.
- - tests    -- Unit tests.
+ - examples     -- Examples of Guile-SSH usage.
+ - libguile-ssh -- Sources of the Guile-SSH library.
+ - modules      -- Scheme modules.
+ - doc          -- Documentation in Texinfo format.
+ - tests        -- Unit tests.
 
 Files are usually installed according to the prefix specified to
 =configure= script, =/usr/local= by default.  Building and installing
