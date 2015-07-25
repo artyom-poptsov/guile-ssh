@@ -93,7 +93,7 @@ evaluated on another node.
 
 The module @code{(ssh dist job)} provides low-level API for job management.
 
-Here's the descriptionof the format of node type printed representation:
+Here's the description of the format of node type printed representation:
 
 @example
 #<job map #<node avp@@127.0.0.1:22/37147 a0dbdc0> a1345a0>
