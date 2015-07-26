@@ -46,6 +46,7 @@
 (define-module (ssh dist node)
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 regex)
+  #:use-module (ice-9 receive)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (ssh session)
   #:use-module (ssh session)
@@ -120,10 +121,11 @@ error."
 
 
 (define %repl-result-regexp
-  (make-regexp "scheme@\\(guile-user\\)> \\$[0-9]+ = (.*)"))
+  (make-regexp "scheme@\\(guile-user\\)> \\$([0-9]+) = (.*)"))
 
 (define (get-result repl-channel)
-  "Get result of evaluation form REPL-CHANNEL, throw 'node-repl-error' on an
+  "Get result of evaluation form REPL-CHANNEL, return two values: the number
+of evaluation and the evaluation result.  Throw 'node-repl-error' on an
 error."
   (let* ((result (read-line repl-channel))
          (match  (regexp-exec %repl-result-regexp result)))
@@ -133,7 +135,7 @@ error."
           (if (or (eof-object? line) (string-null? line))
               (node-repl-error "Evaluation failed" result)
               (loop (read-line repl-channel) (string-append result "\n" line)))))
-    (match:substring match 1)))
+    (values (match:substring match 1) (match:substring match 2))))
 
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
@@ -141,7 +143,9 @@ error."
     (skip-to-prompt repl-channel)
     (write quoted-exp repl-channel)
     (newline repl-channel)
-    (call-with-input-string (get-result repl-channel)
-                            read)))
+    (receive (num val)
+        (get-result repl-channel)
+      (call-with-input-string val
+        read))))
 
 ;;; node.scm ends here
