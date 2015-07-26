@@ -108,7 +108,7 @@
                              #:host-port repl-port)))
     (%make-node tunnel repl-port)))
 
-(define (skip-to-prompt repl-channel)
+(define (rrepl-skip-to-prompt repl-channel)
   "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
 error."
   (let loop ((line (read-line repl-channel)))
@@ -123,7 +123,7 @@ error."
 (define %repl-result-regexp
   (make-regexp "scheme@\\(guile-user\\)> \\$([0-9]+) = (.*)"))
 
-(define (get-result repl-channel)
+(define (rrepl-get-result repl-channel)
   "Get result of evaluation form REPL-CHANNEL, return two values: the number
 of evaluation and the evaluation result.  Throw 'node-repl-error' on an
 error."
@@ -140,11 +140,11 @@ error."
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
   (let ((repl-channel (node-open-repl-channel node)))
-    (skip-to-prompt repl-channel)
+    (rrepl-skip-to-prompt repl-channel)
     (write quoted-exp repl-channel)
     (newline repl-channel)
     (receive (num val)
-        (get-result repl-channel)
+        (rrepl-get-result repl-channel)
       (call-with-input-string val
         read))))
 
