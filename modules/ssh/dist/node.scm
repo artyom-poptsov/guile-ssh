@@ -123,7 +123,7 @@ error."
 
 
 (define %repl-result-regexp
-  (make-regexp "scheme@\\(guile-user\\)> \\$([0-9]+) = (.*)"))
+  (make-regexp "^(.*)@(.*)> \\$([0-9]+) = (.*)"))
 
 (define (rrepl-get-result repl-channel)
   "Get result of evaluation form REPL-CHANNEL, return two values: the number
@@ -138,9 +138,11 @@ error."
               (node-repl-error "Evaluation failed" result)
               (loop (read-line repl-channel) (string-append result "\n" line)))))
     (values
-     (call-with-input-string (match:substring match 2)
-       read)
-     (match:substring match 1))))
+     (call-with-input-string (match:substring match 4)
+       read)                            ; Result
+     (match:substring match 3)          ; # of evaluation
+     (match:substring match 2)          ; Module
+     (match:substring match 1))))       ; Language
 
 (define (rrepl-eval rrepl-channel quoted-exp)
   "Evaluate QUOTED-EXP using RREPL-CHANNEL, return the result of evaluation."
