@@ -33,6 +33,11 @@ non-recoverable (eg. when evaluation of @var{proc} on a node failed due to an
 unbound variable) then execution of a job stops immediately.
 @end deffn
 
+@deffn {Scheme Procedure} rrepl node
+Start a remote REPL (RREPL) session using @var{node}.  Enter @code{,rq} to
+disconnect from the RREPL.
+@end deffn
+
 @subsection Low-level API
 
 @subsubsection Nodes
