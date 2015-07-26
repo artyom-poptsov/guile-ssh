@@ -27,6 +27,7 @@
 ;; The module exports:
 ;;   distribute
 ;;   dist-map
+;;   rrepl
 ;;   make-node
 ;;   node?
 ;;   node-session
@@ -39,13 +40,15 @@
 ;;; Code:
 
 (define-module (ssh dist)
+  #:use-module (ice-9 receive)
   #:use-module (ice-9 threads)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
+  #:use-module (ssh session)
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
   #:re-export (node? node-session node-repl-port make-node)
-  #:export (distribute dist-map))
+  #:export (distribute dist-map rrepl))
 
 
 (define (flatten-1 lst)
@@ -90,6 +93,32 @@ nearly equal parts and hand out resulting jobs to NODES.  Return the result of
 computation."
   (let ((jobs (assign-map nodes lst (quote proc))))
     (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>) jobs))))
+
+
+(define (rrepl node)
+  "Start a remote REPL (RREPL) session using NODE.  Enter ',rq' to disconnect
+from the RREPL."
+  (let* ((s            (node-session node))
+         (user         (session-get s 'user))
+         (host         (session-get s 'host))
+         (port         (session-get s 'port))
+         (repl-port    (node-repl-port node))
+         (repl-channel (node-open-rrepl node))
+         (rrepl-id     (format #f "~a@~a:~a/~a" user host port repl-port)))
+    (rrepl-skip-to-prompt repl-channel)
+    (receive (result result-num module language)
+        (rrepl-eval repl-channel '#t)
+      (format #t "~a ~a@~a> "
+              rrepl-id language module))
+    (while #t
+      (let ((exp (read)))
+        (if (equal? exp '(unquote rq))
+            (break)
+            (receive (result result-num module language)
+                (rrepl-eval repl-channel exp)
+              (format #t "$~a = ~a~%~a ~a@~a> "
+                      result-num result
+                      rrepl-id language module)))))))
 
 ;;; dist.scm ends here
 
