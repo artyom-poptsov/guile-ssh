@@ -62,7 +62,8 @@
 
             node-open-rrepl
             rrepl-eval
-            rrepl-skip-to-prompt))
+            rrepl-skip-to-prompt
+            rrepl-get-result))
 
 
 ;;; Error reporting
