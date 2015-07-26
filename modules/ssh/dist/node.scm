@@ -50,6 +50,7 @@
   #:use-module (ice-9 regex)
   #:use-module (ice-9 receive)
   #:use-module (srfi srfi-9 gnu)
+  #:use-module (scheme documentation)
   #:use-module (ssh session)
   #:use-module (ssh session)
   #:use-module (ssh channel)
@@ -125,10 +126,14 @@ error."
         (loop (read-line repl-channel)))))
 
 
-(define %repl-result-regexp
+(define-with-docs %repl-result-regexp
+  "Regexp for parsing a result of evaluation of an expression that returns a
+value."
   (make-regexp "^(.*)@(.*)> \\$([0-9]+) = (.*)"))
 
-(define %repl-undefined-result-regexp
+(define-with-docs %repl-undefined-result-regexp
+  "Regexp for parsing a result of evaluation of an expression which return
+value is unspecified."
   (make-regexp "^(.*)@(.*)> "))
 
 (define (rrepl-get-result repl-channel)
