@@ -135,7 +135,10 @@ error."
           (if (or (eof-object? line) (string-null? line))
               (node-repl-error "Evaluation failed" result)
               (loop (read-line repl-channel) (string-append result "\n" line)))))
-    (values (match:substring match 2) (match:substring match 1))))
+    (values
+     (call-with-input-string (match:substring match 2)
+       read)
+     (match:substring match 1))))
 
 (define (rrepl-eval rrepl-channel quoted-exp)
   "Evaluate QUOTED-EXP using RREPL-CHANNEL, return the result of evaluation."
@@ -146,9 +149,6 @@ error."
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
   (let ((repl-channel (node-open-rrepl node)))
     (rrepl-skip-to-prompt repl-channel)
-    (receive (val num)
-        (rrepl-eval repl-channel quoted-exp)
-      (call-with-input-string val
-        read))))
+    (rrepl-eval repl-channel quoted-exp)))
 
 ;;; node.scm ends here
