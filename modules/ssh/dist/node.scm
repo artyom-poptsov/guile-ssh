@@ -31,7 +31,7 @@
 ;;   node-repl-port
 ;;   make-node
 ;;   node-eval
-;;   node-open-repl-channel
+;;   node-open-rrepl
 ;;
 ;; There are two specific exceptions that the module procedures can throw:
 ;;   node-error
@@ -58,7 +58,7 @@
             make-node
             node-eval
 
-            node-open-repl-channel))
+            node-open-rrepl))
 
 
 ;;; Error reporting
@@ -84,8 +84,8 @@
   "Get node session."
   (tunnel-session (node-tunnel node)))
 
-(define (node-open-repl-channel node)
-  "Open a new REPL channel."
+(define (node-open-rrepl node)
+  "Open a RREPL.  Return a new RREPL channel."
   (tunnel-open-forward-channel (node-tunnel node)))
 
 (set-record-type-printer!
@@ -144,7 +144,7 @@ error."
 
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
-  (let ((repl-channel (node-open-repl-channel node)))
+  (let ((repl-channel (node-open-rrepl node)))
     (rrepl-skip-to-prompt repl-channel)
     (receive (num val)
         (rrepl-eval repl-channel quoted-exp)
