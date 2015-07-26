@@ -77,9 +77,9 @@
   "Raise a REPL error."
   (apply throw (cons 'node-repl-error args)))
 
-;;;
-
 
+;;; Node type
+
 (define-immutable-record-type <node>
   (%make-node tunnel repl-port)
   node?
@@ -89,10 +89,6 @@
 (define (node-session node)
   "Get node session."
   (tunnel-session (node-tunnel node)))
-
-(define (node-open-rrepl node)
-  "Open a RREPL.  Return a new RREPL channel."
-  (tunnel-open-forward-channel (node-tunnel node)))
 
 (set-record-type-printer!
  <node>
@@ -113,6 +109,13 @@
                              #:host "localhost"
                              #:host-port repl-port)))
     (%make-node tunnel repl-port)))
+
+
+;;; Remote REPL (RREPL)
+
+(define (node-open-rrepl node)
+  "Open a RREPL.  Return a new RREPL channel."
+  (tunnel-open-forward-channel (node-tunnel node)))
 
 (define (rrepl-skip-to-prompt repl-channel)
   "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
@@ -173,6 +176,9 @@ error."
   (write-line quoted-exp rrepl-channel)
   (write-line '(newline) rrepl-channel)
   (rrepl-get-result rrepl-channel))
+
+
+;;;
 
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
