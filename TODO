@@ -7,3 +7,13 @@
    in (ssh dist node)
 
 * Known Bugs
+** distributed forms
+   - 'dist-map' sometimes failes during the job migration with the
+     following error:
+#+BEGIN_EXAMPLE
+In thread:
+ERROR: Could not open forward channel #<tunnel 127.0.0.1:0 -> localhost:37147 91b72a8> error
+#+END_EXAMPLE
+** rrepl
+   - Does not handle output very well.
+   - Does not handle REPL commands such as ',h'.
