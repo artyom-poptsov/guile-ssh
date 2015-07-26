@@ -58,7 +58,8 @@
             make-node
             node-eval
 
-            node-open-rrepl))
+            node-open-rrepl
+            rrepl-eval))
 
 
 ;;; Error reporting
