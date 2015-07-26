@@ -125,28 +125,45 @@ error."
 (define %repl-result-regexp
   (make-regexp "^(.*)@(.*)> \\$([0-9]+) = (.*)"))
 
+(define %repl-undefined-result-regexp
+  (make-regexp "^(.*)@(.*)> "))
+
 (define (rrepl-get-result repl-channel)
   "Get result of evaluation form REPL-CHANNEL, return two values: the number
 of evaluation and the evaluation result.  Throw 'node-repl-error' on an
 error."
-  (let* ((result (read-line repl-channel))
-         (match  (regexp-exec %repl-result-regexp result)))
-    (or match
-        (let loop ((line   (read-line repl-channel))
-                   (result result))
-          (if (or (eof-object? line) (string-null? line))
-              (node-repl-error "Evaluation failed" result)
-              (loop (read-line repl-channel) (string-append result "\n" line)))))
-    (values
-     (call-with-input-string (match:substring match 4)
-       read)                            ; Result
-     (match:substring match 3)          ; # of evaluation
-     (match:substring match 2)          ; Module
-     (match:substring match 1))))       ; Language
+  (let ((result (read-line repl-channel)))
+    (if (string-null? result)
+        (rrepl-get-result repl-channel)
+        (let ((match           (regexp-exec %repl-result-regexp result))
+              (match-undefined (regexp-exec %repl-undefined-result-regexp
+                                            result)))
+          (cond
+           (match
+            (values
+             (call-with-input-string (match:substring match 4)
+               read)                               ; Result
+             (match:substring match 3)             ; # of evaluation
+             (match:substring match 2)             ; Module
+             (match:substring match 1)))           ; Language
+           (match-undefined
+            (values
+             (begin)                               ; Result
+             (begin)                               ; # of evaluation
+             (match:substring match-undefined 2)   ; Module
+             (match:substring match-undefined 1))) ; Language
+           (else
+            (let loop ((line   (read-line repl-channel))
+                       (result result))
+              (if (or (eof-object? line) (string-null? line))
+                  (node-repl-error "Evaluation failed" result)
+                  (loop (read-line repl-channel)
+                        (string-append result "\n" line))))))))))
 
 (define (rrepl-eval rrepl-channel quoted-exp)
   "Evaluate QUOTED-EXP using RREPL-CHANNEL, return the result of evaluation."
   (write-line quoted-exp rrepl-channel)
+  (write-line '(newline) rrepl-channel)
   (rrepl-get-result rrepl-channel))
 
 (define (node-eval node quoted-exp)
