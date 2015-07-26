@@ -156,8 +156,8 @@ error."
              (match:substring match 1)))           ; Language
            (match-undefined
             (values
-             (begin)                               ; Result
-             (begin)                               ; # of evaluation
+             *unspecified*                         ; Result
+             *unspecified*                         ; # of evaluation
              (match:substring match-undefined 2)   ; Module
              (match:substring match-undefined 1))) ; Language
            (else
