@@ -137,14 +137,17 @@ error."
               (loop (read-line repl-channel) (string-append result "\n" line)))))
     (values (match:substring match 1) (match:substring match 2))))
 
+(define (rrepl-eval rrepl-channel quoted-exp)
+  "Evaluate QUOTED-EXP using RREPL-CHANNEL, return the result of evaluation."
+  (write-line quoted-exp rrepl-channel)
+  (rrepl-get-result rrepl-channel))
+
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
   (let ((repl-channel (node-open-repl-channel node)))
     (rrepl-skip-to-prompt repl-channel)
-    (write quoted-exp repl-channel)
-    (newline repl-channel)
     (receive (num val)
-        (rrepl-get-result repl-channel)
+        (rrepl-eval repl-channel quoted-exp)
       (call-with-input-string val
         read))))
 
