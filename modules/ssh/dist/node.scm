@@ -59,7 +59,8 @@
             node-eval
 
             node-open-rrepl
-            rrepl-eval))
+            rrepl-eval
+            rrepl-skip-to-prompt))
 
 
 ;;; Error reporting
