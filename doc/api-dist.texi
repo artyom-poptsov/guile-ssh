@@ -93,6 +93,17 @@ or @code{node-error} if the evaluation potentially could be succesfully
 evaluated on another node.
 @end deffn
 
+@deffn {Scheme Procedure} rrepl-eval rrepl-channel expr
+Evaluate expression @var{expr} using @var{rrepl-channel}, return the result of
+evaluation.
+@end deffn
+
+@deffn {Scheme Procedure} rrepl-skip-to-prompt rrepl-channel
+Read from @var{rrepl-channel} until REPL is observed.  Throw @code{node-error}
+on an error.
+@end deffn
+
+
 @subsubsection Jobs
 @tindex job
 
