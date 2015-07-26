@@ -32,6 +32,8 @@
 ;;   make-node
 ;;   node-eval
 ;;   node-open-rrepl
+;;   rrepl-eval
+;;   rrepl-skip-to-prompt
 ;;
 ;; There are two specific exceptions that the module procedures can throw:
 ;;   node-error
