@@ -77,8 +77,8 @@ Get underlying SSH session from @var{node}.
 Get REPL port number from a @var{node}.
 @end deffn
 
-@deffn {Scheme Procedure} node-open-repl-channel node
-Open a new REPL channel using a @var{node}.  Return a new open channel.
+@deffn {Scheme Procedure} node-open-rrepl node
+Open a remote REPL (RREPL).  Return a new RREPL channel.
 @end deffn
 
 @deffn {Scheme Procedure} node-eval node quoted-exp
