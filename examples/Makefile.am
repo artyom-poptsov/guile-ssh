@@ -20,11 +20,12 @@ EXTRA_DIST = \
 	sssh.scm.in		\
 	ssshd.scm.in		\
 	echo/server.scm.in	\
-	echo/client.scm.in
+	echo/client.scm.in	\
+	rrepl.scm.in
 
 examplesdir = $(pkgdatadir)/examples
 examples_echodir = $(pkgdatadir)/examples/echo
-dist_examples_DATA = README sssh.scm ssshd.scm
+dist_examples_DATA = README sssh.scm ssshd.scm rrepl.scm
 dist_examples_echo_DATA = echo/server.scm echo/client.scm
 
 substitute = sed -e 's,[@]GUILE[@],$(GUILE),g'
@@ -38,4 +39,5 @@ SUFFIXES = .in
 
 CLEANFILES = \
 	sssh.scm ssshd.scm			\
-	echo/server.scm echo/client.scm
+	echo/server.scm echo/client.scm		\
+	rrepl.scm

@@ -1,0 +1,84 @@
+#!@GUILE@ \
+--debug -e main
+!#
+
+;;; rrepl.scm -- An example of RREPL usage.
+
+;; Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;;
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see
+;; <http://www.gnu.org/licenses/>.
+
+
+;;; Commentary:
+
+;; A demo program that connects to a remote REPL (RREPL).
+
+
+;;; Code:
+
+(use-modules (ice-9 getopt-long)
+             (ssh session)
+             (ssh auth)
+             (ssh dist)
+             (ssh dist node))
+
+(define (print-help-and-exit)
+  "Print information about program usage."
+  (display "\
+Usage: rrepl.scm [options] <host>
+
+Connect to a remote REPL (RREPL).  You can disconnect from a remote REPL by
+typing ',rq' into the REPL.
+
+Options:
+  --user, -u <user>       User name.
+  --port, -p <port>       SSH port number (default: 22)
+  --repl-port, -P <port>  Gulie REPL port number (default: 37146)
+  --help, -h              Print this message and exit.
+")
+  (exit))
+
+
+;;; Entry point
+
+(define (main args)
+  "Entry point of the program."
+  (let* ((options-spec '((user          (single-char #\u) (value #t))
+                         (port          (single-char #\p) (value #t))
+                         (repl-port     (single-char #\P) (value #t))
+                         (help          (single-char #\h) (value #f))))
+         (options      (getopt-long args options-spec))
+         (user         (option-ref options 'user      (getenv "USER")))
+         (port         (option-ref options 'port      "22"))
+         (repl-port    (option-ref options 'repl-port "37146"))
+         (help-needed? (option-ref options 'help      #f))
+         (args         (option-ref options '()        #f)))
+
+    (and (or help-needed?
+             (not args)
+             (null? args))
+        (print-help-and-exit))
+
+    (let* ((host (car args))
+           (s (make-session #:user user
+                            #:host host
+                            #:port (string->number port)
+                            #:log-verbosity 'nolog)))
+      (connect! s)
+      (userauth-agent! s)
+      (rrepl (make-node s (string->number repl-port)))
+      (exit 0))))
+
+;;; rrepl.scm ends here.

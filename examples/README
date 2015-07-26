@@ -37,5 +37,6 @@ Implementation of an SSH based echo protocol ([[https://tools.ietf.org/html/rfc8
 Please find sources in =echo/= directory:
  - echo/client.scm
  - echo/server.scm
-
-
+* RREPL
+  A demo program that allows to connect to a remote REPL (RREPL) server.  Pass
+  =--help= (or =-h=) flag to the program to get usage information.
