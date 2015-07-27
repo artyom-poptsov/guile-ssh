@@ -40,6 +40,7 @@
 ;;; Code:
 
 (define-module (ssh dist)
+  #:use-module (ice-9 rdelim)
   #:use-module (ice-9 receive)
   #:use-module (ice-9 threads)
   #:use-module (srfi srfi-1)
@@ -112,13 +113,25 @@ from the RREPL."
               rrepl-id language module))
     (while #t
       (let ((exp (read)))
-        (if (equal? exp '(unquote rq))
-            (break)
+        (format #t "~%DEBUG: expression: ~a~%" exp)
+        (cond
+         ((equal? exp '(unquote rq))
+          (break))
+         ((equal? (car exp) 'unquote)
+          (let ((args (read-line)))
             (receive (result result-num module language)
-                (rrepl-eval repl-channel exp)
+                (rrepl-eval repl-channel
+                            (format #f ",~a ~a"
+                                    (cadr exp) args))
               (format #t "$~a = ~a~%~a ~a@~a> "
                       result-num result
-                      rrepl-id language module)))))))
+                      rrepl-id language module))))
+         (else
+          (receive (result result-num module language)
+              (rrepl-eval repl-channel exp)
+            (format #t "$~a = ~a~%~a ~a@~a> "
+                    result-num result
+                    rrepl-id language module))))))))
 
 ;;; dist.scm ends here
 
