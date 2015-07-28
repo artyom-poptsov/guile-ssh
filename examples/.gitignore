@@ -1,6 +1,7 @@
 # -*- shell-script -*-
 
 # Ignore automatically generated files:
+rrepl.scm
 sssh.scm
 ssshd.scm
 echo/client.scm
