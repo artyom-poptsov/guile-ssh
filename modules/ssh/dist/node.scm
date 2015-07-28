@@ -140,9 +140,9 @@ value is unspecified."
   (make-regexp "^(.*)@(.*)> "))
 
 (define (rrepl-get-result repl-channel)
-  "Get result of evaluation form REPL-CHANNEL, return two values: the number
-of evaluation and the evaluation result.  Throw 'node-repl-error' on an
-error."
+  "Get result of evaluation form REPL-CHANNEL, return four values: an
+evaluation result, a number of the evaluation, a module name and a language
+name.  Throw 'node-repl-error' on an error."
   (let ((result (read-line repl-channel)))
     (if (string-null? result)
         (rrepl-get-result repl-channel)

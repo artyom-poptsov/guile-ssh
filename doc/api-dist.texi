@@ -86,15 +86,17 @@ Open a remote REPL (RREPL).  Return a new RREPL channel.
 @end deffn
 
 @deffn {Scheme Procedure} node-eval node quoted-exp
-Evaluate a @var{quoted-exp} on a @var{node} and return the result of
-evaluation.  Throw @code{node-repl-error} if a non-recoverable error occured,
-or @code{node-error} if the evaluation potentially could be succesfully
-evaluated on another node.
+Evaluate a @var{quoted-exp} on a @var{node} and return four values: an
+evaluation result, a number of the evaluation, a module name and a language
+name.  Throw @code{node-repl-error} if a non-recoverable error occured, or
+@code{node-error} if the evaluation potentially could be succesfully evaluated
+on another node.
 @end deffn
 
 @deffn {Scheme Procedure} rrepl-eval rrepl-channel expr
-Evaluate expression @var{expr} using @var{rrepl-channel}, return the result of
-evaluation.
+Evaluate expression @var{expr} using @var{rrepl-channel}, return four values:
+an evaluation result, a number of the evaluation, a module name and a language
+name.  Throw @code{node-repl-error} on an error.
 @end deffn
 
 @deffn {Scheme Procedure} rrepl-skip-to-prompt rrepl-channel
