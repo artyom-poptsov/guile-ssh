@@ -40,8 +40,7 @@
   (display "\
 Usage: rrepl.scm [options] <host>
 
-Connect to a remote REPL (RREPL) using an ssh-agent for authentication.  You
-can disconnect from the remote REPL by typing ',rq' into the REPL.
+Connect to a remote REPL (RREPL) using an ssh-agent for authentication.
 
 Options:
   --user, -u <user>       User name.
