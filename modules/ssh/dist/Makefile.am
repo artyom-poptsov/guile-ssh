@@ -46,8 +46,8 @@ guilec_warnings =				\
   -Wunused-variable -Wunused-toplevel
 
 guilec_opts = 					\
-	--load-path=$(abs_srcdir)		\
-	--load-path=$(abs_builddir)		\
+	--load-path=$(abs_srcdir)/modules	\
+	--load-path=$(abs_builddir)/modules	\
 	--target=$(host)			\
 	$(guilec_warnings)
 
