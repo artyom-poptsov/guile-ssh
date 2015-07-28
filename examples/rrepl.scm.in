@@ -32,8 +32,7 @@
 (use-modules (ice-9 getopt-long)
              (ssh session)
              (ssh auth)
-             (ssh dist)
-             (ssh dist node))
+             (ssh dist))
 
 (define (print-help-and-exit)
   "Print information about program usage."
