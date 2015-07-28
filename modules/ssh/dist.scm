@@ -46,6 +46,7 @@
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
   #:use-module (ssh session)
+  #:use-module (ssh channel)
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
   #:re-export (node? node-session node-repl-port make-node)
@@ -97,41 +98,16 @@ computation."
 
 
 (define (rrepl node)
-  "Start a remote REPL (RREPL) session using NODE.  Enter ',rq' to disconnect
-from the RREPL."
-  (let* ((s            (node-session node))
-         (user         (session-get s 'user))
-         (host         (session-get s 'host))
-         (port         (session-get s 'port))
-         (repl-port    (node-repl-port node))
-         (repl-channel (node-open-rrepl node))
-         (rrepl-id     (format #f "~a@~a:~a/~a" user host port repl-port)))
-    (rrepl-skip-to-prompt repl-channel)
-    (receive (result result-num module language)
-        (rrepl-eval repl-channel '#t)
-      (format #t "~a ~a@~a> "
-              rrepl-id language module))
-    (while #t
-      (let ((exp (read)))
-        (format #t "~%DEBUG: expression: ~a~%" exp)
-        (cond
-         ((equal? exp '(unquote rq))
-          (break))
-         ((equal? (car exp) 'unquote)
-          (let ((args (read-line)))
-            (receive (result result-num module language)
-                (rrepl-eval repl-channel
-                            (format #f ",~a ~a"
-                                    (cadr exp) args))
-              (format #t "$~a = ~a~%~a ~a@~a> "
-                      result-num result
-                      rrepl-id language module))))
-         (else
-          (receive (result result-num module language)
-              (rrepl-eval repl-channel exp)
-            (format #t "$~a = ~a~%~a ~a@~a> "
-                    result-num result
-                    rrepl-id language module))))))))
+  "Start a remote REPL (RREPL) session using NODE."
+  (let ((repl-channel (node-open-rrepl node)))
+    (while (channel-open? repl-channel)
+      (cond
+       ((and (channel-open? repl-channel) (char-ready? repl-channel))
+        (display (read-char repl-channel)))
+       ((and (channel-open? repl-channel) (char-ready? (current-input-port)))
+        (display (read-char (current-input-port)) repl-channel))
+       (else
+        (usleep 5000))))))
 
 ;;; dist.scm ends here
 

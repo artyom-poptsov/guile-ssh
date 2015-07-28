@@ -34,8 +34,7 @@ unbound variable) then execution of a job stops immediately.
 @end deffn
 
 @deffn {Scheme Procedure} rrepl node
-Start a remote REPL (RREPL) session using @var{node}.  Enter @code{,rq} to
-disconnect from the RREPL.
+Start a remote REPL (RREPL) session using @var{node}.
 @end deffn
 
 @subsection Low-level API
