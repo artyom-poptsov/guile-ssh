@@ -382,6 +382,9 @@ you can implement an RPC call using @code{call-with-ssh-forward}:
     (lambda (socket)
       (RPC-PROGRAM-proc some-data #x123 socket))))
 @end lisp
+
+The full example of an RPC client that uses a SSH tunnel is in
+@file{$prefix/share/guile-ssh/examples/rpc} directory.
 @end deffn
 
 @subsection Example

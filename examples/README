@@ -40,3 +40,6 @@ Please find sources in =echo/= directory:
 * RREPL
   A demo program that allows to connect to a remote REPL (RREPL) server.  Pass
   =--help= (or =-h=) flag to the program to get usage information.
+* RPC over SSH
+  A demo RPC client program that uses an SSH tunnel to make an RPC call over a
+  secure connection.  See =rpc/= directory.

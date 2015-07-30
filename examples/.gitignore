@@ -6,4 +6,6 @@ sssh.scm
 ssshd.scm
 echo/client.scm
 echo/server.scm
+rpc/client.scm
+rpc/server.scm
 Makefile.in

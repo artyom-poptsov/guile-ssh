@@ -1,0 +1,71 @@
+#!@GUILE@ \
+-e main
+!#
+
+;;; server.scm -- An simple RPC server.
+
+;; Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;;
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see
+;; <http://www.gnu.org/licenses/>.
+
+
+;;; Commentary:
+
+;; A simple RPC server.
+;;
+;; The code for the server is taken from Guile-RPC documentation.
+
+
+;;; Code:
+
+
+;; Taken from Guile-RPC examples.
+
+(use-modules (rpc rpc server)
+             (rpc xdr)
+             (rpc xdr types))
+
+(define (split-number-handler number)
+  ;; Handle a `split-number' request.
+  (let* ((int (floor number))
+         (dec (floor (* 1000 (- number int)))))
+    (list (inexact->exact int)
+          (inexact->exact dec))))
+
+(define result-type
+  (make-xdr-struct-type (list xdr-integer             ;; `integer_part'
+                              xdr-unsigned-integer))) ;; `decimal_part'
+
+(define my-rpc-program
+  ;; Define our RPC program.
+  (let* ((proc    (make-rpc-procedure 1 xdr-double result-type
+                                      split-number-handler))
+         (version (make-rpc-program-version 0 (list proc))))
+    (make-rpc-program 80000 (list version))))
+
+(define (main args)
+  "Entry point of the program."
+  (let ((server-socket (socket PF_INET SOCK_STREAM 0)))
+    (bind server-socket AF_INET INADDR_LOOPBACK 6666)
+    (listen server-socket 1024)
+
+    ;; Go ahead and serve requests.
+    (run-stream-rpc-server (list (cons server-socket my-rpc-program))
+                           1000000 ;; a one-second timeout
+                           #f      ;; we don't care about closed connections
+                           (lambda () ;; our idle thunk
+                             (format #t "one second passed~%")))))
+
+;;; server.scm ends here.
