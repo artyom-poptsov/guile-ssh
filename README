@@ -63,6 +63,10 @@ Examples, in =${prefix}/share/guile-ssh/examples=:
  + echo/
    - client.scm -- Echo client example.
    - server.scm -- Echo server example.
+ + rpc/
+   - client.scm -- A simple Guile-RPC client that makes an RPC call over
+     Guile-SSH tunnel.
+   - server.scm -- A simple Guile-RPC server.
 
 * Installation
 
