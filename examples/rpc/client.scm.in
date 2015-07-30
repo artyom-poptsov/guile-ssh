@@ -93,7 +93,7 @@ Options:
       (let ((tunnel  (make-tunnel session
                                   #:port 12345
                                   ;; Guile-RPC server listens on localhost.
-                                  #:host "127.0.0.1" ;
+                                  #:host "127.0.0.1"
                                   ;; Guile-RPC server port.
                                   #:host-port 6666)))
         ;; Make an RPC call using the SSH tunnel.
