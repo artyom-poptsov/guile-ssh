@@ -9,10 +9,16 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 * Unreleased
 ** Implement port forwarding
+** Add distributed forms
 ** New module: (ssh tunnel)
+   The module provides hi-level procedures for SSH tunneling.
 ** New module: (ssh dist)
+   The module provides distributed forms of 'map' and 'eval', as well as
+   remote REPL (RREPL) implementation.
 ** New module: (ssh dist job)
+   Low-level API for distributed jobs.
 ** New module: (ssh dist node)
+   Low-level API for distributed nodes.
 ** New procedure 'channel-accept-forward' in (ssh channel)
 ** New procedure 'channel-listen-forward' in (ssh channel)
 ** Remove 'channel-open-forward/reverse' procedure from (ssh channel)
