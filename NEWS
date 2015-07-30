@@ -16,6 +16,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New procedure 'channel-accept-forward' in (ssh channel)
 ** New procedure 'channel-listen-forward' in (ssh channel)
 ** Remove 'channel-open-forward/reverse' procedure from (ssh channel)
+** Add an RPC client example
+   Add an example program that does an RPC call over a secure channel using
+   a Guile-SSH tunnel.  See 'examples/rpc' directory.
 ** Update documentation
 
 * Changes in version 0.7.2 (2015-02-24)
