@@ -82,3 +82,9 @@ older Automake version such as 1.11).
 Guile's default path.  But, if you don't know where your Guile site
 directory is, run =configure= without the option, and it will give you
 a suggestion.
+
+* Usage
+Please see the documentation in Info format for API documentation and usage
+examples -- you can open it by typing =info guile-ssh= in the shell, or using
+=C-h i m guile-ssh RET= combo in Emacs.  Also take a look on examples in the
+=examples= directory.
