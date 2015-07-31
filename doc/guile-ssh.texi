@@ -93,7 +93,7 @@ Guile-SSH depends on the following packages:
 
 @itemize
 @item @url{https://www.gnu.org/software/guile/, GNU Guile}, 2.0
-@item @url{http://www.libssh.org/, libssh}, 0.6.3 or 0.6.4
+@item @url{http://www.libssh.org/, libssh}, 0.6.3, 0.6.4 or 0.6.5
 @end itemize
 
 Please @strong{note} that you need
