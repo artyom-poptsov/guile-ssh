@@ -698,32 +698,33 @@ CLIENT-PROC call."
      ;; server
      (lambda (server)
        (let ((pid (primitive-fork)))
-         ;; Guile-SSH server
-         (when (zero? pid)
-           (start-server/dt-test server
-                                 (lambda (channel)
-                                   (write-line (read-line channel) channel))))
+         (if (zero? pid)
+             ;; Guile-SSH server
+             (start-server/dt-test server
+                                   (lambda (channel)
+                                     (write-line (read-line channel) channel)))
          ;; call/pf process
-         (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
-         (let* ((session     (make-session/channel-test))
-                (local-port  12345)
-                (remote-host "www.example.org")
-                (tunnel      (make-tunnel session
-                                          #:port local-port
-                                          #:host remote-host))
-                (str         "hello world")
-                (result (call-with-ssh-forward tunnel
-                                               (lambda (sock)
-                                                 (write-line str sock)
-                                                 (while (not (char-ready? sock)))
-                                                 (read-line sock))))
-                (call-pf-sock (socket PF_UNIX SOCK_STREAM 0)))
-           (bind call-pf-sock AF_UNIX sock-path)
-           (listen call-pf-sock 1)
-           (let ((client (car (accept call-pf-sock))))
-             (write-line result client)
-             (sleep 10)
-             (close client)))))
+             (begin
+               (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
+               (let* ((session     (make-session/channel-test))
+                      (local-port  12345)
+                      (remote-host "www.example.org")
+                      (tunnel      (make-tunnel session
+                                                #:port local-port
+                                                #:host remote-host))
+                      (str         "hello world")
+                      (result (call-with-ssh-forward tunnel
+                                                     (lambda (sock)
+                                                       (write-line str sock)
+                                                       (while (not (char-ready? sock)))
+                                                       (read-line sock))))
+                      (call-pf-sock (socket PF_UNIX SOCK_STREAM 0)))
+                 (bind call-pf-sock AF_UNIX sock-path)
+                 (listen call-pf-sock 1)
+                 (let ((client (car (accept call-pf-sock))))
+                   (write-line result client)
+                   (sleep 10)
+                   (close client)))))))
 
      ;; client
      (lambda ()
