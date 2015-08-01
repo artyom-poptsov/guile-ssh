@@ -703,7 +703,7 @@ CLIENT-PROC call."
              (start-server/dt-test server
                                    (lambda (channel)
                                      (write-line (read-line channel) channel)))
-         ;; call/pf process
+             ;; call/pf process
              (begin
                (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
                (let* ((session     (make-session/channel-test))
