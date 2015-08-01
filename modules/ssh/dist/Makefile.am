@@ -54,7 +54,7 @@ guilec_opts = 					\
 # TODO: Move environment setup to a separate file.
 guilec_env  = 									\
 	GUILE_AUTO_COMPILE=0 							\
-	LD_LIBRARY_PATH="$(abs_top_builddir)/ssh/.libs/:${LD_LIBRARY_PATH}"	\
+	LD_LIBRARY_PATH="$(abs_top_builddir)/libguile-ssh/.libs/:${LD_LIBRARY_PATH}"	\
 	GUILE_LOAD_PATH="$(abs_top_srcdir)/modules"				\
 	GUILE_LOAD_COMPILED_PATH="$(builddir)/ssh:$$GUILE_LOAD_COMPILED_PATH"
 
