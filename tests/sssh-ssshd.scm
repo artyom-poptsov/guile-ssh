@@ -54,7 +54,7 @@
    " " (inet-ntoa *srv-address*)
    " '" *test-cmd* "'"))
 
-(setenv "GUILE_LOAD_PATH" *topdir*)
+(setenv "GUILE_LOAD_PATH" (string-append *topdir* "/modules"))
 
 ;; We must unset `SSH_AUTH_SOCK' to prevent sssh from asking SSH agent
 ;; (if it is present) for keys.
