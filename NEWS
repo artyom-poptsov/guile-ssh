@@ -10,6 +10,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 * Unreleased
 ** Implement port forwarding
 ** Add distributed forms
+** Require libssh 0.6.4 or 0.6.5
 ** New module: (ssh tunnel)
    The module provides hi-level procedures for SSH tunneling.
 ** New module: (ssh dist)
