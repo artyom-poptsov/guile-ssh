@@ -7,7 +7,7 @@ underlying [[http://www.libssh.org/][libssh]] library.
 * Requirements
 
  - [[https://www.gnu.org/software/guile/][GNU Guile]] 2.0.x
- - [[http://www.libssh.org/][libssh]] 0.6.3, 0.6.4 or 0.6.5
+ - [[http://www.libssh.org/][libssh]] 0.6.4 or 0.6.5
 
 * Distribution
 
