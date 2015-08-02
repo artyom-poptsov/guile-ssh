@@ -88,7 +88,8 @@ CLIENT-PROC call."
           (lambda ()
             (set-log-userdata! (string-append (get-log-userdata) " (server)"))
             (server-set! server 'log-verbosity 'rare)
-            (server-proc server))
+            (server-proc server)
+            (primitive-exit 0))
           (lambda ()
             (primitive-exit 1)))
         ;; client
