@@ -242,7 +242,6 @@ procedure that always returns #f is used instead."
         (tunnel-listen-forward tunnel)
         (main-loop/reverse tunnel idle-proc))
       (let ((sock (socket PF_INET SOCK_STREAM 0)))
-        (setsockopt sock SOL_SOCKET SO_REUSEADDR 1) ; DEBUG
         (bind sock AF_INET (inet-pton AF_INET (tunnel-bind-address tunnel))
               (tunnel-port tunnel))
         (listen sock 10)
