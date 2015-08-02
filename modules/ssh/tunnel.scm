@@ -266,9 +266,12 @@ Return the result the PROC call."
         (lambda args
           (sleep 1))))
 
-    (let ((result (proc sock)))
-      (close-port sock)
-      (cancel-thread thread)
-      result)))
+    (dynamic-wind
+      (const #f)
+      (lambda ()
+        (proc sock))
+      (lambda ()
+        (close-port sock)
+        (cancel-thread thread)))))
 
 ;;; tunnel.scm ends here.
