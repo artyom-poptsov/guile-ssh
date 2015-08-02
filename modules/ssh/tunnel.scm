@@ -258,8 +258,14 @@ Return the result the PROC call."
                  (lambda ()
                    (start-forward tunnel)))))
 
-    (connect sock AF_INET (inet-pton AF_INET (tunnel-bind-address tunnel))
-             (tunnel-port tunnel))
+    (while #t
+      (catch #t
+        (lambda ()
+          (connect sock AF_INET (inet-pton AF_INET (tunnel-bind-address tunnel))
+                   (tunnel-port tunnel))
+          (break))
+        (lambda args
+          (sleep 1))))
 
     (let ((result (proc sock)))
       (close-port sock)
