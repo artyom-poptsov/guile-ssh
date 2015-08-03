@@ -90,7 +90,7 @@ changed to a NODE."
            (number->string (object-address job) 16))))
 
 (define (job->sexp job)
-  "Convert a JOB to a analogous symbolic expression."
+  "Convert a JOB to an equivalent symbolic expression."
   (case (job-type job)
     ((map)
      `(map ,(job-proc job) ',(job-data job)))

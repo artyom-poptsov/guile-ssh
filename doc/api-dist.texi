@@ -205,7 +205,7 @@ Hand out @var{job} to the assigned node and return the result of computation.
 @end deffn
 
 @deffn {Scheme Procedure} job->sexp job
-Convert a @var{job} to an analogous symbolic expression.
+Convert a @var{job} to an equivalent symbolic expression.
 @end deffn
 
 @c Local Variables:
