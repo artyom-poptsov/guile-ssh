@@ -17,7 +17,7 @@ daemon and a GNU Guile REPL server both running on the remote host.
 Node management procedures:
 
 @deffn {Scheme Procedure} make-node session [repl-port=37146]
-Make a new node that uses an SSH @var{session} to connec to a @var{repl-port}
+Make a new node that uses an SSH @var{session} to connect to a @var{repl-port}
 number on the remote side.  Return a new node.
 @end deffn
 
