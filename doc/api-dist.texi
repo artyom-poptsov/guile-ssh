@@ -33,6 +33,26 @@ non-recoverable (eg. when evaluation of @var{proc} on a node failed due to an
 unbound variable) then execution of a job stops immediately.
 @end deffn
 
+@deffn {Scheme Procedure} with-ssh node exp ...
+Evaluate expressions on a remote REPL using a @var{node}, return four values:
+an evaluation result, a number of the evaluation, a module name and a language
+name.  Throw @code{node-error} or @code{node-repl-error} on an error.
+
+Example:
+@lisp
+(use-modules (ssh session)
+             (ssh auth)
+             (ssh dist))
+
+(let ((session (make-session #:user "alice" #:host "127.0.0.1")))
+  (connect! session)
+  (userauth-agent! session)
+  (display (with-ssh (make-node session)
+             (gethostname)))
+  (newline))
+@end lisp
+@end deffn
+
 @deffn {Scheme Procedure} rrepl node
 Start a remote REPL (RREPL) session using @var{node}.
 @end deffn

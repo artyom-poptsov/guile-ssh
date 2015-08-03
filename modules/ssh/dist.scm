@@ -27,6 +27,7 @@
 ;; The module exports:
 ;;   distribute
 ;;   dist-map
+;;   with-ssh
 ;;   rrepl
 ;;   make-node
 ;;   node?
@@ -50,7 +51,7 @@
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
   #:re-export (node? node-session node-repl-port make-node)
-  #:export (distribute dist-map rrepl))
+  #:export (distribute dist-map with-ssh rrepl))
 
 
 (define (flatten-1 lst)
@@ -60,6 +61,7 @@
 (define (warning fmt . args)
   (apply format (current-error-port) (string-append "WARNING: " fmt) args))
 
+
 (define (execute-job nodes job)
   "Execute a JOB, handle errors."
   (catch 'node-error
@@ -95,6 +97,13 @@ nearly equal parts and hand out resulting jobs to NODES.  Return the result of
 computation."
   (let ((jobs (assign-map nodes lst (quote proc))))
     (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>) jobs))))
+
+
+(define-syntax-rule (with-ssh node exp ...)
+  "Evaluate expressions on a remote REPL using a NODE, return four values: an
+evaluation result, a number of the evaluation, a module name and a language
+name.  Throw 'node-error' or 'node-repl-error' on an error."
+  (node-eval node (quote (begin exp ...))))
 
 
 (define (rrepl node)
