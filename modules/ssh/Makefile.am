@@ -70,6 +70,7 @@ CLEANFILES = $(GOBJECTS)
 
 # Handy way to remove the .go files without removing all the rest.
 clean-go:
+	@cd dist; make clean-go
 	-$(RM) -f $(GOBJECTS)
 .PHONY: clean-go
 

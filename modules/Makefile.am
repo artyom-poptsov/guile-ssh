@@ -21,4 +21,8 @@ EXTRA_DIST = \
 	srfi/srfi-64.scm		\
 	srfi/srfi-64.upstream.scm
 
+clean-go:
+	@cd ssh; make clean-go
+.PHONY: clean-go
+
 ## Makefile.am ends here.

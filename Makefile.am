@@ -37,7 +37,7 @@ dist-hook: gen-ChangeLog
 .PHONY: gen-ChangeLog
 
 clean-go:
-	@cd ssh; make clean-go
+	@cd modules; make clean-go
 .PHONY: clean-go
 
 ## Makefile.am ends here
