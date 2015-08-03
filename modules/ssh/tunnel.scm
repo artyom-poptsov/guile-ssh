@@ -28,6 +28,7 @@
 
 (define-module (ssh tunnel)
   #:use-module (rnrs io ports)
+  #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (ice-9 receive)
   #:use-module (rnrs bytevectors)
@@ -51,7 +52,7 @@
 
 ;;; Tunnel type
 
-(define-immutable-record-type <tunnel>
+(define-record-type <tunnel>
   (%make-tunnel session timeout bind-address port
                 host host-port reverse?)
   tunnel?

@@ -48,6 +48,7 @@
 (define-module (ssh dist job)
   #:use-module (ice-9 receive)
   #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-26)
   #:use-module (ssh dist node)
@@ -67,13 +68,18 @@
             split))
 
 
-(define-immutable-record-type <job>
+(define-record-type <job>
   (make-job type node data proc)
   job?
   (type job-type)
-  (node job-node set-job-node)
+  (node job-node)
   (data job-data)
   (proc job-proc))
+
+(define (set-job-node job node)
+  "A functional setter that returns a new copy of JOB with the node field
+changed to a NODE."
+  (make-job (job-type job) node (job-data job) (job-proc job)))
 
 (set-record-type-printer!
  <job>

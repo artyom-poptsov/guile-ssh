@@ -49,6 +49,7 @@
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 regex)
   #:use-module (ice-9 receive)
+  #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-9 gnu)
   #:use-module (ssh session)
   #:use-module (ssh session)
@@ -79,7 +80,7 @@
 
 ;;; Node type
 
-(define-immutable-record-type <node>
+(define-record-type <node>
   (%make-node tunnel repl-port)
   node?
   (tunnel node-tunnel)
