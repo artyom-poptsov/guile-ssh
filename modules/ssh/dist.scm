@@ -89,16 +89,16 @@
 
 (define-syntax-rule (distribute nodes expr ...)
   "Evaluate each EXPR in parallel, using distributed computation.  Split the
-job to nearly equal parts and hand out each of resulting sub-jobs to NODES.
-Return the results of N expressions as a set of N multiple values."
+job to nearly equal parts and hand out each of resulting sub-jobs to a NODES
+list.  Return the results of N expressions as a set of N multiple values."
   (let ((jobs (assign-eval nodes (list (quote expr) ...))))
     (apply values (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>)
                                         jobs)))))
 
 (define-syntax-rule (dist-map nodes proc lst)
   "Do list mapping using distributed computation.  The job is splitted to
-nearly equal parts and hand out resulting jobs to NODES.  Return the result of
-computation."
+nearly equal parts and hand out resulting jobs to a NODES list.  Return the
+result of computation."
   (let ((jobs (assign-map nodes lst (quote proc))))
     (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>) jobs))))
 
