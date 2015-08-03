@@ -11,6 +11,30 @@
 The @code{(ssh dist)} module provides the spirit of distributed computing for
 Guile.
 
+To make use of the procedures listed in this section you will need an SSH
+daemon and a GNU Guile REPL server both running on the remote host.
+
+Node management procedures:
+
+@deffn {Scheme Procedure} make-node session [repl-port=37146]
+Make a new node that uses an SSH @var{session} to connec to a @var{repl-port}
+number on the remote side.  Return a new node.
+@end deffn
+
+@deffn {Scheme Procedure} node? x
+Return @code{#t} if @var{x} is a node object, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} node-session node
+Get underlying SSH session from @var{node}.
+@end deffn
+
+@deffn {Scheme Procedure} node-repl-port node
+Get REPL port number from a @var{node}.
+@end deffn
+
+Interaction with remote REPLs:
+
 @deffn {Scheme Procedure} distribute nodes expr ...
 Evaluate each @var{expr} in parallel, using distributed computation.  Split
 the job to nearly equal parts and hand out each of resulting sub-jobs to
@@ -84,26 +108,8 @@ occured during execution of a job on a node's REPL -- eg. due to the malformed
 job.  Those errors are non-recoverable because if the job is broken it will
 likely fail on another nodes as well.
 
-@deffn {Scheme Procedure} make-node session [repl-port=37146]
-Make a new node that uses an SSH @var{session} to connec to a @var{repl-port}
-number on the remote side.  Return a new node.
-@end deffn
-
-@deffn {Scheme Procedure} node? x
-Return @code{#t} if @var{x} is a node object, @code{#f} otherwise.
-@end deffn
-
-@deffn {Scheme Procedure} node-session node
-Get underlying SSH session from @var{node}.
-@end deffn
-
-@deffn {Scheme Procedure} node-repl-port node
-Get REPL port number from a @var{node}.
-@end deffn
-
-@deffn {Scheme Procedure} node-open-rrepl node
-Open a remote REPL (RREPL).  Return a new RREPL channel.
-@end deffn
+In addition to @code{make-node}, @code{node?}, @code{node-session} and
+@code{node-repl-port} the module provides:
 
 @deffn {Scheme Procedure} node-eval node quoted-exp
 Evaluate a @var{quoted-exp} on a @var{node} and return four values: an
@@ -111,6 +117,10 @@ evaluation result, a number of the evaluation, a module name and a language
 name.  Throw @code{node-repl-error} if a non-recoverable error occured, or
 @code{node-error} if the evaluation potentially could be succesfully evaluated
 on another node.
+@end deffn
+
+@deffn {Scheme Procedure} node-open-rrepl node
+Open a remote REPL (RREPL).  Return a new RREPL channel.
 @end deffn
 
 @deffn {Scheme Procedure} rrepl-eval rrepl-channel expr
