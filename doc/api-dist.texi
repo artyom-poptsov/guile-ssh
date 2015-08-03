@@ -68,7 +68,7 @@ Example:
              (ssh auth)
              (ssh dist))
 
-(let ((session (make-session #:user "alice" #:host "127.0.0.1")))
+(let ((session (make-session #:user "alice" #:host "www.example.org")))
   (connect! session)
   (userauth-agent! session)
   (display (with-ssh (make-node session)
