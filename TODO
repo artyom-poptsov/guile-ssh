@@ -7,6 +7,9 @@
    in (ssh dist node)
 
 * Known Bugs
+** Tests
+   - 'client-server.scm' sometimes fails when 'make check' is called with
+     number of jobs > 1 (see '-j' flag).
 ** distributed forms
    - 'dist-map' sometimes failes during the job migration with the
      following error:
