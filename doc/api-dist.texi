@@ -78,7 +78,7 @@ Example:
 @end deffn
 
 @deffn {Scheme Procedure} rrepl node
-Start a remote REPL (RREPL) session using @var{node}.
+Start an interactive remote REPL (RREPL) session using @var{node}.
 @end deffn
 
 @subsection Low-level API

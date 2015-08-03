@@ -111,7 +111,7 @@ name.  Throw 'node-error' or 'node-repl-error' on an error."
 
 
 (define (rrepl node)
-  "Start a remote REPL (RREPL) session using NODE."
+  "Start an interactive remote REPL (RREPL) session using NODE."
   (let ((repl-channel (node-open-rrepl node)))
     (while (channel-open? repl-channel)
       (cond
