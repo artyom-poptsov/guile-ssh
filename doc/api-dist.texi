@@ -38,14 +38,14 @@ Interaction with remote REPLs:
 @deffn {Scheme Procedure} distribute nodes expr ...
 Evaluate each @var{expr} in parallel, using distributed computation.  Split
 the job to nearly equal parts and hand out each of resulting sub-jobs to
-@var{nodes}.  Return the results of N expressions as a set of N multiple
+@var{nodes} list.  Return the results of N expressions as a set of N multiple
 values (@pxref{Multiple Values,,, guile, The GNU Guile Reference Manual}).
 @end deffn
 
 @deffn {Scheme Procedure} dist-map nodes proc lst
 Do list mapping using distributed computation.  Split the work into nearly
-equal parts and hand out the resulting jobs to @var{nodes}.  Return the result
-of computation.
+equal parts and hand out the resulting jobs to @var{nodes} list.  Return the
+result of computation.
 
 If for some reason a job could not be executed on a node (for example, if
 connection to a remote REPL fails), @code{dist-map} transfers the job to
