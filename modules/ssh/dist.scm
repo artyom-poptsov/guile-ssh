@@ -54,6 +54,8 @@
   #:export (distribute dist-map with-ssh rrepl))
 
 
+;;; Helper procedures
+
 (define (flatten-1 lst)
   "Flatten a list LST one level down.  Return a flattened list."
   (fold-right append '() lst))
@@ -81,6 +83,8 @@
              (error "Could not execute a job" job))
         (warning "Passing a job ~a to a node ~a ...~%" job (car nodes))
         (execute-job nodes (set-job-node job (car nodes)))))))
+
+;;;
 
 
 (define-syntax-rule (distribute nodes expr ...)
