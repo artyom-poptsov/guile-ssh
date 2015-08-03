@@ -49,7 +49,7 @@ AC_ARG_WITH([guilesitedir],
 # -------------------------------------------------------------------------------
 
 PKG_CHECK_MODULES([GUILE_2], [guile-2.0])
-PKG_CHECK_MODULES([LIBSSH], [libssh >= 0.6.3])
+PKG_CHECK_MODULES([LIBSSH], [libssh >= 0.6.4])
 
 # -------------------------------------------------------------------------------
 
