@@ -185,7 +185,8 @@ name.  Throw 'node-repl-error' on an error."
   "Evaluate QUOTED-EXP using RREPL-CHANNEL, return four values: an evaluation
 result, a number of the evaluation, a module name and a language name.  Throw
 'node-repl-error' on an error."
-  (write-line quoted-exp rrepl-channel)
+  (write quoted-exp rrepl-channel)
+  (newline rrepl-channel)
   (write-line '(newline) rrepl-channel)
   (rrepl-get-result rrepl-channel))
 
