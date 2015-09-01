@@ -139,37 +139,47 @@ error."
 (define %repl-undefined-result-regexp
   (make-regexp "^(.*)@(.*)> "))
 
+;; Regexp for parsing an evaluation error.
+(define %repl-error-regexp
+  (make-regexp "^(.*)@(.*)> ERROR: .*"))
+
 (define (rrepl-get-result repl-channel)
   "Get result of evaluation form REPL-CHANNEL, return four values: an
 evaluation result, a number of the evaluation, a module name and a language
 name.  Throw 'node-repl-error' on an error."
+
+  (define (raise-repl-error result)
+    (let loop ((line   (read-line repl-channel))
+               (result result))
+      (if (or (eof-object? line) (string-null? line))
+          (node-repl-error "Evaluation failed" result)
+          (loop (read-line repl-channel)
+                (string-append result "\n" line)))))
+
   (let ((result (read-line repl-channel)))
     (if (string-null? result)
         (rrepl-get-result repl-channel)
-        (let ((match           (regexp-exec %repl-result-regexp result))
-              (match-undefined (regexp-exec %repl-undefined-result-regexp
-                                            result)))
+        (begin
           (cond
-           (match
-            (values
-             (call-with-input-string (match:substring match 4)
-               read)                               ; Result
-             (match:substring match 3)             ; # of evaluation
-             (match:substring match 2)             ; Module
-             (match:substring match 1)))           ; Language
-           (match-undefined
-            (values
-             *unspecified*                         ; Result
-             *unspecified*                         ; # of evaluation
-             (match:substring match-undefined 2)   ; Module
-             (match:substring match-undefined 1))) ; Language
+           ((regexp-exec %repl-result-regexp result) =>
+            (lambda (match)
+              (values
+               (call-with-input-string (match:substring match 4)
+                                       read)                               ; Result
+               (match:substring match 3)             ; # of evaluation
+               (match:substring match 2)             ; Module
+               (match:substring match 1))))          ; Language
+           ((regexp-exec %repl-error-regexp result) =>
+            (lambda (match) (raise-repl-error result)))
+           ((regexp-exec %repl-undefined-result-regexp result) =>
+            (lambda (match)
+              (values
+               *unspecified*                ; Result
+               *unspecified*                ; # of evaluation
+               (match:substring match 2)    ; Module
+               (match:substring match 1)))) ; Language
            (else
-            (let loop ((line   (read-line repl-channel))
-                       (result result))
-              (if (or (eof-object? line) (string-null? line))
-                  (node-repl-error "Evaluation failed" result)
-                  (loop (read-line repl-channel)
-                        (string-append result "\n" line))))))))))
+            (raise-repl-error result)))))))
 
 (define (rrepl-eval rrepl-channel quoted-exp)
   "Evaluate QUOTED-EXP using RREPL-CHANNEL, return four values: an evaluation
