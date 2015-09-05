@@ -78,7 +78,7 @@
       (call-with-input-string "scheme@(guile-user)> $0 = test"
                               rrepl-get-result)
     (and (eq?      result      'test)
-         (string=? eval-num    "0")
+         (=        eval-num    0)
          (string=? module-name "(guile-user)")
          (string=? lang        "scheme"))))
 

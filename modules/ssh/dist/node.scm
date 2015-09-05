@@ -166,7 +166,7 @@ name.  Throw 'node-repl-error' on an error."
               (values
                (call-with-input-string (match:substring match 4)
                                        read)                               ; Result
-               (match:substring match 3)             ; # of evaluation
+               (string->number (match:substring match 3)) ; # of evaluation
                (match:substring match 2)             ; Module
                (match:substring match 1))))          ; Language
            ((regexp-exec %repl-error-regexp result) =>
