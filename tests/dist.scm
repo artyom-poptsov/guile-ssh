@@ -104,6 +104,15 @@
       #f)
     (const #t)))
 
+(test-assert "rrepl-get-result, valid input, elisp"
+  (receive (result eval-num module-name lang)
+      (call-with-input-string "elisp@(guile-user)> $0 = #nil"
+                              rrepl-get-result)
+    (and (eq?      result      '#nil)
+         (=        eval-num    0)
+         (string=? module-name "(guile-user)")
+         (string=? lang        "elisp"))))
+
 ;;;
 
 
