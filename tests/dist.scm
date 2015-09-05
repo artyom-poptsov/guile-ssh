@@ -56,6 +56,20 @@
          (eq? (job-data j) data)
          (eq? (job-proc j) proc))))
 
+(test-assert "set-job-node"
+  (let* ((s    (make-session-for-test))
+         (n1   (make-node s))
+         (n2   (make-node s))
+         (data '())
+         (proc '(lambda (n) (1+ n)))
+         (j1   (make-job 'map n1 data proc))
+         (j2   (set-job-node j1 n2)))
+    (and (not (eq? j1 j2))
+         (eq? (job-type j1) (job-type j2))
+         (eq? (job-node j1) n1)
+         (eq? (job-node j2) n2)
+         (eq? (job-data j1) (job-data j2))
+         (eq? (job-proc j1) (job-proc j2)))))
 
 (test-end "dist")
 
