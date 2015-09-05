@@ -81,10 +81,11 @@
 ;;; Node type
 
 (define-record-type <node>
-  (%make-node tunnel repl-port)
+  (%make-node tunnel repl-port start-repl-server?)
   node?
   (tunnel node-tunnel)
-  (repl-port node-repl-port))
+  (repl-port node-repl-port)
+  (start-repl-server? node-start-repl-server?))
 
 (define (node-session node)
   "Get node session."
@@ -102,19 +103,45 @@
              (number->string (object-address node) 16)))))
 
 
-(define* (make-node session #:optional (repl-port 37146))
+(define* (make-node session #:optional (repl-port 37146)
+                    #:key (start-repl-server? #t))
   "Make a new distributed computing node."
   (let ((tunnel (make-tunnel session
                              #:port 0          ;Won't be used
                              #:host "localhost"
                              #:host-port repl-port)))
-    (%make-node tunnel repl-port)))
+    (%make-node tunnel repl-port start-repl-server?)))
 
 
 ;;; Remote REPL (RREPL)
 
+(define (rexec node cmd)
+  "Execute a command CMD on the remote side.  Return two values: the first
+line returned by CMD and its exit code."
+  (let* ((s (node-session node))
+         (c (make-channel s)))
+    (channel-open-session c)
+    (channel-request-exec c cmd)
+    (let ((line (read-line c))
+          (rc   (channel-get-exit-status c)))
+      (values line rc))))
+
+(define (rrepl-running? node)
+  "Check if RREPL is running on a NODE, return #t if it is running on an
+expected port and #f otherwise."
+  (receive (result rc)
+      (rexec node (format #f "pgrep --full 'guile --listen=~a'"
+                      (node-repl-port node)))
+    (zero? rc)))
+
 (define (node-open-rrepl node)
   "Open a RREPL.  Return a new RREPL channel."
+  (and (node-start-repl-server? node)
+       (not (rrepl-running? node))
+       (let* ((s (node-session node))
+              (c (make-channel s)))
+         (channel-open-session c)
+         (channel-request-exec c "guile --listen")))
   (tunnel-open-forward-channel (node-tunnel node)))
 
 (define (rrepl-skip-to-prompt repl-channel)
