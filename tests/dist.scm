@@ -98,11 +98,12 @@
 
 (test-assert "rrepl-get-result, valid input, error"
   (catch 'node-repl-error
-    (lambda ()
-      (call-with-input-string "scheme@(guile-user)> ERROR: error."
-                              rrepl-get-result)
-      #f)
-    (const #t)))
+         (lambda ()
+           (call-with-input-string "scheme@(guile-user)> ERROR: error."
+                                   rrepl-get-result)
+           #f)
+         (lambda (key . args)
+           (string=? (cadr args) "scheme@(guile-user)> ERROR: error."))))
 
 (test-assert "rrepl-get-result, valid input, elisp"
   (receive (result eval-num module-name lang)
