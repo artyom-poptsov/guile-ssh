@@ -26,22 +26,12 @@
 
 (test-begin "dist")
 
-(define %knownhosts (format #f "~a/tests/knownhosts"
-                            (getenv "abs_top_builddir")))
+;;; Load helper procedures
 
-(define addr   "127.0.0.1")
-(define port   12400)
+(define topdir (getenv "abs_top_srcdir"))
+(load (format #f "~a/tests/common.scm" topdir))
 
-
-(define (make-session-for-test)
-  "Make a session with predefined parameters for a test."
-  (make-session
-   #:host    addr
-   #:port    port
-   #:timeout 10        ;seconds
-   #:user    "bob"
-   #:knownhosts %knownhosts
-   #:log-verbosity 'rare))
+;;;
 
 
 (test-assert "make-node"
