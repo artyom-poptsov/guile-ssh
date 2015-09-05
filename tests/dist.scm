@@ -73,6 +73,11 @@
          (eq? (job-data j1) (job-data j2))
          (eq? (job-proc j1) (job-proc j2)))))
 
+
+;;; Testing of 'rrepl-get-result'.
+;; These test cases are intended to test various inputs for 'rrepl-get-result'
+;; procedure.
+
 (test-assert "rrepl-get-result, valid input, result"
   (receive (result eval-num module-name lang)
       (call-with-input-string "scheme@(guile-user)> $0 = test"
@@ -98,6 +103,8 @@
                               rrepl-get-result)
       #f)
     (const #t)))
+
+;;;
 
 
 (test-end "dist")
