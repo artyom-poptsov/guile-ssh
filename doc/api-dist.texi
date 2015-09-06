@@ -14,6 +14,13 @@ Guile.
 To make use of the procedures listed in this section you will need an SSH
 daemon and a GNU Guile REPL server both running on the remote host.
 
+Also note that currently there may be cases in which distributed procedures
+may fail to (de)serialise data; namely @code{make-vector} is one of such
+procedures which output may be troublesome for @code{with-ssh}.  To overcome
+this specific case one could pass the @code{fill} argument to
+@code{make-vector} to fill the newly created vector with the specified filling
+instead of @code{#<unspecified>}.
+
 Node management procedures:
 
 @deffn {Scheme Procedure} make-node session [repl-port=37146]
@@ -75,6 +82,29 @@ Example:
              (gethostname)))
   (newline))
 @end lisp
+
+If an expression is evaluated to multiple values then the 1st value returned
+by @code{with-ssh} will be a vector of the evaluated values and the 2nd value
+will be a vector of evaluation numbers.  In this case the 2nd value can be
+used to check whether @code{with-ssh} body evaluated to multiple values or
+not.  For example:
+
+@lisp
+(use-modules (ssh session)
+             (ssh auth)
+             (ssh dist))
+
+(let ((session (make-session #:user "alice" #:host "www.example.org")))
+  (connect! session)
+  (userauth-agent! session)
+  (with-ssh (make-node session)
+    (values 1 2)))
+=> #(1 2)
+=> #(39 40)
+=> "(guile-user)"
+=> "scheme"
+@end lisp
+
 @end deffn
 
 @deffn {Scheme Procedure} rrepl node

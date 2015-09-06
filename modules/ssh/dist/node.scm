@@ -161,6 +161,11 @@ error."
 (define %repl-result-regexp
   (make-regexp "^(.*)@(.*)> \\$([0-9]+) = (.*)"))
 
+;; Regexp for parsing a result of evaluation of an expression that returns
+;; multiple values.
+(define %repl-result-2-regexp
+  (make-regexp "^\\$([0-9]+) = (.*)"))
+
 ;; Regexp for parsing a result of evaluation of an expression which return
 ;; value is unspecified.
 (define %repl-undefined-result-regexp
@@ -183,6 +188,42 @@ name.  Throw 'node-repl-error' on an error."
           (loop (read-line repl-channel)
                 (string-append result "\n" line)))))
 
+  (define (read-result match)
+    (let ((matches
+           (let loop ((line    (read-line repl-channel))
+                      (matches (list match)))
+             (if (or (eof-object? line) (string-null? line)
+                     (regexp-exec %repl-undefined-result-regexp line))
+                 (reverse matches)
+                 (loop (read-line repl-channel)
+                       (cons (regexp-exec %repl-result-2-regexp line) matches))))))
+      (let ((len (length matches)))
+        (if (= len 1)
+            (let ((m (car matches)))
+              (values (call-with-input-string (match:substring m 4)
+                                              read)
+                      (string->number (match:substring m 3))))
+            (let ((rv (make-vector len))
+                  (nv (make-vector len)))
+              (vector-set! rv 0
+                           (call-with-input-string (match:substring (car matches)
+                                                                    4)
+                                                   read))
+              (vector-set! nv 0
+                           (string->number (match:substring (car matches) 3)))
+              (do ((i 1 (1+ i)))
+                  ((= i len))
+                (vector-set! rv i
+                             (call-with-input-string
+                              (match:substring (list-ref matches i)
+                                               2)
+                              read))
+                (vector-set! nv i
+                             (string->number (match:substring (list-ref matches
+                                                                        i)
+                                                              1))))
+              (values rv nv))))))
+
   (let ((result (read-line repl-channel)))
     (if (string-null? result)
         (rrepl-get-result repl-channel)
@@ -190,12 +231,13 @@ name.  Throw 'node-repl-error' on an error."
           (cond
            ((regexp-exec %repl-result-regexp result) =>
             (lambda (match)
-              (values
-               (call-with-input-string (match:substring match 4)
-                                       read)                               ; Result
-               (match:substring match 3)             ; # of evaluation
-               (match:substring match 2)             ; Module
-               (match:substring match 1))))          ; Language
+              (receive (result eval-num)
+                  (read-result match)
+                (values
+                 result                                ; Result
+                 eval-num                              ; # of evaluation
+                 (match:substring match 2)             ; Module
+                 (match:substring match 1)))))         ; Language
            ((regexp-exec %repl-error-regexp result) =>
             (lambda (match) (raise-repl-error result)))
            ((regexp-exec %repl-undefined-result-regexp result) =>

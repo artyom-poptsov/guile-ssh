@@ -18,11 +18,13 @@
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
 (use-modules (srfi srfi-64)
+             (ice-9 receive)
              (ssh  session)
              (ssh  key)
              (ssh  auth)
              (ssh  dist)
-             (ssh  dist job))
+             (ssh  dist job)
+             (ssh  dist node))
 
 (test-begin "dist")
 
@@ -70,6 +72,63 @@
          (eq? (job-node j2) n2)
          (eq? (job-data j1) (job-data j2))
          (eq? (job-proc j1) (job-proc j2)))))
+
+
+;;; Testing of 'rrepl-get-result'.
+;; These test cases are intended to test various inputs for 'rrepl-get-result'
+;; procedure.
+
+(test-assert "rrepl-get-result"
+  (receive (result eval-num module-name lang)
+      (call-with-input-string "scheme@(guile-user)> $0 = test"
+                              rrepl-get-result)
+    (and (eq?      result      'test)
+         (=        eval-num    0)
+         (string=? module-name "(guile-user)")
+         (string=? lang        "scheme"))))
+
+(test-assert "rrepl-get-result, unspecified"
+  (receive (result eval-num module-name lang)
+      (call-with-input-string "scheme@(guile-user)> "
+                              rrepl-get-result)
+    (and (eq?      result      *unspecified*)
+         (eq?      eval-num    *unspecified*)
+         (string=? module-name "(guile-user)")
+         (string=? lang        "scheme"))))
+
+(test-assert "rrepl-get-result, error"
+  (catch 'node-repl-error
+         (lambda ()
+           (call-with-input-string "scheme@(guile-user)> ERROR: error."
+                                   rrepl-get-result)
+           #f)
+         (lambda (key . args)
+           (string=? (cadr args) "scheme@(guile-user)> ERROR: error."))))
+
+(test-assert "rrepl-get-result, elisp"
+  (receive (result eval-num module-name lang)
+      (call-with-input-string "elisp@(guile-user)> $0 = #nil"
+                              rrepl-get-result)
+    (and (eq?      result      '#nil)
+         (=        eval-num    0)
+         (string=? module-name "(guile-user)")
+         (string=? lang        "elisp"))))
+
+(test-assert "rrepl-get-result, multiple values"
+  (receive (result eval-num module-name lang)
+      (call-with-input-string "scheme@(guile-user)> $0 = v1\n$1 = v2"
+                              rrepl-get-result)
+    (and (vector? eval-num)
+         (vector? result)
+         (eq?      (vector-ref result 0)   'v1)
+         (eq?      (vector-ref result 1)   'v2)
+         (=        (vector-ref eval-num 0) 0)
+         (=        (vector-ref eval-num 1) 1)
+         (string=? module-name "(guile-user)")
+         (string=? lang        "scheme"))))
+
+;;;
+
 
 (test-end "dist")
 
