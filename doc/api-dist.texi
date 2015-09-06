@@ -75,6 +75,29 @@ Example:
              (gethostname)))
   (newline))
 @end lisp
+
+If an expression is evaluated to multiple values then the 1st value returned
+by @code{with-ssh} will be a vector of the evaluated values and the 2nd value
+will be a vector of evaluation numbers.  In this case the 2nd value can be
+used to check whether @code{with-ssh} body evaluated to multiple values or
+not.  For example:
+
+@lisp
+(use-modules (ssh session)
+             (ssh auth)
+             (ssh dist))
+
+(let ((session (make-session #:user "alice" #:host "www.example.org")))
+  (connect! session)
+  (userauth-agent! session)
+  (with-ssh (make-node session)
+    (values 1 2)))
+=> #(1 2)
+=> #(39 40)
+=> $19 = "(guile-user)"
+=> $20 = "scheme"
+@end lisp
+
 @end deffn
 
 @deffn {Scheme Procedure} rrepl node

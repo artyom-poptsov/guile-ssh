@@ -114,6 +114,19 @@
          (string=? module-name "(guile-user)")
          (string=? lang        "elisp"))))
 
+(test-assert "rrepl-get-result, valid input, multiple values"
+  (receive (result eval-num module-name lang)
+      (call-with-input-string "scheme@(guile-user)> $0 = v1\n$1 = v2"
+                              rrepl-get-result)
+    (and (vector? eval-num)
+         (vector? result)
+         (eq?      (vector-ref result 0)   'v1)
+         (eq?      (vector-ref result 1)   'v2)
+         (=        (vector-ref eval-num 0) 0)
+         (=        (vector-ref eval-num 1) 1)
+         (string=? module-name "(guile-user)")
+         (string=? lang        "scheme"))))
+
 ;;;
 
 
