@@ -94,8 +94,8 @@ not.  For example:
     (values 1 2)))
 => #(1 2)
 => #(39 40)
-=> $19 = "(guile-user)"
-=> $20 = "scheme"
+=> "(guile-user)"
+=> "scheme"
 @end lisp
 
 @end deffn
