@@ -14,6 +14,13 @@ Guile.
 To make use of the procedures listed in this section you will need an SSH
 daemon and a GNU Guile REPL server both running on the remote host.
 
+Also note that currently there may be cases in which distributed procedures
+may fail to (de)serialise data; namely @code{make-vector} is one of such
+procedures which output may be troublesome for @code{with-ssh}.  To overcome
+this specific case one could pass the @code{fill} argument to
+@code{make-vector} to fill the newly created vector with the specified filling
+instead of @code{#<unspecified>}.
+
 Node management procedures:
 
 @deffn {Scheme Procedure} make-node session [repl-port=37146]
