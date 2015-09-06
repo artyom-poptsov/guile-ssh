@@ -78,7 +78,7 @@
 ;; These test cases are intended to test various inputs for 'rrepl-get-result'
 ;; procedure.
 
-(test-assert "rrepl-get-result, valid input, result"
+(test-assert "rrepl-get-result"
   (receive (result eval-num module-name lang)
       (call-with-input-string "scheme@(guile-user)> $0 = test"
                               rrepl-get-result)
@@ -87,7 +87,7 @@
          (string=? module-name "(guile-user)")
          (string=? lang        "scheme"))))
 
-(test-assert "rrepl-get-result, valid input, unspecified"
+(test-assert "rrepl-get-result, unspecified"
   (receive (result eval-num module-name lang)
       (call-with-input-string "scheme@(guile-user)> "
                               rrepl-get-result)
@@ -96,7 +96,7 @@
          (string=? module-name "(guile-user)")
          (string=? lang        "scheme"))))
 
-(test-assert "rrepl-get-result, valid input, error"
+(test-assert "rrepl-get-result, error"
   (catch 'node-repl-error
          (lambda ()
            (call-with-input-string "scheme@(guile-user)> ERROR: error."
@@ -105,7 +105,7 @@
          (lambda (key . args)
            (string=? (cadr args) "scheme@(guile-user)> ERROR: error."))))
 
-(test-assert "rrepl-get-result, valid input, elisp"
+(test-assert "rrepl-get-result, elisp"
   (receive (result eval-num module-name lang)
       (call-with-input-string "elisp@(guile-user)> $0 = #nil"
                               rrepl-get-result)
@@ -114,7 +114,7 @@
          (string=? module-name "(guile-user)")
          (string=? lang        "elisp"))))
 
-(test-assert "rrepl-get-result, valid input, multiple values"
+(test-assert "rrepl-get-result, multiple values"
   (receive (result eval-num module-name lang)
       (call-with-input-string "scheme@(guile-user)> $0 = v1\n$1 = v2"
                               rrepl-get-result)
