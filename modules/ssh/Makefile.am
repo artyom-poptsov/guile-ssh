@@ -22,7 +22,7 @@ SUBDIRS = dist
 SCM_SOURCES = \
 	auth.scm channel.scm key.scm session.scm	\
 	server.scm message.scm version.scm log.scm	\
-	tunnel.scm dist.scm
+	tunnel.scm dist.scm sftp.scm
 
 pkgguilesitedir = $(guilesitedir)/ssh
 
