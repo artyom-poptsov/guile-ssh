@@ -1,6 +1,4 @@
-/* sftp-session-main.c -- SFTP session initialization.
- *
- * Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -18,15 +16,14 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "sftp-session-type.h"
-#include "sftp-session-func.h"
+#ifndef __SFTP_SESSION_FUNC_H__
+#define __SFTP_SESSION_FUNC_H__
 
-void
-init_sftp_session (void)
-{
-  init_sftp_session_type ();
-  init_sftp_session_func ();
-  init_pthreads ();
-}
+extern SCM gssh_sftp_init (SCM sftp_session);
+extern SCM gssh_sftp_get_session (SCM sftp_session);
+extern SCM gssh_sftp_mkdir (SCM sftp_session, SCM dirname, SCM mode);
 
-/* sftp-session-main.c ends here. */
+
+extern void init_sftp_session_func (void);
+
+#endif /* ifndef __SFTP_SESSION_FUNC_H__ */
