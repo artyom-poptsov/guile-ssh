@@ -25,6 +25,8 @@
 #include "session-type.h"
 #include "sftp-session-type.h"
 
+scm_t_bits sftp_session_tag;    /* Smob tag. */
+
 
 /* GC callbacks. */
 
