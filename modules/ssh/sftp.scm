@@ -25,7 +25,8 @@
 (define-module (ssh sftp)
   #:export (sftp-session?
             make-sftp-session
-            sftp-get-session))
+            sftp-get-session
+            sftp-mkdir))
 
 (define (make-sftp-session session)
   "Make a new SFTP session using a SSH SESSION."
@@ -43,6 +44,12 @@ exception on an error, return value is undefined."
 (define (sftp-get-session sftp-session)
   "Get the parent SSH session for a SFTP-SESSION."
   (%gssh-sftp-get-session sftp-session))
+
+
+(define* (sftp-mkdir sftp-session dirname #:optional (mode (umask)))
+  "Create a directory DIRNAME using a SFTP-SESSION with a MODE.  If the MODE
+is omitted, the current umask value is used."
+  (%gssh-sftp-mkdir sftp-session dirname mode))
 
 
 (load-extension "libguile-ssh" "init_sftp_session")
