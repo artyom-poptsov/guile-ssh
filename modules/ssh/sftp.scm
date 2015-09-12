@@ -27,6 +27,7 @@
             make-sftp-session
             sftp-init
             sftp-get-session
+            sftp-get-error
             sftp-mkdir))
 
 (define (make-sftp-session session)
@@ -45,6 +46,10 @@ exception on an error, return value is undefined."
 (define (sftp-get-session sftp-session)
   "Get the parent SSH session for a SFTP-SESSION."
   (%gssh-sftp-get-session sftp-session))
+
+(define (sftp-get-error sftp-session)
+  "Get the last SFTP error from a SFTP-SESSION.  Return the error code, or throw 'guile-ssh-error' on an error."
+  (%gssh-sftp-get-error sftp-session))
 
 
 (define* (sftp-mkdir sftp-session dirname #:optional (mode (umask)))

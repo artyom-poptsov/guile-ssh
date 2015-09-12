@@ -82,6 +82,23 @@ SCM_DEFINE (gssh_sftp_mkdir, "%gssh-sftp-mkdir", 3, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (gssh_sftp_get_error, "%gssh-sftp-get-error", 1, 0, 0,
+            (SCM sftp_session),
+            "")
+#define FUNC_NAME s_gssh_sftp_get_error
+{
+  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  int rc = sftp_get_error (sftp_sd->sftp_session);
+  if (rc < 0)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not get an error code",
+                        sftp_session);
+    }
+
+  return scm_from_int (rc);
+}
+#undef FUNC_NAME
+
 
 void
 init_sftp_session_func (void)
