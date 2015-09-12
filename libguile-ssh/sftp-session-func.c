@@ -27,6 +27,7 @@
 #include <libssh/sftp.h>
 
 /* Guile-SSH */
+#include "common.h"
 #include "sftp-session-type.h"
 
 
@@ -82,6 +83,26 @@ SCM_DEFINE (gssh_sftp_mkdir, "%gssh-sftp-mkdir", 3, 0, 0,
 }
 #undef FUNC_NAME
 
+
+/* Possible SFTP return codes. */
+static struct symbol_mapping sftp_return_codes[] = {
+  { "fx-ok",                 SSH_FX_OK                  },
+  { "fx-eof",                SSH_FX_EOF                 },
+  { "fx-no-such-file",       SSH_FX_NO_SUCH_FILE        },
+  { "fx-permission-denied",  SSH_FX_PERMISSION_DENIED   },
+  { "fx-failure",            SSH_FX_FAILURE             },
+  { "fx-bad-message",        SSH_FX_BAD_MESSAGE         },
+  { "fx-no-connection",      SSH_FX_NO_CONNECTION       },
+  { "fx-connection-lost",    SSH_FX_CONNECTION_LOST     },
+  { "fx-op-unsupported",     SSH_FX_OP_UNSUPPORTED      },
+  { "fx-invalid-handle",     SSH_FX_INVALID_HANDLE      },
+  { "fx-no-such-path",       SSH_FX_NO_SUCH_PATH        },
+  { "fx-file-already-exist", SSH_FX_FILE_ALREADY_EXISTS },
+  { "fx-write-protect",      SSH_FX_WRITE_PROTECT       },
+  { "fx-no-media",           SSH_FX_NO_MEDIA            },
+  { NULL,                   -1                          }
+};
+
 SCM_DEFINE (gssh_sftp_get_error, "%gssh-sftp-get-error", 1, 0, 0,
             (SCM sftp_session),
             "")
@@ -95,7 +116,7 @@ SCM_DEFINE (gssh_sftp_get_error, "%gssh-sftp-get-error", 1, 0, 0,
                         sftp_session);
     }
 
-  return scm_from_int (rc);
+  return _ssh_const_to_scm (sftp_return_codes, rc);
 }
 #undef FUNC_NAME
 
