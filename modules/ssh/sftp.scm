@@ -25,6 +25,7 @@
 (define-module (ssh sftp)
   #:export (sftp-session?
             make-sftp-session
+            sftp-init
             sftp-get-session
             sftp-mkdir))
 
