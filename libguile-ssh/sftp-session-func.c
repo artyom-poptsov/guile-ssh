@@ -83,6 +83,34 @@ SCM_DEFINE (gssh_sftp_mkdir, "%gssh-sftp-mkdir", 3, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (gssh_sftp_chmod, "%gssh-sftp-chmod", 3, 0, 0,
+            (SCM sftp_session, SCM filename, SCM mode),
+            "")
+#define FUNC_NAME s_gssh_sftp_chmod
+{
+  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  char *c_filename;
+
+  SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (mode), mode, SCM_ARG3, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  c_filename = scm_to_locale_string (filename);
+  scm_dynwind_free (c_filename);
+
+  if (sftp_chmod (sftp_sd->sftp_session, c_filename, scm_to_uint32 (mode)))
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not chmod a file",
+                        scm_list_3 (sftp_session, filename, mode));
+    }
+
+  scm_dynwind_end ();
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 
 /* Possible SFTP return codes. */
 static struct symbol_mapping sftp_return_codes[] = {
