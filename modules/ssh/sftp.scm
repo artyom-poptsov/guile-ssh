@@ -29,6 +29,7 @@
             sftp-get-session
             sftp-get-error
             sftp-mkdir
+            sftp-rmdir
             sftp-chmod))
 
 (define (make-sftp-session session)
