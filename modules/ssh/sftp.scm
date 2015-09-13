@@ -59,6 +59,11 @@ or throw 'guile-ssh-error' on if an error occured in the procedure itself."
 is omitted, the current umask value is used."
   (%gssh-sftp-mkdir sftp-session dirname mode))
 
+(define (sftp-rmdir sftp-session dirname)
+  "Remove a directory DIRNAME.  Throw 'guile-ssh-error' on an error.  Return
+value is undefined."
+  (%gssh-sftp-rmdir sftp-session dirname))
+
 (define* (sftp-chmod sftp-session filename #:optional (mode #o777))
   "Change permissions of a FILENAME.  Permissions are set to 'mode & ~umask'.
 If MODE is not set then #o777 is used.  Throw 'guile-ssh-error' on an error.

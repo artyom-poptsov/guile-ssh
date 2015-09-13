@@ -83,6 +83,33 @@ SCM_DEFINE (gssh_sftp_mkdir, "%gssh-sftp-mkdir", 3, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (gssh_sftp_rmdir, "%gssh-sftp-rmdir", 2, 0, 0,
+            (SCM sftp_session, SCM dirname),
+            "")
+#define FUNC_NAME s_gssh_sftp_rmdir
+{
+  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  char *c_dirname;
+
+  SCM_ASSERT (scm_is_string (dirname), dirname, SCM_ARG2, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  c_dirname = scm_to_locale_string (dirname);
+  scm_dynwind_free (c_dirname);
+
+  if (sftp_rmdir (sftp_sd->sftp_session, c_dirname))
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not remove a directory",
+                        scm_list_2 (sftp_session, dirname));
+    }
+
+  scm_dynwind_end ();
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (gssh_sftp_chmod, "%gssh-sftp-chmod", 3, 0, 0,
             (SCM sftp_session, SCM filename, SCM mode),
             "")
