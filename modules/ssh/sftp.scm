@@ -30,6 +30,7 @@
             sftp-get-error
             sftp-mkdir
             sftp-rmdir
+            sftp-mv
             sftp-chmod))
 
 (define (make-sftp-session session)
@@ -64,6 +65,11 @@ is omitted, the current umask value is used."
   "Remove a directory DIRNAME.  Throw 'guile-ssh-error' on an error.  Return
 value is undefined."
   (%gssh-sftp-rmdir sftp-session dirname))
+
+(define (sftp-mv sftp-session source dest)
+  "Move or rename a file SOURCE into a DEST.  Throw 'guile-ssh-error' on an
+error.  Return value is undefined."
+  (%gssh-sftp-mv sftp-session source dest))
 
 (define* (sftp-chmod sftp-session filename #:optional (mode #o777))
   "Change permissions of a FILENAME.  Permissions are set to 'mode & ~umask'.

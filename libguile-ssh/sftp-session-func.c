@@ -110,6 +110,38 @@ SCM_DEFINE (gssh_sftp_rmdir, "%gssh-sftp-rmdir", 2, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (gssh_sftp_mv, "%gssh-sftp-mv", 3, 0, 0,
+            (SCM sftp_session, SCM source, SCM dest),
+            "")
+#define FUNC_NAME s_gssh_sftp_mv
+{
+  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  char *c_source;
+  char *c_dest;
+
+  SCM_ASSERT (scm_is_string (source), source, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (dest),   dest,   SCM_ARG3, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  c_source = scm_to_locale_string (source);
+  scm_dynwind_free (c_source);
+
+  c_dest = scm_to_locale_string (dest);
+  scm_dynwind_free (c_dest);
+
+  if (sftp_rename (sftp_sd->sftp_session, c_source, c_dest))
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not move a file",
+                        scm_list_3 (sftp_session, source, dest));
+    }
+
+  scm_dynwind_end ();
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (gssh_sftp_chmod, "%gssh-sftp-chmod", 3, 0, 0,
             (SCM sftp_session, SCM filename, SCM mode),
             "")
