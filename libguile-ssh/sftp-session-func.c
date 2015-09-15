@@ -170,6 +170,39 @@ SCM_DEFINE (gssh_sftp_chmod, "%gssh-sftp-chmod", 3, 0, 0,
 }
 #undef FUNC_NAME
 
+
+SCM_DEFINE (gssh_sftp_symlink, "%gssh-sftp-symlink", 3, 0, 0,
+            (SCM sftp_session, SCM target, SCM dest),
+            "")
+#define FUNC_NAME s_gssh_sftp_symlink
+{
+  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  char *c_target;
+  char *c_dest;
+
+  SCM_ASSERT (scm_is_string (target), target, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (dest),   dest,   SCM_ARG3, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  c_target = scm_to_locale_string (target);
+  scm_dynwind_free (c_target);
+
+  c_dest = scm_to_locale_string (dest);
+  scm_dynwind_free (c_dest);
+
+  if (sftp_symlink (sftp_sd->sftp_session, c_target, c_dest))
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not create a symlink",
+                        scm_list_3 (sftp_session, target, dest));
+    }
+
+  scm_dynwind_end ();
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (gssh_sftp_readlink, "%gssh-sftp-readlink", 2, 0, 0,
             (SCM sftp_session, SCM path),
             "")

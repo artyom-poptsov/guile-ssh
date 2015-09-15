@@ -31,6 +31,7 @@
             sftp-mkdir
             sftp-rmdir
             sftp-mv
+            sftp-symlink
             sftp-readlink
             sftp-chmod))
 
@@ -72,11 +73,18 @@ value is undefined."
 error.  Return value is undefined."
   (%gssh-sftp-mv sftp-session source dest))
 
+
+(define (sftp-symlink sftp-session target dest)
+  "Create a symbolic link to a TARGET in a DEST.  Throw 'guile-ssh-error' on an
+error.  Return value is undefined."
+  (%gssh-sftp-symlink sftp-session target dest))
+
 (define (sftp-readlink sftp-session path)
   "Read the value of a symbolic link pointed by a PATH.  Return the value or
 '#f' on an error."
   (%gssh-sftp-readlink sftp-session path))
 
+
 (define* (sftp-chmod sftp-session filename #:optional (mode #o777))
   "Change permissions of a FILENAME.  Permissions are set to 'mode & ~umask'.
 If MODE is not set then #o777 is used.  Throw 'guile-ssh-error' on an error.
