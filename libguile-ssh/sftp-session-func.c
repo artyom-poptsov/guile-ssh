@@ -170,6 +170,30 @@ SCM_DEFINE (gssh_sftp_chmod, "%gssh-sftp-chmod", 3, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (gssh_sftp_readlink, "%gssh-sftp-readlink", 2, 0, 0,
+            (SCM sftp_session, SCM path),
+            "")
+#define FUNC_NAME s_gssh_sftp_readlink
+{
+  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  char *c_path;
+  char *ret;
+
+  SCM_ASSERT (scm_is_string (path), path, SCM_ARG2, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  c_path = scm_to_locale_string (path);
+  scm_dynwind_free (c_path);
+
+  ret = sftp_readlink (sftp_sd->sftp_session, c_path);
+
+  scm_dynwind_end ();
+
+  return ret ? scm_take_locale_string (ret) : SCM_BOOL_F;
+}
+#undef FUNC_NAME
+
 
 /* Possible SFTP return codes. */
 static struct symbol_mapping sftp_return_codes[] = {

@@ -31,6 +31,7 @@
             sftp-mkdir
             sftp-rmdir
             sftp-mv
+            sftp-readlink
             sftp-chmod))
 
 (define (make-sftp-session session)
@@ -70,6 +71,11 @@ value is undefined."
   "Move or rename a file SOURCE into a DEST.  Throw 'guile-ssh-error' on an
 error.  Return value is undefined."
   (%gssh-sftp-mv sftp-session source dest))
+
+(define (sftp-readlink sftp-session path)
+  "Read the value of a symbolic link pointed by a PATH.  Return the value or
+'#f' on an error."
+  (%gssh-sftp-readlink sftp-session path))
 
 (define* (sftp-chmod sftp-session filename #:optional (mode #o777))
   "Change permissions of a FILENAME.  Permissions are set to 'mode & ~umask'.
