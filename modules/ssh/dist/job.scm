@@ -148,11 +148,11 @@ list and assign each part of work to a node.  Return a list of assigned jobs."
   "Hand out JOB to the assigned node and return the result of computation."
   (case (job-type job)
     ((map)
-     (node-eval (job-node job)
-                `(,(job-type job) ,(job-proc job) (quote ,(job-data job)))))
+     (node-eval-1 (job-node job)
+                  `(,(job-type job) ,(job-proc job) (quote ,(job-data job)))))
     ((eval)
      (map (lambda (expr)
-            (node-eval (job-node job) expr))
+            (node-eval-1 (job-node job) expr))
           (job-proc job)))
     (else
      (error "Unknown job type" job))))
