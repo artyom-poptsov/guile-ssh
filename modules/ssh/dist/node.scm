@@ -60,6 +60,7 @@
             node-repl-port
             make-node
             node-eval
+            node-eval-1
 
             node-open-rrepl
             rrepl-eval
@@ -240,5 +241,14 @@ result, a number of the evaluation, a module name and a language name.  Throw
   (let ((repl-channel (node-open-rrepl node)))
     (rrepl-skip-to-prompt repl-channel)
     (rrepl-eval repl-channel quoted-exp)))
+
+(define (node-eval-1 node quoted-exp)
+  "Evaluate QUOTED-EXP on the node and return the evaluated result.  The
+procedure returns the 1st evaluated value if multiple values were returned."
+  (receive (result eval-num)
+      (node-eval node quoted-exp)
+    (if (vector? eval-num)
+        (vector-ref result 0)
+        result)))
 
 ;;; node.scm ends here
