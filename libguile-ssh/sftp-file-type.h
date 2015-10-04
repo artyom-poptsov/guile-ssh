@@ -21,6 +21,9 @@
 #ifndef __SFTP_FILE_TYPE_H__
 #define __SFTP_FILE_TYPE_H__
 
+#include <libguile.h>
+#include <libssh/sftp.h>
+
 extern scm_t_bits sftp_file_tag;
 
 

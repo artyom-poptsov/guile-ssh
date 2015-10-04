@@ -34,7 +34,7 @@ libguile_ssh_la_SOURCES = \
 	sftp-session-type.c sftp-session-type.h \
 	sftp-session-main.c sftp-session-main.h	\
 	sftp-session-func.c sftp-session-func.h	\
-	sftp-file-type.c sftp-file-type.h
+	sftp-file-type.c sftp-file-type.h sftp-file-main.c
 
 BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 	key-func.x key-type.x session-func.x session-type.x \

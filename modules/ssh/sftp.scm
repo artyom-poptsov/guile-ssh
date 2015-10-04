@@ -99,7 +99,7 @@ Return value is undefined."
 
 
 (load-extension "libguile-ssh" "init_sftp_session")
-(load-extension "libguile-ssh" "init_sftp_file_type")
+(load-extension "libguile-ssh" "init_sftp_file")
 
 ;;; sftp-session.scm ends here.
 
