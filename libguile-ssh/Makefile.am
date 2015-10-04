@@ -33,12 +33,14 @@ libguile_ssh_la_SOURCES = \
 	log.c log.h \
 	sftp-session-type.c sftp-session-type.h \
 	sftp-session-main.c sftp-session-main.h	\
-	sftp-session-func.c sftp-session-func.h
+	sftp-session-func.c sftp-session-func.h	\
+	sftp-file-type.c sftp-file-type.h
 
 BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 	key-func.x key-type.x session-func.x session-type.x \
 	server-type.x server-func.x message-type.x message-func.x \
-	version.x log.x sftp-session-type.x sftp-session-func.x
+	version.x log.x sftp-session-type.x sftp-session-func.x \
+	sftp-file-type.x
 
 libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
 

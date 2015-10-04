@@ -33,7 +33,8 @@
             sftp-mv
             sftp-symlink
             sftp-readlink
-            sftp-chmod))
+            sftp-chmod
+            sftp-open-file))
 
 (define (make-sftp-session session)
   "Make a new SFTP session using a SSH SESSION."
@@ -92,7 +93,13 @@ Return value is undefined."
   (%gssh-sftp-chmod sftp-session filename mode))
 
 
+(define* (sftp-open-file sftp-session path flags #:optional (mode 666))
+  "Open a file."
+  (%gssh-sftp-open-file sftp-session path flags mode))
+
+
 (load-extension "libguile-ssh" "init_sftp_session")
+(load-extension "libguile-ssh" "init_sftp_file_type")
 
 ;;; sftp-session.scm ends here.
 
