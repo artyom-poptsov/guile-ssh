@@ -18,6 +18,9 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __SFTP_FILE_TYPE_H__
+#define __SFTP_FILE_TYPE_H__
+
 extern scm_t_bits sftp_file_tag;
 
 
@@ -34,5 +37,7 @@ extern struct sftp_file_data * _scm_to_sftp_file_data (SCM x);
 extern SCM _scm_from_sftp_file (const sftp_file file,
                                 const SCM name,
                                 SCM sftp_session);
+
+#endif /* ifndef __SFTP_FILE_TYPE_H__ */
 
 /* sftp-file-type.h ends here. */
