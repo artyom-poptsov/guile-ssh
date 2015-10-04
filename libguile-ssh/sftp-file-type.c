@@ -34,7 +34,7 @@ enum {
 };
 
 
-/* Ptob specific procedures */
+/* Ptob callbacks. */
 
 /* Read data from the channel.  Return EOF if no data is available or
    throw `guile-ssh-error' if an error occured. */
@@ -181,6 +181,16 @@ equalp_sftp_file (SCM x1, SCM x2)
     return SCM_BOOL_T;
 }
 
+static int
+print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
+{
+  struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
+  scm_puts ("#<sftp-file ", port);
+  scm_display (scm_from_int(_scm_object_hex_address (sftp_file)), port);
+  scm_puts (">", port);
+  return 1;
+}
+
 
 /* Convert SCM object X to a SFTP file data object. */
 struct sftp_file_data *
@@ -223,17 +233,8 @@ _scm_from_sftp_file (const sftp_file file, SCM sftp_session)
   return ptob;
 }
 
-static int
-print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
-{
-  struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
-  scm_puts ("#<sftp-file ", port);
-  scm_display (scm_from_int(_scm_object_hex_address (sftp_file)), port);
-  scm_puts (">", port);
-  return 1;
-}
-
 
+/* Ptob initialization. */
 void
 init_sftp_file_type (void)
 {
