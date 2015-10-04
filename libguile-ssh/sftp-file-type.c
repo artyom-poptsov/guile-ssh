@@ -114,7 +114,7 @@ SCM_DEFINE (gssh_open_file, "%gssh-sftp-open-file", 4, 0, 0,
     }
 
   scm_dynwind_end ();
-  return _scm_from_sftp_file (file, sftp_session);
+  return _scm_from_sftp_file (file, path, sftp_session);
 }
 #undef FUNC_NAME
 
@@ -186,7 +186,37 @@ static int
 print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
 {
   struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
+  ssh_session session = fd->file->sftp->session;
+  sftp_attributes attr = sftp_fstat (fd->file);
+  char *user = NULL;
+  char *host = NULL;
+  unsigned int ssh_port;
+  int res;
+
   scm_puts ("#<sftp-file ", port);
+
+  res = ssh_options_get (session, SSH_OPTIONS_USER, &user);
+  scm_display ((res == SSH_OK) ? scm_from_locale_string (user) : SCM_UNDEFINED,
+               port);
+  ssh_string_free_char (user);
+
+  scm_putc ('@', port);
+
+  res = ssh_options_get (session, SSH_OPTIONS_HOST, &host);
+  scm_display ((res == SSH_OK) ? scm_from_locale_string (host) : SCM_UNDEFINED,
+               port);
+  ssh_string_free_char (host);
+
+  scm_putc (':', port);
+  res = ssh_options_get_port (session, &ssh_port);
+  scm_display ((res == SSH_OK) ? scm_from_int (ssh_port) : SCM_UNDEFINED,
+               port);
+  scm_putc (' ', port);
+
+  scm_display (SCM_FILENAME (sftp_file), port);
+
+  scm_putc (' ', port);
+
   scm_display (_scm_object_hex_address (sftp_file), port);
   scm_puts (">", port);
   return 1;
@@ -206,7 +236,7 @@ _scm_to_sftp_file_data (SCM x)
 /* Convert SFTP file FD to a SCM object; set SFTP_SESSION as a parent of the
    object. */
 SCM
-_scm_from_sftp_file (const sftp_file file, SCM sftp_session)
+_scm_from_sftp_file (const sftp_file file, const SCM name, SCM sftp_session)
 {
   SCM ptob;
   scm_port *pt;
@@ -228,6 +258,7 @@ _scm_from_sftp_file (const sftp_file file, SCM sftp_session)
   pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
   pt->read_pos = pt->read_end = pt->read_buf;
 
+  SCM_SET_FILENAME (ptob, name);
   SCM_SET_CELL_TYPE (ptob, sftp_file_tag | SCM_RDNG | SCM_WRTNG | SCM_OPN);
   SCM_SETSTREAM (ptob, fd);
 

@@ -32,6 +32,7 @@ struct sftp_file_data {
 
 extern struct sftp_file_data * _scm_to_sftp_file_data (SCM x);
 extern SCM _scm_from_sftp_file (const sftp_file file,
+                                const SCM name,
                                 SCM sftp_session);
 
 /* sftp-file-type.h ends here. */
