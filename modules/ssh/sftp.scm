@@ -93,7 +93,7 @@ Return value is undefined."
   (%gssh-sftp-chmod sftp-session filename mode))
 
 
-(define* (sftp-open-file sftp-session path flags #:optional (mode 666))
+(define* (sftp-open-file sftp-session path flags #:optional (mode #o666))
   "Open a file."
   (%gssh-sftp-open-file sftp-session path flags mode))
 
