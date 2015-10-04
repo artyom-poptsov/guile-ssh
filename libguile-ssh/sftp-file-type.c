@@ -21,6 +21,7 @@
 #include <libguile.h>
 #include <libssh/libssh.h>
 
+#include "common.h"
 #include "sftp-session-type.h"
 #include "sftp-file-type.h"
 
@@ -186,7 +187,7 @@ print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
 {
   struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
   scm_puts ("#<sftp-file ", port);
-  scm_display (scm_from_int(_scm_object_hex_address (sftp_file)), port);
+  scm_display (_scm_object_hex_address (sftp_file), port);
   scm_puts (">", port);
   return 1;
 }
