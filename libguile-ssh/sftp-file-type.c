@@ -118,6 +118,11 @@ SCM_DEFINE (gssh_open_file, "%gssh-sftp-open-file", 4, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (gssh_sftp_session_p, "%gssh-sftp-file?", 1, 0, 0, (SCM x), "")
+{
+  return scm_from_bool (SCM_SMOB_PREDICATE (sftp_file_tag, x));
+}
+
 /* Complete the processing of buffered output data.  Currently this
    callback makes no effect because the channel CHANNEL uses
    unbuffered output. */

@@ -35,7 +35,9 @@
             sftp-readlink
             sftp-chmod
             sftp-unlink
-            sftp-open-file))
+            ;; File ports
+            sftp-open-file
+            sftp-file?))
 
 (define (make-sftp-session session)
   "Make a new SFTP session using a SSH SESSION."
@@ -103,6 +105,10 @@ value is undefined."
   "Open a FILENAME, return an open file port.  Throw 'guile-ssh-error' on an
 error."
   (%gssh-sftp-open-file sftp-session filename flags mode))
+
+(define (sftp-file? x)
+  "Return #t if X is an SFTP file port, #f otherwise."
+  (%gssh-sftp-file? x))
 
 
 (load-extension "libguile-ssh" "init_sftp_session")
