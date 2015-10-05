@@ -100,7 +100,8 @@ value is undefined."
 
 
 (define* (sftp-open-file sftp-session filename flags #:optional (mode #o666))
-  "Open a file."
+  "Open a FILENAME, return an open file port.  Throw 'guile-ssh-error' on an
+error."
   (%gssh-sftp-open-file sftp-session filename flags mode))
 
 
