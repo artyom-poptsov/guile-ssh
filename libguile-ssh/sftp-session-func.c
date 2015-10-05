@@ -227,6 +227,34 @@ SCM_DEFINE (gssh_sftp_readlink, "%gssh-sftp-readlink", 2, 0, 0,
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (gssh_sftp_unlink, "%gssh-sftp-unlink", 2, 0, 0,
+            (SCM sftp_session, SCM path),
+            "")
+#define FUNC_NAME s_gssh_sftp_unlink
+{
+  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  char *c_path;
+  int ret;
+
+  SCM_ASSERT (scm_is_string (path), path, SCM_ARG2, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  c_path = scm_to_locale_string (path);
+  scm_dynwind_free (c_path);
+
+  ret = sftp_unlink (sftp_sd->sftp_session, c_path);
+  if (ret)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not unlink a file",
+                        scm_list_2 (sftp_session, path));
+    }
+
+  scm_dynwind_end ();
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 
 /* Possible SFTP return codes. */
 static struct symbol_mapping sftp_return_codes[] = {

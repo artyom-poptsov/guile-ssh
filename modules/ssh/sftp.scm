@@ -34,6 +34,7 @@
             sftp-symlink
             sftp-readlink
             sftp-chmod
+            sftp-unlink
             sftp-open-file))
 
 (define (make-sftp-session session)
@@ -91,6 +92,11 @@ error.  Return value is undefined."
 If MODE is not set then #o777 is used.  Throw 'guile-ssh-error' on an error.
 Return value is undefined."
   (%gssh-sftp-chmod sftp-session filename mode))
+
+(define (sftp-unlink sftp-session filename)
+  "Unlink (delete) a FILENAME.  Throw 'guile-ssh-error' on an error.  Return
+value is undefined."
+  (%gssh-sftp-unlink sftp-session filename))
 
 
 (define* (sftp-open-file sftp-session path flags #:optional (mode #o666))
