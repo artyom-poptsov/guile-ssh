@@ -99,9 +99,9 @@ value is undefined."
   (%gssh-sftp-unlink sftp-session filename))
 
 
-(define* (sftp-open-file sftp-session path flags #:optional (mode #o666))
+(define* (sftp-open-file sftp-session filename flags #:optional (mode #o666))
   "Open a file."
-  (%gssh-sftp-open-file sftp-session path flags mode))
+  (%gssh-sftp-open-file sftp-session filename flags mode))
 
 
 (load-extension "libguile-ssh" "init_sftp_session")
