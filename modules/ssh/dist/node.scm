@@ -66,6 +66,7 @@
             rrepl-eval
             rrepl-skip-to-prompt
             rrepl-get-result
+            run-rrepl-server
             rrepl-running?))
 
 
