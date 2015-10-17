@@ -106,7 +106,9 @@
 
 (define* (make-node session #:optional (repl-port 37146)
                     #:key (start-repl-server? #t))
-  "Make a new distributed computing node."
+  "Make a new distributed computing node.  If START-REPL-SERVER? is set to
+#t (which is by default) then start a REPL server on a remote host
+automatically in case when it is not started yet."
   (let ((tunnel (make-tunnel session
                              #:port 0          ;Won't be used
                              #:host "localhost"
