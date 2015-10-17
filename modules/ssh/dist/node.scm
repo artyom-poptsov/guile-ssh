@@ -32,6 +32,9 @@
 ;;   make-node
 ;;   node-eval
 ;;   node-open-rrepl
+;;   node-guile-version
+;;   node-run-server
+;;   node-server-running?
 ;;   rrepl-eval
 ;;   rrepl-skip-to-prompt
 ;;
