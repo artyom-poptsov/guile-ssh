@@ -265,7 +265,7 @@ listens on an expected port, return #f otherwise."
                                     (node-repl-port node)))
     (close c)
     (while (not (rrepl-running? node))
-      (msleep 100))))
+      (usleep 100))))
 
 (define (node-open-rrepl node)
   "Open a RREPL.  Return a new RREPL channel."
