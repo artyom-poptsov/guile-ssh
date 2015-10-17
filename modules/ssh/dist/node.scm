@@ -141,7 +141,8 @@ expected port and #f otherwise."
        (let* ((s (node-session node))
               (c (make-channel s)))
          (channel-open-session c)
-         (channel-request-exec c "guile --listen")))
+         (channel-request-exec c (format #f "guile --listen=~a"
+                                         (node-repl-port node)))))
   (tunnel-open-forward-channel (node-tunnel node)))
 
 (define (rrepl-skip-to-prompt repl-channel)
