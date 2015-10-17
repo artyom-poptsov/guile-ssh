@@ -60,6 +60,7 @@
             node-repl-port
             make-node
             node-eval
+            node-guile-version
 
             node-open-rrepl
             rrepl-eval
@@ -273,10 +274,20 @@ listens on an expected port, return #f otherwise."
        (run-rrepl-server node))
   (tunnel-open-forward-channel (node-tunnel node)))
 
+
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
   (let ((repl-channel (node-open-rrepl node)))
     (rrepl-skip-to-prompt repl-channel)
     (rrepl-eval repl-channel quoted-exp)))
+
+
+(define (node-guile-version node)
+  "Get Guile version installed on a NODE, return the version string.  Return
+#f if Guile is not installed."
+  (receive (result rc)
+      (rexec node "which guile && guile --version")
+    (and (zero? rc)
+         result)))
 
 ;;; node.scm ends here
