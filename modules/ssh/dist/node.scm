@@ -126,25 +126,6 @@ line returned by CMD and its exit code."
           (rc   (channel-get-exit-status c)))
       (values line rc))))
 
-(define (rrepl-running? node)
-  "Check if RREPL is running on a NODE, return #t if it is running on an
-expected port and #f otherwise."
-  (receive (result rc)
-      (rexec node (format #f "pgrep --full 'guile --listen=~a'"
-                      (node-repl-port node)))
-    (zero? rc)))
-
-(define (node-open-rrepl node)
-  "Open a RREPL.  Return a new RREPL channel."
-  (and (node-start-repl-server? node)
-       (not (rrepl-running? node))
-       (let* ((s (node-session node))
-              (c (make-channel s)))
-         (channel-open-session c)
-         (channel-request-exec c (format #f "guile --listen=~a"
-                                         (node-repl-port node)))))
-  (tunnel-open-forward-channel (node-tunnel node)))
-
 (define (rrepl-skip-to-prompt repl-channel)
   "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
 error."
@@ -262,6 +243,35 @@ result, a number of the evaluation, a module name and a language name.  Throw
 
 
 ;;;
+
+(define (rrepl-running? node)
+  "Check if a RREPL is running on a NODE, return #t if it is running and
+listens on an expected port, return #f otherwise."
+  (receive (result rc)
+      (rexec node (format #f "pgrep --full 'guile --listen=~a'"
+                          (node-repl-port node)))
+    (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
+      (and (channel-open? rp)
+           (let ((line (read-line rp)))
+             (and (not (eof-object? line))
+                  (string-match "^GNU Guile .*" line)))))))
+
+(define (run-rrepl-server node)
+  "Run a RREPL server on a NODE."
+  (let ((c (make-channel (node-session node))))
+    (channel-open-session c)
+    (channel-request-exec c (format #f "nohup guile --listen=~a 0<&- &>/dev/null"
+                                    (node-repl-port node)))
+    (close c)
+    (while (not (rrepl-running? node))
+      (msleep 100))))
+
+(define (node-open-rrepl node)
+  "Open a RREPL.  Return a new RREPL channel."
+  (and (node-start-repl-server? node)
+       (not (rrepl-running? node))
+       (run-rrepl-server node))
+  (tunnel-open-forward-channel (node-tunnel node)))
 
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
