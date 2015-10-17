@@ -61,13 +61,13 @@
             make-node
             node-eval
             node-guile-version
+            node-run-server
+            node-server-running?
 
             node-open-rrepl
             rrepl-eval
             rrepl-skip-to-prompt
-            rrepl-get-result
-            run-rrepl-server
-            rrepl-running?))
+            rrepl-get-result))
 
 
 ;;; Error reporting
@@ -249,7 +249,7 @@ result, a number of the evaluation, a module name and a language name.  Throw
 
 ;;;
 
-(define (rrepl-running? node)
+(define (node-server-running? node)
   "Check if a RREPL is running on a NODE, return #t if it is running and
 listens on an expected port, return #f otherwise."
   (receive (result rc)
@@ -262,21 +262,21 @@ listens on an expected port, return #f otherwise."
              (and (not (eof-object? line))
                   (string-match "^GNU Guile .*" line)))))))
 
-(define (run-rrepl-server node)
+(define (node-run-server node)
   "Run a RREPL server on a NODE."
   (let ((c (make-channel (node-session node))))
     (channel-open-session c)
     (channel-request-exec c (format #f "nohup guile --listen=~a 0<&- &>/dev/null"
                                     (node-repl-port node)))
     (close c)
-    (while (not (rrepl-running? node))
+    (while (not (node-server-running? node))
       (usleep 100))))
 
 (define (node-open-rrepl node)
   "Open a RREPL.  Return a new RREPL channel."
   (and (node-start-repl-server? node)
-       (not (rrepl-running? node))
-       (run-rrepl-server node))
+       (not (node-server-running? node))
+       (node-run-server node))
   (tunnel-open-forward-channel (node-tunnel node)))
 
 
