@@ -254,6 +254,7 @@ listens on an expected port, return #f otherwise."
     (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
       (and (channel-open? rp)
            (let ((line (read-line rp)))
+             (close rp)
              (and (not (eof-object? line))
                   (string-match "^GNU Guile .*" line)))))))
 
