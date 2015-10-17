@@ -32,6 +32,9 @@
 ;;   make-node
 ;;   node-eval
 ;;   node-open-rrepl
+;;   node-guile-version
+;;   node-run-server
+;;   node-server-running?
 ;;   rrepl-eval
 ;;   rrepl-skip-to-prompt
 ;;
@@ -61,6 +64,9 @@
             make-node
             node-eval
             node-eval-1
+            node-guile-version
+            node-run-server
+            node-server-running?
 
             node-open-rrepl
             rrepl-eval
@@ -82,10 +88,11 @@
 ;;; Node type
 
 (define-record-type <node>
-  (%make-node tunnel repl-port)
+  (%make-node tunnel repl-port start-repl-server?)
   node?
   (tunnel node-tunnel)
-  (repl-port node-repl-port))
+  (repl-port node-repl-port)
+  (start-repl-server? node-start-repl-server?))
 
 (define (node-session node)
   "Get node session."
@@ -103,20 +110,30 @@
              (number->string (object-address node) 16)))))
 
 
-(define* (make-node session #:optional (repl-port 37146))
-  "Make a new distributed computing node."
+(define* (make-node session #:optional (repl-port 37146)
+                    #:key (start-repl-server? #t))
+  "Make a new distributed computing node.  If START-REPL-SERVER? is set to
+#t (which is by default) then start a REPL server on a remote host
+automatically in case when it is not started yet."
   (let ((tunnel (make-tunnel session
                              #:port 0          ;Won't be used
                              #:host "localhost"
                              #:host-port repl-port)))
-    (%make-node tunnel repl-port)))
+    (%make-node tunnel repl-port start-repl-server?)))
 
 
 ;;; Remote REPL (RREPL)
 
-(define (node-open-rrepl node)
-  "Open a RREPL.  Return a new RREPL channel."
-  (tunnel-open-forward-channel (node-tunnel node)))
+(define (rexec node cmd)
+  "Execute a command CMD on the remote side.  Return two values: the first
+line returned by CMD and its exit code."
+  (let* ((s (node-session node))
+         (c (make-channel s)))
+    (channel-open-session c)
+    (channel-request-exec c cmd)
+    (let ((line (read-line c))
+          (rc   (channel-get-exit-status c)))
+      (values line rc))))
 
 (define (rrepl-skip-to-prompt repl-channel)
   "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
@@ -236,6 +253,37 @@ result, a number of the evaluation, a module name and a language name.  Throw
 
 ;;;
 
+(define (node-server-running? node)
+  "Check if a RREPL is running on a NODE, return #t if it is running and
+listens on an expected port, return #f otherwise."
+  (receive (result rc)
+      (rexec node (format #f "pgrep --full 'guile --listen=~a'"
+                          (node-repl-port node)))
+    (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
+      (and (channel-open? rp)
+           (let ((line (read-line rp)))
+             (close rp)
+             (and (not (eof-object? line))
+                  (string-match "^GNU Guile .*" line)))))))
+
+(define (node-run-server node)
+  "Run a RREPL server on a NODE."
+  (let ((c (make-channel (node-session node))))
+    (channel-open-session c)
+    (channel-request-exec c (format #f "nohup guile --listen=~a 0<&- &>/dev/null"
+                                    (node-repl-port node)))
+    (close c)
+    (while (not (node-server-running? node))
+      (usleep 100))))
+
+(define (node-open-rrepl node)
+  "Open a RREPL.  Return a new RREPL channel."
+  (and (node-start-repl-server? node)
+       (not (node-server-running? node))
+       (node-run-server node))
+  (tunnel-open-forward-channel (node-tunnel node)))
+
+
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
   (let ((repl-channel (node-open-rrepl node)))
@@ -250,5 +298,14 @@ procedure returns the 1st evaluated value if multiple values were returned."
     (if (vector? eval-num)
         (vector-ref result 0)
         result)))
+
+
+(define (node-guile-version node)
+  "Get Guile version installed on a NODE, return the version string.  Return
+#f if Guile is not installed."
+  (receive (result rc)
+      (rexec node "which guile && guile --version")
+    (and (zero? rc)
+         result)))
 
 ;;; node.scm ends here

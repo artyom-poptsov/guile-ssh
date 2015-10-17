@@ -23,9 +23,13 @@ instead of @code{#<unspecified>}.
 
 Node management procedures:
 
-@deffn {Scheme Procedure} make-node session [repl-port=37146]
+@deffn {Scheme Procedure} make-node session [repl-port=37146] [#:start-repl-server?=#t]
 Make a new node that uses an SSH @var{session} to connect to a @var{repl-port}
 number on the remote side.  Return a new node.
+
+If @var{start-repl-server?} is set to @code{#t} (which is by default) then
+start a REPL server on a remote host automatically in case when it is not
+started yet.
 @end deffn
 
 @deffn {Scheme Procedure} node? x
@@ -151,6 +155,20 @@ on another node.
 
 @deffn {Scheme Procedure} node-open-rrepl node
 Open a remote REPL (RREPL).  Return a new RREPL channel.
+@end deffn
+
+@deffn {Scheme Procedure} node-run-server node
+Run a REPL server on a @var{node}.
+@end deffn
+
+@deffn {Scheme Procedure} node-guile-version node
+Get Guile version installed on a @var{node}, return the version string.
+Return @code{#f} if Guile is not installed.
+@end deffn
+
+@deffn {Scheme Procedure} node-server-running? node
+Check if a REPL server is running on a @var{node}, return @code{#t} if it is
+running and listens on an expected port, return @code{#f} otherwise.
 @end deffn
 
 @deffn {Scheme Procedure} rrepl-eval rrepl-channel expr
