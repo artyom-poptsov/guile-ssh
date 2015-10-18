@@ -17,15 +17,31 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-(use-modules (srfi srfi-64)
-             (ssh session)
-             (ssh server)
-             (ssh log))
+(define-module (tests common)
+  #:use-module (srfi srfi-64)
+  #:use-module (ssh session)
+  #:use-module (ssh server)
+  #:use-module (ssh log)
+  #:export (;; Variables
+            %topdir
+            %knownhosts
+            %addr
+            rsakey                      ;TODO: Rename
+
+            ;; Procedures
+            test-assert-with-log
+            make-session-loop
+            make-session-for-test
+            make-server-for-test
+            make-libssh-log-printer
+            setup-libssh-logging!
+            setup-error-logging!))
 
 
+(define %topdir (getenv "abs_top_srcdir"))
 (define %addr   "127.0.0.1")
 (define *port*  12400)
-(define rsakey (format #f "~a/tests/rsakey" topdir))
+(define rsakey (format #f "~a/tests/rsakey" %topdir))
 (define %knownhosts (format #f "~a/tests/knownhosts"
                             (getenv "abs_top_builddir")))
 
@@ -68,5 +84,28 @@
    #:bindport *port*
    #:rsakey   rsakey
    #:log-verbosity 'nolog))
+
+
+;;; Logging
+
+(define (make-libssh-log-printer log-file)
+  "Make a libssh log printer with output to a LOG-FILE.  Return the log
+printer."
+  (let ((p (open-output-file log-file)))
+    (lambda (priority function message userdata)
+      (format p "[~a, \"~a\", ~a]: ~a~%"
+              (strftime "%Y-%m-%dT%H:%M:%S%z" (localtime (current-time)))
+              userdata
+              priority
+              message))))
+
+(define (setup-libssh-logging! log-file)
+  "Setup libssh logging for a test suite with output to a LOG-FILE."
+  (let ((log-printer (make-libssh-log-printer log-file)))
+    (set-logging-callback! log-printer)))
+
+(define (setup-error-logging! log-file)
+  "Setup error logging for a test suite with output to a LOG-FILE."
+  (set-current-error-port (open-output-file log-file)))
 
 ;;; common.scm ends here

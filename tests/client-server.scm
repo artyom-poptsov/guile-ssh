@@ -43,28 +43,19 @@
 (define log    (test-runner-aux-value (test-runner-current)))
 (define *server-thread* #f)
 
+;;; Load helper procedures
+
+(add-to-load-path (getenv "abs_top_srcdir"))
+(use-modules (tests common))
+
+
+;;; Logging
+
 (define %libssh-log-file "client-server-libssh.log")
 (define %error-log-file  "client-server-errors.log")
 
-;;; Load helper procedures
-
-(load (format #f "~a/tests/common.scm" topdir))
-
-(set-current-error-port (open-output-file %error-log-file))
-
-
-;;; Logging callback
-
-(define libssh-log-printer
-  (let ((p (open-output-file %libssh-log-file)))
-    (lambda (priority function message userdata)
-      (format p "[~a, \"~a\", ~a]: ~a~%"
-              (strftime "%Y-%m-%dT%H:%M:%S%z" (localtime (current-time)))
-              userdata
-              priority
-              message))))
-
-(set-logging-callback! libssh-log-printer)
+(setup-libssh-logging! %libssh-log-file)
+(setup-error-logging! %error-log-file)
 
 
 ;;; Helper procedures and macros
