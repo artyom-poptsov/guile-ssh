@@ -69,4 +69,23 @@
    #:rsakey   rsakey
    #:log-verbosity 'nolog))
 
+
+;;; Logging
+
+(define (make-libssh-log-printer log-file)
+  "Make a libssh log printer with output to a LOG-FILE.  Return the log
+printer."
+  (let ((p (open-output-file log-file)))
+    (lambda (priority function message userdata)
+      (format p "[~a, \"~a\", ~a]: ~a~%"
+              (strftime "%Y-%m-%dT%H:%M:%S%z" (localtime (current-time)))
+              userdata
+              priority
+              message))))
+
+(define (setup-libssh-logging! log-file)
+  "Setup libssh logging for a test suite with output to a LOG-FILE."
+  (let ((log-printer (make-libssh-log-printer log-file)))
+    (set-logging-callback! log-printer)))
+
 ;;; common.scm ends here

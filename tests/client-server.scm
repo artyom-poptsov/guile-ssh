@@ -55,16 +55,7 @@
 
 ;;; Logging callback
 
-(define libssh-log-printer
-  (let ((p (open-output-file %libssh-log-file)))
-    (lambda (priority function message userdata)
-      (format p "[~a, \"~a\", ~a]: ~a~%"
-              (strftime "%Y-%m-%dT%H:%M:%S%z" (localtime (current-time)))
-              userdata
-              priority
-              message))))
-
-(set-logging-callback! libssh-log-printer)
+(setup-libssh-logging! %libssh-log-file)
 
 
 ;;; Helper procedures and macros
