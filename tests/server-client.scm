@@ -37,24 +37,19 @@
 (define %dsakey (format #f "~a/tests/dsakey" %topdir))
 (define %knownhosts (format #f "~a/tests/knownhosts" %topdir))
 
+
+;;; Load helper procedures
+
+(load (format #f "~a/tests/common.scm" %topdir))
+
+
+;;; Logging
+
 (define %libssh-log-file "server-client-libssh.log")
 (define %error-log-file  "server-client-errors.log")
 
-(set-current-error-port (open-output-file %error-log-file))
-
-
-;;; Logging callback
-
-(define libssh-log-printer
-  (let ((p (open-output-file %libssh-log-file)))
-    (lambda (priority function message userdata)
-      (format p "[~a, \"~a\", ~a]: ~a~%"
-              (strftime "%Y-%m-%dT%H:%M:%S%z" (localtime (current-time)))
-              userdata
-              priority
-              message))))
-
-(set-logging-callback! libssh-log-printer)
+(setup-libssh-logging! %libssh-log-file)
+(setup-error-logging! %error-log-file)
 
 ;;; Helper procedures and macros
 
