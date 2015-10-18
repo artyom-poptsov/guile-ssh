@@ -23,9 +23,10 @@
              (ssh log))
 
 
+(define %topdir (getenv "abs_top_srcdir"))
 (define %addr   "127.0.0.1")
 (define *port*  12400)
-(define rsakey (format #f "~a/tests/rsakey" topdir))
+(define rsakey (format #f "~a/tests/rsakey" %topdir))
 (define %knownhosts (format #f "~a/tests/knownhosts"
                             (getenv "abs_top_builddir")))
 
