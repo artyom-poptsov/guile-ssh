@@ -43,19 +43,18 @@
 (define log    (test-runner-aux-value (test-runner-current)))
 (define *server-thread* #f)
 
-(define %libssh-log-file "client-server-libssh.log")
-(define %error-log-file  "client-server-errors.log")
-
 ;;; Load helper procedures
 
 (load (format #f "~a/tests/common.scm" topdir))
 
-(set-current-error-port (open-output-file %error-log-file))
-
 
-;;; Logging callback
+;;; Logging
+
+(define %libssh-log-file "client-server-libssh.log")
+(define %error-log-file  "client-server-errors.log")
 
 (setup-libssh-logging! %libssh-log-file)
+(setup-error-logging! %error-log-file)
 
 
 ;;; Helper procedures and macros

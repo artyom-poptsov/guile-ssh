@@ -88,4 +88,8 @@ printer."
   (let ((log-printer (make-libssh-log-printer log-file)))
     (set-logging-callback! log-printer)))
 
+(define (setup-error-logging! log-file)
+  "Setup error logging for a test suite with output to a LOG-FILE."
+  (set-current-error-port (open-output-file log-file)))
+
 ;;; common.scm ends here
