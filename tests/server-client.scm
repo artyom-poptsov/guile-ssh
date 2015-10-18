@@ -40,7 +40,8 @@
 
 ;;; Load helper procedures
 
-(load (format #f "~a/tests/common.scm" %topdir))
+(add-to-load-path (getenv "abs_top_srcdir"))
+(use-modules (tests common))
 
 
 ;;; Logging

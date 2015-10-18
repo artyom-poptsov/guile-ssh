@@ -17,10 +17,25 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-(use-modules (srfi srfi-64)
-             (ssh session)
-             (ssh server)
-             (ssh log))
+(define-module (tests common)
+  #:use-module (srfi srfi-64)
+  #:use-module (ssh session)
+  #:use-module (ssh server)
+  #:use-module (ssh log)
+  #:export (;; Variables
+            %topdir
+            %knownhosts
+            %addr
+            rsakey                      ;TODO: Rename
+
+            ;; Procedures
+            test-assert-with-log
+            make-session-loop
+            make-session-for-test
+            make-server-for-test
+            make-libssh-log-printer
+            setup-libssh-logging!
+            setup-error-logging!))
 
 
 (define %topdir (getenv "abs_top_srcdir"))
