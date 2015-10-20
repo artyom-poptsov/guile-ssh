@@ -488,27 +488,6 @@
 ;; data transferring
 ;; FIXME: Probably these TCs can be implemented more elegantly.
 
-(define (start-server/dt-test server rwproc)
-  (server-listen server)
-  (let ((session (server-accept server))
-        (channel #f))
-    (server-handle-key-exchange session)
-    (make-session-loop session
-      (if (not (eof-object? msg))
-          (let ((msg-type (message-get-type msg)))
-            (case (car msg-type)
-              ((request-channel-open)
-               (set! channel (message-channel-request-open-reply-accept msg))
-               (let poll ((ready? #f))
-                 (if ready?
-                     (rwproc channel)
-                     (poll (char-ready? channel)))))
-              ((request-channel)
-               (message-reply-success msg))
-              (else
-               (message-reply-success msg)))))))
-  (primitive-exit))
-
 (define (make-channel/dt-test session)
   (let ((c (make-channel session)))
     (channel-open-session c)

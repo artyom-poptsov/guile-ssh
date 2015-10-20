@@ -23,6 +23,7 @@
   #:use-module (ssh session)
   #:use-module (ssh server)
   #:use-module (ssh log)
+  #:use-module (ssh message)
   #:export (;; Variables
             %topdir
             %knownhosts
@@ -37,6 +38,7 @@
             make-session-for-test
             make-server-for-test
             make-libssh-log-printer
+            start-server/dt-test
             setup-libssh-logging!
             setup-error-logging!
             setup-test-suite-logging!
@@ -93,6 +95,30 @@
    #:bindport *port*
    #:rsakey   %rsakey
    #:log-verbosity 'rare))
+
+
+;;; Test Servers
+
+(define (start-server/dt-test server rwproc)
+  (server-listen server)
+  (let ((session (server-accept server))
+        (channel #f))
+    (server-handle-key-exchange session)
+    (make-session-loop session
+      (if (not (eof-object? msg))
+          (let ((msg-type (message-get-type msg)))
+            (case (car msg-type)
+              ((request-channel-open)
+               (set! channel (message-channel-request-open-reply-accept msg))
+               (let poll ((ready? #f))
+                 (if ready?
+                     (rwproc channel)
+                     (poll (char-ready? channel)))))
+              ((request-channel)
+               (message-reply-success msg))
+              (else
+               (message-reply-success msg)))))))
+  (primitive-exit))
 
 
 ;;; Tests
