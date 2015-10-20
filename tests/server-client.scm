@@ -33,7 +33,6 @@
 (define %addr   "127.0.0.1")
 (define *port*   12500)
 (define %topdir (getenv "abs_top_srcdir"))
-(define %knownhosts (format #f "~a/tests/knownhosts" %topdir))
 
 
 ;;; Load helper procedures
