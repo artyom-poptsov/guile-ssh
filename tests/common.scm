@@ -19,6 +19,7 @@
 
 (define-module (tests common)
   #:use-module (srfi srfi-64)
+  #:use-module (ice-9 rdelim)
   #:use-module (ssh session)
   #:use-module (ssh server)
   #:use-module (ssh log)
@@ -40,6 +41,7 @@
             setup-error-logging!
             setup-test-suite-logging!
             run-client-test
+            run-client-test/separate-process
             run-server-test))
 
 
@@ -116,6 +118,66 @@ CLIENT-PROC call."
         ;; client
         (client-proc))))
 
+;; Run a client test in a separate process; only a PRED procedure is running
+;; in the main test process:
+;;
+;; test
+;;  |
+;;  o                                      Fork.
+;;  |______________
+;;  |              \
+;;  |               |
+;;  |               o                      Fork.
+;;  |               |___________________
+;;  |               |                   \
+;;  |               |                    |
+;;  |          CLIENT-PROC          SERVER-PROC
+;;  |               |                    |
+;;  |               o                    | Bind/listen a socket.
+;;  | "hello world" |                    |
+;;  |<--------------|                    |
+;;  o               |                    | Check the result
+;;  |               |                    | with a predicate PRED.
+;;
+;; XXX: This procedure contains operations that potentially can block it
+;; forever.
+;;
+(define (run-client-test/separate-process server-proc client-proc pred)
+  "Run a SERVER-PROC and CLIENT-PROC as separate processes.  Check the result
+returned by a CLIENT-PROC with a predicate PRED."
+  (let ((sock-path (tmpnam)))
+    (run-client-test
+     (lambda (server)
+       (let ((pid (primitive-fork)))
+         (if (zero? pid)
+             (server-proc server)
+             (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
+               (bind sock AF_UNIX sock-path)
+               (listen sock 1)
+               (let ((result (client-proc))
+                     (client (car (accept sock))))
+                 (write-line result client)
+                 (sleep 10)
+                 (close client))))))
+     (lambda ()
+       (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
+
+         ;; XXX: This operation can potentially block the process forever.
+         (while (not (file-exists? sock-path)))
+
+         (format (test-runner-aux-value (test-runner-current))
+                 "    client: sock-path: ~a~%" sock-path)
+
+         (connect sock AF_UNIX sock-path)
+
+         ;; XXX: This too.
+         (while (not (char-ready? sock)))
+
+         (let ((result (read-line sock)))
+           (close sock)
+           (pred result)))))))
+
+
 (define (run-server-test client-proc server-proc)
   "Run a CLIENT-PROC in newly created process.  A session is passed to a
 CLIENT-PROC as an argument.  SERVER-PROC is called with a server as an

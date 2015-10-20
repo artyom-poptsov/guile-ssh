@@ -658,57 +658,30 @@
 ;;  |               |                    |
 ;;
 (test-assert-with-log "call-with-ssh-forward"
-  (let ((sock-path (tmpnam)))
-    (run-client-test
-
-     ;; server
-     (lambda (server)
-       (let ((pid (primitive-fork)))
-         (if (zero? pid)
-             ;; Guile-SSH server
-             (start-server/dt-test server
-                                   (lambda (channel)
-                                     (write-line (read-line channel) channel)))
-             ;; call/pf process
-             (begin
-               (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
-               (let* ((session     (make-session/channel-test))
-                      (local-port  12345)
-                      (remote-host "www.example.org")
-                      (tunnel      (make-tunnel session
-                                                #:port local-port
-                                                #:host remote-host))
-                      (str         "hello world")
-                      (result (call-with-ssh-forward tunnel
-                                                     (lambda (sock)
-                                                       (write-line str sock)
-                                                       (while (not (char-ready? sock)))
-                                                       (read-line sock))))
-                      (call-pf-sock (socket PF_UNIX SOCK_STREAM 0)))
-                 (bind call-pf-sock AF_UNIX sock-path)
-                 (listen call-pf-sock 1)
-                 (let ((client (car (accept call-pf-sock))))
-                   (write-line result client)
-                   (sleep 10)
-                   (close client)))))))
-
-     ;; client
-     (lambda ()
-       (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
-
-         ;; XXX: This operation can potentially block the process forever.
-         (while (not (file-exists? sock-path)))
-
-         (format log "    client: sock-path: ~a~%" sock-path)
-
-         (connect sock AF_UNIX sock-path)
-
-         ;; XXX: This too.
-         (while (not (char-ready? sock)))
-
-         (let ((result (read-line sock)))
-           (close sock)
-           (string=? result "hello world")))))))
+  (run-client-test/separate-process
+   ;; Server
+   (lambda (server)
+     (start-server/dt-test server
+                           (lambda (channel)
+                             (write-line (read-line channel) channel))))
+   ;; Client (call/pf)
+   (lambda ()
+     (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
+     (let* ((session     (make-session/channel-test))
+            (local-port  12345)
+            (remote-host "www.example.org")
+            (tunnel      (make-tunnel session
+                                      #:port local-port
+                                      #:host remote-host))
+            (str         "hello world"))
+       (call-with-ssh-forward tunnel
+                              (lambda (sock)
+                                (write-line str sock)
+                                (while (not (char-ready? sock)))
+                                (read-line sock)))))
+   ;; Predicate
+   (lambda (result)
+     (string=? result "hello world"))))
 
 
 (test-end "client-server")
