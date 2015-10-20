@@ -30,9 +30,7 @@
 
 ;;; Global symbols
 
-(define %addr   "127.0.0.1")
 (define *port*   12500)
-(define %topdir (getenv "abs_top_srcdir"))
 
 
 ;;; Load helper procedures
