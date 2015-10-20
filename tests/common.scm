@@ -35,7 +35,8 @@
             make-server-for-test
             make-libssh-log-printer
             setup-libssh-logging!
-            setup-error-logging!))
+            setup-error-logging!
+            run-client-test))
 
 
 (define %topdir (getenv "abs_top_srcdir"))
@@ -84,6 +85,30 @@
    #:bindport *port*
    #:rsakey   rsakey
    #:log-verbosity 'nolog))
+
+
+;;; Tests
+
+(define (run-client-test server-proc client-proc)
+  "Run a SERVER-PROC in newly created process.  The server passed to a
+SERVER-PROC as an argument.  CLIENT-PROC is expected to be a thunk that should
+be executed in the parent process.  The procedure returns a result of
+CLIENT-PROC call."
+  (let ((server (make-server-for-test))
+        (pid    (primitive-fork)))
+    (if (zero? pid)
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (set-log-userdata! (string-append (get-log-userdata) " (server)"))
+            (server-set! server 'log-verbosity 'rare)
+            (server-proc server)
+            (primitive-exit 0))
+          (lambda ()
+            (primitive-exit 1)))
+        ;; client
+        (client-proc))))
 
 
 ;;; Logging
