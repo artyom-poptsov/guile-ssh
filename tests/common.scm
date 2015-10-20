@@ -87,7 +87,7 @@
   (make-server
    #:bindaddr %addr
    #:bindport *port*
-   #:rsakey   rsakey
+   #:rsakey   %rsakey
    #:log-verbosity 'rare))
 
 
