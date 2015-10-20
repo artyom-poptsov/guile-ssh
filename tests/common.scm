@@ -84,7 +84,7 @@
    #:bindaddr %addr
    #:bindport *port*
    #:rsakey   rsakey
-   #:log-verbosity 'nolog))
+   #:log-verbosity 'rare))
 
 
 ;;; Tests
