@@ -33,8 +33,6 @@
 (define %addr   "127.0.0.1")
 (define *port*   12500)
 (define %topdir (getenv "abs_top_srcdir"))
-(define %rsakey (format #f "~a/tests/rsakey" %topdir))
-(define %dsakey (format #f "~a/tests/dsakey" %topdir))
 (define %knownhosts (format #f "~a/tests/knownhosts" %topdir))
 
 
