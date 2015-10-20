@@ -38,7 +38,8 @@
             make-libssh-log-printer
             setup-libssh-logging!
             setup-error-logging!
-            run-client-test))
+            run-client-test
+            run-server-test))
 
 
 (define %topdir (getenv "abs_top_srcdir"))
@@ -113,6 +114,24 @@ CLIENT-PROC call."
             (primitive-exit 1)))
         ;; client
         (client-proc))))
+
+(define (run-server-test client-proc server-proc)
+  "Run a CLIENT-PROC in newly created process.  A session is passed to a
+CLIENT-PROC as an argument.  SERVER-PROC is called with a server as an
+argument.  The procedure returns a result of SERVER-PROC call."
+  (let ((server  (make-server-for-test))
+        (session (make-session-for-test))
+        (pid     (primitive-fork)))
+    (if (zero? pid)
+        ;; server
+        (dynamic-wind
+          (const #f)
+          (lambda ()
+            (client-proc session))
+          (lambda ()
+            (primitive-exit 1)))
+        ;; client
+        (server-proc server))))
 
 
 ;;; Logging

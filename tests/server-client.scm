@@ -51,25 +51,6 @@
       (format log "    client: ~a~%" message))))
 
 
-(define (run-server-test client-proc server-proc)
-  "Run a CLIENT-PROC in newly created process.  A session is passed to a
-CLIENT-PROC as an argument.  SERVER-PROC is called with a server as an
-argument.  The procedure returns a result of SERVER-PROC call."
-  (let ((server  (make-server-for-test))
-        (session (make-session-for-test))
-        (pid     (primitive-fork)))
-    (if (zero? pid)
-        ;; server
-        (dynamic-wind
-          (const #f)
-          (lambda ()
-            (client-proc session))
-          (lambda ()
-            (primitive-exit 1)))
-        ;; client
-        (server-proc server))))
-
-
 ;;; Testing of basic procedures
 
 (test-assert-with-log "accept, key exchange"
