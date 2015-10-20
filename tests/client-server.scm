@@ -51,11 +51,7 @@
 
 ;;; Logging
 
-(define %libssh-log-file "client-server-libssh.log")
-(define %error-log-file  "client-server-errors.log")
-
-(setup-libssh-logging! %libssh-log-file)
-(setup-error-logging! %error-log-file)
+(setup-test-suite-logging! "client-server")
 
 
 ;;; Helper procedures and macros

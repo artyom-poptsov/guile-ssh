@@ -38,6 +38,7 @@
             make-libssh-log-printer
             setup-libssh-logging!
             setup-error-logging!
+            setup-test-suite-logging!
             run-client-test
             run-server-test))
 
@@ -155,5 +156,12 @@ printer."
 (define (setup-error-logging! log-file)
   "Setup error logging for a test suite with output to a LOG-FILE."
   (set-current-error-port (open-output-file log-file)))
+
+(define (setup-test-suite-logging! test-name)
+  "Setup error logging for a TEST-SUITE."
+  (let ((libssh-log-file (string-append test-name "-libssh.log"))
+        (errors-log-file (string-append test-name "-errors.log")))
+    (setup-libssh-logging! libssh-log-file)
+    (setup-error-logging! errors-log-file)))
 
 ;;; common.scm ends here
