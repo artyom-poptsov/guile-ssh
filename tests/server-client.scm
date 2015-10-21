@@ -28,16 +28,6 @@
 (test-begin "server-client")
 
 
-;;; Global symbols
-
-(define %addr   "127.0.0.1")
-(define *port*   12500)
-(define %topdir (getenv "abs_top_srcdir"))
-(define %rsakey (format #f "~a/tests/rsakey" %topdir))
-(define %dsakey (format #f "~a/tests/dsakey" %topdir))
-(define %knownhosts (format #f "~a/tests/knownhosts" %topdir))
-
-
 ;;; Load helper procedures
 
 (add-to-load-path (getenv "abs_top_srcdir"))
@@ -46,71 +36,15 @@
 
 ;;; Logging
 
-(define %libssh-log-file "server-client-libssh.log")
-(define %error-log-file  "server-client-errors.log")
-
-(setup-libssh-logging! %libssh-log-file)
-(setup-error-logging! %error-log-file)
+(setup-test-suite-logging! "server-client")
 
 ;;; Helper procedures and macros
-
-(define (make-session-for-test)
-  "Make a session with predefined parameters for a test."
-  (make-session
-   #:host    %addr
-   #:port    *port*
-   #:timeout 10        ;seconds
-   #:user    "bob"
-   #:knownhosts %knownhosts
-   #:log-verbosity 'nolog))
-
-(define (make-server-for-test)
-  "Make a server with predefined parameters for a test."
-  (make-server
-   #:bindaddr %addr
-   #:bindport *port*
-   #:rsakey   %rsakey
-   #:dsakey   %dsakey
-   #:log-verbosity 'rare))
 
 (define clnmsg
   (let ((log (test-runner-aux-value (test-runner-current))))
     (lambda (message)
       "Print a server MESSAGE to the test log."
       (format log "    client: ~a~%" message))))
-
-
-;; Pass the test case NAME as the userdata to the libssh log
-(define-syntax test-assert-with-log
-  (syntax-rules ()
-    ((_ name body ...)
-     (test-assert name
-       (begin
-         (set-log-userdata! name)
-
-         ;; Every test uses its own port to avoid conflicts
-         (set! *port* (1+ *port*))
-
-         body ...)))))
-
-
-(define (run-server-test client-proc server-proc)
-  "Run a CLIENT-PROC in newly created process.  A session is passed to a
-CLIENT-PROC as an argument.  SERVER-PROC is called with a server as an
-argument.  The procedure returns a result of SERVER-PROC call."
-  (let ((server  (make-server-for-test))
-        (session (make-session-for-test))
-        (pid     (primitive-fork)))
-    (if (zero? pid)
-        ;; server
-        (dynamic-wind
-          (const #f)
-          (lambda ()
-            (client-proc session))
-          (lambda ()
-            (primitive-exit 1)))
-        ;; client
-        (server-proc server))))
 
 
 ;;; Testing of basic procedures

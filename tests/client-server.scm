@@ -51,11 +51,7 @@
 
 ;;; Logging
 
-(define %libssh-log-file "client-server-libssh.log")
-(define %error-log-file  "client-server-errors.log")
-
-(setup-libssh-logging! %libssh-log-file)
-(setup-error-logging! %error-log-file)
+(setup-test-suite-logging! "client-server")
 
 
 ;;; Helper procedures and macros
@@ -63,28 +59,6 @@
 (define (srvmsg message)
   "Print a server MESSAGE to the test log."
   (format log "    server: ~a~%" message))
-
-
-(define (run-client-test server-proc client-proc)
-  "Run a SERVER-PROC in newly created process.  The server passed to a
-SERVER-PROC as an argument.  CLIENT-PROC is expected to be a thunk that should
-be executed in the parent process.  The procedure returns a result of
-CLIENT-PROC call."
-  (let ((server (make-server-for-test))
-        (pid    (primitive-fork)))
-    (if (zero? pid)
-        ;; server
-        (dynamic-wind
-          (const #f)
-          (lambda ()
-            (set-log-userdata! (string-append (get-log-userdata) " (server)"))
-            (server-set! server 'log-verbosity 'rare)
-            (server-proc server)
-            (primitive-exit 0))
-          (lambda ()
-            (primitive-exit 1)))
-        ;; client
-        (client-proc))))
 
 
 ;;; Testing of basic procedures.
@@ -514,27 +488,6 @@ CLIENT-PROC call."
 ;; data transferring
 ;; FIXME: Probably these TCs can be implemented more elegantly.
 
-(define (start-server/dt-test server rwproc)
-  (server-listen server)
-  (let ((session (server-accept server))
-        (channel #f))
-    (server-handle-key-exchange session)
-    (make-session-loop session
-      (if (not (eof-object? msg))
-          (let ((msg-type (message-get-type msg)))
-            (case (car msg-type)
-              ((request-channel-open)
-               (set! channel (message-channel-request-open-reply-accept msg))
-               (let poll ((ready? #f))
-                 (if ready?
-                     (rwproc channel)
-                     (poll (char-ready? channel)))))
-              ((request-channel)
-               (message-reply-success msg))
-              (else
-               (message-reply-success msg)))))))
-  (primitive-exit))
-
 (define (make-channel/dt-test session)
   (let ((c (make-channel session)))
     (channel-open-session c)
@@ -684,57 +637,30 @@ CLIENT-PROC call."
 ;;  |               |                    |
 ;;
 (test-assert-with-log "call-with-ssh-forward"
-  (let ((sock-path (tmpnam)))
-    (run-client-test
-
-     ;; server
-     (lambda (server)
-       (let ((pid (primitive-fork)))
-         (if (zero? pid)
-             ;; Guile-SSH server
-             (start-server/dt-test server
-                                   (lambda (channel)
-                                     (write-line (read-line channel) channel)))
-             ;; call/pf process
-             (begin
-               (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
-               (let* ((session     (make-session/channel-test))
-                      (local-port  12345)
-                      (remote-host "www.example.org")
-                      (tunnel      (make-tunnel session
-                                                #:port local-port
-                                                #:host remote-host))
-                      (str         "hello world")
-                      (result (call-with-ssh-forward tunnel
-                                                     (lambda (sock)
-                                                       (write-line str sock)
-                                                       (while (not (char-ready? sock)))
-                                                       (read-line sock))))
-                      (call-pf-sock (socket PF_UNIX SOCK_STREAM 0)))
-                 (bind call-pf-sock AF_UNIX sock-path)
-                 (listen call-pf-sock 1)
-                 (let ((client (car (accept call-pf-sock))))
-                   (write-line result client)
-                   (sleep 10)
-                   (close client)))))))
-
-     ;; client
-     (lambda ()
-       (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
-
-         ;; XXX: This operation can potentially block the process forever.
-         (while (not (file-exists? sock-path)))
-
-         (format log "    client: sock-path: ~a~%" sock-path)
-
-         (connect sock AF_UNIX sock-path)
-
-         ;; XXX: This too.
-         (while (not (char-ready? sock)))
-
-         (let ((result (read-line sock)))
-           (close sock)
-           (string=? result "hello world")))))))
+  (run-client-test/separate-process
+   ;; Server
+   (lambda (server)
+     (start-server/dt-test server
+                           (lambda (channel)
+                             (write-line (read-line channel) channel))))
+   ;; Client (call/pf)
+   (lambda ()
+     (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
+     (let* ((session     (make-session/channel-test))
+            (local-port  12345)
+            (remote-host "www.example.org")
+            (tunnel      (make-tunnel session
+                                      #:port local-port
+                                      #:host remote-host))
+            (str         "hello world"))
+       (call-with-ssh-forward tunnel
+                              (lambda (sock)
+                                (write-line str sock)
+                                (while (not (char-ready? sock)))
+                                (read-line sock)))))
+   ;; Predicate
+   (lambda (result)
+     (string=? result "hello world"))))
 
 
 (test-end "client-server")
