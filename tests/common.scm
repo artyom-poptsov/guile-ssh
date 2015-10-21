@@ -94,6 +94,7 @@
    #:bindaddr %addr
    #:bindport *port*
    #:rsakey   %rsakey
+   #:dsakey   %dsakey
    #:log-verbosity 'rare))
 
 
