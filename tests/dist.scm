@@ -74,6 +74,16 @@
          (eq? (job-proc j1) (job-proc j2)))))
 
 
+(test-assert "assign-eval"
+  (let* ((s     (make-session-for-test))
+         (nodes (make-list 2 (make-node s)))
+         (exprs (make-list 10 '(lambda (x) (1+ x))))
+         (jobs  (assign-eval nodes exprs)))
+    (and (eq? (length jobs) 2)
+         (eq? (job-type (car jobs)) 'eval)
+         (eq? (length (job-proc (car jobs))) 5))))
+
+
 ;;; Testing of 'rrepl-get-result'.
 ;; These test cases are intended to test various inputs for 'rrepl-get-result'
 ;; procedure.
