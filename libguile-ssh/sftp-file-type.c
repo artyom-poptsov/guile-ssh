@@ -83,9 +83,8 @@ ptob_input_waiting (SCM file)
 #undef FUNC_NAME
 
 
-SCM_DEFINE (gssh_open_file, "%gssh-sftp-open-file", 4, 0, 0,
-            (SCM sftp_session, SCM path, SCM access_type, SCM mode),
-            "")
+SCM_GSSH_DEFINE (gssh_open_file, "%gssh-sftp-open-file", 4,
+                 (SCM sftp_session, SCM path, SCM access_type, SCM mode))
 #define FUNC_NAME s_gssh_open_file
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -118,7 +117,7 @@ SCM_DEFINE (gssh_open_file, "%gssh-sftp-open-file", 4, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (gssh_sftp_session_p, "%gssh-sftp-file?", 1, 0, 0, (SCM x), "")
+SCM_GSSH_DEFINE (gssh_sftp_session_p, "%gssh-sftp-file?", 1, (SCM x))
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (sftp_file_tag, x));
 }

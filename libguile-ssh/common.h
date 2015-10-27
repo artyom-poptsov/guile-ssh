@@ -21,6 +21,13 @@
 
 #include <libguile.h>
 
+
+/* Simplified version of 'SCM_DEFINE' macro that defines a procedure with
+   empty docstring and without optional and "rest" arguments. */
+#define SCM_GSSH_DEFINE(c_name, scheme_name, req, arglist) \
+  SCM_DEFINE (c_name, scheme_name, req, 0, 0, arglist, "")
+
+
 struct symbol_mapping {
   char* symbol;
   int   value;

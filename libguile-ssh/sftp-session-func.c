@@ -31,9 +31,7 @@
 #include "sftp-session-type.h"
 
 
-SCM_DEFINE (gssh_sftp_init, "%gssh-sftp-init", 1, 0, 0,
-            (SCM sftp_session),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_init, "%gssh-sftp-init", 1, (SCM sftp_session))
 #define FUNC_NAME s_gssh_sftp_init
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -47,18 +45,16 @@ SCM_DEFINE (gssh_sftp_init, "%gssh-sftp-init", 1, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (gssh_sftp_get_session, "%gssh-sftp-get-session", 1, 0, 0,
-            (SCM sftp_session),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_get_session, "%gssh-sftp-get-session", 1,
+                 (SCM sftp_session))
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
   return sftp_sd->session;
 }
 
 
-SCM_DEFINE (gssh_sftp_mkdir, "%gssh-sftp-mkdir", 3, 0, 0,
-            (SCM sftp_session, SCM dirname, SCM mode),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_mkdir, "%gssh-sftp-mkdir", 3,
+                 (SCM sftp_session, SCM dirname, SCM mode))
 #define FUNC_NAME s_gssh_sftp_mkdir
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -83,9 +79,8 @@ SCM_DEFINE (gssh_sftp_mkdir, "%gssh-sftp-mkdir", 3, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (gssh_sftp_rmdir, "%gssh-sftp-rmdir", 2, 0, 0,
-            (SCM sftp_session, SCM dirname),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_rmdir, "%gssh-sftp-rmdir", 2,
+                 (SCM sftp_session, SCM dirname))
 #define FUNC_NAME s_gssh_sftp_rmdir
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -110,9 +105,8 @@ SCM_DEFINE (gssh_sftp_rmdir, "%gssh-sftp-rmdir", 2, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (gssh_sftp_mv, "%gssh-sftp-mv", 3, 0, 0,
-            (SCM sftp_session, SCM source, SCM dest),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_mv, "%gssh-sftp-mv", 3,
+                 (SCM sftp_session, SCM source, SCM dest))
 #define FUNC_NAME s_gssh_sftp_mv
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -142,9 +136,8 @@ SCM_DEFINE (gssh_sftp_mv, "%gssh-sftp-mv", 3, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (gssh_sftp_chmod, "%gssh-sftp-chmod", 3, 0, 0,
-            (SCM sftp_session, SCM filename, SCM mode),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_chmod, "%gssh-sftp-chmod", 3,
+                 (SCM sftp_session, SCM filename, SCM mode))
 #define FUNC_NAME s_gssh_sftp_chmod
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -171,9 +164,8 @@ SCM_DEFINE (gssh_sftp_chmod, "%gssh-sftp-chmod", 3, 0, 0,
 #undef FUNC_NAME
 
 
-SCM_DEFINE (gssh_sftp_symlink, "%gssh-sftp-symlink", 3, 0, 0,
-            (SCM sftp_session, SCM target, SCM dest),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_symlink, "%gssh-sftp-symlink", 3,
+                 (SCM sftp_session, SCM target, SCM dest))
 #define FUNC_NAME s_gssh_sftp_symlink
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -203,9 +195,8 @@ SCM_DEFINE (gssh_sftp_symlink, "%gssh-sftp-symlink", 3, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (gssh_sftp_readlink, "%gssh-sftp-readlink", 2, 0, 0,
-            (SCM sftp_session, SCM path),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_readlink, "%gssh-sftp-readlink", 2,
+                 (SCM sftp_session, SCM path))
 #define FUNC_NAME s_gssh_sftp_readlink
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -227,9 +218,8 @@ SCM_DEFINE (gssh_sftp_readlink, "%gssh-sftp-readlink", 2, 0, 0,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (gssh_sftp_unlink, "%gssh-sftp-unlink", 2, 0, 0,
-            (SCM sftp_session, SCM path),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_unlink, "%gssh-sftp-unlink", 2,
+                 (SCM sftp_session, SCM path))
 #define FUNC_NAME s_gssh_sftp_unlink
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -275,9 +265,8 @@ static struct symbol_mapping sftp_return_codes[] = {
   { NULL,                   -1                          }
 };
 
-SCM_DEFINE (gssh_sftp_get_error, "%gssh-sftp-get-error", 1, 0, 0,
-            (SCM sftp_session),
-            "")
+SCM_GSSH_DEFINE (gssh_sftp_get_error, "%gssh-sftp-get-error", 1,
+                 (SCM sftp_session))
 #define FUNC_NAME s_gssh_sftp_get_error
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
