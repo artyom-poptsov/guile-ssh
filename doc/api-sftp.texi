@@ -98,7 +98,7 @@ port.  Throw @code{guile-ssh-error} on an error.
 Return @code{#t} if @var{x} is an SFTP file port, @code{#f} otherwise.
 @end deffn
 
-@subsection High-level procedures on remote files
+@subsection High-level operations on remote files
 
 @deffn {Scheme Procedure} call-with-remote-input-file sftp-session filename proc
 Call a @var{proc} with a remote file port opened for input using an
