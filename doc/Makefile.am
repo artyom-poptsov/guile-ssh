@@ -12,6 +12,7 @@ guile_ssh_TEXINFOS = \
 	api-logging.texi \
 	api-version.texi \
 	api-dist.texi \
+	api-sftp.texi \
 	examples.texi \
 	fdl.texi \
 	indices.texi

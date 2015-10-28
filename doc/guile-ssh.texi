@@ -146,6 +146,9 @@ Guile-SSH Server API
 * Servers::      Creating and managing Guile-SSH servers
 * Messages::     Handling of messages
 
+SFTP
+* SFTP::         Guile-SSH SFTP client API.
+
 Distributed Computing
 * Distributed Forms::
 
@@ -160,6 +163,7 @@ Distributed Computing
 @include api-logging.texi
 @include api-version.texi
 @include api-dist.texi
+@include api-sftp.texi
 
 @include examples.texi
 
