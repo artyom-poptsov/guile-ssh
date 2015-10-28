@@ -79,11 +79,17 @@ SCM_GSSH_DEFINE (guile_ssh_is_sftp_session_p, "%gssh-sftp-session?", 1, (SCM x))
 
 SCM_GSSH_DEFINE (guile_ssh_make_sftp_session, "%gssh-make-sftp-session", 1,
                  (SCM session))
+#define FUNC_NAME s_guile_ssh_make_sftp_session
 {
   struct session_data *sd = _scm_to_session_data (session);
   sftp_session sftp_session = sftp_new (sd->ssh_session);
+
+  if (! sftp_session)
+    guile_ssh_error1 (FUNC_NAME, "Could not create a SFTP session", session);
+
   return _scm_from_sftp_session (sftp_session, session);
 }
+#undef FUNC_NAME
 
 
 struct sftp_session_data *
