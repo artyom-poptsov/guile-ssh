@@ -125,8 +125,9 @@ value is undefined."
 ;;; SFTP file API.
 
 (define* (sftp-open-file sftp-session filename flags #:optional (mode #o666))
-  "Open a FILENAME, return an open file port.  Throw 'guile-ssh-error' on an
-error."
+  "Open a FILENAME with permissions specified by MODE, return an open file
+port.  Permissions are set to 'MODE & ~umask'; the default MODE is #o666.
+Throw 'guile-ssh-error' on an error."
   (%gssh-sftp-open-file sftp-session filename flags mode))
 
 (define (sftp-file? x)
