@@ -149,9 +149,8 @@ print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
   return 1;
 }
 
-/* Complete the processing of buffered output data.  Currently this
-   callback makes no effect because the channel CHANNEL uses
-   unbuffered output. */
+/* Complete the processing of buffered output data.  Currently this callback
+   makes no effect because a SFTP_FILE uses unbuffered output. */
 static void
 ptob_flush (SCM sftp_file)
 #define FUNC_NAME "ptob_flush"
