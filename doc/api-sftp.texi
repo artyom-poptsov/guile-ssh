@@ -76,7 +76,7 @@ Make a new SFTP session using a @var{ssh-session} without initialization of
 the session with a server.  Throw @code{guile-ssh-error} exception on an
 error.
 
-Note that you should call @code{sftp-init} on the returned SFTP session before
+Note that you should call @code{%sftp-init} on the returned SFTP session before
 using it.
 @end deffn
 
