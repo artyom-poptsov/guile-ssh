@@ -58,11 +58,10 @@ Read the value of a symbolic link pointed by a @var{path}.  Return the value
 or @code{#f} on an error.
 @end deffn
 
-@deffn {Scheme Procedure} sftp-chmod sftp-session filename [mode=#o777]
+@deffn {Scheme Procedure} sftp-chmod sftp-session filename mode
 Change permissions of a remote @var{filename} using @var{sftp-session}.
-Permissions are set to @code{mode & ~umask}.  If @var{mode} is not set then
-#o777 is used.  Throw @code{guile-ssh-error} on an error.  Return value is
-undefined.
+Permissions are set to @code{mode & ~umask}.  Throw @code{guile-ssh-error} on
+an error.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} sftp-unlink sftp-session filename

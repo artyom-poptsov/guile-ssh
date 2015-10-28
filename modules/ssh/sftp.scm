@@ -110,10 +110,9 @@ error.  Return value is undefined."
   (%gssh-sftp-readlink sftp-session path))
 
 
-(define* (sftp-chmod sftp-session filename #:optional (mode #o777))
-  "Change permissions of a FILENAME.  Permissions are set to 'mode & ~umask'.
-If MODE is not set then #o777 is used.  Throw 'guile-ssh-error' on an error.
-Return value is undefined."
+(define* (sftp-chmod sftp-session filename mode)
+  "Change permissions of a FILENAME.  Permissions are set to 'MODE & ~umask'.
+Throw 'guile-ssh-error' on an error.  Return value is undefined."
   (%gssh-sftp-chmod sftp-session filename mode))
 
 (define (sftp-unlink sftp-session filename)
