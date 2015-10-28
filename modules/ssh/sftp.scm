@@ -42,7 +42,7 @@
             %sftp-init
 
             ;; File ports
-            sftp-open-file
+            sftp-open
             sftp-file?
 
             ;; High-level operations on remote files
@@ -131,11 +131,11 @@ value is undefined."
 
 ;;; SFTP file API.
 
-(define* (sftp-open-file sftp-session filename flags #:optional (mode #o666))
+(define* (sftp-open sftp-session filename flags #:optional (mode #o666))
   "Open a FILENAME with permissions specified by MODE, return an open file
 port.  Permissions are set to 'MODE & ~umask'; the default MODE is #o666.
 Throw 'guile-ssh-error' on an error."
-  (%gssh-sftp-open-file sftp-session filename flags mode))
+  (%gssh-sftp-open sftp-session filename flags mode))
 
 (define (sftp-file? x)
   "Return #t if X is an SFTP file port, #f otherwise."
@@ -167,7 +167,7 @@ If the procedure returns, then the port is closed automatically and the values
 yielded by the procedure are returned.  If the procedure does not return, then
 the port will not be closed automatically unless it is possible to prove that
 the port will never again be used for a read or write operation."
-  (let ((input-file (sftp-open-file sftp-session filename O_RDONLY)))
+  (let ((input-file (sftp-open sftp-session filename O_RDONLY)))
     (call-with-values
         (lambda () (proc input-file))
       (lambda vals
@@ -187,8 +187,8 @@ If the procedure returns, then the port is closed automatically and the values
 yielded by the procedure are returned.  If the procedure does not return, then
 the port will not be closed automatically unless it is possible to prove that
 the port will never again be used for a read or write operation."
-  (let ((output-file-port (sftp-open-file sftp-session filename
-                                          (logior O_WRONLY O_CREAT))))
+  (let ((output-file-port (sftp-open sftp-session filename
+                                     (logior O_WRONLY O_CREAT))))
     (call-with-values
         (lambda () (proc output-file-port))
       (lambda vals

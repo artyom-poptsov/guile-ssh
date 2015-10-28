@@ -89,7 +89,7 @@ exception on an error, return value is undefined.
 
 Remote files are represented as regular Guile ports that allow random access.
 
-@deffn {Scheme Procedure} sftp-open-file sftp-session filename flags [mode=#o666]
+@deffn {Scheme Procedure} sftp-open sftp-session filename flags [mode=#o666]
 Open a remote @var{filename} using an @var{sftp-session}, return an open file
 port.  Throw @code{guile-ssh-error} on an error.
 @end deffn

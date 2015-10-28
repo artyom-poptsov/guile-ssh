@@ -239,7 +239,7 @@ ptob_seek (SCM port, scm_t_off offset, int whence)
 /* Public Scheme procedures */
 
 
-SCM_GSSH_DEFINE (gssh_open_file, "%gssh-sftp-open-file", 4,
+SCM_GSSH_DEFINE (gssh_open_file, "%gssh-sftp-open", 4,
                  (SCM sftp_session, SCM path, SCM access_type, SCM mode))
 #define FUNC_NAME s_gssh_open_file
 {
