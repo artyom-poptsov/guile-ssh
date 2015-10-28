@@ -84,8 +84,9 @@ or throw 'guile-ssh-error' on if an error occured in the procedure itself."
 
 
 (define* (sftp-mkdir sftp-session dirname #:optional (mode #o777))
-  "Create a directory DIRNAME using a SFTP-SESSION with a MODE.  If the MODE
-is omitted, the current umask value is used."
+  "Create a directory DIRNAME using a SFTP-SESSION with permissions specified
+by a MODE.  The permissions of the created file are (MODE & ~umask).  If the
+MODE is omitted, #o777 is used."
   (%gssh-sftp-mkdir sftp-session dirname mode))
 
 (define (sftp-rmdir sftp-session dirname)
