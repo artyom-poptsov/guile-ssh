@@ -71,13 +71,13 @@ equalp_sftp_session (SCM x1, SCM x2)
     return SCM_BOOL_T;
 }
 
-SCM_GSSH_DEFINE (guile_ssh_is_sftp_session_p, "%sftp-session?", 1, (SCM x))
+SCM_GSSH_DEFINE (guile_ssh_is_sftp_session_p, "%gssh-sftp-session?", 1, (SCM x))
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (sftp_session_tag, x));
 }
 
 
-SCM_GSSH_DEFINE (guile_ssh_make_sftp_session, "%make-sftp-session", 1,
+SCM_GSSH_DEFINE (guile_ssh_make_sftp_session, "%gssh-make-sftp-session", 1,
                  (SCM session))
 {
   struct session_data *sd = _scm_to_session_data (session);

@@ -41,11 +41,11 @@
 
 (define (make-sftp-session session)
   "Make a new SFTP session using a SSH SESSION."
-  (%make-sftp-session session))
+  (%gssh-make-sftp-session session))
 
 (define (sftp-session? x)
   "Return #t if X is a SFTP session, #f otherwise."
-  (%sftp-session? x))
+  (%gssh-sftp-session? x))
 
 (define (sftp-init sftp-session)
   "Initialize a SFTP-SESSION with the server.  Throw 'guile-ssh-error'
