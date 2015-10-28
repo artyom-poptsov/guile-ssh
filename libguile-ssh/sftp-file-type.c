@@ -228,7 +228,7 @@ ptob_seek (SCM port, scm_t_off offset, int whence)
   if (target < 0)
     scm_misc_error (FUNC_NAME, "negative offset", SCM_EOL);
 
-  if (sftp_seek (fd->file, target))
+  if (sftp_seek64 (fd->file, target))
     guile_ssh_error1 (FUNC_NAME, "Could not seek a file", port);
 
   return target;
