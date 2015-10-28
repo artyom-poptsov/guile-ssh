@@ -305,7 +305,6 @@ _scm_from_sftp_file (const sftp_file file, const SCM name, SCM sftp_session)
   fd->file         = file;
   ptob = scm_new_port_table_entry (sftp_file_tag);
   pt   = SCM_PTAB_ENTRY (ptob);
-  pt->rw_random = 0;
 
   /* Output init */
   pt->write_buf_size = DEFAULT_PORT_R_BUFSZ;
