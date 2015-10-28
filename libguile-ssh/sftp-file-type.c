@@ -25,6 +25,8 @@
 #include "sftp-session-type.h"
 #include "sftp-file-type.h"
 
+static void ptob_flush (SCM sftp_file);
+
 
 scm_t_bits sftp_file_tag;       /* Smob tag. */
 
@@ -79,6 +81,56 @@ ptob_input_waiting (SCM file)
   sftp_attributes attr = sftp_fstat (fd->file);
   uint64_t pos = sftp_tell64 (fd->file);
   return attr->size - pos;
+}
+#undef FUNC_NAME
+
+
+static scm_t_off
+ptob_seek (SCM port, scm_t_off offset, int whence)
+#define FUNC_NAME "ptob_seek"
+{
+  struct sftp_file_data *fd = _scm_to_sftp_file_data (port);
+  scm_t_port *pt = SCM_PTAB_ENTRY (port);
+  scm_t_off target;
+
+  if (pt->rw_active == SCM_PORT_WRITE)
+    ptob_flush (port);
+
+  if (pt->rw_active == SCM_PORT_READ)
+    scm_end_input (port);
+
+  switch (whence)
+    {
+    case SEEK_CUR:
+      {
+        uint64_t current_pos = sftp_tell64 (fd->file);
+        target = current_pos + offset;
+      }
+      break;
+    case SEEK_END:
+      {
+        sftp_attributes attr = sftp_fstat (fd->file);
+        if (! attr)
+          {
+            guile_ssh_error1 (FUNC_NAME,
+                              "Could not get file attributes",
+                              port);
+          }
+        target = attr->size - offset;
+      }
+      break;
+    default: /* SEEK_SET */
+      target = offset;
+      break;
+    }
+
+  if (target < 0)
+    scm_misc_error (FUNC_NAME, "negative offset", SCM_EOL);
+
+  if (sftp_seek (fd->file, target))
+    guile_ssh_error1 (FUNC_NAME, "Could not seek a file", port);
+
+  return target;
 }
 #undef FUNC_NAME
 
@@ -262,6 +314,8 @@ _scm_from_sftp_file (const sftp_file file, const SCM name, SCM sftp_session)
   pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
   pt->read_pos = pt->read_end = pt->read_buf;
 
+  pt->rw_random = 1;
+
   SCM_SET_FILENAME (ptob, name);
   SCM_SET_CELL_TYPE (ptob, sftp_file_tag | SCM_RDNG | SCM_WRTNG | SCM_OPN);
   SCM_SETSTREAM (ptob, fd);
@@ -284,6 +338,7 @@ init_sftp_file_type (void)
   scm_set_port_free (sftp_file_tag, free_sftp_file);
   scm_set_port_print (sftp_file_tag, print_sftp_file);
   scm_set_port_equalp (sftp_file_tag, equalp_sftp_file);
+  scm_set_port_seek (sftp_file_tag, ptob_seek);
 
 #include "sftp-file-type.x"
 }
