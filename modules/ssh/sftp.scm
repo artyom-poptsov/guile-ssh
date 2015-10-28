@@ -47,10 +47,10 @@
 
 ;;; Low-level SFTP session procedures.
 
-(define (%make-sftp-session session)
-  "Make a new SFTP session using a SSH SESSION without initialization of the
+(define (%make-sftp-session ssh-session)
+  "Make a new SFTP session using an SSH-SESSION without initialization of the
 session with a server.  Throw 'guile-ssh-error' exception on an error."
-  (%gssh-make-sftp-session session))
+  (%gssh-make-sftp-session ssh-session))
 
 (define (%sftp-init sftp-session)
   "Initialize a SFTP-SESSION with the server.  Throw 'guile-ssh-error'
@@ -60,11 +60,11 @@ exception on an error, return value is undefined."
 
 ;;; Main SFTP session API.
 
-(define (make-sftp-session session)
-  "Make a new SFTP session using a SSH SESSION, initialize the session with a
+(define (make-sftp-session ssh-session)
+  "Make a new SFTP session using an SSH-SESSION, initialize the session with a
 server.  Return initialized SFTP session or throw 'guile-ssh-error' exception
 on an error"
-  (let ((sftp-session (%gssh-make-sftp-session session)))
+  (let ((sftp-session (%gssh-make-sftp-session ssh-session)))
     (%gssh-sftp-init sftp-session)
     sftp-session))
 
