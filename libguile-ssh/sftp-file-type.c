@@ -25,8 +25,6 @@
 #include "sftp-session-type.h"
 #include "sftp-file-type.h"
 
-static void ptob_flush (SCM sftp_file);
-
 
 scm_t_bits sftp_file_tag;       /* Smob tag. */
 
@@ -83,133 +81,6 @@ ptob_input_waiting (SCM file)
   return attr->size - pos;
 }
 #undef FUNC_NAME
-
-
-static scm_t_off
-ptob_seek (SCM port, scm_t_off offset, int whence)
-#define FUNC_NAME "ptob_seek"
-{
-  struct sftp_file_data *fd = _scm_to_sftp_file_data (port);
-  scm_t_port *pt = SCM_PTAB_ENTRY (port);
-  scm_t_off target;
-
-  if (pt->rw_active == SCM_PORT_WRITE)
-    ptob_flush (port);
-
-  if (pt->rw_active == SCM_PORT_READ)
-    scm_end_input (port);
-
-  switch (whence)
-    {
-    case SEEK_CUR:
-      {
-        uint64_t current_pos = sftp_tell64 (fd->file);
-        target = current_pos + offset;
-      }
-      break;
-    case SEEK_END:
-      {
-        sftp_attributes attr = sftp_fstat (fd->file);
-        if (! attr)
-          {
-            guile_ssh_error1 (FUNC_NAME,
-                              "Could not get file attributes",
-                              port);
-          }
-        target = attr->size - offset;
-      }
-      break;
-    default: /* SEEK_SET */
-      target = offset;
-      break;
-    }
-
-  if (target < 0)
-    scm_misc_error (FUNC_NAME, "negative offset", SCM_EOL);
-
-  if (sftp_seek (fd->file, target))
-    guile_ssh_error1 (FUNC_NAME, "Could not seek a file", port);
-
-  return target;
-}
-#undef FUNC_NAME
-
-
-SCM_GSSH_DEFINE (gssh_open_file, "%gssh-sftp-open-file", 4,
-                 (SCM sftp_session, SCM path, SCM access_type, SCM mode))
-#define FUNC_NAME s_gssh_open_file
-{
-  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
-  sftp_file file;
-  char* c_path;
-  int c_access_type;
-  mode_t c_mode;
-
-  SCM_ASSERT (scm_is_string (path), path, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT (scm_is_number (access_type), access_type, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT (scm_is_number (mode), mode, SCM_ARG4, FUNC_NAME);
-
-  scm_dynwind_begin (0);
-
-  c_path = scm_to_locale_string (path);
-  scm_dynwind_free (c_path);
-
-  c_access_type = scm_to_uint (access_type);
-  c_mode = scm_to_uint (mode);
-
-  file = sftp_open (sftp_sd->sftp_session, c_path, c_access_type, c_mode);
-  if (file == NULL)
-    {
-      guile_ssh_error1 (FUNC_NAME, "Could not open a file",
-                        scm_list_4 (sftp_session, path, access_type, mode));
-    }
-
-  scm_dynwind_end ();
-  return _scm_from_sftp_file (file, path, sftp_session);
-}
-#undef FUNC_NAME
-
-SCM_GSSH_DEFINE (gssh_sftp_session_p, "%gssh-sftp-file?", 1, (SCM x))
-{
-  return scm_from_bool (SCM_SMOB_PREDICATE (sftp_file_tag, x));
-}
-
-/* Complete the processing of buffered output data.  Currently this
-   callback makes no effect because the channel CHANNEL uses
-   unbuffered output. */
-static void
-ptob_flush (SCM sftp_file)
-#define FUNC_NAME "ptob_flush"
-{
-  struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
-  scm_port *pt = SCM_PTAB_ENTRY (sftp_file);
-  size_t wrsize = pt->write_pos - pt->write_buf;
-
-  if (wrsize)
-    ptob_write (sftp_file, pt->write_buf, wrsize);
-
-  pt->write_pos = pt->write_buf;
-}
-#undef FUNC_NAME
-
-static int
-ptob_close (SCM sftp_file)
-{
-  struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
-  scm_port *pt = SCM_PTAB_ENTRY (sftp_file);
-
-  ptob_flush (sftp_file);
-
-  if (fd)
-    {
-      sftp_close (fd->file);
-    }
-
-  scm_gc_free (fd, sizeof (struct sftp_file_data), "sftp file");
-  scm_gc_free (pt->write_buf, pt->write_buf_size, "port write buffer");
-  scm_gc_free (pt->read_buf,  pt->read_buf_size, "port read buffer");
-  SCM_SETSTREAM (sftp_file, NULL);
-}
 
 static SCM
 mark_sftp_file (SCM sftp_file)
@@ -277,6 +148,139 @@ print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
   scm_puts (">", port);
   return 1;
 }
+
+/* Complete the processing of buffered output data.  Currently this
+   callback makes no effect because the channel CHANNEL uses
+   unbuffered output. */
+static void
+ptob_flush (SCM sftp_file)
+#define FUNC_NAME "ptob_flush"
+{
+  struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
+  scm_port *pt = SCM_PTAB_ENTRY (sftp_file);
+  size_t wrsize = pt->write_pos - pt->write_buf;
+
+  if (wrsize)
+    ptob_write (sftp_file, pt->write_buf, wrsize);
+
+  pt->write_pos = pt->write_buf;
+}
+#undef FUNC_NAME
+
+static int
+ptob_close (SCM sftp_file)
+{
+  struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
+  scm_port *pt = SCM_PTAB_ENTRY (sftp_file);
+
+  ptob_flush (sftp_file);
+
+  if (fd)
+    {
+      sftp_close (fd->file);
+    }
+
+  scm_gc_free (fd, sizeof (struct sftp_file_data), "sftp file");
+  scm_gc_free (pt->write_buf, pt->write_buf_size, "port write buffer");
+  scm_gc_free (pt->read_buf,  pt->read_buf_size, "port read buffer");
+  SCM_SETSTREAM (sftp_file, NULL);
+}
+
+
+static scm_t_off
+ptob_seek (SCM port, scm_t_off offset, int whence)
+#define FUNC_NAME "ptob_seek"
+{
+  struct sftp_file_data *fd = _scm_to_sftp_file_data (port);
+  scm_t_port *pt = SCM_PTAB_ENTRY (port);
+  scm_t_off target;
+
+  if (pt->rw_active == SCM_PORT_WRITE)
+    ptob_flush (port);
+
+  if (pt->rw_active == SCM_PORT_READ)
+    scm_end_input (port);
+
+  switch (whence)
+    {
+    case SEEK_CUR:
+      {
+        uint64_t current_pos = sftp_tell64 (fd->file);
+        target = current_pos + offset;
+      }
+      break;
+    case SEEK_END:
+      {
+        sftp_attributes attr = sftp_fstat (fd->file);
+        if (! attr)
+          {
+            guile_ssh_error1 (FUNC_NAME,
+                              "Could not get file attributes",
+                              port);
+          }
+        target = attr->size - offset;
+      }
+      break;
+    default: /* SEEK_SET */
+      target = offset;
+      break;
+    }
+
+  if (target < 0)
+    scm_misc_error (FUNC_NAME, "negative offset", SCM_EOL);
+
+  if (sftp_seek (fd->file, target))
+    guile_ssh_error1 (FUNC_NAME, "Could not seek a file", port);
+
+  return target;
+}
+#undef FUNC_NAME
+
+
+/* Public Scheme procedures */
+
+
+SCM_GSSH_DEFINE (gssh_open_file, "%gssh-sftp-open-file", 4,
+                 (SCM sftp_session, SCM path, SCM access_type, SCM mode))
+#define FUNC_NAME s_gssh_open_file
+{
+  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  sftp_file file;
+  char* c_path;
+  int c_access_type;
+  mode_t c_mode;
+
+  SCM_ASSERT (scm_is_string (path), path, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (access_type), access_type, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT (scm_is_number (mode), mode, SCM_ARG4, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  c_path = scm_to_locale_string (path);
+  scm_dynwind_free (c_path);
+
+  c_access_type = scm_to_uint (access_type);
+  c_mode = scm_to_uint (mode);
+
+  file = sftp_open (sftp_sd->sftp_session, c_path, c_access_type, c_mode);
+  if (file == NULL)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not open a file",
+                        scm_list_4 (sftp_session, path, access_type, mode));
+    }
+
+  scm_dynwind_end ();
+  return _scm_from_sftp_file (file, path, sftp_session);
+}
+#undef FUNC_NAME
+
+SCM_GSSH_DEFINE (gssh_sftp_session_p, "%gssh-sftp-file?", 1, (SCM x))
+{
+  return scm_from_bool (SCM_SMOB_PREDICATE (sftp_file_tag, x));
+}
+
+
+/* Public C procedures */
 
 
 /* Convert SCM object X to a SFTP file data object. */
