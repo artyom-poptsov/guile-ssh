@@ -60,7 +60,7 @@ Example:
     (connect! session)
     (userauth-agent! session)
     (let ((sftp-session (make-sftp-session session)))
-      (let ((remote-file (sftp-open-file sftp-session path O_RDONLY))
+      (let ((remote-file (sftp-open sftp-session path O_RDONLY))
             (local-file  (open-output-file destination)))
         (let copy ((line (read-line remote-file)))
           (unless (eof-object? line)
