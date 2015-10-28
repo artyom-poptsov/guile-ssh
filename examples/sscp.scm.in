@@ -1,0 +1,99 @@
+#!@GUILE@ \
+--debug -e main
+!#
+
+;;; sscp.scm -- Scheme Secure Copy implementation.
+
+;; Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;;
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+;;; Commentary:
+
+;; Somewhat a minimal implementation of scp (Secure Copy) in Scheme that is
+;; aimed to show how one could use (ssh sftp) module from Guile-SSH to do such
+;; a work.
+
+;;; Code:
+
+(use-modules (ice-9 regex)              ; 'make-regexp' etc
+             (ice-9 rdelim)             ; 'read-line', 'write-line'
+             (ice-9 getopt-long)        ; CLI options parsing
+             ;; Guile-SSH modules
+             (ssh session)              ; Guile-SSH sessions
+             (ssh auth)                 ; Authentication
+             (ssh sftp))                ; SFTP client API
+
+
+
+(define (debug fmt . args)
+  (format #t "DEBUG: ~a~%" (apply format #f fmt args)))
+
+(define (print-help-and-exit)
+  (display "
+Usage: sscp source dest
+
+Example:
+  sscp avp@127.0.0.1:/etc/profile profile
+")
+  (exit 0))
+
+
+(define %remote-regex
+  (make-regexp "(.*)@([0-9]+\\.[0-9]+\\.[0-9]\\.[0-9]+):(.*)"))
+
+(define (cp user host path destination)
+  "Copy a file specified by a PATH from HOST to a local DESTINATION."
+  (let ((session (make-session #:user user #:host host)))
+    (connect! session)
+    (userauth-agent! session)
+    (let ((sftp-session (make-sftp-session session)))
+      (let ((remote-file (sftp-open-file sftp-session path O_RDONLY))
+            (local-file  (open-output-file destination)))
+        (let copy ((line (read-line remote-file)))
+          (unless (eof-object? line)
+            (write-line line local-file)
+            (copy (read-line remote-file))))))))
+
+
+(define (main args)
+  "Entry point."
+  (let* ((option-spec  '((help (single-char #\h) (value #f))))
+         (options      (getopt-long args option-spec))
+         (help-needed? (option-ref options 'help #f))
+         (args         (option-ref options '()   #f)))
+
+    (and help-needed?
+         (print-help-and-exit))
+
+    (debug "program args: ~a" args)
+
+    (let* ((source      (car args))
+           (destination (cadr args)))
+
+      (debug "source: ~a; dest: ~a" source destination)
+
+      (cond
+       ((regexp-exec %remote-regex source) =>
+        (lambda (match)
+          (let ((user (match:substring match 1))
+                (host (match:substring match 2))
+                (path (match:substring match 3)))
+            (debug "user: ~a; host: ~a; path: ~a" user host path)
+            (cp user host path destination))))
+        (else
+         (error "Not supported yet.  :-/" args))))))
+
+;;; sscp.scm ends here.
