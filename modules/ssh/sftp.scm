@@ -35,23 +35,44 @@
             sftp-readlink
             sftp-chmod
             sftp-unlink
+
+            ;; Low-level SFTP session procedures
+            %make-sftp-session
+            %sftp-init
+
             ;; File ports
             sftp-open-file
             sftp-file?))
 
-(define (make-sftp-session session)
-  "Make a new SFTP session using a SSH SESSION."
+
+;;; Low-level SFTP session procedures.
+
+(define (%make-sftp-session session)
+  "Make a new SFTP session using a SSH SESSION without initialization of the
+session with a server.  Throw 'guile-ssh-error' exception on an error."
   (%gssh-make-sftp-session session))
+
+(define (%sftp-init sftp-session)
+  "Initialize a SFTP-SESSION with the server.  Throw 'guile-ssh-error'
+exception on an error, return value is undefined."
+  (%gssh-sftp-init sftp-session))
+
+
+;;; Main SFTP session API.
+
+(define (make-sftp-session session)
+  "Make a new SFTP session using a SSH SESSION, initialize the session with a
+server.  Return initialized SFTP session or throw 'guile-ssh-error' exception
+on an error"
+  (let ((sftp-session (%gssh-make-sftp-session session)))
+    (%gssh-sftp-init sftp-session)
+    sftp-session))
 
 (define (sftp-session? x)
   "Return #t if X is a SFTP session, #f otherwise."
   (%gssh-sftp-session? x))
 
-(define (sftp-init sftp-session)
-  "Initialize a SFTP-SESSION with the server.  Throw 'guile-ssh-error'
-exception on an error, return value is undefined."
-  (%gssh-sftp-init sftp-session))
-
+
 (define (sftp-get-session sftp-session)
   "Get the parent SSH session for a SFTP-SESSION."
   (%gssh-sftp-get-session sftp-session))
@@ -101,6 +122,8 @@ value is undefined."
   (%gssh-sftp-unlink sftp-session filename))
 
 
+;;; SFTP file API.
+
 (define* (sftp-open-file sftp-session filename flags #:optional (mode #o666))
   "Open a FILENAME, return an open file port.  Throw 'guile-ssh-error' on an
 error."
@@ -111,6 +134,8 @@ error."
   (%gssh-sftp-file? x))
 
 
+;;; Load libraries.
+
 (load-extension "libguile-ssh" "init_sftp_session")
 (load-extension "libguile-ssh" "init_sftp_file")
 
