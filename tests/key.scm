@@ -22,6 +22,14 @@
              (ssh version))
 
 
+;;; Load helper procedures
+
+(add-to-load-path (getenv "abs_top_srcdir"))
+(use-modules (tests common))
+
+;;;
+
+
 ;; ECDSA doesn't work if libssh 0.6.3 was compiled GCrypt
 (define %openssl? (eq? (get-crypto-library) 'openssl))
 (define-syntax-rule (when-openssl test)
@@ -29,7 +37,6 @@
       test))
 
 
-(define %topdir (getenv "abs_top_srcdir"))
 (define %rsa-private-key-file   (format #f "~a/tests/rsakey"   %topdir))
 (define %dsa-private-key-file   (format #f "~a/tests/dsakey"   %topdir))
 (define %ecdsa-private-key-file (format #f "~a/tests/ecdsakey" %topdir))
