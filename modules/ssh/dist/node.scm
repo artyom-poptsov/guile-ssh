@@ -223,28 +223,27 @@ name.  Throw 'node-repl-error' on an error."
   (let ((result (read-line repl-channel)))
     (if (string-null? result)
         (rrepl-get-result repl-channel)
-        (begin
-          (cond
-           ((regexp-exec %repl-result-regexp result) =>
-            (lambda (match)
-              (receive (result eval-num)
-                  (read-result match)
-                (values
-                 result                                ; Result
-                 eval-num                              ; # of evaluation
-                 (match:substring match 2)             ; Module
-                 (match:substring match 1)))))         ; Language
-           ((regexp-exec %repl-error-regexp result) =>
-            (lambda (match) (raise-repl-error result)))
-           ((regexp-exec %repl-undefined-result-regexp result) =>
-            (lambda (match)
+        (cond
+         ((regexp-exec %repl-result-regexp result) =>
+          (lambda (match)
+            (receive (result eval-num)
+                (read-result match)
               (values
-               *unspecified*                ; Result
-               *unspecified*                ; # of evaluation
-               (match:substring match 2)    ; Module
-               (match:substring match 1)))) ; Language
-           (else
-            (raise-repl-error result)))))))
+               result                                ; Result
+               eval-num                              ; # of evaluation
+               (match:substring match 2)             ; Module
+               (match:substring match 1)))))         ; Language
+         ((regexp-exec %repl-error-regexp result) =>
+          (lambda (match) (raise-repl-error result)))
+         ((regexp-exec %repl-undefined-result-regexp result) =>
+          (lambda (match)
+            (values
+             *unspecified*                ; Result
+             *unspecified*                ; # of evaluation
+             (match:substring match 2)    ; Module
+             (match:substring match 1)))) ; Language
+         (else
+          (raise-repl-error result))))))
 
 (define (rrepl-eval rrepl-channel quoted-exp)
   "Evaluate QUOTED-EXP using RREPL-CHANNEL, return four values: an evaluation
