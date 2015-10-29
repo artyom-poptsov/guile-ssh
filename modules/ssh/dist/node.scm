@@ -189,35 +189,35 @@ name.  Throw 'node-repl-error' on an error."
                 (string-append result "\n" line)))))
 
   (define (read-result match)
-    (let ((matches
-           (let loop ((line    (read-line repl-channel))
-                      (matches (list match)))
-             (if (or (eof-or-null? line)
-                     (regexp-exec %repl-undefined-result-regexp line))
-                 (reverse matches)
-                 (loop (read-line repl-channel)
-                       (cons (regexp-exec %repl-result-2-regexp line) matches))))))
-      (let ((len (length matches)))
-        (if (= len 1)
-            (let ((m (car matches)))
-              (values (read-string (match:substring m 4))
-                      (string->number (match:substring m 3))))
-            (let ((rv (make-vector len))
-                  (nv (make-vector len)))
-              (vector-set! rv 0
-                           (read-string (match:substring (car matches) 4)))
-              (vector-set! nv 0
-                           (string->number (match:substring (car matches) 3)))
-              (do ((i 1 (1+ i)))
-                  ((= i len))
-                (vector-set! rv i
-                             (read-string (match:substring (list-ref matches i)
-                                                           2)))
-                (vector-set! nv i
-                             (string->number (match:substring (list-ref matches
-                                                                        i)
-                                                              1))))
-              (values rv nv))))))
+    (let* ((matches
+            (let loop ((line    (read-line repl-channel))
+                       (matches (list match)))
+              (if (or (eof-or-null? line)
+                      (regexp-exec %repl-undefined-result-regexp line))
+                  (reverse matches)
+                  (loop (read-line repl-channel)
+                        (cons (regexp-exec %repl-result-2-regexp line) matches)))))
+           (len (length matches)))
+      (if (= len 1)
+          (let ((m (car matches)))
+            (values (read-string (match:substring m 4))
+                    (string->number (match:substring m 3))))
+          (let ((rv (make-vector len))
+                (nv (make-vector len)))
+            (vector-set! rv 0
+                         (read-string (match:substring (car matches) 4)))
+            (vector-set! nv 0
+                         (string->number (match:substring (car matches) 3)))
+            (do ((i 1 (1+ i)))
+                ((= i len))
+              (vector-set! rv i
+                           (read-string (match:substring (list-ref matches i)
+                                                         2)))
+              (vector-set! nv i
+                           (string->number (match:substring (list-ref matches
+                                                                      i)
+                                                            1))))
+            (values rv nv)))))
 
   (let ((result (read-line repl-channel)))
     (if (string-null? result)
