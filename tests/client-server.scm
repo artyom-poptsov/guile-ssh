@@ -339,7 +339,7 @@
        (sleep 1)
        (connect! session)
        (authenticate-server session)
-       (let* ((prvkey (private-key-from-file rsakey)))
+       (let* ((prvkey (private-key-from-file %rsakey)))
          (let ((res (userauth-public-key! session prvkey)))
            (disconnect! session)
            (eq? res 'success)))))))
@@ -550,9 +550,9 @@
   (let ((channel (make-channel session)))
     (case (channel-open-forward channel
                                 #:source-host "localhost"
-                                #:local-port  12345
+                                #:local-port  (get-unused-port)
                                 #:remote-host "localhost"
-                                #:remote-port 12321)
+                                #:remote-port (1+ (get-unused-port)))
       ((ok)
        channel)
       (else => (cut error "Could not open forward" <>)))))
@@ -578,7 +578,7 @@
 ;; Create a tunnel, check the result.
 (test-assert-with-log "make-tunnel"
   (let* ((session (make-session-for-test))
-         (local-port  12345)
+         (local-port (get-unused-port))
          (remote-host "www.example.org")
          (tunnel  (make-tunnel session
                                #:port  local-port
@@ -647,7 +647,7 @@
    (lambda ()
      (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
      (let* ((session     (make-session/channel-test))
-            (local-port  12345)
+            (local-port  (get-unused-port))
             (remote-host "www.example.org")
             (tunnel      (make-tunnel session
                                       #:port local-port

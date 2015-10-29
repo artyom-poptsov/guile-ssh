@@ -53,12 +53,12 @@ AM_SCM_LOG_FLAGS = \
 EXTRA_DIST = \
 	${SCM_TESTS}		\
 	common.scm		\
-	dsakey			\
-	dsakey.pub		\
-	ecdsakey		\
-	ecdsakey.pub		\
-	rsakey			\
-	rsakey.pub
+	keys/dsakey		\
+	keys/dsakey.pub		\
+	keys/ecdsakey		\
+	keys/ecdsakey.pub	\
+	keys/rsakey		\
+	keys/rsakey.pub
 
 CLEANFILES = \
 	client-server-errors.log		\

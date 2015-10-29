@@ -1,6 +1,6 @@
 ;;; server.scm -- Testing of server procedures without a client.
 
-;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -17,8 +17,12 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
+(add-to-load-path (getenv "abs_top_srcdir"))
+
 (use-modules (srfi srfi-64)
-             (ssh server))
+             (ssh server)
+             ;; Helper procedures
+             (tests common))
 
 (test-begin "server")
 
@@ -43,8 +47,8 @@
          (options `((bindaddr      "127.0.0.1")
                     (bindport      22)
                     (hostkey       "ssh-rsa" "ssh-dss")
-                    (rsakey        ,(format #f "~a/tests/rsakey" topdir))
-                    (dsakey        ,(format #f "~a/tests/dsakey" topdir))
+                    (rsakey        ,%rsakey)
+                    (dsakey        ,%dsakey)
                     (banner        "string")
                     (log-verbosity nolog rare protocol packet functions)
                     (blocking-mode #f #t)))
@@ -108,8 +112,8 @@
   (let ((topdir  (getenv "abs_top_srcdir")))
     (make-server #:bindaddr      "127.0.0.1"
                  #:bindport      123456
-                 #:rsakey        (format #f "~a/tests/rsakey" topdir)
-                 #:dsakey        (format #f "~a/tests/dsakey" topdir)
+                 #:rsakey        %rsakey
+                 #:dsakey        %dsakey
                  #:banner        "banner"
                  #:log-verbosity 'nolog
                  #:blocking-mode #f)))
@@ -118,22 +122,20 @@
   (let* ((topdir        (getenv "abs_top_srcdir"))
          (bindaddr      "127.0.0.1")
          (bindport      123456)
-         (rsakey        (format #f "~a/tests/rsakey" topdir))
-         (dsakey        (format #f "~a/tests/dsakey" topdir))
          (banner        "banner")
          (log-verbosity 'nolog)
          (blocking-mode #f)
          (server (make-server #:bindaddr      bindaddr
                               #:bindport      bindport
-                              #:rsakey        rsakey
-                              #:dsakey        dsakey
+                              #:rsakey        %rsakey
+                              #:dsakey        %dsakey
                               #:banner        banner
                               #:log-verbosity log-verbosity
                               #:blocking-mode blocking-mode)))
     (and (eq? (server-get server 'bindaddr)      bindaddr)
          (eq? (server-get server 'bindport)      bindport)
-         (eq? (server-get server 'rsakey)        rsakey)
-         (eq? (server-get server 'dsakey)        dsakey)
+         (eq? (server-get server 'rsakey)        %rsakey)
+         (eq? (server-get server 'dsakey)        %dsakey)
          (eq? (server-get server 'banner)        banner)
          (eq? (server-get server 'log-verbosity) log-verbosity)
          (eq? (server-get server 'blocking-mode) blocking-mode))))
@@ -142,7 +144,7 @@
   (let* ((topdir  (getenv "abs_top_srcdir"))
          (server  (make-server #:bindaddr "127.0.0.1"
                                #:bindport 123456
-                               #:rsakey   (format #f "~a/tests/rsakey" topdir)
+                               #:rsakey   %rsakey
                                #:log-verbosity 'nolog)))
     (server-listen server)
     #t))

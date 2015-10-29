@@ -1,6 +1,6 @@
 ;;; key.scm -- Testing of Guile-SSH keys
 
-;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -22,43 +22,42 @@
              (ssh version))
 
 
+;;; Load helper procedures
+
+(add-to-load-path (getenv "abs_top_srcdir"))
+(use-modules (tests common))
+
+;;;
+
+
 ;; ECDSA doesn't work if libssh 0.6.3 was compiled GCrypt
 (define %openssl? (eq? (get-crypto-library) 'openssl))
 (define-syntax-rule (when-openssl test)
   (or (not %openssl?)
       test))
 
-
-(define %topdir (getenv "abs_top_srcdir"))
-(define %rsa-private-key-file   (format #f "~a/tests/rsakey"   %topdir))
-(define %dsa-private-key-file   (format #f "~a/tests/dsakey"   %topdir))
-(define %ecdsa-private-key-file (format #f "~a/tests/ecdsakey" %topdir))
-(define %rsa-public-key-file    (format #f "~a/tests/rsakey.pub"   %topdir))
-(define %dsa-public-key-file    (format #f "~a/tests/dsakey.pub"   %topdir))
-(define %ecdsa-public-key-file  (format #f "~a/tests/ecdsakey.pub" %topdir))
-
 (test-begin "key")
 
 (test-assert "private-key-from-file"
-  (and (private-key-from-file %rsa-private-key-file)
-       (private-key-from-file %dsa-private-key-file)
+  (and (private-key-from-file %rsakey)
+       (private-key-from-file %dsakey)
        (when-openssl
-        (private-key-from-file %ecdsa-private-key-file))))
+        (private-key-from-file %ecdsakey))))
 
 (test-assert "public-key-from-file"
-  (and (public-key-from-file %rsa-public-key-file)
-       (public-key-from-file %dsa-public-key-file)
+  (and (public-key-from-file %rsakey-pub)
+       (public-key-from-file %dsakey-pub)
        (when-openssl
-        (public-key-from-file %ecdsa-public-key-file))))
+        (public-key-from-file %ecdsakey-pub))))
 
-(define *rsa-key*       (private-key-from-file %rsa-private-key-file))
-(define *dsa-key*       (private-key-from-file %dsa-private-key-file))
+(define *rsa-key*       (private-key-from-file %rsakey))
+(define *dsa-key*       (private-key-from-file %dsakey))
 (define *ecdsa-key*     (when-openssl
-                         (private-key-from-file %ecdsa-private-key-file)))
-(define *rsa-pub-key*   (public-key-from-file %rsa-public-key-file))
-(define *dsa-pub-key*   (public-key-from-file %dsa-public-key-file))
+                         (private-key-from-file %ecdsakey)))
+(define *rsa-pub-key*   (public-key-from-file %rsakey-pub))
+(define *dsa-pub-key*   (public-key-from-file %dsakey-pub))
 (define *ecdsa-pub-key* (when-openssl
-                         (public-key-from-file %ecdsa-public-key-file)))
+                         (public-key-from-file %ecdsakey-pub)))
 
 (test-assert "key?"
   (and (not (key? "not a key"))

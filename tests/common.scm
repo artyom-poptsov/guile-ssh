@@ -28,11 +28,15 @@
             %topdir
             %knownhosts
             %addr
-            rsakey                      ;TODO: Rename
             %rsakey
+            %rsakey-pub
             %dsakey
+            %dsakey-pub
+            %ecdsakey
+            %ecdsakey-pub
 
             ;; Procedures
+            get-unused-port
             test-assert-with-log
             make-session-loop
             make-session-for-test
@@ -50,9 +54,17 @@
 (define %topdir (getenv "abs_top_srcdir"))
 (define %addr   "127.0.0.1")
 (define *port*  12400)
-(define rsakey (format #f "~a/tests/rsakey" %topdir))
-(define %rsakey (format #f "~a/tests/rsakey" %topdir))
-(define %dsakey (format #f "~a/tests/dsakey" %topdir))
+
+
+;; Keys
+(define %rsakey       (format #f "~a/tests/keys/rsakey"       %topdir))
+(define %rsakey-pub   (format #f "~a/tests/keys/rsakey.pub"   %topdir))
+(define %dsakey       (format #f "~a/tests/keys/dsakey"       %topdir))
+(define %dsakey-pub   (format #f "~a/tests/keys/dsakey.pub"   %topdir))
+(define %ecdsakey     (format #f "~a/tests/keys/ecdsakey"     %topdir))
+(define %ecdsakey-pub (format #f "~a/tests/keys/ecdsakey.pub" %topdir))
+
+
 (define %knownhosts (format #f "~a/tests/knownhosts"
                             (getenv "abs_top_builddir")))
 
@@ -96,6 +108,32 @@
    #:rsakey   %rsakey
    #:dsakey   %dsakey
    #:log-verbosity 'rare))
+
+
+;;; Port helpers.
+
+(define (port-in-use? port-number)
+  "Return #t if a port with a PORT-NUMBER isn't used, #f otherwise."
+  (let ((sock (socket PF_INET SOCK_STREAM 0)))
+    (catch #t
+      (lambda ()
+        (bind sock AF_INET INADDR_LOOPBACK port-number)
+        (close sock)
+        #f)
+      (lambda args
+        (close sock)
+        #t))))
+
+(define get-unused-port
+  (let ((port-num 12345))
+    (lambda ()
+      "Get an unused port number."
+      (let loop ((num port-num))
+        (if (port-in-use? num)
+            (loop (1+ num))
+            (begin
+              (set! port-num num)
+              num))))))
 
 
 ;;; Test Servers
