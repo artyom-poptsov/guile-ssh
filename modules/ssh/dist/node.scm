@@ -129,6 +129,10 @@ automatically in case when it is not started yet."
 
 ;;; Remote REPL (RREPL)
 
+(define (read-string str)
+  "Read a string STR."
+  (call-with-input-string str read))
+
 (define (rexec node cmd)
   "Execute a command CMD on the remote side.  Return two values: the first
 line returned by CMD and its exit code."
@@ -196,24 +200,19 @@ name.  Throw 'node-repl-error' on an error."
       (let ((len (length matches)))
         (if (= len 1)
             (let ((m (car matches)))
-              (values (call-with-input-string (match:substring m 4)
-                                              read)
+              (values (read-string (match:substring m 4))
                       (string->number (match:substring m 3))))
             (let ((rv (make-vector len))
                   (nv (make-vector len)))
               (vector-set! rv 0
-                           (call-with-input-string (match:substring (car matches)
-                                                                    4)
-                                                   read))
+                           (read-string (match:substring (car matches) 4)))
               (vector-set! nv 0
                            (string->number (match:substring (car matches) 3)))
               (do ((i 1 (1+ i)))
                   ((= i len))
                 (vector-set! rv i
-                             (call-with-input-string
-                              (match:substring (list-ref matches i)
-                                               2)
-                              read))
+                             (read-string (match:substring (list-ref matches i)
+                                                           2)))
                 (vector-set! nv i
                              (string->number (match:substring (list-ref matches
                                                                         i)
