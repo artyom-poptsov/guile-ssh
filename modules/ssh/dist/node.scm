@@ -90,9 +90,9 @@
 (define-record-type <node>
   (%make-node tunnel repl-port start-repl-server?)
   node?
-  (tunnel node-tunnel)
-  (repl-port node-repl-port)
-  (start-repl-server? node-start-repl-server?))
+  (tunnel node-tunnel)                          ; <tunnel>
+  (repl-port node-repl-port)                    ; number
+  (start-repl-server? node-start-repl-server?)) ; boolean
 
 (define (node-session node)
   "Get node session."
