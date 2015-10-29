@@ -578,7 +578,7 @@
 ;; Create a tunnel, check the result.
 (test-assert-with-log "make-tunnel"
   (let* ((session (make-session-for-test))
-         (local-port  12345)
+         (local-port (get-unused-port))
          (remote-host "www.example.org")
          (tunnel  (make-tunnel session
                                #:port  local-port
