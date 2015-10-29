@@ -63,6 +63,9 @@
 (define (format-warning fmt . args)
   (apply format (current-error-port) (string-append "WARNING: " fmt) args))
 
+(define (format-error fmt . args)
+  (apply format (current-error-port) (string-append "ERROR: " fmt) args))
+
 
 (define (execute-job nodes job)
   "Execute a JOB, handle errors."
@@ -72,9 +75,7 @@
         (lambda ()
           (hand-out-job job))
         (lambda args
-          (format (current-error-port)
-                  "ERROR: In ~a:~%~a:~%~a~%"
-                  job (cadr args) (caddr args))
+          (format-error "In ~a:~%~a:~%~a~%" job (cadr args) (caddr args))
           (error "Could not execute a job" job))))
     (lambda args
       (format-warning "Could not execute a job ~a~%" job)
