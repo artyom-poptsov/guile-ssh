@@ -31,10 +31,6 @@
 
 ;;;
 
-(define *topdir* %topdir)
-(define *rsakey* %rsakey)
-(define *dsakey* %dsakey)
-
 (define *test-cmd* "uname --all")
 
 (define *srv-address* INADDR_LOOPBACK)
@@ -43,22 +39,22 @@
 
 (define *ssshd-cmd*
   (string-append
-   *topdir* "/examples/ssshd.scm --detach"
+   %topdir "/examples/ssshd.scm --detach"
    " --pid-file=" *srv-pid-file*
    " --port=" (number->string *srv-port*)
-   " --rsakey=" *rsakey*
-   " --dsakey=" *dsakey*))
+   " --rsakey=" %rsakey
+   " --dsakey=" %dsakey))
 
 (define *sssh-cmd*
   (string-append
-   *topdir* "/examples/sssh.scm"
-   " --identity-file=" *rsakey*
+   %topdir "/examples/sssh.scm"
+   " --identity-file=" %rsakey
    " --port=" (number->string *srv-port*)
    " --known-hosts-file=" %knownhosts
    " " (inet-ntoa *srv-address*)
    " '" *test-cmd* "'"))
 
-(setenv "GUILE_LOAD_PATH" (string-append *topdir* "/modules"))
+(setenv "GUILE_LOAD_PATH" (string-append %topdir "/modules"))
 
 ;; We must unset `SSH_AUTH_SOCK' to prevent sssh from asking SSH agent
 ;; (if it is present) for keys.
