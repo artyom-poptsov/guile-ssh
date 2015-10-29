@@ -1,6 +1,6 @@
 ;;; session.scm -- Testing of session procedures without a connection.
 
-;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -17,13 +17,14 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
+(add-to-load-path (getenv "abs_top_srcdir"))
+
 (use-modules (srfi srfi-64)
-             (ssh session))
+             (ssh session)
+             ;; Helper procedures
+             (tests common))
 
 (test-begin "session")
-
-(define %topdir (getenv "abs_top_srcdir"))
-(define %rsakey (format #f "~a/tests/rsakey" %topdir))
 
 (test-assert "%make-session"
   (%make-session))
