@@ -647,7 +647,7 @@
    (lambda ()
      (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
      (let* ((session     (make-session/channel-test))
-            (local-port  12345)
+            (local-port  (get-unused-port))
             (remote-host "www.example.org")
             (tunnel      (make-tunnel session
                                       #:port local-port

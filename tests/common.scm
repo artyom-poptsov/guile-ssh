@@ -33,6 +33,7 @@
             %dsakey
 
             ;; Procedures
+            get-unused-port
             test-assert-with-log
             make-session-loop
             make-session-for-test
@@ -96,6 +97,32 @@
    #:rsakey   %rsakey
    #:dsakey   %dsakey
    #:log-verbosity 'rare))
+
+
+;;; Port helpers.
+
+(define (port-in-use? port-number)
+  "Return #t if a port with a PORT-NUMBER isn't used, #f otherwise."
+  (let ((sock (socket PF_INET SOCK_STREAM 0)))
+    (catch #t
+      (lambda ()
+        (bind sock AF_INET INADDR_LOOPBACK port-number)
+        (close sock)
+        #f)
+      (lambda args
+        (close sock)
+        #t))))
+
+(define get-unused-port
+  (let ((port-num 12345))
+    (lambda ()
+      "Get an unused port number."
+      (let loop ((num port-num))
+        (if (port-in-use? num)
+            (loop (1+ num))
+            (begin
+              (set! port-num num)
+              num))))))
 
 
 ;;; Test Servers
