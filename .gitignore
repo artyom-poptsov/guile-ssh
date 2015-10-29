@@ -24,3 +24,6 @@ libtool
 
 TAGS
 tags
+GPATH
+GRTAGS
+GTAGS
