@@ -83,6 +83,11 @@
              (error "Could not execute a job" job))
         (warning "Passing a job ~a to a node ~a ...~%" job (car nodes))
         (execute-job nodes (set-job-node job (car nodes)))))))
+
+(define (execute-jobs nodes jobs)
+  "Execute JOBS on NODES, return the result."
+  (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>) jobs)))
+
 
 ;;;
 
@@ -92,8 +97,7 @@
 job to nearly equal parts and hand out each of resulting sub-jobs to a NODES
 list.  Return the results of N expressions as a set of N multiple values."
   (let* ((jobs    (assign-eval nodes (list (quote expr) ...)))
-         (results (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>)
-                                        jobs))))
+         (results (execute-jobs nodes jobs)))
     (and (null? results)
          (error "Could not execute jobs" nodes jobs))
     (apply values results)))
@@ -103,8 +107,7 @@ list.  Return the results of N expressions as a set of N multiple values."
 nearly equal parts and hand out resulting jobs to a NODES list.  Return the
 result of computation."
   (let* ((jobs    (assign-map nodes lst (quote proc)))
-         (results (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>)
-                                        jobs))))
+         (results (execute-jobs nodes jobs)))
     (and (null? results)
          (error "Could not execute jobs" nodes jobs))
     results))
