@@ -91,9 +91,12 @@
   "Evaluate each EXPR in parallel, using distributed computation.  Split the
 job to nearly equal parts and hand out each of resulting sub-jobs to a NODES
 list.  Return the results of N expressions as a set of N multiple values."
-  (let ((jobs (assign-eval nodes (list (quote expr) ...))))
-    (apply values (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>)
-                                        jobs)))))
+  (let* ((jobs    (assign-eval nodes (list (quote expr) ...)))
+         (results (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>)
+                                        jobs))))
+    (and (null? results)
+         (error "Could not execute jobs" nodes jobs))
+    (apply values results)))
 
 (define-syntax-rule (dist-map nodes proc lst)
   "Do list mapping using distributed computation.  The job is splitted to
