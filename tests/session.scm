@@ -91,8 +91,7 @@
                 (format l "  opt: ~a, val: ~a -- passed mistakenly~%"
                         (car opt) val)
                 (set! res #f)))
-            (lambda (key . args)
-              #t)))
+            (const #t)))
         (cdr opt)))
      options)
     res))
