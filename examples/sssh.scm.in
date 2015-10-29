@@ -64,9 +64,8 @@
 ;;; Helper procedures
 
 (define (handle-error session)
-  "Handle a SSH error."
-  (display (get-error session))
-  (newline)
+  "Handle an SSH error; exit with an error code."
+  (write-line (get-error session))
   (exit 1))
 
 (define (print-debug msg)
