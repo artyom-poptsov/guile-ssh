@@ -25,7 +25,7 @@
 ;;; Commentary:
 
 ;; This program is aimed to demonstrate some features of Guile-SSH
-;; library.  See https://github.com/artyom-poptsov/libguile-ssh
+;; library.  See https://github.com/artyom-poptsov/guile-ssh
 
 
 ;;; Code:
