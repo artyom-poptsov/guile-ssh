@@ -210,13 +210,9 @@ name.  Throw 'node-repl-error' on an error."
                          (string->number (match:substring (car matches) 3)))
             (do ((i 1 (1+ i)))
                 ((= i len))
-              (vector-set! rv i
-                           (read-string (match:substring (list-ref matches i)
-                                                         2)))
-              (vector-set! nv i
-                           (string->number (match:substring (list-ref matches
-                                                                      i)
-                                                            1))))
+              (let ((m (list-ref matches i)))
+                (vector-set! rv i (read-string (match:substring m 2)))
+                (vector-set! nv i (string->number (match:substring m 1)))))
             (values rv nv)))))
 
   (let ((result (read-line repl-channel)))
