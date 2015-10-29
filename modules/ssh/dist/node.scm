@@ -204,10 +204,13 @@ name.  Throw 'node-repl-error' on an error."
                     (string->number (match:substring m 3))))
           (let ((rv (make-vector len))
                 (nv (make-vector len)))
-            (vector-set! rv 0
-                         (read-string (match:substring (car matches) 4)))
-            (vector-set! nv 0
-                         (string->number (match:substring (car matches) 3)))
+
+            ;; The 1st match also contains a module name and language name,
+            ;; but we want only the evaluation result and the result number.
+            (let ((m (car matches)))
+              (vector-set! rv 0 (read-string (match:substring m 4)))
+              (vector-set! nv 0 (string->number (match:substring m 3))))
+
             (do ((i 1 (1+ i)))
                 ((= i len))
               (let ((m (list-ref matches i)))
