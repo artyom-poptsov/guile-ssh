@@ -1,6 +1,6 @@
 ;;; sssh-ssshd.scm -- Communication between sssh and ssshd.
 
-;; Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -17,20 +17,24 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
+(add-to-load-path (getenv "abs_top_srcdir"))
+
 (use-modules (srfi srfi-64)
              (ice-9 popen)
              (ice-9 rdelim)
-             (ice-9 regex))
+             (ice-9 regex)
+             ;; Helper procedures
+             (tests common))
 
 (test-begin "sssh-ssshd")
 
 
 ;;;
 
-(define *topdir* (getenv "abs_top_srcdir"))
-(define *rsakey* (format #f "~a/tests/rsakey" *topdir*))
-(define *dsakey* (format #f "~a/tests/dsakey" *topdir*))
-(define %knownhosts (format #f "~a/tests/knownhosts" *topdir*))
+(define *topdir* %topdir)
+(define *rsakey* %rsakey)
+(define *dsakey* %dsakey)
+
 (define *test-cmd* "uname --all")
 
 (define *srv-address* INADDR_LOOPBACK)
