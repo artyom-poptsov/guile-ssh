@@ -57,12 +57,12 @@
 
 
 ;; Keys
-(define %rsakey       (format #f "~a/tests/rsakey"       %topdir))
-(define %rsakey-pub   (format #f "~a/tests/rsakey.pub"   %topdir))
-(define %dsakey       (format #f "~a/tests/dsakey"       %topdir))
-(define %dsakey-pub   (format #f "~a/tests/dsakey.pub"   %topdir))
-(define %ecdsakey     (format #f "~a/tests/ecdsakey"     %topdir))
-(define %ecdsakey-pub (format #f "~a/tests/ecdsakey.pub" %topdir))
+(define %rsakey       (format #f "~a/tests/keys/rsakey"       %topdir))
+(define %rsakey-pub   (format #f "~a/tests/keys/rsakey.pub"   %topdir))
+(define %dsakey       (format #f "~a/tests/keys/dsakey"       %topdir))
+(define %dsakey-pub   (format #f "~a/tests/keys/dsakey.pub"   %topdir))
+(define %ecdsakey     (format #f "~a/tests/keys/ecdsakey"     %topdir))
+(define %ecdsakey-pub (format #f "~a/tests/keys/ecdsakey.pub" %topdir))
 
 
 (define %knownhosts (format #f "~a/tests/knownhosts"
