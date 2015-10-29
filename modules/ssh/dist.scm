@@ -102,8 +102,12 @@ list.  Return the results of N expressions as a set of N multiple values."
   "Do list mapping using distributed computation.  The job is splitted to
 nearly equal parts and hand out resulting jobs to a NODES list.  Return the
 result of computation."
-  (let ((jobs (assign-map nodes lst (quote proc))))
-    (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>) jobs))))
+  (let* ((jobs    (assign-map nodes lst (quote proc)))
+         (results (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>)
+                                        jobs))))
+    (and (null? results)
+         (error "Could not execute jobs" nodes jobs))
+    results))
 
 
 (define-syntax-rule (with-ssh node exp ...)
