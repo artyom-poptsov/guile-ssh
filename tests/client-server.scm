@@ -550,9 +550,9 @@
   (let ((channel (make-channel session)))
     (case (channel-open-forward channel
                                 #:source-host "localhost"
-                                #:local-port  12345
+                                #:local-port  (get-unused-port)
                                 #:remote-host "localhost"
-                                #:remote-port 12321)
+                                #:remote-port (1+ (get-unused-port)))
       ((ok)
        channel)
       (else => (cut error "Could not open forward" <>)))))
