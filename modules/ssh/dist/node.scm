@@ -74,6 +74,11 @@
             rrepl-get-result))
 
 
+(define (eof-or-null? str)
+  "Return #t if a STR is an EOF object or an empty string, #f otherwise."
+  (or (eof-object? str) (string-null? str)))
+
+
 ;;; Error reporting
 
 (define (node-error . args)
@@ -174,7 +179,7 @@ name.  Throw 'node-repl-error' on an error."
   (define (raise-repl-error result)
     (let loop ((line   (read-line repl-channel))
                (result result))
-      (if (or (eof-object? line) (string-null? line))
+      (if (eof-or-null? line)
           (node-repl-error "Evaluation failed" result)
           (loop (read-line repl-channel)
                 (string-append result "\n" line)))))
@@ -183,7 +188,7 @@ name.  Throw 'node-repl-error' on an error."
     (let ((matches
            (let loop ((line    (read-line repl-channel))
                       (matches (list match)))
-             (if (or (eof-object? line) (string-null? line)
+             (if (or (eof-or-null? line)
                      (regexp-exec %repl-undefined-result-regexp line))
                  (reverse matches)
                  (loop (read-line repl-channel)
