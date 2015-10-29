@@ -339,7 +339,7 @@
        (sleep 1)
        (connect! session)
        (authenticate-server session)
-       (let* ((prvkey (private-key-from-file rsakey)))
+       (let* ((prvkey (private-key-from-file %rsakey)))
          (let ((res (userauth-public-key! session prvkey)))
            (disconnect! session)
            (eq? res 'success)))))))
