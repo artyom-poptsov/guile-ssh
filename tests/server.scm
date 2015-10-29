@@ -17,8 +17,12 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
+(add-to-load-path (getenv "abs_top_srcdir"))
+
 (use-modules (srfi srfi-64)
-             (ssh server))
+             (ssh server)
+             ;; Helper procedures
+             (tests common))
 
 (test-begin "server")
 
@@ -43,8 +47,8 @@
          (options `((bindaddr      "127.0.0.1")
                     (bindport      22)
                     (hostkey       "ssh-rsa" "ssh-dss")
-                    (rsakey        ,(format #f "~a/tests/rsakey" topdir))
-                    (dsakey        ,(format #f "~a/tests/dsakey" topdir))
+                    (rsakey        ,%rsakey)
+                    (dsakey        ,%dsakey)
                     (banner        "string")
                     (log-verbosity nolog rare protocol packet functions)
                     (blocking-mode #f #t)))
@@ -108,8 +112,8 @@
   (let ((topdir  (getenv "abs_top_srcdir")))
     (make-server #:bindaddr      "127.0.0.1"
                  #:bindport      123456
-                 #:rsakey        (format #f "~a/tests/rsakey" topdir)
-                 #:dsakey        (format #f "~a/tests/dsakey" topdir)
+                 #:rsakey        %rsakey
+                 #:dsakey        %dsakey
                  #:banner        "banner"
                  #:log-verbosity 'nolog
                  #:blocking-mode #f)))
@@ -118,8 +122,8 @@
   (let* ((topdir        (getenv "abs_top_srcdir"))
          (bindaddr      "127.0.0.1")
          (bindport      123456)
-         (rsakey        (format #f "~a/tests/rsakey" topdir))
-         (dsakey        (format #f "~a/tests/dsakey" topdir))
+         (rsakey        %rsakey)
+         (dsakey        %dsakey)
          (banner        "banner")
          (log-verbosity 'nolog)
          (blocking-mode #f)
@@ -142,7 +146,7 @@
   (let* ((topdir  (getenv "abs_top_srcdir"))
          (server  (make-server #:bindaddr "127.0.0.1"
                                #:bindport 123456
-                               #:rsakey   (format #f "~a/tests/rsakey" topdir)
+                               #:rsakey   %rsakey
                                #:log-verbosity 'nolog)))
     (server-listen server)
     #t))
