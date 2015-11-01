@@ -17,10 +17,6 @@
 In thread:
 ERROR: Could not open forward channel #<tunnel 127.0.0.1:0 -> localhost:37147 91b72a8> error
 #+END_EXAMPLE
-** 'channel-listen-forward' should always return correct port number
-   Currently the procedure returns garbage as the 2nd argument if a
-   port number was passed to it.  However, it will be much better to
-   return the given port as the 2nd argument.
 ** Reverse port forwarding
    Reverse port forwarding is not supported yet.  To make it work, it
    a global request callback should be implemented (see
