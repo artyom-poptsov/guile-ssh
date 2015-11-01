@@ -60,8 +60,11 @@
   "Flatten a list LST one level down.  Return a flattened list."
   (fold-right append '() lst))
 
-(define (warning fmt . args)
+(define (format-warning fmt . args)
   (apply format (current-error-port) (string-append "WARNING: " fmt) args))
+
+(define (format-error fmt . args)
+  (apply format (current-error-port) (string-append "ERROR: " fmt) args))
 
 
 (define (execute-job nodes job)
@@ -72,17 +75,20 @@
         (lambda ()
           (hand-out-job job))
         (lambda args
-          (format (current-error-port)
-                  "ERROR: In ~a:~%~a:~%~a~%"
-                  job (cadr args) (caddr args))
+          (format-error "In ~a:~%~a:~%~a~%" job (cadr args) (caddr args))
           (error "Could not execute a job" job))))
     (lambda args
-      (warning "Could not execute a job ~a~%" job)
+      (format-warning "Could not execute a job ~a~%" job)
       (let ((nodes (delete (job-node job) nodes)))
         (and (null? nodes)
              (error "Could not execute a job" job))
-        (warning "Passing a job ~a to a node ~a ...~%" job (car nodes))
+        (format-warning "Passing a job ~a to a node ~a ...~%" job (car nodes))
         (execute-job nodes (set-job-node job (car nodes)))))))
+
+(define (execute-jobs nodes jobs)
+  "Execute JOBS on NODES, return the result."
+  (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>) jobs)))
+
 
 ;;;
 
@@ -91,16 +97,21 @@
   "Evaluate each EXPR in parallel, using distributed computation.  Split the
 job to nearly equal parts and hand out each of resulting sub-jobs to a NODES
 list.  Return the results of N expressions as a set of N multiple values."
-  (let ((jobs (assign-eval nodes (list (quote expr) ...))))
-    (apply values (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>)
-                                        jobs)))))
+  (let* ((jobs    (assign-eval nodes (list (quote expr) ...)))
+         (results (execute-jobs nodes jobs)))
+    (and (null? results)
+         (error "Could not execute jobs" nodes jobs))
+    (apply values results)))
 
 (define-syntax-rule (dist-map nodes proc lst)
   "Do list mapping using distributed computation.  The job is splitted to
 nearly equal parts and hand out resulting jobs to a NODES list.  Return the
 result of computation."
-  (let ((jobs (assign-map nodes lst (quote proc))))
-    (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>) jobs))))
+  (let* ((jobs    (assign-map nodes lst (quote proc)))
+         (results (execute-jobs nodes jobs)))
+    (and (null? results)
+         (error "Could not execute jobs" nodes jobs))
+    results))
 
 
 (define-syntax-rule (with-ssh node exp ...)

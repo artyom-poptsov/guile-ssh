@@ -208,8 +208,8 @@ all addresses on all protocol families supported by the server.  When 0 is
 passed as a @var{port} then server allocates the next unprivileged port.
 
 The procedure returns two values: the first value is the result of the
-operation, and the second value is the bound port number (if @var{port} was
-set to 0).
+operation, and the second value is the bound port number; if @var{port} was
+set to 0 then the procedure returns the chosen port number.
 
 The result of the operation can be one of the following symbols:
 @table @samp

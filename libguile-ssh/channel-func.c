@@ -290,6 +290,8 @@ SCM_DEFINE (guile_ssh_channel_listen_forward,
                             &bound_port);
   if (res != SSH_OK)
     bound_port = -1;
+  else if (scm_zero_p (port))
+    bound_port = scm_to_int (port);
 
   scm_dynwind_end ();
 

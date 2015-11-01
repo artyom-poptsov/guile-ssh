@@ -5,7 +5,7 @@
 
 ;;; sssh.scm -- Scheme Secure Shell.
 
-;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -25,7 +25,7 @@
 ;;; Commentary:
 
 ;; This program is aimed to demonstrate some features of Guile-SSH
-;; library.  See https://github.com/artyom-poptsov/libguile-ssh
+;; library.  See https://github.com/artyom-poptsov/guile-ssh
 
 
 ;;; Code:
@@ -64,9 +64,8 @@
 ;;; Helper procedures
 
 (define (handle-error session)
-  "Handle a SSH error."
-  (display (get-error session))
-  (newline)
+  "Handle an SSH error; exit with an error code."
+  (write-line (get-error session))
   (exit 1))
 
 (define (print-debug msg)

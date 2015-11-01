@@ -74,6 +74,11 @@
             rrepl-get-result))
 
 
+(define (eof-or-null? str)
+  "Return #t if a STR is an EOF object or an empty string, #f otherwise."
+  (or (eof-object? str) (string-null? str)))
+
+
 ;;; Error reporting
 
 (define (node-error . args)
@@ -90,9 +95,9 @@
 (define-record-type <node>
   (%make-node tunnel repl-port start-repl-server?)
   node?
-  (tunnel node-tunnel)
-  (repl-port node-repl-port)
-  (start-repl-server? node-start-repl-server?))
+  (tunnel node-tunnel)                          ; <tunnel>
+  (repl-port node-repl-port)                    ; number
+  (start-repl-server? node-start-repl-server?)) ; boolean
 
 (define (node-session node)
   "Get node session."
@@ -123,6 +128,10 @@ automatically in case when it is not started yet."
 
 
 ;;; Remote REPL (RREPL)
+
+(define (read-string str)
+  "Read a string STR."
+  (call-with-input-string str read))
 
 (define (rexec node cmd)
   "Execute a command CMD on the remote side.  Return two values: the first
@@ -174,72 +183,67 @@ name.  Throw 'node-repl-error' on an error."
   (define (raise-repl-error result)
     (let loop ((line   (read-line repl-channel))
                (result result))
-      (if (or (eof-object? line) (string-null? line))
+      (if (eof-or-null? line)
           (node-repl-error "Evaluation failed" result)
           (loop (read-line repl-channel)
                 (string-append result "\n" line)))))
 
+  (define (parse-result 1st-match)
+    (let loop ((line    (read-line repl-channel))
+               (matches (list 1st-match)))
+      (if (or (eof-or-null? line)
+              (regexp-exec %repl-undefined-result-regexp line))
+          (reverse matches)
+          (loop (read-line repl-channel)
+                (cons (regexp-exec %repl-result-2-regexp line) matches)))))
+
   (define (read-result match)
-    (let ((matches
-           (let loop ((line    (read-line repl-channel))
-                      (matches (list match)))
-             (if (or (eof-object? line) (string-null? line)
-                     (regexp-exec %repl-undefined-result-regexp line))
-                 (reverse matches)
-                 (loop (read-line repl-channel)
-                       (cons (regexp-exec %repl-result-2-regexp line) matches))))))
-      (let ((len (length matches)))
-        (if (= len 1)
+    (let* ((matches (parse-result match))
+           (len     (length matches)))
+      (if (= len 1)
+          (let ((m (car matches)))
+            (values (read-string (match:substring m 4))
+                    (string->number (match:substring m 3))))
+          (let ((rv (make-vector len))
+                (nv (make-vector len)))
+
+            ;; The 1st match also contains a module name and language name,
+            ;; but we want only the evaluation result and the result number.
             (let ((m (car matches)))
-              (values (call-with-input-string (match:substring m 4)
-                                              read)
-                      (string->number (match:substring m 3))))
-            (let ((rv (make-vector len))
-                  (nv (make-vector len)))
-              (vector-set! rv 0
-                           (call-with-input-string (match:substring (car matches)
-                                                                    4)
-                                                   read))
-              (vector-set! nv 0
-                           (string->number (match:substring (car matches) 3)))
-              (do ((i 1 (1+ i)))
-                  ((= i len))
-                (vector-set! rv i
-                             (call-with-input-string
-                              (match:substring (list-ref matches i)
-                                               2)
-                              read))
-                (vector-set! nv i
-                             (string->number (match:substring (list-ref matches
-                                                                        i)
-                                                              1))))
-              (values rv nv))))))
+              (vector-set! rv 0 (read-string (match:substring m 4)))
+              (vector-set! nv 0 (string->number (match:substring m 3))))
+
+            (do ((i 1 (1+ i)))
+                ((= i len))
+              (let ((m (list-ref matches i)))
+                (vector-set! rv i (read-string (match:substring m 2)))
+                (vector-set! nv i (string->number (match:substring m 1)))))
+            (values rv nv)))))
 
   (let ((result (read-line repl-channel)))
     (if (string-null? result)
         (rrepl-get-result repl-channel)
-        (begin
-          (cond
-           ((regexp-exec %repl-result-regexp result) =>
-            (lambda (match)
-              (receive (result eval-num)
-                  (read-result match)
-                (values
-                 result                                ; Result
-                 eval-num                              ; # of evaluation
-                 (match:substring match 2)             ; Module
-                 (match:substring match 1)))))         ; Language
-           ((regexp-exec %repl-error-regexp result) =>
-            (lambda (match) (raise-repl-error result)))
-           ((regexp-exec %repl-undefined-result-regexp result) =>
-            (lambda (match)
+        (cond
+         ((regexp-exec %repl-result-regexp result) =>
+          (lambda (match)
+            (receive (result eval-num)
+                (read-result match)
               (values
-               *unspecified*                ; Result
-               *unspecified*                ; # of evaluation
-               (match:substring match 2)    ; Module
-               (match:substring match 1)))) ; Language
-           (else
-            (raise-repl-error result)))))))
+               result                                ; Result
+               eval-num                              ; # of evaluation
+               (match:substring match 2)             ; Module
+               (match:substring match 1)))))         ; Language
+         ((regexp-exec %repl-error-regexp result) =>
+          (lambda (match) (raise-repl-error result)))
+         ((regexp-exec %repl-undefined-result-regexp result) =>
+          (lambda (match)
+            (values
+             *unspecified*                ; Result
+             *unspecified*                ; # of evaluation
+             (match:substring match 2)    ; Module
+             (match:substring match 1)))) ; Language
+         (else
+          (raise-repl-error result))))))
 
 (define (rrepl-eval rrepl-channel quoted-exp)
   "Evaluate QUOTED-EXP using RREPL-CHANNEL, return four values: an evaluation
