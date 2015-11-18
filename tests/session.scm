@@ -54,7 +54,9 @@
                    (log-verbosity nolog rare protocol packet functions
                                   nolog)
                    (compression   "yes" "no")
-                   (compression-level 1 2 3 4 5 6 7 8 9)))
+                   (compression-level 1 2 3 4 5 6 7 8 9)
+                   (callbacks     `((user-data . "hello")
+                                    (global-request-callback. ,(const #f))))))
         (res #t))
     (for-each
      (lambda (opt)
@@ -77,7 +79,8 @@
                    (ssh2              12345 "string")
                    (log-verbosity     "string" -1 0 1 2 3 4 5)
                    (compression       12345)
-                   (compression-level -1 0 10)))
+                   (compression-level -1 0 10)
+                   (callbacks         "not a list")))
         (res #t))
     (for-each
      (lambda (opt)

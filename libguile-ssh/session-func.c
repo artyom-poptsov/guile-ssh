@@ -20,18 +20,27 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include <libssh/callbacks.h>
 #include <assert.h>
 
 #include "common.h"
 #include "error.h"
 #include "session-type.h"
 #include "key-type.h"
+#include "message-type.h"
 #include "log.h"
 
 /* SSH option mapping. */
 struct option {
   char* symbol;
   int   type;
+};
+
+/* Guile SSH specific options that are aimed to unificate the way of session
+   configuration. */
+enum gssh_session_options {
+  /* Should not intersect with options from SSH session API. */
+  GSSH_OPTIONS_CALLBACKS = 100
 };
 
 
@@ -59,6 +68,7 @@ static struct symbol_mapping session_options[] = {
   { "stricthostkeycheck", SSH_OPTIONS_STRICTHOSTKEYCHECK },
   { "compression",        SSH_OPTIONS_COMPRESSION        },
   { "compression-level",  SSH_OPTIONS_COMPRESSION_LEVEL  },
+  { "callbacks",          GSSH_OPTIONS_CALLBACKS         },
   { NULL,                 -1 }
 };
 
@@ -202,10 +212,52 @@ set_sym_opt (ssh_session session, int type, struct symbol_mapping *sm, SCM value
   return ssh_options_set (session, type, &opt->value);
 }
 
+
+/* Callbacks. */
+
+static void
+libssh_global_request_callback (ssh_session session, ssh_message message,
+                                void *userdata)
+{
+  SCM scm_session = (SCM) userdata;
+  SCM scm_callback
+    = scm_assoc (scm_from_locale_symbol ("global-request-callback"),
+                 userdata);
+  SCM scm_userdata
+    = scm_assoc (scm_from_locale_symbol ("user-data"),
+                 userdata);
+  SCM scm_message = _scm_from_ssh_message (message, scm_session);
+
+  scm_call_3 (scm_callback, scm_session, scm_message, scm_userdata);
+}
+
+static int
+set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
+{
+  struct ssh_callbacks_struct cb;
+
+  SCM_ASSERT (scm_to_bool (scm_list_p (callbacks)), callbacks, SCM_ARG3,
+              "session-set!");
+
+  cb.userdata = session;
+  cb.global_request_function = libssh_global_request_callback;
+
+  ssh_callbacks_init (&cb);
+
+  sd->callbacks = callbacks;
+
+  ssh_set_callbacks (sd->ssh_session, &cb);
+
+  return SSH_OK;                /* TODO: Handle errors. */
+}
+
+
 /* Set an SSH session option. */
 static int
-set_option (ssh_session session, int type, SCM value)
+set_option (SCM scm_session, struct session_data* sd, int type, SCM value)
 {
+  ssh_session session = sd->ssh_session;
+
   switch (type)
     {
     case SSH_OPTIONS_PORT:
@@ -243,6 +295,9 @@ set_option (ssh_session session, int type, SCM value)
     case SSH_OPTIONS_FD:
       return set_port_opt (session, type, value);
 
+    case GSSH_OPTIONS_CALLBACKS:
+      return set_callbacks (scm_session, sd, value);
+
     default:
       guile_ssh_error1 ("session-set!",
                         "Operation is not supported yet: %a~%",
@@ -272,7 +327,7 @@ Return value is undefined.\
   if(! opt)
     guile_ssh_error1 (FUNC_NAME, "No such option", option);
 
-  res = set_option (data->ssh_session, opt->value, value);
+  res = set_option (session, data, opt->value, value);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to set the option", option);
 

@@ -91,6 +91,21 @@ Return #t if X a SSH message, #f otherwise.\
 
 /* Helper procedures. */
 
+SCM
+_scm_from_ssh_message (const ssh_message message, SCM session)
+{
+  SCM smob;
+  struct message_data *message_data
+    = (struct message_data *) scm_gc_malloc (sizeof (struct message_data),
+                                             "message");
+
+  message_data->message = message;
+  message_data->session = session;
+
+  SCM_NEWSMOB (smob, message_tag, message_data);
+  return smob;
+}
+
 /* Convert X to a SSH message. */
 struct message_data *
 _scm_to_message_data (SCM x)
