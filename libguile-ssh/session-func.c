@@ -354,6 +354,7 @@ static struct symbol_mapping session_options_getable[] = {
   { "user",         SSH_OPTIONS_USER         },
   { "identity",     SSH_OPTIONS_IDENTITY     },
   { "proxycommand", SSH_OPTIONS_PROXYCOMMAND },
+  { "callbacks",    GSSH_OPTIONS_CALLBACKS   },
   { NULL,           -1                       }
 };
 
@@ -380,6 +381,10 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
       unsigned int port;
       res = ssh_options_get_port (sd->ssh_session, &port);
       value = (res == SSH_OK) ? scm_from_int (port) : SCM_UNDEFINED;
+    }
+  else if (opt->value == GSSH_OPTIONS_CALLBACKS)
+    {
+      value = sd->callbacks;
     }
   else
     {
