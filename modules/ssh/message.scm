@@ -131,7 +131,10 @@ to use will be selected depending on a type of the message MSG."
        (message-channel-request-reply-success msg))
 
       ((request-global)
-       (message-global-request-reply-success msg (car args))))))
+       (message-global-request-reply-success msg (car args)))
+
+      (else
+       (error "Unknown message type" msg-type)))))
 
 
 (load-extension "libguile-ssh" "init_message")
