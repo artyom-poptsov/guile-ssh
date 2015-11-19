@@ -257,6 +257,9 @@ set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
   cb->userdata = session;
   cb->global_request_function = libssh_global_request_callback;
   ssh_callbacks_init (cb);
+
+  scm_remember_upto_here_2 (session, callbacks);
+
   return ssh_set_callbacks (sd->ssh_session, cb);
 }
 
