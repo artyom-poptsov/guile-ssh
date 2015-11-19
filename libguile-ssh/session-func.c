@@ -215,6 +215,9 @@ set_sym_opt (ssh_session session, int type, struct symbol_mapping *sm, SCM value
 
 /* Callbacks. */
 
+/* The callback procedure that meant to be called by libssh; the procedure in
+   turn calls a specified Scheme procedure.  USERDATA is a Guile-SSH
+   session instance. */
 static void
 libssh_global_request_callback (ssh_session session, ssh_message message,
                                 void *userdata)
@@ -234,6 +237,10 @@ libssh_global_request_callback (ssh_session session, ssh_message message,
   scm_call_3 (scm_callback, scm_session, scm_message, scm_userdata);
 }
 
+/* Set libssh callbacks for a SESSION.  The procedure expects CALLBACKS to be
+   an alist object.
+
+   Return SSH_OK if callbacks were set succesfully, SSH_ERROR otherwise. */
 static int
 set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
 {
