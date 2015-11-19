@@ -220,12 +220,15 @@ libssh_global_request_callback (ssh_session session, ssh_message message,
                                 void *userdata)
 {
   SCM scm_session = (SCM) userdata;
+  struct session_data *sd = _scm_to_session_data (scm_session);
+
   SCM scm_callback
-    = scm_assoc (scm_from_locale_symbol ("global-request-callback"),
-                 userdata);
+    = scm_assoc_ref (sd->callbacks,
+                     scm_from_locale_symbol ("global-request-callback"));
+
   SCM scm_userdata
-    = scm_assoc (scm_from_locale_symbol ("user-data"),
-                 userdata);
+    = scm_assoc_ref (sd->callbacks, scm_from_locale_symbol ("user-data"));
+
   SCM scm_message = _scm_from_ssh_message (message, scm_session);
 
   scm_call_3 (scm_callback, scm_session, scm_message, scm_userdata);
@@ -234,21 +237,20 @@ libssh_global_request_callback (ssh_session session, ssh_message message,
 static int
 set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
 {
-  struct ssh_callbacks_struct cb;
+  struct ssh_callbacks_struct *cb
+    = (struct ssh_callbacks_struct *)
+    scm_gc_malloc (sizeof (struct ssh_callbacks_struct),
+                   "ssh-callbacks");
 
   SCM_ASSERT (scm_to_bool (scm_list_p (callbacks)), callbacks, SCM_ARG3,
               "session-set!");
 
-  cb.userdata = session;
-  cb.global_request_function = libssh_global_request_callback;
-
-  ssh_callbacks_init (&cb);
-
   sd->callbacks = callbacks;
 
-  ssh_set_callbacks (sd->ssh_session, &cb);
-
-  return SSH_OK;                /* TODO: Handle errors. */
+  cb->userdata = session;
+  cb->global_request_function = libssh_global_request_callback;
+  ssh_callbacks_init (cb);
+  return ssh_set_callbacks (sd->ssh_session, cb);
 }
 
 
