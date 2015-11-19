@@ -67,6 +67,8 @@ Create a new session.\
   if (session_data->ssh_session == NULL)
     return SCM_BOOL_F;
 
+  session_data->callbacks = SCM_BOOL_F;
+
   SCM_NEWSMOB (smob, session_tag, session_data);
 
   return smob;
