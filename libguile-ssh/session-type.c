@@ -33,7 +33,8 @@ scm_t_bits session_tag;	/* Smob tag. */
 SCM
 mark_session (SCM session_smob)
 {
-  return SCM_BOOL_F;
+  struct session_data *sd = _scm_to_session_data (session_smob);
+  return sd->callbacks;
 }
 
 /* Handle GC'ing of the session smob. */
