@@ -104,16 +104,21 @@
          (port         12345)
          (user         "alice")
          (proxycommand "test")
+         (callbacks    '((user-data . "test")))
          (session      (make-session #:host         host
                                      #:port         port
                                      #:user         user
                                      #:identity     %rsakey
-                                     #:proxycommand proxycommand)))
+                                     #:proxycommand proxycommand
+                                     #:callbacks    callbacks)))
     (and (string=? (session-get session 'host)         host)
          (=        (session-get session 'port)         port)
          (string=? (session-get session 'user)         user)
          (string=? (session-get session 'identity)     %rsakey)
-         (string=? (session-get session 'proxycommand) proxycommand))))
+         (string=? (session-get session 'proxycommand) proxycommand)
+         (equal?   (session-get session 'callbacks)    callbacks)
+         ;; Make sure that default callbacks value is '#f'.
+         (equal?   (session-get (%make-session) 'callbacks) #f))))
 
 (test-assert "make-session"
   (make-session #:host "localhost"
