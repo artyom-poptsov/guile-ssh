@@ -131,7 +131,12 @@ to use will be selected depending on a type of the message MSG."
        (message-channel-request-reply-success msg))
 
       ((request-global)
-       (message-global-request-reply-success msg (car args)))
+       (cond
+        ((= (length args) 1)
+         (message-global-request-reply-success msg (car args)))
+        (else
+         (error "message-reply-success: Wrong number of arguments."
+                args))))
 
       (else
        (error "Unknown message type" msg-type)))))
