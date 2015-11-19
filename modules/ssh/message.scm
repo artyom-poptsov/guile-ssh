@@ -60,6 +60,8 @@
             message-channel-request-reply-success
             message-channel-request-open-reply-accept
 
+            message-global-request-reply-success
+
             pty-req:term pty-req:width pty-req:height pty-req:pxwidth
             pty-req:pxheight
 
@@ -129,7 +131,7 @@ to use will be selected depending on a type of the message MSG."
        (message-channel-request-reply-success msg))
 
       ((request-global)
-       (error "Not implemented yet" (cadr msg-type))))))
+       (message-global-request-reply-success msg (car args))))))
 
 
 (load-extension "libguile-ssh" "init_message")
