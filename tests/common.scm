@@ -20,6 +20,7 @@
 (define-module (tests common)
   #:use-module (srfi srfi-64)
   #:use-module (ice-9 rdelim)
+  #:use-module (ice-9 format)
   #:use-module (ssh session)
   #:use-module (ssh server)
   #:use-module (ssh log)
@@ -43,6 +44,7 @@
             make-server-for-test
             make-libssh-log-printer
             start-server/dt-test
+            start-server/dist-test
             setup-libssh-logging!
             setup-error-logging!
             setup-test-suite-logging!
@@ -157,6 +159,48 @@
                (message-reply-success msg))
               (else
                (message-reply-success msg)))))))
+  (primitive-exit))
+
+(define (start-server/dist-test server rwproc)
+  (server-listen server)
+  (let ((session (server-accept server))
+        (channel #f))
+
+    (server-handle-key-exchange session)
+
+    (let* ((proc (lambda (session message user-data)
+                   (let ((type (message-get-type message))
+                         (req  (message-get-req  message)))
+                     (format (current-error-port) "global req: type: ~a~%"
+                             type)
+                     (case (cadr type)
+                       ((global-request-tcpip-forward)
+                        (let ((pnum (global-req:port req)))
+                          (format (current-error-port) "global req: port: ~a~%"
+                                  pnum)
+                          (message-reply-success message
+                                                 pnum)))
+                       ((global-request-cancel-tcpip-forward)
+                        (message-reply-success message 1)
+                        (disconnect! session))))))
+           (callbacks `((user-data               . #f)
+                        (global-request-callback . ,proc))))
+      (session-set! session 'callbacks callbacks))
+
+    (make-session-loop session
+      (unless (eof-object? msg)
+        (let ((msg-type (message-get-type msg)))
+          (case (car msg-type)
+            ((request-channel-open)
+             (set! channel (message-channel-request-open-reply-accept msg))
+             (let poll ((ready? #f))
+               (if ready?
+                   (rwproc channel)
+                   (poll (char-ready? channel)))))
+            ((request-channel)
+               (message-reply-success msg))
+            (else
+             (message-reply-success msg)))))))
   (primitive-exit))
 
 
