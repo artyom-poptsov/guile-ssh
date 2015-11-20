@@ -26,6 +26,13 @@
 
 (test-begin "session")
 
+
+;;; Logging
+
+(setup-test-suite-logging! "session")
+
+;;;
+
 (test-assert "%make-session"
   (%make-session))
 
