@@ -50,7 +50,7 @@
 
 (test-assert "session-set!, valid values"
   (let ((session (%make-session))
-        (options '((host         "localhost")
+        (options `((host         "localhost")
                    (port         22)
                    (bindaddr     "127.0.0.1")
                    (user         "Random J. User")
@@ -62,8 +62,8 @@
                                   nolog)
                    (compression   "yes" "no")
                    (compression-level 1 2 3 4 5 6 7 8 9)
-                   (callbacks     `((user-data . "hello")
-                                    (global-request-callback. ,(const #f))))))
+                   (callbacks     ((user-data . "hello")
+                                   (global-request-callback . ,(const #f))))))
         (res #t))
     (for-each
      (lambda (opt)
