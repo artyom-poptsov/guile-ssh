@@ -237,6 +237,25 @@ libssh_global_request_callback (ssh_session session, ssh_message message,
   scm_call_3 (scm_callback, scm_session, scm_message, scm_userdata);
 }
 
+/* The callback procedure that meant to be called by libssh to indicate the
+   percentage of connection steps completed.  The percentage is passed as
+   STATUS.  USERDATA is a Guile-SSH session instance. */
+static void
+libssh_connect_status_callback (void *userdata, float status)
+{
+  SCM scm_session = (SCM) userdata;
+  struct session_data *sd = _scm_to_session_data (scm_session);
+
+  SCM scm_callback
+    = scm_assoc_ref (sd->callbacks,
+                     scm_from_locale_symbol ("connect-status-callback"));
+
+  SCM scm_userdata
+    = scm_assoc_ref (sd->callbacks, scm_from_locale_symbol ("user-data"));
+
+  scm_call_2 (scm_callback, scm_from_double (status), scm_userdata);
+}
+
 /* Set libssh callbacks for a SESSION.  The procedure expects CALLBACKS to be
    an alist object.
 
@@ -256,6 +275,7 @@ set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
 
   cb->userdata = session;
   cb->global_request_function = libssh_global_request_callback;
+  cb->connect_status_function = libssh_connect_status_callback;
   ssh_callbacks_init (cb);
 
   scm_remember_upto_here_2 (session, callbacks);
