@@ -215,6 +215,21 @@ set_sym_opt (ssh_session session, int type, struct symbol_mapping *sm, SCM value
 
 /* Callbacks. */
 
+/* Predicate.  Check if a callback NAME is present in CALLBACKS alist; return
+   1 if it is, 0 otherwise. */
+static inline int
+callback_set_p (SCM callbacks, const char* name)
+{
+  return scm_is_true (scm_assoc (scm_from_locale_symbol (name), callbacks));
+}
+
+/* Get an element NAME of the callbacks alist from a session data SD. */
+static inline SCM
+callbacks_ref (const struct session_data *sd, const char* name)
+{
+  return scm_assoc_ref (sd->callbacks, scm_from_locale_symbol (name));
+}
+
 /* The callback procedure that meant to be called by libssh; the procedure in
    turn calls a specified Scheme procedure.  USERDATA is a Guile-SSH
    session instance. */
@@ -225,13 +240,8 @@ libssh_global_request_callback (ssh_session session, ssh_message message,
   SCM scm_session = (SCM) userdata;
   struct session_data *sd = _scm_to_session_data (scm_session);
 
-  SCM scm_callback
-    = scm_assoc_ref (sd->callbacks,
-                     scm_from_locale_symbol ("global-request-callback"));
-
-  SCM scm_userdata
-    = scm_assoc_ref (sd->callbacks, scm_from_locale_symbol ("user-data"));
-
+  SCM scm_callback = callbacks_ref (sd, "global-request-callback");
+  SCM scm_userdata = callbacks_ref (sd, "user-data");
   SCM scm_message = _scm_from_ssh_message (message, scm_session);
 
   scm_call_3 (scm_callback, scm_session, scm_message, scm_userdata);
@@ -246,22 +256,10 @@ libssh_connect_status_callback (void *userdata, float status)
   SCM scm_session = (SCM) userdata;
   struct session_data *sd = _scm_to_session_data (scm_session);
 
-  SCM scm_callback
-    = scm_assoc_ref (sd->callbacks,
-                     scm_from_locale_symbol ("connect-status-callback"));
-
-  SCM scm_userdata
-    = scm_assoc_ref (sd->callbacks, scm_from_locale_symbol ("user-data"));
+  SCM scm_callback = callbacks_ref (sd, "connect-status-callback");
+  SCM scm_userdata = callbacks_ref (sd, "user-data");
 
   scm_call_2 (scm_callback, scm_from_double (status), scm_userdata);
-}
-
-/* Predicate.  Check if a callback NAME is present in CALLBACKS alist; return
-   1 if it is, 0 otherwise. */
-static inline int
-callback_set_p (SCM callbacks, const char* name)
-{
-  return scm_is_true (scm_assoc (scm_from_locale_symbol (name), callbacks));
 }
 
 /* Set libssh callbacks for a SESSION.  The procedure expects CALLBACKS to be
