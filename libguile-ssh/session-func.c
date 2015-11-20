@@ -256,6 +256,14 @@ libssh_connect_status_callback (void *userdata, float status)
   scm_call_2 (scm_callback, scm_from_double (status), scm_userdata);
 }
 
+/* Predicate.  Check if a callback NAME is present in CALLBACKS alist; return
+   1 if it is, 0 otherwise. */
+static inline int
+callback_set_p (SCM callbacks, const char* name)
+{
+  return scm_is_true (scm_assoc (scm_from_locale_symbol (name), callbacks));
+}
+
 /* Set libssh callbacks for a SESSION.  The procedure expects CALLBACKS to be
    an alist object.
 
@@ -274,8 +282,13 @@ set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
   sd->callbacks = callbacks;
 
   cb->userdata = session;
-  cb->global_request_function = libssh_global_request_callback;
-  cb->connect_status_function = libssh_connect_status_callback;
+
+  if (callback_set_p (callbacks, "global-request-callback"))
+    cb->global_request_function = libssh_global_request_callback;
+
+  if (callback_set_p (callbacks, "connect-status-callback"))
+    cb->connect_status_function = libssh_connect_status_callback;
+
   ssh_callbacks_init (cb);
 
   scm_remember_upto_here_2 (session, callbacks);
