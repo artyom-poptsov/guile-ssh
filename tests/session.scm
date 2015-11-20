@@ -87,7 +87,8 @@
                    (log-verbosity     "string" -1 0 1 2 3 4 5)
                    (compression       12345)
                    (compression-level -1 0 10)
-                   (callbacks         "not a list")))
+                   (callbacks         "not a list"
+                                      ((global-request-callback . #f)))))
         (res #t))
     (for-each
      (lambda (opt)

@@ -262,6 +262,29 @@ libssh_connect_status_callback (void *userdata, float status)
   scm_call_2 (scm_callback, scm_from_double (status), scm_userdata);
 }
 
+/* Predicate.  Return 1 if X is a Scheme procedure, 0 otherwise. */
+static inline int
+scm_is_procedure (SCM x)
+{
+  return scm_to_bool (scm_procedure_p (x));
+}
+
+/* Validate callback NAME.  Throw 'guile-ssh-error' exception on an error. */
+static void
+validate_callback (SCM session, const struct session_data *sd, const char* name)
+{
+  if (! scm_is_procedure (callbacks_ref (sd, name)))
+    {
+      enum { BUFSZ = 70 };
+      char msg[BUFSZ];
+
+      snprintf (msg, BUFSZ, "'%s' must be a procedure", name);
+
+      guile_ssh_error1 ("session-set!", msg,
+                        scm_list_2 (session, sd->callbacks));
+    }
+}
+
 /* Set libssh callbacks for a SESSION.  The procedure expects CALLBACKS to be
    an alist object.
 
@@ -282,10 +305,16 @@ set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
   cb->userdata = session;
 
   if (callback_set_p (callbacks, "global-request-callback"))
-    cb->global_request_function = libssh_global_request_callback;
+    {
+      validate_callback (session, sd, "global-request-callback");
+      cb->global_request_function = libssh_global_request_callback;
+    }
 
   if (callback_set_p (callbacks, "connect-status-callback"))
-    cb->connect_status_function = libssh_connect_status_callback;
+    {
+      validate_callback (session, sd, "connect-status-callback");
+      cb->connect_status_function = libssh_connect_status_callback;
+    }
 
   ssh_callbacks_init (cb);
 
