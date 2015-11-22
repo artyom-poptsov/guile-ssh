@@ -135,6 +135,8 @@
               (set! port-num num)
               num))))))
 
+(set! *port* (get-unused-port))
+
 
 ;;; Test Servers
 
