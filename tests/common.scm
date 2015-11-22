@@ -194,47 +194,77 @@
 
 ;;; Tests
 
+(define (format-log/scm level proc-name message . args)
+  "Format a log MESSAGE, append \"[SCM]\" to a PROC-NAME."
+  (apply format-log level (string-append "[SCM] " proc-name)  message args))
+
+(define (multifork . procs)
+  "Execute each procedure from PROCS list in a separate process.  The last
+procedure from PROCS is executed in the main process; return the result of the
+main procedure."
+  (format-log/scm 'nolog "multifork" "procs 1: ~a~%" procs)
+  (let* ((len      (length procs))
+         (mainproc (car (list-tail procs (- len 1))))
+         (procs    (list-head procs (- len 1)))
+         (pids     (map (lambda (proc)
+                          (let ((pid (primitive-fork)))
+                            (when (zero? pid)
+                              (proc)
+                              (primitive-exit 0))
+                            pid))
+                        procs)))
+    (format-log/scm 'nolog "multifork" "procs 2: ~a~%" procs)
+    (format-log/scm 'nolog "multifork" "mainproc: ~a~%" mainproc)
+    (format-log/scm 'nolog "multifork" "PIDs: ~a~%" pids)
+    (dynamic-wind
+      (const #f)
+      mainproc
+      (lambda ()
+        (format-log/scm 'nolog "multifork" "killing spawned processes ...")
+        (for-each (lambda (pid) kill pid SIGTERM) pids)))))
+
+
 (define (run-client-test server-proc client-proc)
   "Run a SERVER-PROC in newly created process.  The server passed to a
 SERVER-PROC as an argument.  CLIENT-PROC is expected to be a thunk that should
 be executed in the parent process.  The procedure returns a result of
 CLIENT-PROC call."
-  (let ((server (make-server-for-test))
-        (pid    (primitive-fork)))
-    (if (zero? pid)
-        ;; server
-        (dynamic-wind
-          (const #f)
-          (lambda ()
-            (set-log-userdata! (string-append (get-log-userdata) " (server)"))
-            (server-set! server 'log-verbosity 'rare)
-            (server-proc server)
-            (primitive-exit 0))
-          (lambda ()
-            (primitive-exit 1)))
-        ;; client
-        (client-proc))))
+  (let ((server (make-server-for-test)))
+    (multifork
+     ;; server
+     (lambda ()
+       (dynamic-wind
+         (const #f)
+         (lambda ()
+           (set-log-userdata! (string-append (get-log-userdata) " (server)"))
+           (server-set! server 'log-verbosity 'rare)
+           (server-proc server)
+           (primitive-exit 0))
+         (lambda ()
+           (primitive-exit 1))))
+     ;; client
+     client-proc)))
 
 ;; Run a client test in a separate process; only a PRED procedure is running
 ;; in the main test process:
 ;;
 ;; test
 ;;  |
-;;  o                                      Fork.
-;;  |______________
-;;  |              \
-;;  |               |
-;;  |               o                      Fork.
-;;  |               |___________________
-;;  |               |                   \
-;;  |               |                    |
-;;  |          CLIENT-PROC          SERVER-PROC
-;;  |               |                    |
-;;  |               o                    | Bind/listen a socket.
-;;  | "hello world" |                    |
-;;  |<--------------|                    |
-;;  o               |                    | Check the result
-;;  |               |                    | with a predicate PRED.
+;;  o                                  Fork.
+;;  |_______________________________
+;;  o                               \  Fork.
+;;  |______________                  |
+;;  |              \                 |
+;;  |               |                |
+;;  |               |                |
+;;  |               |                |
+;;  |          CLIENT-PROC      SERVER-PROC
+;;  |               |                |
+;;  |               o                | Bind/listen a socket.
+;;  | "hello world" |                |
+;;  |<--------------|                |
+;;  o               |                | Check the result
+;;  |               |                | with a predicate PRED.
 ;;
 ;; XXX: This procedure contains operations that potentially can block it
 ;; forever.
@@ -242,20 +272,23 @@ CLIENT-PROC call."
 (define (run-client-test/separate-process server-proc client-proc pred)
   "Run a SERVER-PROC and CLIENT-PROC as separate processes.  Check the result
 returned by a CLIENT-PROC with a predicate PRED."
-  (let ((sock-path (tmpnam)))
-    (run-client-test
-     (lambda (server)
-       (let ((pid (primitive-fork)))
-         (if (zero? pid)
-             (server-proc server)
-             (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
-               (bind sock AF_UNIX sock-path)
-               (listen sock 1)
-               (let ((result (client-proc))
-                     (client (car (accept sock))))
-                 (write-line result client)
-                 (sleep 10)
-                 (close client))))))
+  (let ((server (make-server-for-test))
+        (sock-path (tmpnam)))
+    (multifork
+     ;; Server procedure
+     (lambda ()
+       (server-proc server))
+     ;; Client procedure
+     (lambda ()
+       (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
+         (bind sock AF_UNIX sock-path)
+         (listen sock 1)
+         (let ((result (client-proc))
+               (client (car (accept sock))))
+           (write-line result client)
+           (sleep 10)
+           (close client))))
+     ;; Main procedure
      (lambda ()
        (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
 
