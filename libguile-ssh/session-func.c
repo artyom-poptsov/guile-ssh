@@ -259,7 +259,8 @@ libssh_connect_status_callback (void *userdata, float status)
   SCM scm_callback = callbacks_ref (sd, "connect-status-callback");
   SCM scm_userdata = callbacks_ref (sd, "user-data");
 
-  scm_call_2 (scm_callback, scm_from_double (status), scm_userdata);
+  scm_call_3 (scm_callback, scm_session, scm_from_double (status),
+              scm_userdata);
 }
 
 /* Predicate.  Return 1 if X is a Scheme procedure, 0 otherwise. */
