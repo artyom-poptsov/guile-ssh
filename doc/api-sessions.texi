@@ -1,10 +1,18 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2014 Artyom V. Poptsov
+@c Copyright (C) 2014, 2015 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Sessions
 @section Sessions
+
+@menu
+* Session Management::
+* Callbacks::
+@end menu
+
+@node Session Management
+@subsection Session Management
 
 @cindex sessions
 @tindex session
@@ -210,6 +218,17 @@ Expected type of @var{value}: string.
 Set the compression level to use for zlib functions.  The @var{value}
 is expected to be a number from 1 to 9, 9 being the most efficient but
 slower.
+
+@item callbacks
+Set callbacks that will be called on related events.  Allowed callbacks are:
+@table @samp
+@item global-request-callback
+@item connect-status-callback
+@end table
+
+The callbacks are described in @pxref{Callbacks} section.
+
+Expected type of @var{value}: an association list (alist).
 @end table
 
 @end deffn
@@ -302,6 +321,79 @@ Get version of SSH protocol.  Return 1 for SSH1, 2 for SSH2 or
 
 Throw @code{wrong-type-arg} exception if a disconnected @var{session} is
 passed as an argument.
+@end deffn
+
+@node Callbacks
+@subsection Callbacks
+
+Guile-SSH uses an association list (alist) to represent session callbacks; the
+key is a callback name, and the value is expecting to be a procedure.
+
+Session callbacks is the way to handle some events, notably the incoming
+reverse port forwarding requests on the server side.  Each callback is called
+with the optional @code{user-data} argument which can be specified in the
+callbacks alist as well.
+
+@deffn {Scheme Procedure} global-request-callback session message user-data
+A server-side callback that is called on a global request (e.g. when an SSH
+client asks for reverse port forwarding.)
+
+The callback should be set on an accepted Guile-SSH session (@pxref{Servers})
+in case when global requests must be handled; note that if the callback is not
+set then the server will always deny global requests, which may be confusing.
+
+Example:
+@lisp
+(define (handle-global-request session message user-data)
+  (let ((port-number 12345))
+    (message-reply-success message port-number)))
+
+;; Let's suppose that the session was created earlier.
+
+;; Now we can set our callback:
+(session-set! session
+              'callbacks 
+              `((user-data               . #f)
+                (global-request-callback . ,handle-global-request)))
+
+;; Note that 'user-data' is optional, so the following example
+;; is valid:
+(session-set! session
+              'callbacks
+              `((global-request-callback . ,handle-global-request)))
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} connect-status-callback session status user-data
+This callback is called during connection establishment process (that is,
+after @code{connect!} is called) with a server.  A connection @var{status} is
+a number that shows what percentage of connection esablishment is done.
+
+Example:
+@lisp
+(define (print-status session status user-data)
+  (let ((percentage (truncate (* status 100))))
+    (format #t "~a: connecting ... ~a%~%" session percentage)))
+
+;; Let's suppose that the session was created earlier.
+
+(session-set! session
+              'callbacks
+              `((user-data               . #f)
+                (connect-status-callback . ,print-status)))
+
+;; Or we can set two callbacks simultaneously:
+
+(define (handle-global-request session message user-data)
+  (let ((port-number 12345))
+    (message-reply-success message port-number)))
+
+(session-set! session
+              'callbacks
+              `((user-data               . #f)
+                (connect-status-callback . ,print-status)
+                (global-request-callback . ,handle-global-request)))
+@end lisp
 @end deffn
 
 @c Local Variables:
