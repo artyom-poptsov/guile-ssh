@@ -220,13 +220,7 @@ is expected to be a number from 1 to 9, 9 being the most efficient but
 slower.
 
 @item callbacks
-Set callbacks that will be called on related events.  Allowed callbacks are:
-@table @samp
-@item global-request-callback
-@item connect-status-callback
-@end table
-
-The callbacks are described in @pxref{Callbacks} section.
+Set callbacks that will be called on related events (@pxref{Callbacks}.)
 
 Expected type of @var{value}: an association list (alist).
 @end table
