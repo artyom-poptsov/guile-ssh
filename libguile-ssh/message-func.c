@@ -404,6 +404,21 @@ get_channel_open_req (ssh_message msg)
   return result;
 }
 
+static SCM
+get_subsystem_req (ssh_message msg)
+{
+  const char* subsystem = ssh_message_channel_request_subsystem (msg);
+  SCM result = SCM_BOOL_F;
+
+  if (subsystem)
+    {
+      result = scm_c_make_vector (1, SCM_UNDEFINED);
+      SCM_SIMPLE_VECTOR_SET (result, 0, scm_from_locale_string (subsystem));
+    }
+
+  return result;
+}
+
 SCM_DEFINE (guile_ssh_message_get_req,
             "message-get-req", 1, 0, 0,
             (SCM msg),
@@ -446,6 +461,9 @@ Get a request object from the message MSG\
 
           case SSH_CHANNEL_REQUEST_ENV:
             return get_env_req (ssh_msg);
+
+          case SSH_CHANNEL_REQUEST_SUBSYSTEM:
+            return get_subsystem_req (ssh_msg);
 
           default:
             guile_ssh_error1 (FUNC_NAME, "Wrong message subtype",

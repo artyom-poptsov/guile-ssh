@@ -69,7 +69,8 @@
 
             env-req:name env-req:value
 
-            global-req:addr global-req:port))
+            global-req:addr global-req:port
+            subsystem-req:subsystem))
 
 
 (define (service-req:service req) (vector-ref req 0))
@@ -97,6 +98,8 @@
 
 (define (global-req:addr req) (vector-ref req 0))
 (define (global-req:port req) (vector-ref req 1))
+
+(define (subsystem-req:subsystem req) (vector-ref req 0))
 
 
 (define (message-reply-success msg . args)
