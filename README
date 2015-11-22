@@ -4,6 +4,25 @@ Guile-SSH is a library that provides access to the [[https://en.wikipedia.org/wi
 programs written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It is a wrapper to the
 underlying [[http://www.libssh.org/][libssh]] library.
 
+* Features
+  - The API that is sufficient for building of standalone SSH clients and
+    servers, or for embedding client/server functionality in your lispy Scheme
+    applications.
+  - Several authentication methods are supported, including password
+    authentication, public key and SSH agent authentication methods.
+  - Key management procedures: you can make key pairs, read keys from files,
+    get key hashes, get public keys from private keys etc.  DSS, RSA, RSA1 and
+    ECDSA (by means of OpenSSL) are supported.
+  - Port forwarding procedures and high-level API for creating of SSH tunnels.
+  - Distributed forms (=dist-map=, =distribute=, ...) that allow to spread the
+    evaluation of Scheme code between remote hosts.  Or you can just connect
+    to a remote REPL from Scheme using =with-ssh= procedure and evaluate some
+    expressions.  No special server needed on the remote side, just an SSH
+    daemon and GNU Guile installed!
+  - Execution of shell commands on the remote host, by means of
+    =channel-request-exec=.
+  - Detailed documentation in Texinfo format with examples included, even more
+    examples in =examples= directory.
 * Requirements
 
  - [[https://www.gnu.org/software/guile/][GNU Guile]] 2.0.x
