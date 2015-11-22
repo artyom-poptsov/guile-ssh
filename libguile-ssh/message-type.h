@@ -38,6 +38,7 @@ extern void init_message_type (void);
 
 
 /* Helper procedures. */
+extern SCM _scm_from_ssh_message (const ssh_message message, SCM session);
 extern struct message_data *_scm_to_message_data (SCM x);
 
 #endif  /* ifndef __MESSAGE_TYPE_H__ */

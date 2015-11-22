@@ -145,6 +145,30 @@ Return a new SSH channel.\
   return channel;
 }
 
+SCM_DEFINE (gssh_message_global_request_reply_success,
+            "message-global-request-reply-success", 2, 0, 0,
+            (SCM msg, SCM bound_port), "")
+#define FUNC_NAME s_gssh_message_global_request_reply_success
+{
+  struct message_data *md = _scm_to_message_data (msg);
+  int res;
+
+  SCM_ASSERT (scm_is_unsigned_integer (bound_port, 0, UINT16_MAX), bound_port,
+              SCM_ARG2, FUNC_NAME);
+
+  res = ssh_message_global_request_reply_success (md->message,
+                                                  scm_to_uint16 (bound_port));
+  if (res != SSH_OK)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Unable to reply",
+                        scm_list_2 (msg, bound_port));
+    }
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
+
 
 static struct symbol_mapping req_types[] = {
   { "request-auth",         SSH_REQUEST_AUTH         },

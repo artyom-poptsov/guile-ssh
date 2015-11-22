@@ -26,6 +26,13 @@
 
 (test-begin "session")
 
+
+;;; Logging
+
+(setup-test-suite-logging! "session")
+
+;;;
+
 (test-assert "%make-session"
   (%make-session))
 
@@ -43,7 +50,7 @@
 
 (test-assert "session-set!, valid values"
   (let ((session (%make-session))
-        (options '((host         "localhost")
+        (options `((host         "localhost")
                    (port         22)
                    (bindaddr     "127.0.0.1")
                    (user         "Random J. User")
@@ -54,7 +61,9 @@
                    (log-verbosity nolog rare protocol packet functions
                                   nolog)
                    (compression   "yes" "no")
-                   (compression-level 1 2 3 4 5 6 7 8 9)))
+                   (compression-level 1 2 3 4 5 6 7 8 9)
+                   (callbacks     ((user-data . "hello")
+                                   (global-request-callback . ,(const #f))))))
         (res #t))
     (for-each
      (lambda (opt)
@@ -77,7 +86,9 @@
                    (ssh2              12345 "string")
                    (log-verbosity     "string" -1 0 1 2 3 4 5)
                    (compression       12345)
-                   (compression-level -1 0 10)))
+                   (compression-level -1 0 10)
+                   (callbacks         "not a list"
+                                      ((global-request-callback . #f)))))
         (res #t))
     (for-each
      (lambda (opt)
@@ -101,16 +112,21 @@
          (port         12345)
          (user         "alice")
          (proxycommand "test")
+         (callbacks    '((user-data . "test")))
          (session      (make-session #:host         host
                                      #:port         port
                                      #:user         user
                                      #:identity     %rsakey
-                                     #:proxycommand proxycommand)))
+                                     #:proxycommand proxycommand
+                                     #:callbacks    callbacks)))
     (and (string=? (session-get session 'host)         host)
          (=        (session-get session 'port)         port)
          (string=? (session-get session 'user)         user)
          (string=? (session-get session 'identity)     %rsakey)
-         (string=? (session-get session 'proxycommand) proxycommand))))
+         (string=? (session-get session 'proxycommand) proxycommand)
+         (equal?   (session-get session 'callbacks)    callbacks)
+         ;; Make sure that default callbacks value is '#f'.
+         (equal?   (session-get (%make-session) 'callbacks) #f))))
 
 (test-assert "make-session"
   (make-session #:host "localhost"

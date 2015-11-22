@@ -22,6 +22,7 @@
 (use-modules (srfi srfi-64)
              (srfi srfi-26)
              (ice-9 rdelim)
+             (ice-9 receive)
              ;; Helper procedures.
              (tests common)
              ;; Guile-SSH
@@ -166,6 +167,27 @@
    ;; Predicate
    (lambda (result)
      (string=? result "hello world"))))
+
+
+(test-assert-with-log "channel-{listen,cancel}-forward"
+  (run-client-test
+   ;; Server
+   (lambda (server)
+     (start-server/dist-test server
+                             (lambda (channel)
+                               (write-line (read-line channel) channel))))
+   ;; Client
+   (lambda ()
+     (let ((session (make-session/channel-test))
+           (portnum (get-unused-port)))
+       (and
+        (receive (result pnum)
+            (channel-listen-forward session
+                                    #:address "localhost"
+                                    #:port    portnum)
+          (and (equal? result 'ok)
+               (= pnum portnum)))
+        (eq? (channel-cancel-forward session "localhost" portnum) 'ok))))))
 
 (test-end "tunnel")
 

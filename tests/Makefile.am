@@ -65,4 +65,8 @@ CLEANFILES = \
 	client-server-errors.log		\
 	client-server-libssh.log		\
 	server-client-errors.log		\
-	server-client-libssh.log
+	server-client-libssh.log		\
+	session-errors.log			\
+	session-libssh.log			\
+	tunnel-errors.log			\
+	tunnel-libssh.log

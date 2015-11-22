@@ -20,18 +20,27 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include <libssh/callbacks.h>
 #include <assert.h>
 
 #include "common.h"
 #include "error.h"
 #include "session-type.h"
 #include "key-type.h"
+#include "message-type.h"
 #include "log.h"
 
 /* SSH option mapping. */
 struct option {
   char* symbol;
   int   type;
+};
+
+/* Guile SSH specific options that are aimed to unificate the way of session
+   configuration. */
+enum gssh_session_options {
+  /* Should not intersect with options from SSH session API. */
+  GSSH_OPTIONS_CALLBACKS = 100
 };
 
 
@@ -59,6 +68,7 @@ static struct symbol_mapping session_options[] = {
   { "stricthostkeycheck", SSH_OPTIONS_STRICTHOSTKEYCHECK },
   { "compression",        SSH_OPTIONS_COMPRESSION        },
   { "compression-level",  SSH_OPTIONS_COMPRESSION_LEVEL  },
+  { "callbacks",          GSSH_OPTIONS_CALLBACKS         },
   { NULL,                 -1 }
 };
 
@@ -202,10 +212,125 @@ set_sym_opt (ssh_session session, int type, struct symbol_mapping *sm, SCM value
   return ssh_options_set (session, type, &opt->value);
 }
 
+
+/* Callbacks. */
+
+/* Predicate.  Check if a callback NAME is present in CALLBACKS alist; return
+   1 if it is, 0 otherwise. */
+static inline int
+callback_set_p (SCM callbacks, const char* name)
+{
+  return scm_is_true (scm_assoc (scm_from_locale_symbol (name), callbacks));
+}
+
+/* Get an element NAME of the callbacks alist from a session data SD. */
+static inline SCM
+callbacks_ref (const struct session_data *sd, const char* name)
+{
+  return scm_assoc_ref (sd->callbacks, scm_from_locale_symbol (name));
+}
+
+/* The callback procedure that meant to be called by libssh; the procedure in
+   turn calls a specified Scheme procedure.  USERDATA is a Guile-SSH
+   session instance. */
+static void
+libssh_global_request_callback (ssh_session session, ssh_message message,
+                                void *userdata)
+{
+  SCM scm_session = (SCM) userdata;
+  struct session_data *sd = _scm_to_session_data (scm_session);
+
+  SCM scm_callback = callbacks_ref (sd, "global-request-callback");
+  SCM scm_userdata = callbacks_ref (sd, "user-data");
+  SCM scm_message = _scm_from_ssh_message (message, scm_session);
+
+  scm_call_3 (scm_callback, scm_session, scm_message, scm_userdata);
+}
+
+/* The callback procedure that meant to be called by libssh to indicate the
+   percentage of connection steps completed.  The percentage is passed as
+   STATUS.  USERDATA is a Guile-SSH session instance. */
+static void
+libssh_connect_status_callback (void *userdata, float status)
+{
+  SCM scm_session = (SCM) userdata;
+  struct session_data *sd = _scm_to_session_data (scm_session);
+
+  SCM scm_callback = callbacks_ref (sd, "connect-status-callback");
+  SCM scm_userdata = callbacks_ref (sd, "user-data");
+
+  scm_call_3 (scm_callback, scm_session, scm_from_double (status),
+              scm_userdata);
+}
+
+/* Predicate.  Return 1 if X is a Scheme procedure, 0 otherwise. */
+static inline int
+scm_is_procedure (SCM x)
+{
+  return scm_to_bool (scm_procedure_p (x));
+}
+
+/* Validate callback NAME.  Throw 'guile-ssh-error' exception on an error. */
+static void
+validate_callback (SCM session, const struct session_data *sd, const char* name)
+{
+  if (! scm_is_procedure (callbacks_ref (sd, name)))
+    {
+      enum { BUFSZ = 70 };
+      char msg[BUFSZ];
+
+      snprintf (msg, BUFSZ, "'%s' must be a procedure", name);
+
+      guile_ssh_error1 ("session-set!", msg,
+                        scm_list_2 (session, sd->callbacks));
+    }
+}
+
+/* Set libssh callbacks for a SESSION.  The procedure expects CALLBACKS to be
+   an alist object.
+
+   Return SSH_OK if callbacks were set succesfully, SSH_ERROR otherwise. */
+static int
+set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
+{
+  struct ssh_callbacks_struct *cb
+    = (struct ssh_callbacks_struct *)
+    scm_gc_malloc (sizeof (struct ssh_callbacks_struct),
+                   "ssh-callbacks");
+
+  SCM_ASSERT (scm_to_bool (scm_list_p (callbacks)), callbacks, SCM_ARG3,
+              "session-set!");
+
+  sd->callbacks = callbacks;
+
+  cb->userdata = session;
+
+  if (callback_set_p (callbacks, "global-request-callback"))
+    {
+      validate_callback (session, sd, "global-request-callback");
+      cb->global_request_function = libssh_global_request_callback;
+    }
+
+  if (callback_set_p (callbacks, "connect-status-callback"))
+    {
+      validate_callback (session, sd, "connect-status-callback");
+      cb->connect_status_function = libssh_connect_status_callback;
+    }
+
+  ssh_callbacks_init (cb);
+
+  scm_remember_upto_here_2 (session, callbacks);
+
+  return ssh_set_callbacks (sd->ssh_session, cb);
+}
+
+
 /* Set an SSH session option. */
 static int
-set_option (ssh_session session, int type, SCM value)
+set_option (SCM scm_session, struct session_data* sd, int type, SCM value)
 {
+  ssh_session session = sd->ssh_session;
+
   switch (type)
     {
     case SSH_OPTIONS_PORT:
@@ -243,6 +368,9 @@ set_option (ssh_session session, int type, SCM value)
     case SSH_OPTIONS_FD:
       return set_port_opt (session, type, value);
 
+    case GSSH_OPTIONS_CALLBACKS:
+      return set_callbacks (scm_session, sd, value);
+
     default:
       guile_ssh_error1 ("session-set!",
                         "Operation is not supported yet: %a~%",
@@ -272,7 +400,7 @@ Return value is undefined.\
   if(! opt)
     guile_ssh_error1 (FUNC_NAME, "No such option", option);
 
-  res = set_option (data->ssh_session, opt->value, value);
+  res = set_option (session, data, opt->value, value);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to set the option", option);
 
@@ -290,6 +418,7 @@ static struct symbol_mapping session_options_getable[] = {
   { "user",         SSH_OPTIONS_USER         },
   { "identity",     SSH_OPTIONS_IDENTITY     },
   { "proxycommand", SSH_OPTIONS_PROXYCOMMAND },
+  { "callbacks",    GSSH_OPTIONS_CALLBACKS   },
   { NULL,           -1                       }
 };
 
@@ -316,6 +445,10 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
       unsigned int port;
       res = ssh_options_get_port (sd->ssh_session, &port);
       value = (res == SSH_OK) ? scm_from_int (port) : SCM_UNDEFINED;
+    }
+  else if (opt->value == GSSH_OPTIONS_CALLBACKS)
+    {
+      value = sd->callbacks;
     }
   else
     {
