@@ -240,6 +240,7 @@ with this procedure.  Here is the list of allowed options:
 @item user
 @item identity
 @item proxycommand
+@item callbacks
 @end table
 @end deffn
 
