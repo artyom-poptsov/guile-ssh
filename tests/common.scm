@@ -184,7 +184,12 @@ main procedure."
     (format-log/scm 'nolog "multifork" "procs 2: ~a~%" procs)
     (format-log/scm 'nolog "multifork" "mainproc: ~a~%" mainproc)
     (format-log/scm 'nolog "multifork" "PIDs: ~a~%" pids)
-    (mainproc)))
+    (dynamic-wind
+      (const #f)
+      mainproc
+      (lambda ()
+        (format-log/scm 'nolog "multifork" "killing spawned processes ...")
+        (for-each (lambda (pid) kill pid SIGTERM) pids)))))
 
 
 (define (run-client-test server-proc client-proc)
