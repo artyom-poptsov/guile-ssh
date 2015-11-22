@@ -1,6 +1,6 @@
 ;;; message.scm -- Procedures for working with SSH messages.
 
-;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -59,6 +59,8 @@
 
             message-channel-request-reply-success
             message-channel-request-open-reply-accept
+
+            message-global-request-reply-success
 
             pty-req:term pty-req:width pty-req:height pty-req:pxwidth
             pty-req:pxheight
@@ -129,7 +131,15 @@ to use will be selected depending on a type of the message MSG."
        (message-channel-request-reply-success msg))
 
       ((request-global)
-       (error "Not implemented yet" (cadr msg-type))))))
+       (cond
+        ((= (length args) 1)
+         (message-global-request-reply-success msg (car args)))
+        (else
+         (error "message-reply-success: Wrong number of arguments."
+                args))))
+
+      (else
+       (error "Unknown message type" msg-type)))))
 
 
 (load-extension "libguile-ssh" "init_message")

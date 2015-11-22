@@ -28,6 +28,7 @@ extern scm_t_bits session_tag;
 
 struct session_data {
   ssh_session ssh_session;
+  SCM callbacks;
 };
 
 /* Make sure that the session pointed by session data structure pointer SD is

@@ -41,7 +41,7 @@ convenient wrapper for other @code{*-reply-success} procedures (see
 below).  The right procedure to use will be selected depending on a
 type of the @code{message}.  The procedure may take additional
 argument @code{'partial} for that changes reply to authentication
-request.
+request, and a @code{bound-port} for a global request.
 
 Throw an exception on error.  Return value is undefined.
 @end deffn
@@ -59,6 +59,11 @@ Reply with ``success'' on the auth-request @var{message}.  Throw
 @deffn {Scheme Procedure} message-channel-request-reply-success message
 Reply ``success'' on a channel-request @var{message}.
 Throw @code{guile-ssh-error} on error.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} message-global-request-reply-success message bound-port
+Reply ``success'' on a global request @var{message}.  Throw
+@code{guile-ssh-error} on error.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} message-auth-reply-public-key-ok message

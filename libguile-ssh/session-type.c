@@ -33,7 +33,8 @@ scm_t_bits session_tag;	/* Smob tag. */
 SCM
 mark_session (SCM session_smob)
 {
-  return SCM_BOOL_F;
+  struct session_data *sd = _scm_to_session_data (session_smob);
+  return sd->callbacks;
 }
 
 /* Handle GC'ing of the session smob. */
@@ -66,6 +67,8 @@ Create a new session.\
   session_data->ssh_session = ssh_new ();
   if (session_data->ssh_session == NULL)
     return SCM_BOOL_F;
+
+  session_data->callbacks = SCM_BOOL_F;
 
   SCM_NEWSMOB (smob, session_tag, session_data);
 
