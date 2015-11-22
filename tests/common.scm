@@ -181,26 +181,14 @@
                           (message-reply-success message
                                                  pnum)))
                        ((global-request-cancel-tcpip-forward)
-                        (message-reply-success message 1)
-                        (disconnect! session))))))
+                        (message-reply-success message 1))))))
            (callbacks `((user-data               . #f)
                         (global-request-callback . ,proc))))
       (session-set! session 'callbacks callbacks))
 
     (make-session-loop session
       (unless (eof-object? msg)
-        (let ((msg-type (message-get-type msg)))
-          (case (car msg-type)
-            ((request-channel-open)
-             (set! channel (message-channel-request-open-reply-accept msg))
-             (let poll ((ready? #f))
-               (if ready?
-                   (rwproc channel)
-                   (poll (char-ready? channel)))))
-            ((request-channel)
-               (message-reply-success msg))
-            (else
-             (message-reply-success msg)))))))
+        (message-reply-success msg))))
   (primitive-exit))
 
 
