@@ -36,6 +36,14 @@ struct sftp_file_data {
 };
 
 
+extern SCM gssh_sftp_open (SCM sftp_session, SCM path, SCM access_type,
+                           SCM mode);
+extern SCM gssh_sftp_file_p (SCM x);
+
+
+extern void init_sftp_file_type (void);
+
+
 extern struct sftp_file_data * _scm_to_sftp_file_data (SCM x);
 extern SCM _scm_from_sftp_file (const sftp_file file,
                                 const SCM name,
