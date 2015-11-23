@@ -116,21 +116,35 @@
 (define %ecdsakey-pub-string
   "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHcpje/fp21KjuZFKgmKAAwHeYJ6e3ny4LwEVjZr8hOCVlBvqj7/krVqxbwZI7EcowbpYI1F8ZszS7zfUhKT3U4=")
 
-(test-assert "public-key->string"
-  (and (string=? (public-key->string *rsa-pub-key*)   %rsakey-pub-string)
-       (string=? (public-key->string *dsa-pub-key*)   %dsakey-pub-string)
-       (when-openssl
-        (string=? (public-key->string *ecdsa-pub-key*) %ecdsakey-pub-string))))
+
+(test-equal "public-key->string, RSA"
+  (public-key->string *rsa-pub-key*)
+  %rsakey-pub-string)
 
-(test-assert "string->public-key"
-  (and (string=? (public-key->string (string->public-key %rsakey-pub-string 'rsa))
-                 %rsakey-pub-string)
-       (string=? (public-key->string (string->public-key %dsakey-pub-string 'dss))
-                 %dsakey-pub-string)
-       (when-openssl
-        (string=? (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa))
-                  %ecdsakey-pub-string))))
+(test-equal "public-key->string, DSA"
+  (public-key->string *dsa-pub-key*)
+  %dsakey-pub-string)
 
+(when-openssl
+ (test-equal "public-key->string, ECDSA"
+   (public-key->string *ecdsa-pub-key*)
+   %ecdsakey-pub-string))
+
+
+(test-equal "string->public-key, RSA"
+  (public-key->string (string->public-key %rsakey-pub-string 'rsa))
+  %rsakey-pub-string)
+
+(test-equal "string->public-key, DSA"
+  (public-key->string (string->public-key %dsakey-pub-string 'dss))
+  %dsakey-pub-string)
+
+(when-openssl
+ (test-equal "string->public-key, ECDSA"
+   (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa))
+   %ecdsakey-pub-string))
+
+
 (test-assert "make-keypair"
   (and (let ((key (make-keypair 'rsa 1024)))
          (and (key? key)
