@@ -139,6 +139,33 @@ When the @var{thunk} returns, the port is closed and the previous default is
 restored.  Returns the values yielded by @var{thunk}.  If an escape procedure
 is used to escape from the continuation of these procedures, their behavior is
 implementation dependent.
+
+Example:
+
+@lisp
+(define (rcat user host filename)
+  "Print contents of a remote file on a HOST pointed by a FILENAME to
+stdout."
+  (let ((session (make-session #:user user #:host host)))
+
+    ;; Connect to an SSH server.
+    (connect! session)
+
+    (authenticate-server session)
+
+    ;; Authenticate with an SSH server using a SSH agent.
+    (userauth-agent! session)
+
+    (let ((sftp-session (make-sftp-session session)))
+
+      ;; Read read a file line-by-line and print it to stdout.
+      (with-input-from-remote-file sftp-session filename
+        (lambda ()
+          (do ((line (read-line) (read-line)))
+              ((eof-object? line))
+            (write-line line)))))))
+@end lisp
+
 @end deffn
 
 @deffn {Scheme Procedure} with-output-to-remote-file sftp-session filename thunk
