@@ -17,32 +17,3 @@
 In thread:
 ERROR: Could not open forward channel #<tunnel 127.0.0.1:0 -> localhost:37147 91b72a8> error
 #+END_EXAMPLE
-** Reverse port forwarding
-   Reverse port forwarding is not supported yet.  To make it work, it
-   a global request callback should be implemented (see
-   =ssh_packet_global_request= in libssh 0.6.3.)  It should be
-   possible to set the callback from Scheme world.
-
-   When the reverse port forwarding API is ready, corresponding test
-   cases should be added to =tests/tunnel.scm=.  For example:
-#+BEGIN_EXAMPLE scheme
-(test-assert-with-log "channel-{listen,cancel}-forward"
-  (run-client-test
-   ;; Server
-   (lambda (server)
-     (start-server/dt-test server
-                           (lambda (channel)
-                             (write-line (read-line channel) channel))))
-   ;; Client
-   (lambda ()
-     (let ((session (make-session/channel-test))
-           (portnum (get-unused-port)))
-       (and
-        (receive (result pnum)
-            (channel-listen-forward session
-                                    #:address "localhost"
-                                    #:port    portnum)
-          (eq? result 'ok))
-
-        (eq? (channel-cancel-forward session "localhost" portnum) 'ok))))))
-#+END_EXAMPLE
