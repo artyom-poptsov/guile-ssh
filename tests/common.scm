@@ -315,18 +315,19 @@ returned by a CLIENT-PROC with a predicate PRED."
 CLIENT-PROC as an argument.  SERVER-PROC is called with a server as an
 argument.  The procedure returns a result of SERVER-PROC call."
   (let ((server  (make-server-for-test))
-        (session (make-session-for-test))
-        (pid     (primitive-fork)))
-    (if (zero? pid)
-        ;; server
-        (dynamic-wind
-          (const #f)
-          (lambda ()
-            (client-proc session))
-          (lambda ()
-            (primitive-exit 1)))
-        ;; client
-        (server-proc server))))
+        (session (make-session-for-test)))
+    (multifork
+     ;; server
+     (lambda ()
+       (dynamic-wind
+         (const #f)
+         (lambda ()
+           (client-proc session))
+         (lambda ()
+           (primitive-exit 1))))
+     ;; client
+     (lambda ()
+       (server-proc server)))))
 
 
 ;;; Logging
