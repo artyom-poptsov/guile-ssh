@@ -29,8 +29,41 @@ Get the parent SSH session for a @var{sftp-session}.
 
 @deffn {Scheme Procedure} sftp-get-error sftp-session
 Get the last SFTP error from a @var{sftp-session}.  Return the error name as a
-symbol, or throw @var{guile-ssh-error} on if an error occured in the procedure
-itself.
+symbol, or throw @code{guile-ssh-error} on if an error occured in the
+procedure itself.
+
+The procedure returns one of the following values:
+
+@table @samp
+@item fx-ok
+No error.
+@item fx-eof
+End-of-file encountered.
+@item fx-no-such-file
+File doesn't exist.
+@item fx-permission-denied
+Permission denied.
+@item fx-failure
+Generic failure.
+@item fx-bad-message
+Garbage received from the server.
+@item fx-no-connection
+No connection has been set up.
+@item fx-connection-lost
+There was a connection, but we lost it.
+@item fx-op-unsupported
+Operation not supported by the server.
+@item fx-invalid-handle
+Invalid file handle.
+@item fx-no-such-path
+No such file or directory path exists.
+@item fx-file-already-exist
+An attempt to create an already existing file or directory has been made.
+@item fx-write-protect
+We are trying to write on a write-protected filesystem.
+@item fx-no-media
+No media in remote drive.
+@end table
 @end deffn
 
 @deffn {Scheme Procedure} sftp-mkdir sftp-session dirname [mode=#o777]
