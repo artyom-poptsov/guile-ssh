@@ -56,8 +56,7 @@
    (lambda (session)
      (sleep 1)
      (connect! session)
-     (authenticate-server session)
-     (primitive-exit))
+     (authenticate-server session))
 
    ;; server
    (lambda (server)
@@ -83,8 +82,7 @@
      (authenticate-server session)
      (clnmsg "server authenticated")
      (userauth-none! session)
-     (clnmsg "client authenticated")
-     (primitive-exit))
+     (clnmsg "client authenticated"))
 
    ;; server
    (lambda (server)
@@ -108,8 +106,7 @@
      (authenticate-server session)
      (clnmsg "server authenticated")
      (userauth-none! session)
-     (clnmsg "client authenticated")
-     (primitive-exit))
+     (clnmsg "client authenticated"))
 
    ;; server
    (lambda (server)
@@ -136,8 +133,7 @@
      (authenticate-server session)
      (clnmsg "server authenticated")
      (userauth-none! session)
-     (clnmsg "client authenticated")
-     (primitive-exit))
+     (clnmsg "client authenticated"))
 
    ;; server
    (lambda (server)
