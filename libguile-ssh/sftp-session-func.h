@@ -22,6 +22,13 @@
 extern SCM gssh_sftp_init (SCM sftp_session);
 extern SCM gssh_sftp_get_session (SCM sftp_session);
 extern SCM gssh_sftp_mkdir (SCM sftp_session, SCM dirname, SCM mode);
+extern SCM gssh_sftp_rmdir (SCM sftp_session, SCM dirname);
+extern SCM gssh_sftp_mv (SCM sftp_session, SCM source, SCM dest);
+extern SCM gssh_sftp_chmod (SCM sftp_session, SCM filename, SCM mode);
+extern SCM gssh_sftp_symlink (SCM sftp_session, SCM target, SCM dest);
+extern SCM gssh_sftp_readlink (SCM sftp_session, SCM path);
+extern SCM gssh_sftp_unlink (SCM sftp_session, SCM path);
+extern SCM gssh_sftp_get_error (SCM sftp_session);
 
 
 extern void init_sftp_session_func (void);
