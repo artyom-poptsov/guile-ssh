@@ -19,6 +19,8 @@
 #ifndef __SFTP_SESSION_FUNC_H__
 #define __SFTP_SESSION_FUNC_H__
 
+#include <libguile.h>
+
 extern SCM gssh_sftp_init (SCM sftp_session);
 extern SCM gssh_sftp_get_session (SCM sftp_session);
 extern SCM gssh_sftp_mkdir (SCM sftp_session, SCM dirname, SCM mode);
