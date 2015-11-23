@@ -37,6 +37,9 @@ struct sftp_session_data {
 };
 
 
+extern SCM gssh_sftp_session_p (SCM arg1);
+extern SCM gssh_make_sftp_session (SCM arg1);
+
 extern void init_sftp_session_type (void);
 
 
