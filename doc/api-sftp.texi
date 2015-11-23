@@ -87,7 +87,8 @@ exception on an error, return value is undefined.
 
 @subsection SFTP file
 
-Remote files are represented as regular Guile ports that allow random access.
+Remote files are represented as regular Guile ports that allow random access
+(@pxref{Input and Output,,, guile, The GNU Guile Reference Manual}.)
 
 @deffn {Scheme Procedure} sftp-open sftp-session filename flags [mode=#o666]
 Open a remote @var{filename} using an @var{sftp-session}, return an open file
