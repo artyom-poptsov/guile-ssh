@@ -273,7 +273,7 @@ SCM_GSSH_DEFINE (gssh_sftp_open, "%gssh-sftp-open", 4,
 }
 #undef FUNC_NAME
 
-SCM_GSSH_DEFINE (gssh_sftp_session_p, "%gssh-sftp-file?", 1, (SCM x))
+SCM_GSSH_DEFINE (gssh_sftp_file_p, "%gssh-sftp-file?", 1, (SCM x))
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (sftp_file_tag, x));
 }
