@@ -20,6 +20,33 @@
 
 ;;; Commentary:
 
+;; This module contains SFTP API procedures.
+;;
+;; The module exports:
+;;   sftp-session?
+;;   make-sftp-session
+;;   sftp-init
+;;   sftp-get-session
+;;   sftp-get-error
+;;   sftp-mkdir
+;;   sftp-rmdir
+;;   sftp-mv
+;;   sftp-symlink
+;;   sftp-readlink
+;;   sftp-chmod
+;;   sftp-unlink
+;;   %make-sftp-session
+;;   %sftp-init
+;;   sftp-open
+;;   sftp-file?
+;;   call-with-remote-input-file
+;;   call-with-remote-output-file
+;;   with-input-from-remote-file
+;;   with-output-to-remote-file
+;;
+;; See the Info documentation for the detailed description of these
+;; procedures.
+
 ;;; Code:
 
 (define-module (ssh sftp)
