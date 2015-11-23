@@ -31,14 +31,14 @@ scm_t_bits sftp_session_tag;    /* Smob tag. */
 
 /* GC callbacks. */
 
-SCM
+static SCM
 mark_sftp_session (SCM sftp_session)
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
   return sftp_sd->session;
 }
 
-size_t
+static size_t
 free_sftp_session (SCM sftp_session)
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
@@ -57,7 +57,7 @@ print_sftp_session (SCM sftp_session, SCM port, scm_print_state *pstate)
 }
 
 
-SCM
+static SCM
 equalp_sftp_session (SCM x1, SCM x2)
 {
   struct sftp_session_data *sftp_sd1 = _scm_to_sftp_session_data (x1);
