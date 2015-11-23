@@ -19,6 +19,8 @@ underlying [[http://www.libssh.org/][libssh]] library.
     to a remote REPL from Scheme using =with-ssh= procedure and evaluate some
     expressions.  No special server needed on the remote side, just an SSH
     daemon and GNU Guile installed!
+  - SFTP client API allows you to read and write remote files over the SSH
+    protocol right from the Scheme code.
   - Execution of shell commands on the remote host, by means of
     =channel-request-exec=.
   - Detailed documentation in Texinfo format with examples included, even more
