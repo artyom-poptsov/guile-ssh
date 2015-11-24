@@ -172,9 +172,7 @@
   (run-client-test
    ;; Server
    (lambda (server)
-     (start-server/dist-test server
-                             (lambda (channel)
-                               (write-line (read-line channel) channel))))
+     (start-server/dist-test server))
    ;; Client
    (lambda ()
      (let ((session (make-session/channel-test))

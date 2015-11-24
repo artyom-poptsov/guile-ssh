@@ -163,10 +163,9 @@
                (message-reply-success msg)))))))
   (primitive-exit))
 
-(define (start-server/dist-test server rwproc)
+(define (start-server/dist-test server)
   (server-listen server)
-  (let ((session (server-accept server))
-        (channel #f))
+  (let ((session (server-accept server)))
 
     (server-handle-key-exchange session)
 
@@ -190,8 +189,7 @@
 
     (make-session-loop session
       (unless (eof-object? msg)
-        (message-reply-success msg))))
-  (primitive-exit))
+        (message-reply-success msg)))))
 
 
 ;;; Tests
