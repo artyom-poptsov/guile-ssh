@@ -33,6 +33,11 @@
 (add-to-load-path (getenv "abs_top_srcdir"))
 (use-modules (tests common))
 
+
+;;; Logging
+
+(setup-test-suite-logging! "dist")
+
 ;;;
 
 
