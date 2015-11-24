@@ -137,6 +137,23 @@
          (string=? module-name "(guile-user)")
          (string=? lang        "scheme"))))
 
+
+(test-assert "rrepl-skip-to-prompt, valid input"
+  (begin
+    (call-with-input-string "Enter `,help' for help."
+      (lambda (port)
+        (rrepl-skip-to-prompt port)))
+    #t))
+
+(test-assert "rrepl-skip-to-prompt, invalid input"
+  (catch 'node-error
+    (lambda ()
+      (call-with-input-string "invalid input"
+        (lambda (port)
+          (rrepl-skip-to-prompt port)))
+      #f)
+    (const #t)))
+
 ;;;
 
 
