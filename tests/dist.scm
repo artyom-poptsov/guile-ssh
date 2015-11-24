@@ -19,9 +19,13 @@
 
 (use-modules (srfi srfi-64)
              (ice-9 receive)
+             (ice-9 rdelim)
              (ssh  session)
              (ssh  key)
              (ssh  auth)
+             (ssh  message)
+             (ssh  server)
+             (ssh  log)
              (ssh  dist)
              (ssh  dist job)
              (ssh  dist node))
@@ -158,6 +162,74 @@
           (rrepl-skip-to-prompt port)))
       #f)
     (const #t)))
+
+
+;;; Distributed forms.
+
+;; The client uses distributed form 'with-ssh' to evaluate (+ 21 21).  The
+;; server pretends to be a RREPL server and returns the evaluation "result",
+;; 42.
+(test-assert-with-log "with-ssh"
+  (run-client-test
+   ;; Server
+   (lambda (server)
+     (server-listen server)
+     (server-set! server 'log-verbosity 'functions)
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (make-session-loop session
+         (unless (eof-object? msg)
+           (let ((type (message-get-type msg)))
+             (case (car type)
+               ((request-channel-open)
+                (let ((c (message-channel-request-open-reply-accept msg)))
+
+                  ;; Write the last line of Guile REPL greeting message to
+                  ;; pretend that we're a REPL server.
+                  (write-line "Enter `,help' for help." c)
+
+                  (let poll ((ready? #f))
+                    (usleep 100)
+                    (if ready?
+                        (begin
+                          ;; Read expression
+                          (let ((result (read-line c)))
+                            (format-log 'nolog "server"
+                                        "[SCM] sexp: ~a" result)
+                            (or (string=? result "(begin (+ 21 21))")
+                                (error "Wrong result 1" result)))
+
+                          ;; Read newline
+                          (let ((result (read-line c)))
+                            (format-log 'nolog "server"
+                                        "[SCM] sexp: ~a" result)
+                            (or (string=? result "(newline)")
+                                (error "Wrong result 2" result)))
+
+                          (write-line "scheme@(guile-user)> $1 = 42\n" c)
+
+                          (sleep 60))
+                        (poll (char-ready? c))))))
+               (else
+                (message-reply-success msg))))))))
+   ;; Client
+   (lambda ()
+     (let ((session (make-session-for-test)))
+       (session-set! session 'log-verbosity 'functions)
+
+       (let ((result (connect! session)))
+         (or (equal? result 'ok)
+             (error "Could not connect to a server" session result)))
+
+       (authenticate-server session)
+
+       (or (equal? (userauth-none! session) 'success)
+           (error "Could not authenticate with a server" session))
+
+       (let ((n (make-node session #:start-repl-server? #f)))
+         (= (with-ssh n
+              (+ 21 21))
+            42))))))
 
 ;;;
 
