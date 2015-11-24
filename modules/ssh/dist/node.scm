@@ -60,6 +60,7 @@
   #:use-module (ssh tunnel)
   #:export (node?
             node-session
+            node-tunnel
             node-repl-port
             make-node
             node-eval

@@ -24,6 +24,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     'channel-listen-forward' would always return garbage as the 2nd argument
     when called with port > 0.  Now when the port is explicitly specified then
     the procedure returns the specified port as the 2nd argument.
+*** Add missing export of 'node-tunnel' from (ssh dist node) module
 ** Distributed forms now return number of evaluation as a number
    instead of string.
 ** 'with-ssh' is now are capable of handling of multiple values
