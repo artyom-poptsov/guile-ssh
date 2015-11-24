@@ -21,6 +21,7 @@
 #include <libguile.h>
 #include <libssh/libssh.h>
 
+#include "common.h"
 #include "error.h"
 #include "channel-type.h"
 #include "session-type.h"
@@ -223,11 +224,10 @@ _ssh_result_to_symbol (int res)
     }
 }
 
-SCM_DEFINE (guile_ssh_channel_open_forward,
-            "%channel-open-forward", 5, 0, 0,
-            (SCM channel, SCM remote_host, SCM remote_port,
-             SCM source_host, SCM local_port),
-            "")
+SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
+                 "%channel-open-forward", 5,
+                 (SCM channel, SCM remote_host, SCM remote_port,
+                  SCM source_host, SCM local_port))
 #define FUNC_NAME s_guile_ssh_channel_open_forward
 {
   struct channel_data *cd = _scm_to_channel_data (channel);
@@ -261,10 +261,9 @@ SCM_DEFINE (guile_ssh_channel_open_forward,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_listen_forward,
-            "%channel-listen-forward", 3, 0, 0,
-            (SCM session, SCM address, SCM port),
-            "")
+SCM_GSSH_DEFINE (guile_ssh_channel_listen_forward,
+                 "%channel-listen-forward", 3,
+                 (SCM session, SCM address, SCM port))
 #define FUNC_NAME s_guile_ssh_channel_listen_forward
 {
   struct session_data *sd = _scm_to_session_data (session);
@@ -300,10 +299,9 @@ SCM_DEFINE (guile_ssh_channel_listen_forward,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_accept_forward,
-            "%channel-accept-forward", 2, 0, 0,
-            (SCM session, SCM timeout),
-            "")
+SCM_GSSH_DEFINE (guile_ssh_channel_accept_forward,
+                 "%channel-accept-forward", 2,
+                 (SCM session, SCM timeout))
 #define FUNC_NAME s_guile_ssh_channel_accept_forward
 {
   struct session_data *sd = _scm_to_session_data (session);
@@ -327,10 +325,9 @@ SCM_DEFINE (guile_ssh_channel_accept_forward,
 #undef FUNC_NAME
 
 /* FIXME: Should it be defined in some other module? */
-SCM_DEFINE (guile_ssh_channel_cancel_forward,
-            "channel-cancel-forward", 3, 0, 0,
-            (SCM session, SCM address, SCM port),
-            "")
+SCM_GSSH_DEFINE (guile_ssh_channel_cancel_forward,
+                 "channel-cancel-forward", 3,
+                 (SCM session, SCM address, SCM port))
 #define FUNC_NAME s_guile_ssh_channel_cancel_forward
 {
   struct session_data *sd = _scm_to_session_data (session);
