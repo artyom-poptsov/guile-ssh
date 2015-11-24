@@ -36,6 +36,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New procedures
 *** New procedure 'node-server-running?' in (ssh dist node)
 *** New procedure 'node-run-server' in (ssh dist node)
+** Unit tests
+*** Expand the test suite for distributed forms
+*** Expand the test suite for tunnels
 ** Update documentation
 
 * Changes in version 0.8.0 (2015-08-04)
