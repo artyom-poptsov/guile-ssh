@@ -1,5 +1,7 @@
 # -*- mode: org; -*-
 
+[[./doc/logo.png]]
+
 Guile-SSH is a library that provides access to the [[https://en.wikipedia.org/wiki/Secure_Shell][SSH protocol]] for
 programs written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It is a wrapper to the
 underlying [[http://www.libssh.org/][libssh]] library.
