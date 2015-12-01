@@ -36,6 +36,10 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New procedures
 *** New procedure 'node-server-running?' in (ssh dist node)
 *** New procedure 'node-run-server' in (ssh dist node)
+*** New procedure 'session-parse-config!' in (ssh session)
+** 'make-session' now takes 'config' option
+   that allows to specify whether the SSH config should be parsed or not, and
+   optionally the path to the config.
 ** Unit tests
 *** Expand the test suite for distributed forms
 *** Expand the test suite for tunnels

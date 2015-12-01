@@ -28,6 +28,7 @@
   #:export (;; Variables
             %topdir
             %knownhosts
+            %config
             %addr
             %rsakey
             %rsakey-pub
@@ -69,6 +70,8 @@
 
 (define %knownhosts (format #f "~a/tests/knownhosts"
                             (getenv "abs_top_builddir")))
+
+(define %config (format #f "~a/tests/config" %topdir))
 
 
 ;; Pass the test case NAME as the userdata to the libssh log

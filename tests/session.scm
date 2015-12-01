@@ -128,6 +128,14 @@
          ;; Make sure that default callbacks value is '#f'.
          (equal?   (session-get (%make-session) 'callbacks) #f))))
 
+(test-assert "session-parse-config!"
+  (let ((session (make-session #:host "example")))
+    (session-parse-config! session %config)
+    (format (current-error-port) "session: ~a~%" session)
+    (and (string=? (session-get session 'host) "example.org")
+         (string=? (session-get session 'user) "alice")
+         (=        (session-get session 'port) 2222))))
+
 (test-assert "make-session"
   (make-session #:host "localhost"
                 #:port 22

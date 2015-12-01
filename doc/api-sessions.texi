@@ -223,8 +223,36 @@ slower.
 Set callbacks that will be called on related events (@pxref{Callbacks}.)
 
 Expected type of @var{value}: an association list (alist).
+
+@item config
+The option specifies whether an SSH config should be parsed or not, and
+optionally the path to a config file.
+
+Setting the @var{value} to @code{#t} means that the default
+@file{~/.ssh/config} should be parsed; in turn, setting the option to
+@code{#f} (the default value) means that the config should not be parsed at
+all.  If the value is a string, then the string is expected to be a path to
+config file.
+
+The procedure reads the config file after all other specified options are set.
+When the config file is read, the options for @var{session} are set,
+overwriting those that were passed to the procedure.
+
+You @emph{must} specify at least a host name when using this option, otherwise
+the procedure will fail.
+
+Optionally you could use @code{session-parse-config!} procedure explicitly to
+read the config (see below.)
+
+Expected types of @var{value}: Either a string or a boolean value.
 @end table
 
+@end deffn
+
+@deffn {Scheme Procedure} session-parse-config! session [file-name]
+Parse an SSH config @var{file-name} and set @var{session} options.  If
+@var{file-name} is not set, the default SSH @file{~/.ssh/config} is used.
+Throw @code{guile-ssh-error} on an error.  Return value is undefined.
 @end deffn
 
 @deffn {Scheme Procedure} session-get session option
