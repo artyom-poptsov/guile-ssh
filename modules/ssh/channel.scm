@@ -109,12 +109,13 @@ issued."
 
 
 ;;; High-level procedures.
-;; TODO: Add error handling.
 
 (define (open-remote-pipe session command)
   "Execute a COMMAND on the remote host using a SESSION with a pipe to it.
 The pipe works in both directions.  Returns newly created port (channel)."
   (let ((channel (make-channel session)))
+    (unless channel
+      (throw 'guile-ssh-error "Could not create a channel" session command))
     (channel-open-session channel)
     (channel-request-pty channel)
     (channel-request-exec channel command)
