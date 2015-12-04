@@ -66,7 +66,11 @@
             channel-get-session
             channel-get-exit-status
             channel-open?
-            channel-eof?))
+            channel-eof?
+
+            ;; High-level procedures.
+            open-remote-pipe
+            open-remote-pipe*))
 
 
 (define* (channel-open-forward channel
@@ -102,6 +106,26 @@ incoming connection.  Return two values: the first value is the incoming
 channel, and the second value is a port number on which the connection was
 issued."
   (%channel-accept-forward session timeout))
+
+
+;;; High-level procedures.
+;; TODO: Add error handling.
+
+(define (open-remote-pipe session command)
+  "Execute a COMMAND on the remote host using a SESSION with a pipe to it.
+The pipe works in both directions.  Returns newly created port (channel)."
+  (let ((channel (make-channel session)))
+    (channel-open-session channel)
+    (channel-request-pty channel)
+    (channel-request-exec channel command)
+    channel))
+
+(define (open-remote-pipe* session prog . args)
+  "Execute COMMANDS on the remote host using a SESSION with a pipe to it.  The
+pipe works in both directions.  Returns newly created port (channel)."
+  (open-remote-pipe session (string-join (cons prog args))))
+
+;;;
 
 
 (load-extension "libguile-ssh" "init_channel")
