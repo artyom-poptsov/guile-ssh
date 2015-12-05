@@ -47,6 +47,7 @@
 (define-module (ssh channel)
   #:use-module (ssh log)
   #:use-module (ssh session)
+  #:use-module (ice-9 popen)
   #:export (channel
             channel?
             make-channel
@@ -70,18 +71,19 @@
 
             ;; High-level procedures.
             open-remote-pipe
-            open-remote-pipe*))
+            open-remote-pipe*)
+  #:re-export (OPEN_READ OPEN_WRITE OPEN_BOTH))
 
-(define* (make-channel session #:optional (flags O_RDWR))
+(define* (make-channel session #:optional (mode OPEN_BOTH))
   (cond
-    ((= flags O_RDWR)
+    ((string=? mode OPEN_BOTH)
      (%make-channel session (logior RDNG WRTNG)))
-    ((= flags O_RDONLY)
+    ((string=? mode OPEN_READ)
      (%make-channel session RDNG))
-    ((= flags O_WRONLY)
+    ((string=? mode OPEN_WRITE)
      (%make-channel session WRTNG))
     (else
-     (throw 'guile-ssh-error "Wrong flags" flags))))
+     (throw 'guile-ssh-error "Wrong mode" mode))))
 
 
 (define* (channel-open-forward channel

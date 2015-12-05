@@ -42,7 +42,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** 'make-session' now takes 'config' option
    that allows to specify whether the SSH config should be parsed or not, and
    optionally the path to the config.
-** 'make-channel' now takes optional 'flags' option
+** 'make-channel' now takes optional 'mode' option
    that allow to specify the direction of a channel.
 ** Unit tests
 *** Expand the test suite for distributed forms
