@@ -33,9 +33,13 @@ Return @code{#t} if @var{x} is a Guile-SSH channel, @code{#f}
 otherwise.
 @end deffn
 
-@deffn {Scheme Procedure} make-channel session
-Allocate a new Guile-SSH channel for the @var{session}
-(@pxref{Sessions}).
+@deffn {Scheme Procedure} make-channel session [flags]
+Allocate a new Guile-SSH channel for the @var{session} (@pxref{Sessions}).
+
+@var{flags} are determine what kind of a channel should be created.  Possible
+flags are: @code{O_RDONLY}, @code{O_WRONLY}, @code{O_RDWR}.  They play similar
+role to @code{open} procedure flags, and allow to create an ihput channel,
+output channel or input/output channel respectively.
 @end deffn
 
 @deffn {Scheme Procedure} channel-open-session channel

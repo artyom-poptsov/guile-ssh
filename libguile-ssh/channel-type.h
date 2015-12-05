@@ -52,7 +52,7 @@ struct channel_data {
 
 /* API */
 
-extern SCM guile_ssh_make_channel (SCM arg1);
+extern SCM guile_ssh_make_channel (SCM arg1, SCM flags);
 extern SCM guile_ssh_is_channel_p (SCM arg1);
 extern SCM guile_ssh_channel_get_session (SCM arg1);
 
@@ -61,6 +61,7 @@ extern void init_channel_type (void);
 
 /* Helper procedures */
 extern struct channel_data *_scm_to_channel_data (SCM x);
-extern SCM _scm_from_channel_data (ssh_channel ch, SCM session);
+extern SCM _scm_from_channel_data (ssh_channel ch, SCM session,
+                                   long flags);
 
 #endif /* ifndef __CHANNEL_TYPE_H__ */

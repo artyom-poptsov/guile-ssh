@@ -72,6 +72,17 @@
             open-remote-pipe
             open-remote-pipe*))
 
+(define* (make-channel session #:optional (flags O_RDWR))
+  (cond
+    ((= flags O_RDWR)
+     (%make-channel session (logior RDNG WRTNG)))
+    ((= flags O_RDONLY)
+     (%make-channel session RDNG))
+    ((= flags O_WRONLY)
+     (%make-channel session WRTNG))
+    (else
+     (throw 'guile-ssh-error "Wrong flags" flags))))
+
 
 (define* (channel-open-forward channel
                                #:key (source-host "localhost") local-port

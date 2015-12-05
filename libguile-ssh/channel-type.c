@@ -182,7 +182,14 @@ static int
 print_channel (SCM channel, SCM port, scm_print_state *pstate)
 {
   struct channel_data *ch = _scm_to_channel_data (channel);
-  scm_puts ("#<channel ", port);
+
+  if (SCM_INPUT_PORT_P (port) && SCM_OUTPUT_PORT_P (port))
+    scm_puts ("#<channel ", port);
+  else if (SCM_INPUT_PORT_P (port))
+    scm_puts ("#<input channel ", port);
+  else if (SCM_OUTPUT_PORT_P (port))
+    scm_puts ("#<output channel ", port);
+
   if (! ch)
     {
       scm_puts ("(freed) ", port);
@@ -202,20 +209,26 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
 }
 
 /* Allocate a new SSH channel. */
-SCM_DEFINE (guile_ssh_make_channel, "make-channel", 1, 0, 0,
-            (SCM arg1),
+SCM_DEFINE (guile_ssh_make_channel, "%make-channel", 2, 0, 0,
+            (SCM arg1, SCM flags),
             "\
 Allocate a new SSH channel.\
 ")
+#define FUNC_NAME s_guile_ssh_make_channel
 {
   struct session_data *session_data = _scm_to_session_data (arg1);
-  ssh_channel ch = ssh_channel_new (session_data->ssh_session);
+  ssh_channel ch;
+
+  SCM_ASSERT (scm_is_integer (flags), flags, SCM_ARG2, FUNC_NAME);
+
+  ch = ssh_channel_new (session_data->ssh_session);
 
   if (! ch)
     return SCM_BOOL_F;
 
-  return _scm_from_channel_data (ch, arg1);
+  return _scm_from_channel_data (ch, arg1, scm_to_long (flags));
 }
+#undef FUNC_NAME
 
 
 /* Predicates */
@@ -247,9 +260,13 @@ equalp_channel (SCM x1, SCM x2)
 /* Helper procedures */
 
 /* Pack the SSH channel CH to a Scheme port and return newly created
-   port. */
+   port.
+
+   Asserts:
+   - mode has only SCM_RDNG and SCM_WRTNG bits set.
+   */
 SCM
-_scm_from_channel_data (ssh_channel ch, SCM session)
+_scm_from_channel_data (ssh_channel ch, SCM session, long flags)
 {
   struct channel_data *channel_data;
   SCM ptob;
@@ -278,7 +295,10 @@ _scm_from_channel_data (ssh_channel ch, SCM session)
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf;
 
-  SCM_SET_CELL_TYPE (ptob, channel_tag | SCM_RDNG | SCM_WRTNG);
+  assert ((flags ^ (SCM_RDNG | SCM_WRTNG)) == 0);
+
+  SCM_SET_CELL_TYPE (ptob, channel_tag | flags);
+
   SCM_SETSTREAM (ptob, channel_data);
 
   return ptob;
@@ -310,6 +330,9 @@ init_channel_type (void)
   scm_set_port_free (channel_tag, free_channel);
   scm_set_port_print (channel_tag, print_channel);
   scm_set_port_equalp (channel_tag, equalp_channel);
+
+  scm_c_define ("RDNG",  scm_from_int (SCM_RDNG));
+  scm_c_define ("WRTNG", scm_from_int (SCM_WRTNG));
 
 #include "channel-type.x"
 }
