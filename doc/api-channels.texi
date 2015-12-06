@@ -148,6 +148,12 @@ instruction).  The @var{channel} must be open.  Return the exist status, or
 @subsection Remote Pipes
 @cindex Remote Pipes
 
+@code{(ssh channel)} provides API for working with remote pipes, akin to
+@code{(ice-9 popen)} procedures.
+
+@var{mode} argument allows to specify what kind of pipe should be created.
+Allowed values are: @code{OPEN_READ}, @code{OPEN_WRITE}, @code{OPEN_BOTH}.
+
 @deffn {Scheme Procedure} open-remote-pipe session command mode
 Execute a @var{command} on the remote host using a @var{session} with a pipe
 to it.  Returns newly created channel port with the specified @var{mode}.
