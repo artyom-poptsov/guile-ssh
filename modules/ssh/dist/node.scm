@@ -137,13 +137,8 @@ automatically in case when it is not started yet."
 (define (rexec node cmd)
   "Execute a command CMD on the remote side.  Return two values: the first
 line returned by CMD and its exit code."
-  (let* ((s (node-session node))
-         (c (make-channel s)))
-    (channel-open-session c)
-    (channel-request-exec c cmd)
-    (let ((line (read-line c))
-          (rc   (channel-get-exit-status c)))
-      (values line rc))))
+  (let ((channel (open-remote-input-pipe (node-session node) cmd)))
+    (values (read-line channel) (channel-get-exit-status channel))))
 
 (define (rrepl-skip-to-prompt repl-channel)
   "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
