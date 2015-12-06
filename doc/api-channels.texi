@@ -8,7 +8,6 @@
 
 @menu
 * Channel Management::
-* Remote Pipes::
 * Port Forwarding::
 * Tunnels::
 @end menu
@@ -142,39 +141,6 @@ Get the exit status of the @var{channel} (error code from the executed
 instruction).  The @var{channel} must be open.  Return the exist status, or
 @code{#f} if no exit status has been returned (yet).  Throw
 @code{guile-ssh-error} on error.
-@end deffn
-
-@node Remote Pipes
-@subsection Remote Pipes
-@cindex Remote Pipes
-
-@code{(ssh channel)} provides API for working with remote pipes, akin to
-@code{(ice-9 popen)} procedures.
-
-@var{mode} argument allows to specify what kind of pipe should be created.
-Allowed values are: @code{OPEN_READ}, @code{OPEN_WRITE}, @code{OPEN_BOTH}.
-
-@deffn {Scheme Procedure} open-remote-pipe session command mode
-Execute a @var{command} on the remote host using a @var{session} with a pipe
-to it.  Returns newly created channel port with the specified @var{mode}.
-@end deffn
-
-@deffn {Scheme Procedure} open-remote-pipe* session mode prog [args...]
-Execute @var{prog} on the remote host with the given @var{args} using a
-@var{session} with a pipe to it.  Returns newly created channel port with the
-specified @var{mode}.
-@end deffn
-
-@deffn {Scheme Procedure} open-remote-input-pipe session command
-@deffnx {Scheme Procedure} open-remote-input-pipe* session prog [args...]
-Equvalent to @code{open-remote-pipe} and @code{open-remote-pipe*} respectively
-with mode @code{OPEN_READ}.
-@end deffn
-
-@deffn {Scheme Procedure} open-remote-output-pipe session command
-@deffnx {Scheme Procedure} open-remote-output-pipe* session prog [args...]
-Equvalent to @code{open-remote-pipe} and @code{open-remote-pipe*} respectively
-with mode @code{OPEN_WRITE}.
 @end deffn
 
 @node Port Forwarding

@@ -139,6 +139,8 @@ and it will give you a suggestion.
 * Auth::         Authentication procedures
 * Keys::         Public and private keys
 * Channels::     Channel manipulation procedures
+* Remote Pipes:: Creating of input, output or bidirectional pipes to remote
+                 processes
 * Logging::      Interface to the libssh logging
 * Version::      Get information about versions
 
@@ -164,6 +166,7 @@ Distributed Computing
 @include api-version.texi
 @include api-dist.texi
 @include api-sftp.texi
+@include api-popen.texi
 
 @include examples.texi
 
