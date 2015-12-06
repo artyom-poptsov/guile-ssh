@@ -263,7 +263,7 @@ equalp_channel (SCM x1, SCM x2)
    port.
 
    Asserts:
-   - mode has only SCM_RDNG and SCM_WRTNG bits set.
+   - FLAGS variable has only SCM_RDNG and SCM_WRTNG bits set.
    */
 SCM
 _scm_from_channel_data (ssh_channel ch, SCM session, long flags)
@@ -271,6 +271,8 @@ _scm_from_channel_data (ssh_channel ch, SCM session, long flags)
   struct channel_data *channel_data;
   SCM ptob;
   scm_port *pt;
+
+  assert ((flags & ~(SCM_RDNG | SCM_WRTNG)) == 0);
 
   channel_data = scm_gc_malloc (sizeof (struct channel_data), "channel");
 
@@ -294,8 +296,6 @@ _scm_from_channel_data (ssh_channel ch, SCM session, long flags)
   pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
   pt->read_pos = pt->read_buf;
   pt->read_end = pt->read_buf;
-
-  assert ((flags ^ (SCM_RDNG | SCM_WRTNG)) == 0);
 
   SCM_SET_CELL_TYPE (ptob, channel_tag | flags);
 
