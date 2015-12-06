@@ -544,6 +544,54 @@
                (poll (char-ready? channel)))))))))
 
 
+;;; Remote Pipes
+
+(test-assert-with-log "open-remote-pipe"
+  (run-client-test
+   (lambda (server)
+     (start-server/channel-test server))
+   (lambda ()
+     (let* ((session (make-session/channel-test))
+            (channel (open-remote-pipe session "ping" OPEN_READ)))
+       (format (current-error-port) "channel: ~a~%" channel)
+       (and (input-port? channel)
+            (not (output-port? channel))
+            (let poll ((ready? #f))
+              (if ready?
+                  (string=? (read-line channel) "pong")
+                  (poll (char-ready? channel)))))))))
+
+(test-assert-with-log "open-remote-pipe*"
+  (run-client-test
+   (lambda (server)
+     (start-server/channel-test server))
+   (lambda ()
+     (let* ((session (make-session/channel-test))
+            (channel (open-remote-pipe* session OPEN_READ "ping")))
+       (format (current-error-port) "channel: ~a~%" channel)
+       (and (input-port? channel)
+            (not (output-port? channel))
+            (let poll ((ready? #f))
+              (if ready?
+                  (string=? (read-line channel) "pong")
+                  (poll (char-ready? channel)))))))))
+
+(test-assert-with-log "open-remote-input-pipe"
+  (run-client-test
+   (lambda (server)
+     (start-server/channel-test server))
+   (lambda ()
+     (let* ((session (make-session/channel-test))
+            (channel (open-remote-input-pipe session "ping")))
+       (format (current-error-port) "channel: ~a~%" channel)
+       (and (input-port? channel)
+            (not (output-port? channel))
+            (let poll ((ready? #f))
+              (if ready?
+                  (string=? (read-line channel) "pong")
+                  (poll (char-ready? channel)))))))))
+
+
 ;;;
 
 (test-end "client-server")
