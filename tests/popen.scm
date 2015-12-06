@@ -85,6 +85,15 @@
                   (string=? (read-line channel) "pong")
                   (poll (char-ready? channel)))))))))
 
+(test-assert-with-log "open-remote-output-pipe"
+  (run-client-test
+   start-server/exec
+   (lambda ()
+     (let* ((session (make-session/channel-test))
+            (channel (open-remote-output-pipe session "ping")))
+       (and (output-port? channel)
+            (not (input-port? channel)))))))
+
 (test-end "popen")
 
 (exit (= (test-runner-fail-count (test-runner-current)) 0))
