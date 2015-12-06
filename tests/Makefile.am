@@ -60,7 +60,8 @@ EXTRA_DIST = \
 	keys/ecdsakey		\
 	keys/ecdsakey.pub	\
 	keys/rsakey		\
-	keys/rsakey.pub
+	keys/rsakey.pub		\
+	config
 
 CLEANFILES = \
 	client-server-errors.log		\
