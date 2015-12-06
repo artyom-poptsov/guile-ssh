@@ -172,7 +172,7 @@ with mode @code{OPEN_READ}.
 @end deffn
 
 @deffn {Scheme Procedure} open-remote-output-pipe session command
-@deffnx {Scheme Procedure} open-remote-output-pipe session prog [args...]
+@deffnx {Scheme Procedure} open-remote-output-pipe* session prog [args...]
 Equvalent to @code{open-remote-pipe} and @code{open-remote-pipe*} respectively
 with mode @code{OPEN_WRITE}.
 @end deffn
