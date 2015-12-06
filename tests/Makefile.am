@@ -66,6 +66,8 @@ EXTRA_DIST = \
 CLEANFILES = \
 	client-server-errors.log		\
 	client-server-libssh.log		\
+	dist-errors.log				\
+	dist-libssh.log				\
 	popen-errors.log			\
 	popen-libssh.log			\
 	server-client-errors.log		\
