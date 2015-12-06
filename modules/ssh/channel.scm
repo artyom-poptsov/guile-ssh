@@ -1,6 +1,6 @@
 ;;; channel.scm -- API for SSH channel manipulation.
 
-;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -40,6 +40,12 @@
 ;;   channel-get-stream
 ;;   channel-open?
 ;;   channel-eof?
+;;   open-remote-pipe
+;;   open-remote-pipe*
+;;   open-remote-input-pipe
+;;   open-remote-input-pipe*
+;;   open-remote-output-pipe
+;;   open-remote-output-pipe*
 
 
 ;;; Code:
