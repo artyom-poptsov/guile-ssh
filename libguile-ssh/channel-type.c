@@ -183,12 +183,9 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
 {
   struct channel_data *ch = _scm_to_channel_data (channel);
 
-  if (SCM_INPUT_PORT_P (port) && SCM_OUTPUT_PORT_P (port))
-    scm_puts ("#<channel ", port);
-  else if (SCM_INPUT_PORT_P (port))
-    scm_puts ("#<input channel ", port);
-  else if (SCM_OUTPUT_PORT_P (port))
-    scm_puts ("#<output channel ", port);
+  scm_puts ("#<", port);
+  scm_print_port_mode (channel, port);
+  scm_puts ("channel ", port);
 
   if (! ch)
     {
