@@ -331,8 +331,8 @@ init_channel_type (void)
   scm_set_port_print (channel_tag, print_channel);
   scm_set_port_equalp (channel_tag, equalp_channel);
 
-  scm_c_define ("RDNG",  scm_from_int (SCM_RDNG));
-  scm_c_define ("WRTNG", scm_from_int (SCM_WRTNG));
+  scm_c_define ("RDNG",  scm_from_long (SCM_RDNG));
+  scm_c_define ("WRTNG", scm_from_long (SCM_WRTNG));
 
 #include "channel-type.x"
 }
