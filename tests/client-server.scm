@@ -548,8 +548,7 @@
 
 (test-assert-with-log "open-remote-pipe"
   (run-client-test
-   (lambda (server)
-     (start-server/channel-test server))
+   start-server/exec
    (lambda ()
      (let* ((session (make-session/channel-test))
             (channel (open-remote-pipe session "ping" OPEN_READ)))
@@ -563,8 +562,7 @@
 
 (test-assert-with-log "open-remote-pipe*"
   (run-client-test
-   (lambda (server)
-     (start-server/channel-test server))
+   start-server/exec
    (lambda ()
      (let* ((session (make-session/channel-test))
             (channel (open-remote-pipe* session OPEN_READ "ping")))
@@ -578,8 +576,7 @@
 
 (test-assert-with-log "open-remote-input-pipe"
   (run-client-test
-   (lambda (server)
-     (start-server/channel-test server))
+   start-server/exec
    (lambda ()
      (let* ((session (make-session/channel-test))
             (channel (open-remote-input-pipe session "ping")))
