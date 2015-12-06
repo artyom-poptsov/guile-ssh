@@ -148,16 +148,27 @@ instruction).  The @var{channel} must be open.  Return the exist status, or
 @subsection Remote Pipes
 @cindex Remote Pipes
 
-@deffn {Scheme Procedure} open-remote-pipe session command
+@deffn {Scheme Procedure} open-remote-pipe session command mode
 Execute a @var{command} on the remote host using a @var{session} with a pipe
-to it.  The pipe works in both directions.  Returns newly created port
-(channel).
+to it.  Returns newly created channel port with the specified @var{mode}.
 @end deffn
 
-@deffn {Scheme Procedure} open-remote-pipe* session prog [args...]
+@deffn {Scheme Procedure} open-remote-pipe* session mode prog [args...]
 Execute @var{prog} on the remote host with the given @var{args} using a
-@var{session} with a pipe to it.  The pipe works in both directions.  Returns
-newly created port (channel).
+@var{session} with a pipe to it.  Returns newly created channel port with the
+specified @var{mode}.
+@end deffn
+
+@deffn {Scheme Procedure} open-remote-input-pipe session command
+@deffnx {Scheme Procedure} open-remote-input-pipe* session prog [args...]
+Equvalent to @code{open-remote-pipe} and @code{open-remote-pipe*} respectively
+with mode @code{OPEN_READ}.
+@end deffn
+
+@deffn {Scheme Procedure} open-remote-output-pipe session command
+@deffnx {Scheme Procedure} open-remote-output-pipe session prog [args...]
+Equvalent to @code{open-remote-pipe} and @code{open-remote-pipe*} respectively
+with mode @code{OPEN_WRITE}.
 @end deffn
 
 @node Port Forwarding

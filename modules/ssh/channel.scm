@@ -71,7 +71,11 @@
 
             ;; High-level procedures.
             open-remote-pipe
-            open-remote-pipe*)
+            open-remote-pipe*
+            open-remote-input-pipe
+            open-remote-input-pipe*
+            open-remote-output-pipe
+            open-remote-output-pipe*)
   #:re-export (OPEN_READ OPEN_WRITE OPEN_BOTH))
 
 (define* (make-channel session #:optional (mode OPEN_BOTH))
@@ -123,21 +127,43 @@ issued."
 
 ;;; High-level procedures.
 
-(define (open-remote-pipe session command)
+(define (open-remote-pipe session command mode)
   "Execute a COMMAND on the remote host using a SESSION with a pipe to it.
-The pipe works in both directions.  Returns newly created port (channel)."
-  (let ((channel (make-channel session)))
+Returns newly created channel port with the specified MODE."
+  (let ((channel (make-channel session mode)))
     (unless channel
-      (throw 'guile-ssh-error "Could not create a channel" session command))
+      (throw 'guile-ssh-error "Could not create a channel" session command mode))
     (channel-open-session channel)
     (channel-request-pty channel)
     (channel-request-exec channel command)
     channel))
 
-(define (open-remote-pipe* session prog . args)
-  "Execute COMMANDS on the remote host using a SESSION with a pipe to it.  The
-pipe works in both directions.  Returns newly created port (channel)."
-  (open-remote-pipe session (string-join (cons prog args))))
+(define (open-remote-pipe* session mode prog . args)
+  "Execute a PROG with optional ARGS on the remote host using a SESSION with a
+pipe to it.  Returns newly created channel port with the specified MODE."
+  (open-remote-pipe session (string-join (cons prog args)) mode))
+
+
+(define (open-remote-input-pipe session command)
+  "Execute a COMMAND on the remote host using a SESSION with an input pipe to it.
+Returns newly created input channel port."
+  (open-remote-pipe session command OPEN_READ))
+
+(define (open-remote-input-pipe* session prog . args)
+  "Execute a PROG with optional ARGS on the remote host using a SESSION with
+an input pipe to it.  Returns newly created input channel port."
+  (open-remote-pipe session (string-join (cons prog args)) OPEN_READ))
+
+
+(define (open-remote-output-pipe session command)
+  "Execute a COMMAND on the remote host using a SESSION with an input pipe to it.
+Returns newly created input channel port."
+  (open-remote-pipe session command OPEN_WRITE))
+
+(define (open-remote-output-pipe* session prog . args)
+  "Execute a PROG with optional ARGS on the remote host using a SESSION with
+an output pipe to it.  Returns newly created output channel port."
+  (open-remote-pipe session (string-join (cons prog args)) OPEN_WRITE))
 
 ;;;
 
