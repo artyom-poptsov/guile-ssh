@@ -259,12 +259,13 @@ listens on an expected port, return #f otherwise."
   (receive (result rc)
       (rexec node (format #f "pgrep --full 'guile --listen=~a'"
                           (node-repl-port node)))
-    (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
-      (and (channel-open? rp)
-           (let ((line (read-line rp)))
-             (close rp)
-             (and (not (eof-object? line))
-                  (string-match "^GNU Guile .*" line)))))))
+    (and (zero? rc)
+         (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
+           (and (channel-open? rp)
+                (let ((line (read-line rp)))
+                  (close rp)
+                  (and (not (eof-object? line))
+                       (string-match "^GNU Guile .*" line))))))))
 
 (define (node-run-server node)
   "Run a RREPL server on a NODE."
