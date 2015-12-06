@@ -22,14 +22,14 @@ SUBDIRS = dist
 SCM_SOURCES = \
 	auth.scm channel.scm key.scm session.scm	\
 	server.scm message.scm version.scm log.scm	\
-	tunnel.scm dist.scm sftp.scm
+	tunnel.scm dist.scm sftp.scm popen.scm
 
 pkgguilesitedir = $(guilesitedir)/ssh
 
 nobase_dist_pkgguilesite_DATA = $(SCM_SOURCES)
 
 ETAGS_ARGS = auth.scm channel.scm key.scm session.scm server.scm \
-	message.scm version.scm
+	message.scm version.scm popen.scm
 
 GOBJECTS = $(SCM_SOURCES:%.scm=%.go)
 $(GOBJECTS): $(lib_LTLIBRARIES)	# Build the library first

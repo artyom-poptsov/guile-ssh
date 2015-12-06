@@ -21,8 +21,8 @@ underlying [[http://www.libssh.org/][libssh]] library.
     daemon and GNU Guile installed!
   - SFTP client API allows you to read and write remote files over the SSH
     protocol right from the Scheme code.
-  - Execution of shell commands on the remote host, by means of
-    =channel-request-exec=.
+  - Remote popen API that allows you to make either input, output or
+    bidirectional pipes to remote processes.
   - Detailed documentation in Texinfo format with examples included, even more
     examples in =examples= directory.
 * Requirements
@@ -66,6 +66,7 @@ Guile modules, in =${GUILE_SITE}/ssh=:
  - key.scm     -- Keys management.
  - log.scm     -- Interface to libssh logging facilities
  - message.scm -- Procedures for working with SSH messages.
+ - popen.scm   -- Remote popen API.
  - server.scm  -- Server API.
  - session.scm -- Session management.
  - sftp.scm    -- SFTP client API.

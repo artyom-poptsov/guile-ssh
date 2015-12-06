@@ -24,7 +24,8 @@
              (tests common)
              (ssh channel)
              (ssh session)
-             (ssh auth))
+             (ssh auth)
+             (ssh popen))
 
 (test-begin "popen")
 

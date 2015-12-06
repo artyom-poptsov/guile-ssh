@@ -38,12 +38,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 *** New procedure 'node-server-running?' in (ssh dist node)
 *** New procedure 'node-run-server' in (ssh dist node)
 *** New procedure 'session-parse-config!' in (ssh session)
-*** New procedure 'open-remote-pipe' in (ssh channel)
-*** New procedure 'open-remote-pipe*' in (ssh channel)
-*** New procedure 'open-remote-input-pipe' in (ssh channel)
-*** New procedure 'open-remote-input-pipe*' in (ssh channel)
-*** New procedure 'open-remote-output-pipe' in (ssh channel)
-*** New procedure 'open-remote-output-pipe*' in (ssh channel)
+** New modules
+*** (ssh popen)
+*** (ssh sftp)
 ** 'make-session' now takes 'config' option
    that allows to specify whether the SSH config should be parsed or not, and
    optionally the path to the config.

@@ -57,6 +57,7 @@
   #:use-module (ssh session)
   #:use-module (ssh session)
   #:use-module (ssh channel)
+  #:use-module (ssh popen)
   #:use-module (ssh tunnel)
   #:export (node?
             node-session
