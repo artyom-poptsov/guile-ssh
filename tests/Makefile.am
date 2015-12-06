@@ -1,6 +1,6 @@
 ## Config file for GNU Automake. 
 ##
-## Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of Guile-SSH.
 ## 
@@ -22,6 +22,7 @@ SCM_TESTS = \
 	server.scm \
 	session.scm \
 	client-server.scm \
+	popen.scm \
 	server-client.scm \
 	sssh-ssshd.scm \
 	key.scm \
@@ -64,6 +65,8 @@ EXTRA_DIST = \
 CLEANFILES = \
 	client-server-errors.log		\
 	client-server-libssh.log		\
+	popen-errors.log			\
+	popen-libssh.log			\
 	server-client-errors.log		\
 	server-client-libssh.log		\
 	session-errors.log			\
