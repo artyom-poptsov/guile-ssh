@@ -1,8 +1,7 @@
 # -*- mode: org; -*-
 
-Guile-SSH is a library that provides access to the [[https://en.wikipedia.org/wiki/Secure_Shell][SSH protocol]] for
-programs written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It is a wrapper to the
-underlying [[http://www.libssh.org/][libssh]] library.
+Guile-SSH is a library that provides access to the [[https://en.wikipedia.org/wiki/Secure_Shell][SSH protocol]] for programs
+written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It is built upon the [[https://www.libssh.org/][libssh]] library.
 
 * Features
   - The API that is sufficient for building of standalone SSH clients and
@@ -90,7 +89,8 @@ Examples, in =${prefix}/share/guile-ssh/examples=:
    - client.scm -- A simple Guile-RPC client that makes an RPC call over
      a Guile-SSH tunnel.
    - server.scm -- A simple Guile-RPC server.
-
+ - rrepl.scm    -- Remote REPL example.
+ - sscp.scm     -- Scheme secure copy.
 * Installation
 
 For a basic explanation of the installation of the package, see the
