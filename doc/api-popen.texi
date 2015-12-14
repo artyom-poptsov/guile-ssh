@@ -8,7 +8,8 @@
 @cindex remote pipes
 
 @code{(ssh popen)} provides API for working with remote pipes, akin to
-@code{(ice-9 popen)} procedures.
+@code{(ice-9 popen)} procedures (@pxref{Pipes,,, guile, The GNU Guile
+Reference Manual})
 
 @var{mode} argument allows to specify what kind of pipe should be created.
 Allowed values are: @code{OPEN_READ}, @code{OPEN_WRITE}, @code{OPEN_BOTH}.
