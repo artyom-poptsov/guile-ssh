@@ -40,12 +40,6 @@
 ;;   channel-get-stream
 ;;   channel-open?
 ;;   channel-eof?
-;;   open-remote-pipe
-;;   open-remote-pipe*
-;;   open-remote-input-pipe
-;;   open-remote-input-pipe*
-;;   open-remote-output-pipe
-;;   open-remote-output-pipe*
 
 
 ;;; Code:
