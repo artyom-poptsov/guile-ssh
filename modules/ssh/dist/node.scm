@@ -270,13 +270,11 @@ listens on an expected port, return #f otherwise."
 
 (define (node-run-server node)
   "Run a RREPL server on a NODE."
-  (let ((c (make-channel (node-session node))))
-    (channel-open-session c)
-    (channel-request-exec c (format #f "nohup guile --listen=~a 0<&- &>/dev/null"
-                                    (node-repl-port node)))
-    (close c)
-    (while (not (node-server-running? node))
-      (usleep 100))))
+  (open-remote-input-pipe (node-session node)
+                          (format #f "nohup guile --listen=~a 0<&- &>/dev/null"
+                                  (node-repl-port node)))
+  (while (not (node-server-running? node))
+    (usleep 100)))
 
 (define (node-open-rrepl node)
   "Open a RREPL.  Return a new RREPL channel."
