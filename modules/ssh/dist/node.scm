@@ -34,6 +34,7 @@
 ;;   node-open-rrepl
 ;;   node-guile-version
 ;;   node-run-server
+;;   node-stop-server
 ;;   node-server-running?
 ;;   rrepl-eval
 ;;   rrepl-skip-to-prompt
