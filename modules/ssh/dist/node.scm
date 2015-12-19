@@ -68,6 +68,7 @@
             node-eval-1
             node-guile-version
             node-run-server
+            node-stop-server
             node-server-running?
 
             node-open-rrepl
@@ -95,11 +96,12 @@
 ;;; Node type
 
 (define-record-type <node>
-  (%make-node tunnel repl-port start-repl-server?)
+  (%make-node tunnel repl-port start-repl-server? stop-repl-server?)
   node?
   (tunnel node-tunnel)                          ; <tunnel>
   (repl-port node-repl-port)                    ; number
-  (start-repl-server? node-start-repl-server?)) ; boolean
+  (start-repl-server? node-start-repl-server?)  ; boolean
+  (stop-repl-server?  node-stop-repl-server?))  ; boolean
 
 (define (node-session node)
   "Get node session."
@@ -118,15 +120,17 @@
 
 
 (define* (make-node session #:optional (repl-port 37146)
-                    #:key (start-repl-server? #t))
+                    #:key (start-repl-server? #t)
+                    (stop-repl-server? #f))
   "Make a new distributed computing node.  If START-REPL-SERVER? is set to
 #t (which is by default) then start a REPL server on a remote host
-automatically in case when it is not started yet."
+automatically in case when it is not started yet.  If STOP-REPL-SERVER? is set
+to #t then a REPL server will be stopped as soon as an evaluation is done."
   (let ((tunnel (make-tunnel session
                              #:port 0          ;Won't be used
                              #:host "localhost"
                              #:host-port repl-port)))
-    (%make-node tunnel repl-port start-repl-server?)))
+    (%make-node tunnel repl-port start-repl-server? stop-repl-server?)))
 
 
 ;;; Remote REPL (RREPL)
@@ -268,6 +272,7 @@ listens on an expected port, return #f otherwise."
                   (and (not (eof-object? line))
                        (string-match "^GNU Guile .*" line))))))))
 
+
 (define (node-run-server node)
   "Run a RREPL server on a NODE."
   (open-remote-input-pipe (node-session node)
@@ -276,6 +281,15 @@ listens on an expected port, return #f otherwise."
   (while (not (node-server-running? node))
     (usleep 100)))
 
+(define (node-stop-server node)
+  "Stop a RREPL server on a NODE."
+  (close (open-remote-input-pipe (node-session node)
+                          (format #f "pkill --full 'guile --listen=~a'"
+                                  (node-repl-port node))))
+  (while (node-server-running? node)
+    (sleep 1)))
+
+
 (define (node-open-rrepl node)
   "Open a RREPL.  Return a new RREPL channel."
   (and (node-start-repl-server? node)
@@ -288,7 +302,11 @@ listens on an expected port, return #f otherwise."
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
   (let ((repl-channel (node-open-rrepl node)))
     (rrepl-skip-to-prompt repl-channel)
-    (rrepl-eval repl-channel quoted-exp)))
+    (call-with-values (lambda () (rrepl-eval repl-channel quoted-exp))
+      (lambda vals
+        (and (node-stop-repl-server? node)
+             (node-stop-server node))
+        (apply values vals)))))
 
 (define (node-eval-1 node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result.  The

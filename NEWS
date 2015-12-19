@@ -31,12 +31,14 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    'with-ssh' now returns a vector of values if an expression was evaluated to
    multiple values.  'distribute' and 'dist-map' only take the 1st value if
    multiple values were returned by an expression.
-** Nodes are now capable of starting a remote REPL (RREPL)
-   The new behaviour is controlled by 'start-repl-server?' keyed option.
+** Nodes are now capable of starting and stopping a remote REPL (RREPL)
+   The new behaviour is controlled by 'start-repl-server?' and
+   'stop-repl-server?' keyed options of 'make-node'.
 ** Channels now can be created as input, output or bi-drectional ports
 ** New procedures
 *** New procedure 'node-server-running?' in (ssh dist node)
 *** New procedure 'node-run-server' in (ssh dist node)
+*** New procedure 'node-stop-server' in (ssh dist node)
 *** New procedure 'session-parse-config!' in (ssh session)
 ** New modules
 *** (ssh popen)
