@@ -139,6 +139,7 @@ and it will give you a suggestion.
 * Auth::         Authentication procedures
 * Keys::         Public and private keys
 * Channels::     Channel manipulation procedures
+* Tunnels::      SSH tunnels
 * Remote Pipes:: Creating of input, output or bidirectional pipes to remote
                  processes
 * Logging::      Interface to the libssh logging
@@ -158,6 +159,7 @@ Distributed Computing
 
 @include api-auth.texi
 @include api-channels.texi
+@include api-tunnels.texi
 @include api-sessions.texi
 @include api-keys.texi
 @include api-messages.texi

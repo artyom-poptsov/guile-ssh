@@ -48,6 +48,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    optionally the path to the config.
 ** 'make-channel' now takes optional 'mode' option
    that allow to specify the direction of a channel.
+** Documentation
+*** Move description of tunnels into a separate section
 ** Unit tests
 *** Expand the test suite for distributed forms
 *** Expand the test suite for tunnels
