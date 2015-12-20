@@ -27,6 +27,7 @@
 ;;   session?
 ;;   %make-session
 ;;   make-session
+;;   session-parse-config!
 ;;   blocking-flush!
 ;;   session-set!
 ;;   session-get
@@ -49,6 +50,7 @@
             session?
             %make-session
             make-session
+            session-parse-config!
 	    blocking-flush!
             session-set!
             session-get
@@ -72,7 +74,7 @@
                        knownhosts timeout timeout-usec ssh1 ssh2 log-verbosity
                        ciphers-c-s ciphers-s-c compression-c-s compression-s-c
                        proxycommand stricthostkeycheck compression
-                       compression-level callbacks)
+                       compression-level callbacks config)
   "Make a new SSH session with specified configuration.\n
 Return a new SSH session."
   (let ((session (%make-session)))
@@ -97,7 +99,26 @@ Return a new SSH session."
     (session-set-if-specified! compression)
     (session-set-if-specified! compression-level)
     (session-set-if-specified! callbacks)
+
+    (when config
+      (or host
+          (throw 'guile-ssh-error
+                 "'config' is specified, but 'host' option is missed."))
+      (cond
+       ((string? config)
+        (%gssh-session-parse-config! session config))
+       ((boolean? config)
+        (%gssh-session-parse-config! session #f))
+       (else
+        (throw 'guile-ssh-error "Wrong 'config' value" config))))
+
     session))
+
+(define* (session-parse-config! session #:optional file-name)
+  "Parse an SSH config FILE-NAME and set SESSION options.  If FILE-NAME is not
+set, the default SSH '~/.ssh/config' is used.  Throw 'guile-ssh-error' on an
+error.  Return value is undefined."
+  (%gssh-session-parse-config! session file-name))
 
 (load-extension "libguile-ssh" "init_session")
 

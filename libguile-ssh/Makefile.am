@@ -32,7 +32,7 @@ libguile_ssh_la_SOURCES = \
 	common.c common.h	\
 	log.c log.h \
 	sftp-session-type.c sftp-session-type.h \
-	sftp-session-main.c sftp-session-main.h	\
+	sftp-session-main.c	\
 	sftp-session-func.c sftp-session-func.h	\
 	sftp-file-type.c sftp-file-type.h sftp-file-main.c
 

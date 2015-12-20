@@ -1,0 +1,4 @@
+Host example
+        Hostname        example.org
+        Port            2222
+	User            alice

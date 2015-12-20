@@ -24,12 +24,13 @@ EXTRA_DIST = \
 	rrepl.scm.in		\
 	rpc/client.scm.in	\
 	rpc/server.scm.in	\
-	sscp.scm.in
+	sscp.scm.in		\
+	pg-tunnel.scm.in
 
 examplesdir = $(pkgdatadir)/examples
 examples_echodir = $(pkgdatadir)/examples/echo
 examples_rpcdir = $(pkgdatadir)/examples/rpc
-dist_examples_DATA = README sssh.scm ssshd.scm rrepl.scm sscp.scm
+dist_examples_DATA = README sssh.scm ssshd.scm rrepl.scm sscp.scm pg-tunnel.scm
 dist_examples_echo_DATA = echo/server.scm echo/client.scm
 dist_examples_rpc_DATA = rpc/client.scm rpc/server.scm
 

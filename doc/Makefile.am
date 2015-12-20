@@ -5,6 +5,7 @@ info_TEXINFOS = guile-ssh.texi
 guile_ssh_TEXINFOS = \
 	api-auth.texi \
 	api-channels.texi \
+	api-tunnels.texi \
 	api-keys.texi \
 	api-messages.texi \
 	api-servers.texi \
@@ -13,6 +14,7 @@ guile_ssh_TEXINFOS = \
 	api-version.texi \
 	api-dist.texi \
 	api-sftp.texi \
+	api-popen.texi \
 	examples.texi \
 	fdl.texi \
 	indices.texi

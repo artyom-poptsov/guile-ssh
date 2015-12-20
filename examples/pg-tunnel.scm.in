@@ -1,0 +1,148 @@
+#!@GUILE@ \
+--debug -e main
+!#
+
+;;; pg-tunnel.scm -- Connect to a PostgreSQL instance through an SSH tunnel.
+
+;; Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;;
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+;;; Commentary:
+
+;; An example of using Guile-SSH [1] tunnels and Guile-PG [2] to access a
+;; remote PostgreSQL database.
+;;
+;; This program is known to work with the 'master' branch of Guile-SSH, commit
+;; '1673d06'.
+;;
+;; Example:
+;;   ./pg-tunnel.scm --host=example.org --dbname=example --user=alice \
+;;     'select * from people'
+;;
+;; References:
+;;
+;; [1] https://github.com/artyom-poptsov/guile-ssh
+;; [2] http://www.nongnu.org/guile-pg/
+
+;;; Code:
+
+(use-modules (ice-9 getopt-long)
+             ;; PostgreSQL adapter from Guile-PG
+             (database postgres)
+             ;; Guile-SSH
+             (ssh session)
+             (ssh auth)
+             (ssh tunnel))
+
+(setlocale LC_ALL "")
+
+
+(define *mtx* (make-mutex 'allow-external-unlock 'unchecked-unlock))
+(lock-mutex *mtx* 0 #f)
+
+
+(define (start-postgres-tunnel host)
+  "Start an SSH tunnel to a postgres server running on a HOST."
+  (let ((session (make-session #:host host #:config #t)))
+    (connect! session)
+    (format #t "Session with a server: ~a~%" session)
+    (authenticate-server session)
+    (userauth-agent! session)
+    (let ((tunnel (make-tunnel session
+                               #:host "localhost"
+                               #:port 5432)))
+      (format #t "Starting the tunnel ~a ...~%" tunnel)
+      (unlock-mutex *mtx*)
+      (start-forward tunnel))))
+
+
+;;; Helper procedures for processing of a result of a query
+;; Taken from Guile-PG tutorial
+;; <http://www.nongnu.org/guile-pg/doc/Processing-Results.html#Processing-Results>
+
+(define (field-names result)
+  (map (lambda (field)
+         (pg-fname result field))
+       (iota (pg-nfields result))))
+
+(define (get-values result tuple)
+  (map (lambda (field)
+         (pg-getvalue result tuple field))
+       (iota (pg-nfields result))))
+
+(define (tuple->alist result tuple)
+  (map (lambda (n v) (cons (string->symbol n) v))
+       (field-names result)
+       (get-values result tuple)))
+
+;;;
+
+(define (print-help-and-exit)
+  (display "\
+Usage: pg-tunnel [options] query
+
+Options:
+  --host          Name of the host on which DB is running.
+  --dbname        Name of a database.
+  --user          Database user name.
+  --help          Print this message and exit.
+
+Example:
+  ./pg-tunnel.scm --host=example.org --dbname=example --user=alice \\
+    'select * from people'
+
+")
+  (exit 0))
+
+
+(define (main args)
+  "Entry point."
+  (let* ((option-spec '((host   (value #t) (required? #t))
+                        (dbname (value #t) (required? #t))
+                        (user   (value #t) (required? #t))
+                        (help   (value #f))))
+         (options      (getopt-long args option-spec))
+         (dbname       (option-ref options 'dbname #f))
+         (user         (option-ref options 'user   #f))
+         (host         (option-ref options 'host   #f))
+         (help-needed? (option-ref options 'help   #f))
+         (args         (option-ref options '()     #f))
+         ;; Start an SSH tunnel.
+         (thread (call-with-new-thread
+                  (lambda ()
+                    (start-postgres-tunnel host)))))
+
+    (and (or help-needed?
+             (null? args))
+         (print-help-and-exit))
+
+    ;; Wait for tunnel to be established.
+    (lock-mutex *mtx*)
+
+    (let ((db (pg-connectdb (format #f "dbname=~a user=~a host=localhost port=5432"
+                                    dbname user))))
+
+      (format #t "DB connection created: ~a~%" db)
+      (format #t "Query: ~a~%" args)
+
+      (let ((result (pg-exec db (car args))))
+
+        (format #t "Response: ~a~%" (tuple->alist result 0))
+
+        (cancel-thread thread)))))
+
+;;; pg-tunnel.scm ends here.
+

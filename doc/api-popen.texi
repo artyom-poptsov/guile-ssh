@@ -1,0 +1,86 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2015 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Remote Pipes
+@section Remote Pipes
+@cindex remote pipes
+
+@code{(ssh popen)} provides API for working with remote pipes, akin to
+@code{(ice-9 popen)} procedures (@pxref{Pipes,,, guile, The GNU Guile
+Reference Manual})
+
+@var{mode} argument allows to specify what kind of pipe should be created.
+Allowed values are: @code{OPEN_READ}, @code{OPEN_WRITE}, @code{OPEN_BOTH}.
+
+@deffn {Scheme Procedure} open-remote-pipe session command mode
+Execute a @var{command} on the remote host using a @var{session} with a pipe
+to it.  Returns newly created channel port with the specified @var{mode}.
+@end deffn
+
+@deffn {Scheme Procedure} open-remote-pipe* session mode prog [args...]
+Execute @var{prog} on the remote host with the given @var{args} using a
+@var{session} with a pipe to it.  Returns newly created channel port with the
+specified @var{mode}.
+@end deffn
+
+@deffn {Scheme Procedure} open-remote-input-pipe session command
+@deffnx {Scheme Procedure} open-remote-input-pipe* session prog [args...]
+Equvalent to @code{open-remote-pipe} and @code{open-remote-pipe*} respectively
+with mode @code{OPEN_READ}.
+@end deffn
+
+@deffn {Scheme Procedure} open-remote-output-pipe session command
+@deffnx {Scheme Procedure} open-remote-output-pipe* session prog [args...]
+Equvalent to @code{open-remote-pipe} and @code{open-remote-pipe*} respectively
+with mode @code{OPEN_WRITE}.
+@end deffn
+
+@subsection Examples
+
+Here's a self-explanatory little script that executes @code{uname -o} command
+on the local host and prints the result:
+
+@lisp
+#!/usr/bin/guile \
+-e main -s
+!#
+
+(use-modules (ice-9 rdelim)             ; @{read,write@}-line
+             ;; Guile-SSH
+             (ssh session)
+             (ssh auth)
+             (ssh popen))               ; remote pipes
+
+(define (main args)
+  ;; Make a session with local machine and the current user.
+  (let ((session (make-session #:host "localhost")))
+
+    ;; Connect the session and perform the authentication.
+    (connect! session)
+    (authenticate-server session)
+    (userauth-agent! session)
+
+    ;; Execute the command on the remote side and get the input pipe
+    ;; to it.
+    (let ((channel (open-remote-input-pipe session "uname -o")))
+      ;; Read and display the result.
+      (write-line (read-line channel)))))
+@end lisp
+
+Surely we aren't limited to one-line outputs; for example, we can watch
+@code{top} command executing on a remote side locally, by reading data from
+the channel in a loop:
+
+@lisp
+(let ((channel (open-remote-input-pipe* session "top" "-u avp")))
+  (let r ((line (read-line channel)))
+    (unless (eof-object? line)
+      (write-line line)
+      (r (read-line channel)))))
+@end lisp
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:
