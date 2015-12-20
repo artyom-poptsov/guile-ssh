@@ -26,6 +26,16 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
     bidirectional pipes to remote processes.
   - Detailed documentation in Texinfo format with examples included, even more
     examples in =examples= directory.
+* License
+  Guile-SSH is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation, either version 3 of the License, or (at your option)
+  any later version.  Please see =COPYING= file for the terms of GNU General
+  Public License.
+
+  The logo (=logo.svg=, =logo-with-text.svg= and rasterised versions) is
+  distributed under terms of [[https://creativecommons.org/licenses/by-sa/4.0/][Creative Commons Attribution-ShareAlike 4.0
+  International]].
 * Requirements
 
  - [[https://www.gnu.org/software/guile/][GNU Guile]] 2.0.x
