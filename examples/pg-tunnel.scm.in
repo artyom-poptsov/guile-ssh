@@ -1,5 +1,5 @@
-#!/usr/bin/guile \
--e main -s
+#!@GUILE@ \
+--debug -e main
 !#
 
 ;;; pg-tunnel.scm -- Connect to a PostgreSQL instance through an SSH tunnel.

@@ -91,6 +91,8 @@ Examples, in =${prefix}/share/guile-ssh/examples=:
    - server.scm -- A simple Guile-RPC server.
  - rrepl.scm    -- Remote REPL example.
  - sscp.scm     -- Scheme secure copy.
+ - pg-tunnel.scm -- Connect to a PostgreSQL instance through an SSH tunnel.
+
 * Installation
 
 For a basic explanation of the installation of the package, see the
