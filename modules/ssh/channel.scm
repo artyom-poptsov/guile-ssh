@@ -1,6 +1,6 @@
 ;;; channel.scm -- API for SSH channel manipulation.
 
-;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -68,6 +68,17 @@
             channel-open?
             channel-eof?))
 
+(define* (make-channel session #:optional (mode OPEN_BOTH))
+  (cond
+    ((string=? mode OPEN_BOTH)
+     (%make-channel session (logior RDNG WRTNG)))
+    ((string=? mode OPEN_READ)
+     (%make-channel session RDNG))
+    ((string=? mode OPEN_WRITE)
+     (%make-channel session WRTNG))
+    (else
+     (throw 'guile-ssh-error "Wrong mode" mode))))
+
 
 (define* (channel-open-forward channel
                                #:key (source-host "localhost") local-port
@@ -102,6 +113,8 @@ incoming connection.  Return two values: the first value is the incoming
 channel, and the second value is a port number on which the connection was
 issued."
   (%channel-accept-forward session timeout))
+
+;;;
 
 
 (load-extension "libguile-ssh" "init_channel")

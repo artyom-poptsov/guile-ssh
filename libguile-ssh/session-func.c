@@ -464,6 +464,45 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
 }
 #undef FUNC_NAME
 
+/* Asserts:
+   - SESSION is a Guile-SSH session object.
+   - FILE_NAME either a string or '#f' */
+SCM_GSSH_DEFINE (gssh_session_parse_config, "%gssh-session-parse-config!", 2,
+                 (SCM session, SCM file_name))
+#define FUNC_NAME s_gssh_session_parse_config
+{
+  struct session_data *sd = _scm_to_session_data (session);
+  int res;
+  char* c_file_name = NULL;
+
+  SCM_ASSERT (scm_is_string (file_name)
+              || (scm_is_bool (file_name) && scm_is_false (file_name)),
+              file_name, SCM_ARG2, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  if (scm_is_string (file_name))
+    {
+      c_file_name = scm_to_locale_string (file_name);
+      scm_dynwind_free (c_file_name);
+    }
+
+  res = ssh_options_parse_config (sd->ssh_session,
+                                  /* 'NULL' means that we should read the
+                                     default '~/.ssh/config' file. */
+                                  c_file_name);
+  if (res != SSH_OK)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not read the configuration file",
+                        scm_list_2 (session, file_name));
+    }
+
+  scm_dynwind_end ();
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 /* Connect to the SSH server.
 
    Return one of the following symbols: 'ok, 'again, 'error

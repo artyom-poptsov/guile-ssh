@@ -23,13 +23,19 @@ instead of @code{#<unspecified>}.
 
 Node management procedures:
 
-@deffn {Scheme Procedure} make-node session [repl-port=37146] [#:start-repl-server?=#t]
+@deffn {Scheme Procedure} make-node session [repl-port=37146] [#:start-repl-server?=#t] [#:stop-repl-server?=#f]
 Make a new node that uses an SSH @var{session} to connect to a @var{repl-port}
 number on the remote side.  Return a new node.
 
 If @var{start-repl-server?} is set to @code{#t} (which is by default) then
 start a REPL server on a remote host automatically in case when it is not
 started yet.
+
+If @var{stop-repl-server?} is set to #t then a REPL server will be stopped as
+soon as an evaluation is done.  Alternatively you could use
+@code{node-stop-server} procedure from @code{(ssh dist node)} to stop the
+server when it is not needed anymore.
+
 @end deffn
 
 @deffn {Scheme Procedure} node? x
@@ -159,6 +165,10 @@ Open a remote REPL (RREPL).  Return a new RREPL channel.
 
 @deffn {Scheme Procedure} node-run-server node
 Run a REPL server on a @var{node}.
+@end deffn
+
+@deffn {Scheme Procedure} node-stop-server node
+Stop a RREPL server on a @var{node}.
 @end deffn
 
 @deffn {Scheme Procedure} node-guile-version node

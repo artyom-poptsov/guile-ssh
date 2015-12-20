@@ -28,6 +28,7 @@
   #:export (;; Variables
             %topdir
             %knownhosts
+            %config
             %addr
             %rsakey
             %rsakey-pub
@@ -45,6 +46,7 @@
             make-libssh-log-printer
             start-server/dt-test
             start-server/dist-test
+            start-server/exec
             setup-libssh-logging!
             setup-error-logging!
             setup-test-suite-logging!
@@ -69,6 +71,8 @@
 
 (define %knownhosts (format #f "~a/tests/knownhosts"
                             (getenv "abs_top_builddir")))
+
+(define %config (format #f "~a/tests/config" %topdir))
 
 
 ;; Pass the test case NAME as the userdata to the libssh log
@@ -162,6 +166,33 @@
               (else
                (message-reply-success msg)))))))
   (primitive-exit))
+
+(define (start-server/exec server)
+  "Start SERVER for a command execution test."
+  (server-listen server)
+  (let ((session (server-accept server))
+        (channel #f))
+    (server-handle-key-exchange session)
+    (make-session-loop session
+      (let ((msg-type (message-get-type msg)))
+        (case (car msg-type)
+          ((request-channel-open)
+           (set! channel (message-channel-request-open-reply-accept msg)))
+          ((request-channel)
+           (if (equal? (cadr msg-type) 'channel-request-exec)
+               (let ((cmd (exec-req:cmd (message-get-req msg))))
+                 (cond
+                  ((string=? cmd "ping")
+                   (write-line "pong" channel)
+                   (message-reply-success msg))
+                  ((string=? cmd "uname") ; For exit status testing
+                   (message-reply-success msg)
+                   (channel-request-send-exit-status channel 0)
+                   (message-reply-success msg))))
+               (message-reply-success msg)))
+          (else
+           (message-reply-success msg)))))
+    (primitive-exit)))
 
 (define (start-server/dist-test server)
   (server-listen server)
