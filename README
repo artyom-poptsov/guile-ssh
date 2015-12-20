@@ -33,8 +33,8 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
   any later version.  Please see =COPYING= file for the terms of GNU General
   Public License.
 
-  The logo (=logo.svg=, =logo-with-text.svg= and rasterised versions) is
-  distributed under terms of [[https://creativecommons.org/licenses/by-sa/4.0/][Creative Commons Attribution-ShareAlike 4.0
+  The logo (=doc/logo.svg=, =doc/logo-with-text.svg= and rasterised versions)
+  is distributed under terms of [[https://creativecommons.org/licenses/by-sa/4.0/][Creative Commons Attribution-ShareAlike 4.0
   International]].
 * Requirements
 
