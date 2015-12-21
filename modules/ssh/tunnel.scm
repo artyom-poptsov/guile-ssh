@@ -156,7 +156,8 @@ procedures that operate on a <tunnel> object -- e.g.  'start-forward' or
 (define-syntax-rule (p1->p2? p1 p2)
   "Return #t if P1 and P2 are open ports and P1 has data that can be read, #f
 otherwise."
-  (and (not (or (port-closed? p1) (port-closed? p2)))
+  (and (not (port-closed? p1))
+       (not (port-closed? p2))
        (char-ready? p1)))
 
 (define-syntax cond-io
