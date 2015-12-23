@@ -4,7 +4,7 @@
   This directory includes an examples of programs that use Guile-SSH
   library to access SSH protocol.
 
-  Executable =.scm=-files are produced from =.scm.in= files during the build
+  Executable =.scm= files are produced from =.scm.in= files during the build
   process.
 ** =sssh.scm=
 Scheme Secure Shell (SSSH) uses Guile-SSH API to implement basic SSH client
@@ -15,19 +15,21 @@ Please see
   $ ./sssh.scm --help
 #+END_EXAMPLE
 for information about program usage.
-
 *** Examples
 #+BEGIN_EXAMPLE
   $ ./sssh.scm --identity=~/.ssh/id_rsa --user=avp localhost "uname -a"
 #+END_EXAMPLE
 
 ** =ssshd.scm=
+   Scheme Secure Shell Daemon (SSSHD) uses Guile-SSH API to implement basic
+   SSH server functionality.
 ** =echo=
    Echo client and server.
 ** =rrepl.scm=
    A demo program that allows to connect to a remote REPL (RREPL) server.  Pass
    =--help= (or =-h=) flag to the program to get usage information.
 ** =rpc=
+   RPC over an SSH tunnel.
 ** =sscp.scm=
 *** Usage
 #+BEGIN_EXAMPLE
