@@ -33,16 +33,22 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    multiple values were returned by an expression.
 ** Nodes are now capable of starting and stopping a remote REPL (RREPL)
    The new behaviour is controlled by 'start-repl-server?' and
-   'stop-repl-server?' keyed options of 'make-node'.
+   'stop-repl-server?' keyed options of 'make-node'.  Stopping of a RREPL
+   server is disabled by default.
 ** Channels now can be created as input, output or bi-drectional ports
+   The direction of a channel is controlled by the 2nd argument to
+   'make-channel' procedure.
 ** New procedures
 *** New procedure 'node-server-running?' in (ssh dist node)
 *** New procedure 'node-run-server' in (ssh dist node)
 *** New procedure 'node-stop-server' in (ssh dist node)
+*** New procedure 'node-guile-version' in (ssh dist node)
 *** New procedure 'session-parse-config!' in (ssh session)
 ** New modules
 *** (ssh popen)
+    Remote popen interface to interact with remote processes.
 *** (ssh sftp)
+    SFTP interface that allows to operate on remote files.
 ** 'make-session' now takes 'config' option
    that allows to specify whether the SSH config should be parsed or not, and
    optionally the path to the config.
@@ -50,11 +56,13 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    that allow to specify the direction of a channel.
 ** Documentation
 *** Move description of tunnels into a separate section
+*** Add description of the new procedures
+*** Update existing documentation
 ** Unit tests
 *** Expand the test suite for distributed forms
 *** Expand the test suite for tunnels
-** Update documentation
 
+** Add the project logo
 * Changes in version 0.8.0 (2015-08-04)
 ** Implement port forwarding
 ** Add distributed forms
