@@ -1,12 +1,11 @@
 # -*- mode: org; -*-
 
 * Examples
-** Overview
-   This directory includes an examples of programs that use Guile-SSH
-   library to access SSH protocol.
+  This directory includes an examples of programs that use Guile-SSH
+  library to access SSH protocol.
 
-   Executable =.scm=-files are produced from =.scm.in= files during the build
-   process.
+  Executable =.scm=-files are produced from =.scm.in= files during the build
+  process.
 ** =sssh.scm=
 Scheme Secure Shell (SSSH) uses Guile-SSH API to implement basic SSH client
 functionality.
