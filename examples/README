@@ -1,11 +1,14 @@
 # -*- mode: org; -*-
 
 * Overview
-This directory includes an examples of programs that use Guile-SSH
-library to access SSH protocol.
+  This directory includes an examples of programs that use Guile-SSH
+  library to access SSH protocol.
 
-* Scheme Secure Shell (SSSH)
-SSSH uses Guile-SSH API to implement basic SSH client functionality.
+  Executable =.scm=-files are produced from =.scm.in= files during the build
+  process.
+* =sssh.scm=
+Scheme Secure Shell (SSSH) uses Guile-SSH API to implement basic SSH client
+functionality.
 ** Usage
 Please see
 #+BEGIN_EXAMPLE
@@ -18,28 +21,28 @@ for information about program usage.
   $ ./sssh.scm --identity=~/.ssh/id_rsa --user=avp localhost "uname -a"
 #+END_EXAMPLE
 
-* Scheme Secure Shell Daemon (SSSHD)
-SSSHD uses Guile-SSH API to implement basic SSH server functionality.
-** Usage
-Please see
-#+BEGIN_EXAMPLE
-  ./ssshd.scm --help
-#+END_EXAMPLE
-for information about program usage.
-
-** Examples
-#+BEGIN_EXAMPLE
-  $ ./ssshd.scm -r ~/.ssh/id_rsa
-#+END_EXAMPLE
-
-* Echo server and client
-Implementation of an SSH based echo protocol ([[https://tools.ietf.org/html/rfc862][RFC862]]) with Guile-SSH.
-Please find sources in =echo/= directory:
- - echo/client.scm
- - echo/server.scm
-* RREPL
+* =ssshd.scm=
+* =echo=
+* =rrepl.scm=
   A demo program that allows to connect to a remote REPL (RREPL) server.  Pass
   =--help= (or =-h=) flag to the program to get usage information.
-* RPC over SSH
-  A demo [[https://www.gnu.org/software/guile-rpc/][Guile-RPC]] client program that uses an SSH tunnel to make an RPC call
-  over a secure connection.  See =rpc/= directory.
+* =rpc=
+* =sscp.scm=
+** Usage
+#+BEGIN_EXAMPLE
+$ sscp avp@127.0.0.1:/etc/profile profile
+#+END_EXAMPLE
+* =pg-tunnel.scm=
+  An example of using Guile-SSH tunnels and [[http://www.nongnu.org/guile-pg/][Guile-PG]] to access a remote
+  PostgreSQL database.
+** Usage
+   Please see
+#+BEGIN_EXAMPLE
+  $ ./pg-tunnel.scm --help
+#+END_EXAMPLE
+   for information about program usage.
+** Examples
+#+BEGIN_EXAMPLE
+$ ./pg-tunnel.scm --host=example.org --dbname=example --user=alice \
+    'select * from people'
+#+END_EXAMPLE
