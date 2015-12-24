@@ -8,4 +8,6 @@ echo/client.scm
 echo/server.scm
 rpc/client.scm
 rpc/server.scm
+sscp.scm
+pg-tunnel.scm
 Makefile.in
