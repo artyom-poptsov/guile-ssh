@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.9.0 (2015-12-24)
 ** Bugfixes
 *** Fix a bug in distributed forms in handling of REPL errors
     Distributed procedures now throw an 'node-repl-error' on an evaluation
@@ -20,24 +20,28 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     data printing.
 *** 'dist-map' and 'distribute' now raise an error if an evaluation failed
     instead of silently return an empty list.
-*** 'channel-listen-forward' now returns correct port number
+*** 'channel-listen-forward' now returns a correct port number
     'channel-listen-forward' would always return garbage as the 2nd argument
     when called with port > 0.  Now when the port is explicitly specified then
     the procedure returns the specified port as the 2nd argument.
 *** Add missing export of 'node-tunnel' from (ssh dist node) module
-** Distributed forms now return number of evaluation as a number
-   instead of string.
-** 'with-ssh' is now are capable of handling of multiple values
-   'with-ssh' now returns a vector of values if an expression was evaluated to
-   multiple values.  'distribute' and 'dist-map' only take the 1st value if
-   multiple values were returned by an expression.
-** Nodes are now capable of starting and stopping a remote REPL (RREPL)
-   The new behaviour is controlled by 'start-repl-server?' and
-   'stop-repl-server?' keyed options of 'make-node'.  Stopping of a RREPL
-   server is disabled by default.
-** Channels now can be created as input, output or bi-drectional ports
-   The direction of a channel is controlled by the 2nd argument to
-   'make-channel' procedure.
+** Changes in API
+*** Distributed forms now return the number of evaluation as a number
+    instead of string.
+*** 'with-ssh' is now capable of handling of multiple values
+    'with-ssh' now returns a vector of values if an expression was evaluated to
+    multiple values.  'distribute' and 'dist-map' only take the 1st value if
+    multiple values were returned by an expression.
+*** Nodes are now capable of starting and stopping a remote REPL (RREPL)
+    The new behaviour is controlled by 'start-repl-server?' and
+    'stop-repl-server?' keyed options of 'make-node'.  Stopping of a RREPL
+    server is disabled by default.
+*** Channels now can be created as input, output or bi-drectional ports
+    The direction of a channel is controlled by the 2nd argument to
+    'make-channel' procedure.
+*** 'make-session' now takes 'config' option
+    that allows to specify whether the SSH config should be parsed or not, and
+    optionally the path to the config.
 ** New procedures
 *** New procedure 'node-server-running?' in (ssh dist node)
 *** New procedure 'node-run-server' in (ssh dist node)
@@ -49,11 +53,6 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     Remote popen interface to interact with remote processes.
 *** (ssh sftp)
     SFTP interface that allows to operate on remote files.
-** 'make-session' now takes 'config' option
-   that allows to specify whether the SSH config should be parsed or not, and
-   optionally the path to the config.
-** 'make-channel' now takes optional 'mode' option
-   that allow to specify the direction of a channel.
 ** Documentation
 *** Move description of tunnels into a separate section
 *** Add description of the new procedures
@@ -61,8 +60,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Unit tests
 *** Expand the test suite for distributed forms
 *** Expand the test suite for tunnels
-
 ** Add the project logo
+
 * Changes in version 0.8.0 (2015-08-04)
 ** Implement port forwarding
 ** Add distributed forms
