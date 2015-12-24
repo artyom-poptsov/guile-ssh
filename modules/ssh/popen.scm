@@ -37,14 +37,12 @@
 
 (define-module (ssh popen)
   #:use-module (ssh channel)
-  #:use-module (ice-9 popen)
   #:export (open-remote-pipe
             open-remote-pipe*
             open-remote-input-pipe
             open-remote-input-pipe*
             open-remote-output-pipe
-            open-remote-output-pipe*)
-  #:re-export (OPEN_READ OPEN_WRITE OPEN_BOTH))
+            open-remote-output-pipe*))
 
 (define (open-remote-pipe session command mode)
   "Execute a COMMAND on the remote host using a SESSION with a pipe to it.
