@@ -22,6 +22,7 @@
 #include <libssh/libssh.h>
 #include <libssh/server.h>
 
+#include "common.h"
 #include "server-type.h"
 #include "server-func.h"
 
