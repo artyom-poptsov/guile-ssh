@@ -24,14 +24,14 @@
 #include "error.h"
 
 /* Report an error */
-inline void
+void
 guile_ssh_error (const char *proc, const char *msg, SCM args, SCM rest)
 {
   scm_error (scm_from_locale_symbol (GUILE_SSH_ERROR), proc, msg, args, rest);
 }
 
 /* Report an error (shorter version). */
-inline void
+void
 guile_ssh_error1 (const char *proc, const char *msg, SCM args)
 {
   scm_error (scm_from_locale_symbol (GUILE_SSH_ERROR), proc, msg, args,
@@ -39,7 +39,7 @@ guile_ssh_error1 (const char *proc, const char *msg, SCM args)
 }
 
 /* Report a session error. */
-inline void
+void
 guile_ssh_session_error1 (const char *proc, ssh_session session, SCM args)
 {
   guile_ssh_error1 (proc, ssh_get_error (session), args);

@@ -39,7 +39,7 @@ _ssh_const_to_scm (struct symbol_mapping *types, int value);
 extern struct symbol_mapping *
 _scm_to_ssh_const (struct symbol_mapping *types, SCM value);
 
-inline SCM
+extern SCM
 _scm_object_hex_address (SCM obj);
 
 #endif  /* ifndef __COMMON_H__ */

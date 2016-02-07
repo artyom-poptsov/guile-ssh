@@ -219,14 +219,14 @@ _scm_to_key_data (SCM x)
 }
 
 /* Check that KEY is a SSH private key. */
-inline int
+int
 _private_key_p (struct key_data *key)
 {
   return ssh_key_is_private (key->ssh_key);
 }
 
 /* Check that KEY is a SSH public key */
-inline int
+int
 _public_key_p (struct key_data *key)
 {
   return ssh_key_is_public (key->ssh_key);

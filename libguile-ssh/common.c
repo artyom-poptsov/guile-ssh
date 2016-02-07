@@ -55,7 +55,7 @@ _scm_to_ssh_const (struct symbol_mapping *types, SCM value)
 
 /* Return an address of the object OBJ as an hexadecimal number represented as
    a string. */
-inline SCM
+SCM
 _scm_object_hex_address (SCM obj)
 {
   return scm_number_to_string (scm_object_address (obj), scm_from_uint (16U));

@@ -51,8 +51,8 @@ extern void init_key_type (void);
 /* Helper procedures */
 extern SCM _scm_from_ssh_key (ssh_key key, SCM x);
 extern struct key_data *_scm_to_key_data (SCM x);
-extern inline int _private_key_p (struct key_data *key);
-extern inline int _public_key_p (struct key_data *key);
+extern int _private_key_p (struct key_data *key);
+extern int _public_key_p (struct key_data *key);
 
 extern SCM _ssh_key_type_to_scm (int arg1);
 extern struct symbol_mapping *_scm_to_ssh_key_type (SCM arg1);
