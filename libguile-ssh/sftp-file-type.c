@@ -22,6 +22,7 @@
 #include <libssh/libssh.h>
 
 #include "common.h"
+#include "error.h"
 #include "sftp-session-type.h"
 #include "sftp-file-type.h"
 

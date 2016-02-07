@@ -28,6 +28,7 @@
 
 /* Guile-SSH */
 #include "common.h"
+#include "error.h"
 #include "sftp-session-type.h"
 
 

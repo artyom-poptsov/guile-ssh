@@ -23,6 +23,7 @@
 
 #include "key-type.h"
 #include "common.h"
+#include "error.h"
 
 /* BUG: Currently a SSH key that has been read from a file has both
    public and private flags.  It means that we cannot distinguish
