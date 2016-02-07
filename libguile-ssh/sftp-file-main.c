@@ -18,6 +18,7 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "threads.h"
 #include "sftp-file-type.h"
 
 void
