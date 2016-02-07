@@ -19,9 +19,6 @@
 #ifndef __KEY_FUNC_H__
 #define __KEY_FUNC_H__
 
-extern inline ssh_string
-public_key_to_ssh_string (const struct key_data* public_key_data);
-
 
 /* Guile SSH API */
 extern SCM guile_ssh_string_to_public_key (SCM arg1, SCM arg2);
