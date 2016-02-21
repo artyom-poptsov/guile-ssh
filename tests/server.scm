@@ -26,6 +26,13 @@
 
 (test-begin "server")
 
+
+;;; Logging
+
+(setup-test-suite-logging! "server")
+
+;;;
+
 (test-assert "%make-server"
   (%make-server))
 
