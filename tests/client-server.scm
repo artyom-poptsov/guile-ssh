@@ -1,6 +1,6 @@
 ;;; client-server.scm -- Guile-SSH client is SUT.
 
-;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -63,15 +63,22 @@
 
 ;;; Testing of basic procedures.
 
+;; Helper procedures.
+
+(define (simple-server-proc server)
+  "start a SERVER that accepts a connection and handles a key exchange."
+  (server-listen server)
+  (let ((s (server-accept server)))
+    (server-handle-key-exchange s)))
+
+
+;; Tests.
+
 (test-assert-with-log "connect!, disconnect!"
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (primitive-exit)))
+   simple-server-proc
 
    ;; client
    (lambda ()
@@ -86,11 +93,7 @@
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (primitive-exit)))
+   simple-server-proc
 
    ;; client
    (lambda ()
@@ -105,11 +108,7 @@
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (primitive-exit)))
+   simple-server-proc
 
    ;; client
    (lambda ()
@@ -124,11 +123,7 @@
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (primitive-exit)))
+   simple-server-proc
 
    ;; client
    (lambda ()
@@ -145,11 +140,7 @@
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)
-       (primitive-exit)))
+   simple-server-proc
 
    ;; client
    (lambda ()
@@ -185,8 +176,7 @@
        (server-handle-key-exchange session)
        (make-session-loop session
                           (message-auth-set-methods! msg '(none))
-                          (message-reply-success msg)))
-     (primitive-exit))
+                          (message-reply-success msg))))
 
    ;; client
    (lambda ()
@@ -210,8 +200,7 @@
        (server-handle-key-exchange session)
        (make-session-loop session
                           (message-auth-set-methods! msg '(public-key))
-                          (message-reply-default msg)))
-     (primitive-exit))
+                          (message-reply-default msg))))
 
    ;; client
    (lambda ()
@@ -235,8 +224,7 @@
        (server-handle-key-exchange session)
        (make-session-loop session
                           (message-auth-set-methods! msg '(none))
-                          (message-reply-success msg 'partial)))
-     (primitive-exit))
+                          (message-reply-success msg 'partial))))
 
    ;; client
    (lambda ()
@@ -259,8 +247,7 @@
        (server-handle-key-exchange session)
        (make-session-loop session
                           (message-auth-set-methods! msg '(password))
-                          (message-reply-success msg)))
-     (primitive-exit))
+                          (message-reply-success msg))))
 
    ;; client
    (lambda ()
@@ -283,8 +270,7 @@
        (server-handle-key-exchange session)
        (make-session-loop session
                           (message-auth-set-methods! msg '(password))
-                          (message-reply-default msg)))
-     (primitive-exit))
+                          (message-reply-default msg))))
 
    ;; client
    (lambda ()
@@ -307,8 +293,7 @@
        (server-handle-key-exchange session)
        (make-session-loop session
                           (message-auth-set-methods! msg '(password))
-                          (message-reply-success msg 'partial)))
-     (primitive-exit))
+                          (message-reply-success msg 'partial))))
 
    ;; client
    (lambda ()
@@ -330,8 +315,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (make-session-loop session
-                          (message-reply-success msg)))
-     (primitive-exit))
+                          (message-reply-success msg))))
 
    ;; client
    (lambda ()
@@ -357,8 +341,7 @@
        (server-handle-key-exchange session)
        (make-session-loop session
                           (message-auth-set-methods! msg '(password public-key))
-                          (message-reply-default msg)))
-     (primitive-exit))
+                          (message-reply-default msg))))
 
    ;; client
    (lambda ()
@@ -399,8 +382,7 @@
                    (channel-request-send-exit-status channel 0))))
                (message-reply-success msg)))
           (else
-           (message-reply-success msg)))))
-    (primitive-exit)))
+           (message-reply-success msg)))))))
 
 (define (make-session/channel-test)
   "Make a session for a channel test."
