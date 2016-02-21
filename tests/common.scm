@@ -52,7 +52,8 @@
             setup-test-suite-logging!
             run-client-test
             run-client-test/separate-process
-            run-server-test))
+            run-server-test
+            poll))
 
 
 (define %topdir (getenv "abs_top_srcdir"))
@@ -142,6 +143,16 @@
               num))))))
 
 (set! *port* (get-unused-port))
+
+
+;;;
+
+(define (poll port proc)
+  "Poll a PORT, call a PROC when data is available."
+  (let p ((ready? #f))
+    (if ready?
+        (proc port)
+        (p (char-ready? port)))))
 
 
 ;;; Test Servers

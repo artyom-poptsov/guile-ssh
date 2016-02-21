@@ -55,10 +55,9 @@
             (channel (open-remote-pipe session "ping" OPEN_READ)))
        (and (input-port? channel)
             (not (output-port? channel))
-            (let poll ((ready? #f))
-              (if ready?
-                  (string=? (read-line channel) "pong")
-                  (poll (char-ready? channel)))))))))
+            (poll channel
+                  (lambda args
+                    (string=? (read-line channel) "pong"))))))))
 
 (test-assert-with-log "open-remote-pipe*"
   (run-client-test
@@ -68,10 +67,9 @@
             (channel (open-remote-pipe* session OPEN_READ "ping")))
        (and (input-port? channel)
             (not (output-port? channel))
-            (let poll ((ready? #f))
-              (if ready?
-                  (string=? (read-line channel) "pong")
-                  (poll (char-ready? channel)))))))))
+            (poll channel
+                  (lambda args
+                    (string=? (read-line channel) "pong"))))))))
 
 (test-assert-with-log "open-remote-input-pipe"
   (run-client-test
@@ -81,10 +79,9 @@
             (channel (open-remote-input-pipe session "ping")))
        (and (input-port? channel)
             (not (output-port? channel))
-            (let poll ((ready? #f))
-              (if ready?
-                  (string=? (read-line channel) "pong")
-                  (poll (char-ready? channel)))))))))
+            (poll channel
+                  (lambda args
+                    (string=? (read-line channel) "pong"))))))))
 
 (test-assert-with-log "open-remote-output-pipe"
   (run-client-test
