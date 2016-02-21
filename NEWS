@@ -7,6 +7,10 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Bugfixes
+*** Don't merge stderr with stdout in remote pipes
+
 * Changes in version 0.9.0 (2015-12-24)
 ** Bugfixes
 *** Fix a bug in distributed forms in handling of REPL errors

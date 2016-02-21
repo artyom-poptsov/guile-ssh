@@ -51,7 +51,6 @@ Returns newly created channel port with the specified MODE."
     (unless channel
       (throw 'guile-ssh-error "Could not create a channel" session command mode))
     (channel-open-session channel)
-    (channel-request-pty channel)
     (channel-request-exec channel command)
     channel))
 

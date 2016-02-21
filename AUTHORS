@@ -3,10 +3,10 @@ Authors of Guile-SSH
 See also files THANKS and ChangeLog.
 
 * Artyom V. Poptsov <poptsov.artyom@gmail.com>
+* David Thompson <davet@gnu.org>
+  Bug reports, various comments and suggestions.
 * Ludovic Courtès <ludo@gnu.org>
   In subdirectory ssh, changes to:
     channel-type.c
 
   Bug reports, various comments and suggestions.
-
-

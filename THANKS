@@ -8,6 +8,7 @@ authors list.
 Thanks to the following people who contributed to Guile-SSH
 through bug reports or patches:
 
+* David Thompson <davet@gnu.org>
 * Ludovic Courtès <ludo@gnu.org>
 
 Thank you.
