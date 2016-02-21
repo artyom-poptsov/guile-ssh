@@ -510,12 +510,11 @@
             (channel (make-channel/dt-test session))
             (str "Hello Scheme World!"))
        (write-line str channel)
-       (let poll ((ready? #f))
-         (if ready?
-             (let ((res (read-line channel)))
-               (disconnect! session)
-               (equal? res str))
-             (poll (char-ready? channel))))))))
+       (poll channel
+             (lambda args
+               (let ((res (read-line channel)))
+                 (disconnect! session)
+                 (equal? res str))))))))
 
 
 (test-assert-with-log "data transferring, bytevector"
@@ -537,11 +536,10 @@
               (channel (make-channel/dt-test session))
               (vect    (make-bytevector vect-size vect-fill)))
          (put-bytevector channel vect)
-         (let poll ((ready? #f))
-           (if ready?
-               (let ((res (get-bytevector-n channel vect-size)))
-                 (equal? res vect))
-               (poll (char-ready? channel)))))))))
+         (poll channel
+               (lambda args
+                 (let ((res (get-bytevector-n channel vect-size)))
+                   (equal? res vect)))))))))
 
 
 ;;;

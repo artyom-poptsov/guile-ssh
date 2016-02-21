@@ -188,10 +188,9 @@
                   ;; pretend that we're a REPL server.
                   (write-line "Enter `,help' for help." c)
 
-                  (let poll ((ready? #f))
-                    (usleep 100)
-                    (if ready?
-                        (begin
+                  (usleep 100)
+                  (poll c
+                        (lambda args
                           ;; Read expression
                           (let ((result (read-line c)))
                             (format-log 'nolog "server"
@@ -208,8 +207,7 @@
 
                           (write-line "scheme@(guile-user)> $1 = 42\n" c)
 
-                          (sleep 60))
-                        (poll (char-ready? c))))))
+                          (sleep 60)))))
                (else
                 (message-reply-success msg))))))))
    ;; Client
