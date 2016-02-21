@@ -63,14 +63,22 @@
 
 ;;; Testing of basic procedures.
 
+;; Helper procedures.
+
+(define (simple-server-proc server)
+  "start a SERVER that accepts a connection and handles a key exchange."
+  (server-listen server)
+  (let ((s (server-accept server)))
+    (server-handle-key-exchange s)))
+
+
+;; Tests.
+
 (test-assert-with-log "connect!, disconnect!"
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)))
+   simple-server-proc
 
    ;; client
    (lambda ()
@@ -85,10 +93,7 @@
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)))
+   simple-server-proc
 
    ;; client
    (lambda ()
@@ -103,10 +108,7 @@
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)))
+   simple-server-proc
 
    ;; client
    (lambda ()
@@ -121,10 +123,7 @@
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)))
+   simple-server-proc
 
    ;; client
    (lambda ()
@@ -141,10 +140,7 @@
   (run-client-test
 
    ;; server
-   (lambda (server)
-     (server-listen server)
-     (let ((s (server-accept server)))
-       (server-handle-key-exchange s)))
+   simple-server-proc
 
    ;; client
    (lambda ()
