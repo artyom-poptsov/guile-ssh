@@ -1,6 +1,6 @@
 ;;; server.scm -- Testing of server procedures without a client.
 
-;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -36,19 +36,19 @@
 (test-assert "%make-server"
   (%make-server))
 
-(test-assert "server?"
+(test-assert-with-log "server?"
   (let ((server (%make-server))
         (x      "I'm not a server"))
     (and (server? server)
          (not (server? x)))))
 
-(test-assert "comparison of servers"
+(test-assert-with-log "comparison of servers"
   (let ((s1 (%make-server))
         (s2 (%make-server)))
     (and (equal? s1 s1)
          (not (equal? s1 s2)))))
 
-(test-assert "server-set!, valid values"
+(test-assert-with-log "server-set!, valid values"
   (let* ((server  (%make-server))
          (topdir  (getenv "abs_top_srcdir"))
          (options `((bindaddr      "127.0.0.1")
@@ -79,7 +79,7 @@
      options)
     res))
 
-(test-assert "server-set!, invalid values"
+(test-assert-with-log "server-set!, invalid values"
   (let ((server  (%make-server))
         (options '(;; Errors with wrong IP address format will be
                    ;; caught on `server-listen' call, so that's the
@@ -115,7 +115,7 @@
      options)
     res))
 
-(test-assert "make-server"
+(test-assert-with-log "make-server"
   (let ((topdir  (getenv "abs_top_srcdir")))
     (make-server #:bindaddr      "127.0.0.1"
                  #:bindport      123456
@@ -125,7 +125,7 @@
                  #:log-verbosity 'nolog
                  #:blocking-mode #f)))
 
-(test-assert "server-get"
+(test-assert-with-log "server-get"
   (let* ((topdir        (getenv "abs_top_srcdir"))
          (bindaddr      "127.0.0.1")
          (bindport      123456)
@@ -147,7 +147,7 @@
          (eq? (server-get server 'log-verbosity) log-verbosity)
          (eq? (server-get server 'blocking-mode) blocking-mode))))
 
-(test-assert "server-listen"
+(test-assert-with-log "server-listen"
   (let* ((topdir  (getenv "abs_top_srcdir"))
          (server  (make-server #:bindaddr "127.0.0.1"
                                #:bindport 123456
