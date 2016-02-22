@@ -47,12 +47,25 @@
 
 ;;;
 
-(test-assert-with-log "open-remote-pipe"
+(test-assert-with-log "open-remote-pipe, OPEN_READ"
   (run-client-test
    start-server/exec
    (lambda ()
      (let* ((session (make-session/channel-test))
             (channel (open-remote-pipe session "ping" OPEN_READ)))
+       (and (input-port? channel)
+            (not (output-port? channel))
+            (poll channel
+                  (lambda args
+                    (string=? (read-line channel) "pong"))))))))
+
+(test-assert-with-log "open-remote-pipe, OPEN_PTY_READ"
+  (run-client-test
+   start-server/exec
+   (lambda ()
+     (let* ((session       (make-session/channel-test))
+            (OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
+            (channel       (open-remote-pipe session "ping" OPEN_PTY_READ)))
        (and (input-port? channel)
             (not (output-port? channel))
             (poll channel
