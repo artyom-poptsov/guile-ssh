@@ -14,6 +14,24 @@ Reference Manual})
 @var{mode} argument allows to specify what kind of pipe should be created.
 Allowed values are: @code{OPEN_READ}, @code{OPEN_WRITE}, @code{OPEN_BOTH}.
 
+There is an additional value, @code{OPEN_PTY}, that allows to request a pseudo
+terminal.  The terminal is needed to run such commands as @code{top}.  Thus,
+to run @code{top} on the remote side you need to open a remote pipe with "t"
+flag set.
+
+Values of the aforementioned constants:
+
+@table @samp
+@item OPEN_READ
+      ``r''
+@item OPEN_WRITE
+      ``w''
+@item OPEN_BOTH
+      ``r+''
+@item OPEN_PTY
+      ``t''
+@end table
+
 @deffn {Scheme Procedure} open-remote-pipe session command mode
 Execute a @var{command} on the remote host using a @var{session} with a pipe
 to it.  Returns newly created channel port with the specified @var{mode}.
@@ -38,6 +56,8 @@ with mode @code{OPEN_WRITE}.
 @end deffn
 
 @subsection Examples
+
+@subsubsection Simple cases
 
 Here's a self-explanatory little script that executes @code{uname -o} command
 on the local host and prints the result:
@@ -69,16 +89,68 @@ on the local host and prints the result:
       (write-line (read-line channel)))))
 @end lisp
 
+@subsubsection Executing a command with a pseudo terminal
+
 Surely we aren't limited to one-line outputs; for example, we can watch
 @code{top} command executing on a remote side locally, by reading data from
 the channel in a loop:
 
 @lisp
-(let ((channel (open-remote-input-pipe* session "top" "-u avp")))
+(define OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
+
+(let ((channel (open-remote-pipe* session OPEN_PTY_READ
+                                  "top" "-u avp")))
   (let r ((line (read-line channel)))
     (unless (eof-object? line)
       (write-line line)
       (r (read-line channel)))))
+@end lisp
+
+Or we can do the same, but this time with streams:
+
+@lisp
+(use-modules (srfi srfi-41)             ; streams
+             (ssh session)
+             (ssh auth)
+             (ssh popen))
+
+(define (pipe->stream p)
+  (stream-let loop ((c (read-char p)))
+    (if (eof-object? c)
+        (begin
+          (close-input-port p)
+          stream-null)
+        (stream-cons c (loop (read-char p))))))
+
+(define OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
+
+(define (main args)
+  (let ((s (make-session #:host "example.org")))
+    (connect! s)
+    (userauth-agent! s)
+    (let ((rs (pipe->stream (open-remote-pipe* s OPEN_PTY_READ
+                                               "top" "-u avp"))))
+      (stream-for-each display rs))))
+@end lisp
+
+@subsubsection Controlling the pseudo terminal size
+
+To set the size of a pseudo terminal, one may use @code{channel-set-pty-size!}
+from @code{(ssh channel)}.  For example:
+
+@lisp
+(use-modules (ssh popen)
+             (ssh auth)
+             (ssh channel))
+
+(define OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
+
+;; Opening of a Guile-SSH session goes here ...
+
+(let ((p (open-remote-pipe* session OPEN_PTY_READ "top" "-u avp")))
+  (channel-set-pty-size! p 80 50)
+  ;; Reading output from a port ...
+  )
 @end lisp
 
 @c Local Variables:
