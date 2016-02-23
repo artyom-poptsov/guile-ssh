@@ -341,11 +341,11 @@ returned by a CLIENT-PROC with a predicate PRED."
          (connect sock AF_UNIX sock-path)
 
          ;; XXX: This too.
-         (while (not (char-ready? sock)))
-
-         (let ((result (read-line sock)))
-           (close sock)
-           (pred result)))))))
+         (poll sock
+               (lambda (sock)
+                 (let ((result (read-line sock)))
+                   (close sock)
+                   (pred result)))))))))
 
 
 (define (run-server-test client-proc server-proc)
