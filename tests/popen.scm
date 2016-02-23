@@ -78,6 +78,16 @@
        (and (input-only? channel)
             (poll channel (lambda args (response=? channel "pong"))))))))
 
+(test-assert-with-log "open-remote-pipe, OPEN_BOTH"
+  (run-client-test
+   start-server/exec
+   (lambda ()
+     (let* ((session (make-session/channel-test))
+            (channel (open-remote-pipe session "ping" OPEN_BOTH)))
+       (and (input-port? channel)
+            (output-port? channel)
+            (poll channel (lambda args (response=? channel "pong"))))))))
+
 (test-assert-with-log "open-remote-pipe*"
   (run-client-test
    start-server/exec
