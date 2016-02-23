@@ -169,10 +169,7 @@
             (case (car msg-type)
               ((request-channel-open)
                (set! channel (message-channel-request-open-reply-accept msg))
-               (let poll ((ready? #f))
-                 (if ready?
-                     (rwproc channel)
-                     (poll (char-ready? channel)))))
+               (poll channel rwproc))
               ((request-channel)
                (message-reply-success msg))
               (else
