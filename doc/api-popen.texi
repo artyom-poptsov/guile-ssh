@@ -19,6 +19,9 @@ terminal.  The terminal is needed to run such commands as @code{top}.  Thus,
 to run @code{top} on the remote side you need to open a remote pipe with "t"
 flag set.
 
+@strong{Note} that when a PTY is used, a server merges stderr stream with
+stdout.
+
 Values of the aforementioned constants:
 
 @table @samp
