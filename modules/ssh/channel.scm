@@ -70,11 +70,11 @@
 
 (define* (make-channel session #:optional (mode OPEN_BOTH))
   (cond
-    ((string=? mode OPEN_BOTH)
+    ((string-contains mode OPEN_BOTH)
      (%make-channel session (logior RDNG WRTNG)))
-    ((string=? mode OPEN_READ)
+    ((string-contains mode OPEN_READ)
      (%make-channel session RDNG))
-    ((string=? mode OPEN_WRITE)
+    ((string-contains mode OPEN_WRITE)
      (%make-channel session WRTNG))
     (else
      (throw 'guile-ssh-error "Wrong mode" mode))))

@@ -1,6 +1,6 @@
 ;;; common.scm -- Heper procedures and macros for tests.
 
-;; Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -19,6 +19,7 @@
 
 (define-module (tests common)
   #:use-module (srfi srfi-64)
+  #:use-module (srfi srfi-26)
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 format)
   #:use-module (ssh session)
@@ -168,10 +169,7 @@
             (case (car msg-type)
               ((request-channel-open)
                (set! channel (message-channel-request-open-reply-accept msg))
-               (let poll ((ready? #f))
-                 (if ready?
-                     (rwproc channel)
-                     (poll (char-ready? channel)))))
+               (poll channel rwproc))
               ((request-channel)
                (message-reply-success msg))
               (else
@@ -263,7 +261,7 @@ main procedure."
       mainproc
       (lambda ()
         (format-log/scm 'nolog "multifork" "killing spawned processes ...")
-        (for-each (lambda (pid) (kill pid SIGTERM)) pids)))))
+        (for-each (cut kill <> SIGTERM) pids)))))
 
 
 (define (run-client-test server-proc client-proc)
@@ -343,11 +341,11 @@ returned by a CLIENT-PROC with a predicate PRED."
          (connect sock AF_UNIX sock-path)
 
          ;; XXX: This too.
-         (while (not (char-ready? sock)))
-
-         (let ((result (read-line sock)))
-           (close sock)
-           (pred result)))))))
+         (poll sock
+               (lambda (sock)
+                 (let ((result (read-line sock)))
+                   (close sock)
+                   (pred result)))))))))
 
 
 (define (run-server-test client-proc server-proc)

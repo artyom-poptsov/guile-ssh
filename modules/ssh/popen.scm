@@ -1,6 +1,6 @@
 ;;; popen.scm -- Remote popen emulation.
 
-;; Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -32,6 +32,14 @@
 ;;   open-remote-input-pipe*
 ;;   open-remote-output-pipe
 ;;   open-remote-output-pipe*
+;;
+;; Variables exported:
+;;
+;;   OPEN_PTY
+;;
+;; See the Info documentation for the detailed description of these
+;; procedures.
+
 
 ;;; Code:
 
@@ -42,7 +50,10 @@
             open-remote-input-pipe
             open-remote-input-pipe*
             open-remote-output-pipe
-            open-remote-output-pipe*))
+            open-remote-output-pipe*
+            OPEN_PTY))
+
+(define OPEN_PTY "t")
 
 (define (open-remote-pipe session command mode)
   "Execute a COMMAND on the remote host using a SESSION with a pipe to it.
@@ -51,6 +62,8 @@ Returns newly created channel port with the specified MODE."
     (unless channel
       (throw 'guile-ssh-error "Could not create a channel" session command mode))
     (channel-open-session channel)
+    (when (string-contains mode OPEN_PTY)
+      (channel-request-pty channel))
     (channel-request-exec channel command)
     channel))
 
