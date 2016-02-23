@@ -34,7 +34,7 @@
 
 (setup-test-suite-logging! "popen")
 
-;;;
+;;; Helper procedures.
 
 (define (make-session/channel-test)
   "Make a session for a channel test."
@@ -45,6 +45,18 @@
     (userauth-none! session)
     session))
 
+(define (response=? channel string)
+  "Read a line from a CHANNEL, check if the line is equal to a STRING."
+  (string=? (read-line channel) string))
+
+(define (input-only? port)
+  (and (input-port? port)
+       (not (output-port? port))))
+
+(define (output-only? port)
+  (and (output-port? port)
+       (not (input-port? port))))
+
 ;;;
 
 (test-assert-with-log "open-remote-pipe, OPEN_READ"
@@ -53,11 +65,8 @@
    (lambda ()
      (let* ((session (make-session/channel-test))
             (channel (open-remote-pipe session "ping" OPEN_READ)))
-       (and (input-port? channel)
-            (not (output-port? channel))
-            (poll channel
-                  (lambda args
-                    (string=? (read-line channel) "pong"))))))))
+       (and (input-only? channel)
+            (poll channel (lambda args (response=? channel "pong"))))))))
 
 (test-assert-with-log "open-remote-pipe, OPEN_PTY_READ"
   (run-client-test
@@ -66,11 +75,8 @@
      (let* ((session       (make-session/channel-test))
             (OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
             (channel       (open-remote-pipe session "ping" OPEN_PTY_READ)))
-       (and (input-port? channel)
-            (not (output-port? channel))
-            (poll channel
-                  (lambda args
-                    (string=? (read-line channel) "pong"))))))))
+       (and (input-only? channel)
+            (poll channel (lambda args (response=? channel "pong"))))))))
 
 (test-assert-with-log "open-remote-pipe*"
   (run-client-test
@@ -78,11 +84,8 @@
    (lambda ()
      (let* ((session (make-session/channel-test))
             (channel (open-remote-pipe* session OPEN_READ "ping")))
-       (and (input-port? channel)
-            (not (output-port? channel))
-            (poll channel
-                  (lambda args
-                    (string=? (read-line channel) "pong"))))))))
+       (and (input-only? channel)
+            (poll channel (lambda args (response=? channel "pong"))))))))
 
 (test-assert-with-log "open-remote-input-pipe"
   (run-client-test
@@ -90,11 +93,8 @@
    (lambda ()
      (let* ((session (make-session/channel-test))
             (channel (open-remote-input-pipe session "ping")))
-       (and (input-port? channel)
-            (not (output-port? channel))
-            (poll channel
-                  (lambda args
-                    (string=? (read-line channel) "pong"))))))))
+       (and (input-only? channel)
+            (poll channel (lambda args (response=? channel "pong"))))))))
 
 (test-assert-with-log "open-remote-output-pipe"
   (run-client-test
@@ -102,8 +102,7 @@
    (lambda ()
      (let* ((session (make-session/channel-test))
             (channel (open-remote-output-pipe session "ping")))
-       (and (output-port? channel)
-            (not (input-port? channel)))))))
+       (output-only? channel)))))
 
 (test-end "popen")
 
