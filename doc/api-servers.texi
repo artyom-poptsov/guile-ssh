@@ -54,6 +54,11 @@ Expected type of @var{value}: number.
 @item hostkey
 Set the @var{server} public key type: ``ssh-rsa'' or ``ssh-dss''.
 
+@strong{libssh 0.7 note:} you should pass a path to an ssh key for this
+option.  Only one key from per key type (RSA, DSA, ECDSA) is allowed in an
+server at a time, and later calls to @code{server-set!} with this option for
+the same key type will override prior calls.
+
 Expected type of @var{value}: string.
 @item dsakey
 Set the path to the @acronym{SSH} host @acronym{DSA} key.
