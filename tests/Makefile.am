@@ -72,6 +72,8 @@ CLEANFILES = \
 	popen-libssh.log			\
 	server-client-errors.log		\
 	server-client-libssh.log		\
+	server-errors.log			\
+	server-libssh.log			\
 	session-errors.log			\
 	session-libssh.log			\
 	tunnel-errors.log			\
