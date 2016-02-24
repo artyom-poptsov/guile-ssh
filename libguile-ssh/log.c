@@ -20,6 +20,7 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include <libssh/callbacks.h>
 
 #include <sys/time.h>
 #include <time.h>
