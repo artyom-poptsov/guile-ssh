@@ -23,6 +23,7 @@
 
 #include "key-type.h"
 #include "common.h"
+#include "error.h"
 
 /* Convert SSH public key KEY to a scheme string. */
 SCM_DEFINE (guile_ssh_public_key_to_string, "public-key->string", 1, 0, 0,
