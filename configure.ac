@@ -50,6 +50,11 @@ AC_ARG_WITH([guilesitedir],
 
 PKG_CHECK_MODULES([GUILE_2], [guile-2.0])
 PKG_CHECK_MODULES([LIBSSH], [libssh >= 0.6.4])
+PKG_CHECK_MODULES([LIBSSH_0_7_3], [libssh >= 0.7.3],
+                                [AC_DEFINE(HAVE_LIBSSH_0_7_3, 1, [Use libssh 0.7.3])],
+                                [AC_WARN([
+  Using a potentially vulnerable version of libssh
+  <https://www.libssh.org/2016/02/23/libssh-0-7-3-security-and-bugfix-release/>])])
 
 # -------------------------------------------------------------------------------
 

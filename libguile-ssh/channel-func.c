@@ -27,6 +27,11 @@
 #include "channel-type.h"
 #include "session-type.h"
 
+#ifdef HAVE_LIBSSH_0_7_3
+#define ssh_forward_listen ssh_channel_listen_forward
+#define ssh_forward_cancel ssh_channel_cancel_forward
+#endif
+
 
 /* Procedures */
 
