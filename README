@@ -39,7 +39,8 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
 * Requirements
 
  - [[https://www.gnu.org/software/guile/][GNU Guile]], version 2.0.9 or later
- - [[http://www.libssh.org/][libssh]], version 0.6.4 or later
+ - [[http://www.libssh.org/][libssh]], version 0.6.4 or later (0.7.3 or later is recommended due to
+   [[https://www.libssh.org/2016/02/23/libssh-0-7-3-security-and-bugfix-release/][CVE-2016-0739 found in previous versions]].)
 
 * Distribution
 
