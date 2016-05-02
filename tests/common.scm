@@ -108,7 +108,7 @@
   ;; FIXME: This hack is aimed to give every server its own unique
   ;; port to listen to.  Clients will pick up new port number
   ;; automatically through global `port' symbol as well.
-  (set! *port* (1+ *port*))
+  (set! *port* (get-unused-port))
 
   (make-server
    #:bindaddr %addr
