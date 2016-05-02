@@ -173,8 +173,6 @@
               ((request-channel-open)
                (set! channel (message-channel-request-open-reply-accept msg))
                (poll channel rwproc))
-              ((request-channel)
-               (message-reply-success msg))
               (else
                (message-reply-success msg)))))))
   (primitive-exit))
