@@ -79,7 +79,10 @@
             (str     "hello world"))
        (write-line str channel)
        (while (not (char-ready? channel)))
-       (string=? str (read-line channel))))))
+       (let ((line (read-line channel)))
+         (close channel)
+         (disconnect! session)
+         (string=? str line))))))
 
 ;; Create a tunnel, check the result.
 (test-assert-with-log "make-tunnel"
