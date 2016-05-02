@@ -196,12 +196,11 @@
                  (let ((cmd (exec-req:cmd (message-get-req msg))))
                    (cond
                     ((string=? cmd "ping")
-                     (write-line "pong" channel)
-                     (message-reply-success msg))
+                     (write-line "pong" channel))
                     ((string=? cmd "uname") ; For exit status testing
                      (message-reply-success msg)
-                     (channel-request-send-exit-status channel 0)
-                     (message-reply-success msg))))
+                     (channel-request-send-exit-status channel 0)))
+                   (message-reply-success msg))
                  (message-reply-success msg)))
             (else
              (message-reply-success msg))))))))
