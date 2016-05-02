@@ -360,29 +360,27 @@
 
 (define (start-server/channel-test server)
   "Start SERVER for a channel test."
-  (server-listen server)
-  (let ((session (server-accept server))
-        (channel #f))
-    (server-handle-key-exchange session)
-    (make-session-loop session
-      (let ((msg-type (message-get-type msg)))
-        (srvmsg msg-type)
-        (case (car msg-type)
-          ((request-channel-open)
-           (set! channel (message-channel-request-open-reply-accept msg)))
-          ((request-channel)
-           (if (equal? (cadr msg-type) 'channel-request-exec)
-               (let ((cmd (exec-req:cmd (message-get-req msg))))
-                 (cond
-                  ((string=? cmd "ping")
-                   (write-line "pong" channel)
-                   (message-reply-success msg))
-                  ((string=? cmd "uname") ; For exit status testing
-                   (message-reply-success msg)
-                   (channel-request-send-exit-status channel 0))))
-               (message-reply-success msg)))
-          (else
-           (message-reply-success msg)))))))
+  (start-server-loop server
+    (let ((channel #f))
+      (lambda (msg)
+        (let ((msg-type (message-get-type msg)))
+          (srvmsg msg-type)
+          (case (car msg-type)
+            ((request-channel-open)
+             (set! channel (message-channel-request-open-reply-accept msg)))
+            ((request-channel)
+             (if (equal? (cadr msg-type) 'channel-request-exec)
+                 (let ((cmd (exec-req:cmd (message-get-req msg))))
+                   (cond
+                    ((string=? cmd "ping")
+                     (write-line "pong" channel)
+                     (message-reply-success msg))
+                    ((string=? cmd "uname") ; For exit status testing
+                     (message-reply-success msg)
+                     (channel-request-send-exit-status channel 0))))
+                 (message-reply-success msg)))
+            (else
+             (message-reply-success msg))))))))
 
 (define (make-session/channel-test)
   "Make a session for a channel test."

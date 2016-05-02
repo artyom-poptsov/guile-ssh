@@ -45,6 +45,7 @@
             make-session-for-test
             make-server-for-test
             make-libssh-log-printer
+            start-server-loop
             start-server/dt-test
             start-server/dist-test
             start-server/exec
