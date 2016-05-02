@@ -161,48 +161,50 @@
 
 ;;; Test Servers
 
-(define (start-server/dt-test server rwproc)
+(define (start-server-loop server proc)
+  "Start a SERVER loop, call PROC on incoming messages."
   (server-listen server)
-  (let ((session (server-accept server))
-        (channel #f))
+  (let ((session (server-accept server)))
     (server-handle-key-exchange session)
     (make-session-loop session
-      (if (not (eof-object? msg))
-          (let ((msg-type (message-get-type msg)))
-            (case (car msg-type)
-              ((request-channel-open)
-               (set! channel (message-channel-request-open-reply-accept msg))
-               (poll channel rwproc))
-              (else
-               (message-reply-success msg)))))))
-  (primitive-exit))
+      (unless (eof-object? msg)
+        (proc msg)))
+    (primitive-exit)))
+
+
+(define (start-server/dt-test server rwproc)
+  (start-server-loop server
+    (lambda (msg)
+      (case (car (message-get-type msg))
+        ((request-channel-open)
+         (let ((channel (message-channel-request-open-reply-accept msg)))
+           (poll channel rwproc)))
+        (else
+         (message-reply-success msg))))))
 
 (define (start-server/exec server)
   "Start SERVER for a command execution test."
-  (server-listen server)
-  (let ((session (server-accept server))
-        (channel #f))
-    (server-handle-key-exchange session)
-    (make-session-loop session
-      (let ((msg-type (message-get-type msg)))
-        (case (car msg-type)
-          ((request-channel-open)
-           (set! channel (message-channel-request-open-reply-accept msg)))
-          ((request-channel)
-           (if (equal? (cadr msg-type) 'channel-request-exec)
-               (let ((cmd (exec-req:cmd (message-get-req msg))))
-                 (cond
-                  ((string=? cmd "ping")
-                   (write-line "pong" channel)
-                   (message-reply-success msg))
-                  ((string=? cmd "uname") ; For exit status testing
-                   (message-reply-success msg)
-                   (channel-request-send-exit-status channel 0)
-                   (message-reply-success msg))))
-               (message-reply-success msg)))
-          (else
-           (message-reply-success msg)))))
-    (primitive-exit)))
+  (start-server-loop server
+    (let ((channel #f))
+      (lambda (msg)
+        (let ((msg-type (message-get-type msg)))
+          (case (car msg-type)
+            ((request-channel-open)
+             (set! channel (message-channel-request-open-reply-accept msg)))
+            ((request-channel)
+             (if (equal? (cadr msg-type) 'channel-request-exec)
+                 (let ((cmd (exec-req:cmd (message-get-req msg))))
+                   (cond
+                    ((string=? cmd "ping")
+                     (write-line "pong" channel)
+                     (message-reply-success msg))
+                    ((string=? cmd "uname") ; For exit status testing
+                     (message-reply-success msg)
+                     (channel-request-send-exit-status channel 0)
+                     (message-reply-success msg))))
+                 (message-reply-success msg)))
+            (else
+             (message-reply-success msg))))))))
 
 (define (start-server/dist-test server)
   (server-listen server)
