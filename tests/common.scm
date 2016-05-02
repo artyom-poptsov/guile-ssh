@@ -133,14 +133,17 @@
         #t))))
 
 (define get-unused-port
-  (let ((port-num 12345))
+  (let ((port-num 12345)
+        (mtx      (make-mutex 'allow-external-unlock)))
     (lambda ()
       "Get an unused port number."
+      (lock-mutex mtx)
       (let loop ((num port-num))
         (if (port-in-use? num)
             (loop (1+ num))
             (begin
               (set! port-num num)
+              (unlock-mutex mtx)
               num))))))
 
 (set! *port* (get-unused-port))
