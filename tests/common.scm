@@ -264,7 +264,8 @@ main procedure."
       mainproc
       (lambda ()
         (format-log/scm 'nolog "multifork" "killing spawned processes ...")
-        (for-each (cut kill <> SIGTERM) pids)))))
+        (for-each (cut kill <> SIGTERM) pids)
+        (for-each waitpid pids)))))
 
 
 (define (run-client-test server-proc client-proc)
