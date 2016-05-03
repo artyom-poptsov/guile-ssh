@@ -105,18 +105,26 @@
 
 (define (make-server-for-test)
   "Make a server with predefined parameters for a test."
+  (define mtx (make-mutex 'allow-external-unlock))
+  (lock-mutex mtx)
+  (dynamic-wind
+    (const #f)
+    (lambda ()
+      ;; FIXME: This hack is aimed to give every server its own unique
+      ;; port to listen to.  Clients will pick up new port number
+      ;; automatically through global `port' symbol as well.
+      (set! *port* (get-unused-port))
 
-  ;; FIXME: This hack is aimed to give every server its own unique
-  ;; port to listen to.  Clients will pick up new port number
-  ;; automatically through global `port' symbol as well.
-  (set! *port* (get-unused-port))
-
-  (make-server
-   #:bindaddr %addr
-   #:bindport *port*
-   #:rsakey   %rsakey
-   #:dsakey   %dsakey
-   #:log-verbosity 'rare))
+      (let ((s (make-server
+                #:bindaddr %addr
+                #:bindport *port*
+                #:rsakey   %rsakey
+                #:dsakey   %dsakey
+                #:log-verbosity 'rare)))
+        (server-listen s)
+        s))
+    (lambda ()
+      (unlock-mutex mtx))))
 
 
 ;;; Port helpers.

@@ -67,7 +67,6 @@
 
 (define (simple-server-proc server)
   "start a SERVER that accepts a connection and handles a key exchange."
-  (server-listen server)
   (let ((s (server-accept server)))
     (server-handle-key-exchange s)))
 
@@ -336,7 +335,6 @@
 
    ;; server
    (lambda (server)
-     (server-listen server)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (make-session-loop session
