@@ -282,16 +282,23 @@ main procedure."
 SERVER-PROC as an argument.  CLIENT-PROC is expected to be a thunk that should
 be executed in the parent process.  The procedure returns a result of
 CLIENT-PROC call."
+  (format-log/scm 'nolog "run-client-test" "Making a server ...")
   (let ((server (make-server-for-test)))
+    (format-log/scm 'nolog "run-client-test" "Server: ~a" server)
+    (format-log/scm 'nolog "run-client-test" "Spawning processes ...")
     (multifork
      ;; server
      (lambda ()
        (dynamic-wind
          (const #f)
          (lambda ()
+           (format-log/scm 'nolog "run-client-test"
+                           "Server process is up and running")
            (set-log-userdata! (string-append (get-log-userdata) " (server)"))
            (server-set! server 'log-verbosity 'rare)
            (server-proc server)
+           (format-log/scm 'nolog "run-client-test"
+                           "Server procedure is finished")
            (primitive-exit 0))
          (lambda ()
            (primitive-exit 1))))
