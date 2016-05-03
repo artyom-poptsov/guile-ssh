@@ -55,6 +55,7 @@
             run-client-test
             run-client-test/separate-process
             run-server-test
+            format-log/scm
             poll))
 
 
