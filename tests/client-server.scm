@@ -321,11 +321,21 @@
          (eq? res 'partial))))))
 
 
+;;; 'userauth-public-key!'
+
 ;; The procedure called with a wrong object as a parameter which leads to an
 ;; exception.
 (test-error-with-log "userauth-public-key!, wrong parameter" 'wrong-type-arg
   (userauth-public-key! "Not a session." (private-key-from-file %rsakey)))
 
+;; Client tries to authenticate using a non-connected session which leads to
+;; an exception.
+(test-error-with-log "userauth-public-key!, non-connected session"
+  'wrong-type-arg
+  (userauth-public-key! (make-session-for-test)
+                        (private-key-from-file %rsakey)))
+
+
 (test-assert-with-log "userauth-public-key!, success"
   (run-client-test
 
@@ -348,6 +358,8 @@
          (let ((res (userauth-public-key! session prvkey)))
            (disconnect! session)
            (eq? res 'success)))))))
+
+;;;
 
 
 ;; The procedure called with a wrong object as a parameter which leads to an
