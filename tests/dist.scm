@@ -158,7 +158,7 @@
         (rrepl-skip-to-prompt port)))
     #t))
 
-(test-error-with-log "rrepl-skip-to-prompt, invalid input 2" 'node-error
+(test-error-with-log "rrepl-skip-to-prompt, invalid input" 'node-error
   (call-with-input-string "invalid input"
                           (lambda (port)
                             (rrepl-skip-to-prompt port))))
