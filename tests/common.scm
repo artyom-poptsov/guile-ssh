@@ -91,15 +91,15 @@
 
 (define-syntax test-error-with-log
   (syntax-rules ()
-    ((_ name error body ...)
+    ((_ name error expr)
      (test-assert-with-log name
        (catch error
-         (lambda () body ... #f)
+         (lambda () expr #f)
          (const #t))))
-    ((_ name body ...)
+    ((_ name expr)
      (test-assert-with-log name
        (catch #t
-         (lambda () body ... #f)
+         (lambda () expr #f)
          (const #t))))))
 
 (define (start-session-loop session body)
