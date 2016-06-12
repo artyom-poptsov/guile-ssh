@@ -82,6 +82,10 @@
          (eq? (job-data j1) (job-data j2))
          (eq? (job-proc j1) (job-proc j2)))))
 
+(test-error-with-log "hand-out-job, invalid type"
+  (let ((n (make-node (make-session-for-test))))
+    (hand-out-job (make-job 'invalid-job n '() (const #t)))))
+
 
 (test-assert "assign-eval"
   (let* ((s     (make-session-for-test))
