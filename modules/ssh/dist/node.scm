@@ -141,10 +141,16 @@ to #t then a REPL server will be stopped as soon as an evaluation is done."
   (call-with-input-string str read))
 
 (define (rexec node cmd)
-  "Execute a command CMD on the remote side.  Return two values: the first
-line returned by CMD and its exit code."
+  "Execute a command CMD on the remote side.  Return two values: list of
+output lines returned by CMD and its exit code."
   (let ((channel (open-remote-input-pipe (node-session node) cmd)))
-    (values (read-line channel) (channel-get-exit-status channel))))
+    (values (let loop ((line   (read-line channel))
+                       (result '()))
+              (if (eof-or-null? line)
+                  (reverse result)
+                  (loop (read-line channel)
+                        (cons line result))))
+            (channel-get-exit-status channel))))
 
 (define (rrepl-skip-to-prompt repl-channel)
   "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
@@ -325,6 +331,6 @@ procedure returns the 1st evaluated value if multiple values were returned."
   (receive (result rc)
       (rexec node "which guile > /dev/null && guile --version")
     (and (zero? rc)
-         result)))
+         (car result))))
 
 ;;; node.scm ends here
