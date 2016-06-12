@@ -154,14 +154,10 @@
         (rrepl-skip-to-prompt port)))
     #t))
 
-(test-assert "rrepl-skip-to-prompt, invalid input"
-  (catch 'node-error
-    (lambda ()
-      (call-with-input-string "invalid input"
-        (lambda (port)
-          (rrepl-skip-to-prompt port)))
-      #f)
-    (const #t)))
+(test-error-with-log "rrepl-skip-to-prompt, invalid input 2" 'node-error
+  (call-with-input-string "invalid input"
+                          (lambda (port)
+                            (rrepl-skip-to-prompt port))))
 
 
 ;;; Distributed forms.

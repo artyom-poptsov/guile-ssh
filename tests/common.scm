@@ -41,6 +41,7 @@
             ;; Procedures
             get-unused-port
             test-assert-with-log
+            test-error-with-log
             start-session-loop
             make-session-for-test
             make-server-for-test
@@ -88,6 +89,19 @@
          (set-log-userdata! name)
          body ...)))))
 
+(define-syntax test-error-with-log
+  (syntax-rules ()
+    ((_ name error body ...)
+     (test-assert-with-log name
+       (catch error
+         (lambda () body ... #f)
+         (const #t))))
+    ((_ name body ...)
+     (test-assert-with-log name
+       (catch #t
+         (lambda () body ... #f)
+         (const #t))))))
+
 (define (start-session-loop session body)
   (let session-loop ((msg (server-message-get session)))
     (when (and msg (not (eof-object? msg)))
