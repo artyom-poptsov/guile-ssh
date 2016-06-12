@@ -345,6 +345,12 @@
            (eq? res 'success)))))))
 
 
+;; The procedure called with a wrong object as a parameter which leads to an
+;; exception.
+(test-error-with-log "userauth-get-list, wrong parameter" 'wrong-type-arg
+  (userauth-get-list "Not a session."))
+
+
 ;; Server replies "default" with the list of allowed authentication
 ;; methods.  Client receives the list.
 (test-assert-with-log "userauth-get-list"
