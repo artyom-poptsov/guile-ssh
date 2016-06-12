@@ -163,6 +163,11 @@
 
 ;;; Authentication
 
+;; The procedure called with a wrong object as a parameter which leads to an
+;; exception.
+(test-error-with-log "userauth-none!, wrong parameter" 'wrong-type-arg
+  (userauth-none! "Not a session."))
+
 ;; Client tries to authenticate using a non-connected session which leads to
 ;; an exception.
 (test-error-with-log "userauth-none!, not connected" 'wrong-type-arg
