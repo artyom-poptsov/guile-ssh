@@ -173,9 +173,10 @@
      (server-listen server)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
-       (make-session-loop session
-                          (message-auth-set-methods! msg '(none))
-                          (message-reply-success msg))))
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-auth-set-methods! msg '(none))
+                             (message-reply-success msg)))))
 
    ;; client
    (lambda ()
@@ -197,9 +198,10 @@
      (server-listen server)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
-       (make-session-loop session
-                          (message-auth-set-methods! msg '(public-key))
-                          (message-reply-default msg))))
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-auth-set-methods! msg '(public-key))
+                             (message-reply-default msg)))))
 
    ;; client
    (lambda ()
@@ -221,9 +223,10 @@
      (server-listen server)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
-       (make-session-loop session
-                          (message-auth-set-methods! msg '(none))
-                          (message-reply-success msg 'partial))))
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-auth-set-methods! msg '(none))
+                             (message-reply-success msg 'partial)))))
 
    ;; client
    (lambda ()
@@ -244,9 +247,10 @@
      (server-listen server)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
-       (make-session-loop session
-                          (message-auth-set-methods! msg '(password))
-                          (message-reply-success msg))))
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-auth-set-methods! msg '(password))
+                             (message-reply-success msg)))))
 
    ;; client
    (lambda ()
@@ -267,9 +271,10 @@
      (server-listen server)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
-       (make-session-loop session
-                          (message-auth-set-methods! msg '(password))
-                          (message-reply-default msg))))
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-auth-set-methods! msg '(password))
+                             (message-reply-default msg)))))
 
    ;; client
    (lambda ()
@@ -290,9 +295,10 @@
      (server-listen server)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
-       (make-session-loop session
-                          (message-auth-set-methods! msg '(password))
-                          (message-reply-success msg 'partial))))
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-auth-set-methods! msg '(password))
+                             (message-reply-success msg 'partial)))))
 
    ;; client
    (lambda ()
@@ -313,8 +319,9 @@
      (server-listen server)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
-       (make-session-loop session
-                          (message-reply-success msg))))
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-reply-success msg)))))
 
    ;; client
    (lambda ()
@@ -337,9 +344,10 @@
    (lambda (server)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
-       (make-session-loop session
-                          (message-auth-set-methods! msg '(password public-key))
-                          (message-reply-default msg))))
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-auth-set-methods! msg '(password public-key))
+                             (message-reply-default msg)))))
 
    ;; client
    (lambda ()

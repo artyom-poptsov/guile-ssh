@@ -41,7 +41,7 @@
             ;; Procedures
             get-unused-port
             test-assert-with-log
-            make-session-loop
+            start-session-loop
             make-session-for-test
             make-server-for-test
             make-libssh-log-printer
@@ -88,11 +88,12 @@
          (set-log-userdata! name)
          body ...)))))
 
-(define-macro (make-session-loop session . body)
-  `(let session-loop ((msg (server-message-get ,session)))
-     (and msg (begin ,@body))
-     (and (connected? session)
-          (session-loop (server-message-get ,session)))))
+(define (start-session-loop session body)
+  (let session-loop ((msg (server-message-get session)))
+    (when (and msg (not (eof-object? msg)))
+      (body msg (message-get-type msg)))
+    (when (connected? session)
+      (session-loop (server-message-get session)))))
 
 (define (make-session-for-test)
   "Make a session with predefined parameters for a test."
@@ -176,9 +177,9 @@
   (server-listen server)
   (let ((session (server-accept server)))
     (server-handle-key-exchange session)
-    (make-session-loop session
-      (unless (eof-object? msg)
-        (proc msg)))
+    (start-session-loop session
+                        (lambda (msg type)
+                          (proc msg)))
     (primitive-exit)))
 
 
@@ -239,9 +240,9 @@
                         (global-request-callback . ,proc))))
       (session-set! session 'callbacks callbacks))
 
-    (make-session-loop session
-      (unless (eof-object? msg)
-        (message-reply-success msg)))))
+    (start-session-loop session
+                        (lambda (msg type)
+                          (message-reply-success msg)))))
 
 
 ;;; Tests

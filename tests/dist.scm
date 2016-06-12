@@ -177,39 +177,39 @@
      (server-set! server 'log-verbosity 'functions)
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
-       (make-session-loop session
-         (unless (eof-object? msg)
-           (let ((type (message-get-type msg)))
-             (case (car type)
-               ((request-channel-open)
-                (let ((c (message-channel-request-open-reply-accept msg)))
+       (start-session-loop
+        session
+        (lambda (msg type)
+          (case (car type)
+            ((request-channel-open)
+             (let ((c (message-channel-request-open-reply-accept msg)))
 
-                  ;; Write the last line of Guile REPL greeting message to
-                  ;; pretend that we're a REPL server.
-                  (write-line "Enter `,help' for help." c)
+               ;; Write the last line of Guile REPL greeting message to
+               ;; pretend that we're a REPL server.
+               (write-line "Enter `,help' for help." c)
 
-                  (usleep 100)
-                  (poll c
-                        (lambda args
-                          ;; Read expression
-                          (let ((result (read-line c)))
-                            (format-log 'nolog "server"
-                                        "[SCM] sexp: ~a" result)
-                            (or (string=? result "(begin (+ 21 21))")
-                                (error "Wrong result 1" result)))
+               (usleep 100)
+               (poll c
+                     (lambda args
+                       ;; Read expression
+                       (let ((result (read-line c)))
+                         (format-log 'nolog "server"
+                                     "[SCM] sexp: ~a" result)
+                         (or (string=? result "(begin (+ 21 21))")
+                             (error "Wrong result 1" result)))
 
-                          ;; Read newline
-                          (let ((result (read-line c)))
-                            (format-log 'nolog "server"
-                                        "[SCM] sexp: ~a" result)
-                            (or (string=? result "(newline)")
-                                (error "Wrong result 2" result)))
+                       ;; Read newline
+                       (let ((result (read-line c)))
+                         (format-log 'nolog "server"
+                                     "[SCM] sexp: ~a" result)
+                         (or (string=? result "(newline)")
+                             (error "Wrong result 2" result)))
 
-                          (write-line "scheme@(guile-user)> $1 = 42\n" c)
+                       (write-line "scheme@(guile-user)> $1 = 42\n" c)
 
-                          (sleep 60)))))
-               (else
-                (message-reply-success msg))))))))
+                       (sleep 60)))))
+            (else
+             (message-reply-success msg)))))))
    ;; Client
    (lambda ()
      (let ((session (make-session-for-test)))
