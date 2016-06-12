@@ -163,6 +163,11 @@
 
 ;;; Authentication
 
+;; Client tries to authenticate using a non-connected session which leads to
+;; an exception.
+(test-error-with-log "userauth-none!, not connected" 'wrong-type-arg
+  (userauth-none! (make-session-for-test)))
+
 
 ;; Server replies with "success", client receives 'success.
 (test-assert-with-log "userauth-none!, success"
