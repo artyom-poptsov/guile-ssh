@@ -1,6 +1,6 @@
 ;;; tunnel.scm -- SSH tunnels
 
-;; Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -87,8 +87,8 @@
 
 (define (make-tunnel-channel tunnel)
   (let ((channel (make-channel (tunnel-session tunnel))))
-    (or channel
-        (error "Could not make a channel" tunnel))
+    (unless channel
+      (error "Could not make a channel" tunnel))
     channel))
 
 (define (tunnel-open-forward-channel tunnel)
