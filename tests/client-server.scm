@@ -350,6 +350,9 @@
 (test-error-with-log "userauth-get-list, wrong parameter" 'wrong-type-arg
   (userauth-get-list "Not a session."))
 
+(test-error-with-log "userauth-get-list, non-connected" 'wrong-type-arg
+  (userauth-get-list (make-session-for-test)))
+
 
 ;; Server replies "default" with the list of allowed authentication
 ;; methods.  Client receives the list.
