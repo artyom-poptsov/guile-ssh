@@ -161,7 +161,12 @@
               (string=? (bytevector->hex-string sha1-res) hash-sha1-str)))))))
 
 
+;;;
 ;;; Authentication
+;;;
+
+
+;;; 'userauth-none!'
 
 ;; The procedure called with a wrong object as a parameter which leads to an
 ;; exception.
@@ -249,6 +254,8 @@
          (eq? res 'partial))))))
 
 
+;;; 'userauth-password!'
+
 (test-assert-with-log "userauth-password!, success"
   (run-client-test
 
