@@ -256,6 +256,42 @@
 
 ;;; 'userauth-password!'
 
+;; The procedure called with a wrong object as a parameter which leads to an
+;; exception.
+(test-error-with-log "userauth-password!, session: non-session object"
+  'wrong-type-arg
+  (userauth-password! "Not a session." "Password"))
+
+;; Client tries to authenticate using a non-connected session which leads to
+;; an exception.
+(test-error-with-log "userauth-password!, session: non-connected session"
+  'wrong-type-arg
+  (userauth-password! (make-session-for-test) "Password"))
+
+;; User tries to authenticate using a non-string object as a password. the
+;; procedure raises an error.
+(test-error-with-log "userauth-password!, password: non-string object"
+  'wrong-type-arg
+  (run-client-test
+
+   ;; server
+   (lambda (server)
+     (server-listen server)
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-auth-set-methods! msg '(password))
+                             (message-reply-success msg)))))
+
+   ;; client
+   (lambda ()
+     (let ((session (make-session-for-test)))
+       (sleep 1)
+       (connect! session)
+       (userauth-password! session 123)))))
+
+
 (test-assert-with-log "userauth-password!, success"
   (run-client-test
 
