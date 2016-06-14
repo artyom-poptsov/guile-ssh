@@ -378,6 +378,26 @@
   (userauth-public-key! (make-session-for-test)
                         (private-key-from-file %rsakey)))
 
+;; Client tries to use a non-key object for authentication, the procedure
+;; raises an exception.
+(test-error-with-log "userauth-public-key!, private-key: non-key object"
+  'wrong-type-arg
+  (run-client-test
+   ;; server
+   (lambda (server)
+     (server-listen server)
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (start-session-loop session
+                           (lambda (msg type)
+                             (message-reply-success msg)))))
+   ;; client
+   (lambda ()
+     (let ((session (make-session-for-test)))
+       (sleep 1)
+       (connect! session)
+       (userauth-public-key! session "Non-key object.")))))
+
 
 (test-assert-with-log "userauth-public-key!, success"
   (run-client-test
