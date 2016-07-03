@@ -46,16 +46,20 @@
      (userauth-none! session)
      (proc session))))
 
-(define (make-channel/pf-test session)
+(define (call-with-forward-channel session proc)
   (let ((channel (make-channel session)))
-    (case (channel-open-forward channel
-                                #:source-host "localhost"
-                                #:local-port  (get-unused-port)
-                                #:remote-host "localhost"
-                                #:remote-port (1+ (get-unused-port)))
-      ((ok)
-       channel)
-      (else => (cut error "Could not open forward" <>)))))
+    (dynamic-wind
+      (const #f)
+      (lambda ()
+        (case (channel-open-forward channel
+                                    #:source-host "localhost"
+                                    #:local-port  (get-unused-port)
+                                    #:remote-host "localhost"
+                                    #:remote-port (1+ (get-unused-port)))
+          ((ok)
+           (proc channel))
+          (else => (cut error "Could not open forward" <>))))
+      (lambda () (close channel)))))
 
 
 (test-equal-with-log "port forwarding, direct"
@@ -70,12 +74,11 @@
    (lambda ()
      (call-with-connected-session/tunnel
       (lambda (session)
-        (let ((channel (make-channel/pf-test session)))
-          (write-line %test-string channel)
-          (while (not (char-ready? channel)))
-          (let ((line (read-line channel)))
-            (close channel)
-            line)))))))
+        (call-with-forward-channel session
+          (lambda (channel)                                   
+            (write-line %test-string channel)
+            (while (not (char-ready? channel)))
+            (read-line channel))))))))
 
 ;; Create a tunnel, check the result.
 (test-assert-with-log "make-tunnel"
