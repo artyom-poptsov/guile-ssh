@@ -60,16 +60,6 @@
   "Print a server MESSAGE to the test log."
   (format log "    server: ~a~%" message))
 
-(define (call-with-connected-session proc)
-  "Call the one-argument procedure PROC with a freshly created and connected
-SSH session object, return the result of the procedure call.  The session is
-disconnected when the PROC is finished."
-  (let ((session (make-session-for-test)))
-    (dynamic-wind
-      (lambda () (connect! session))
-      (lambda () (proc session))
-      (lambda () (disconnect! session)))))
-
 
 ;;; Testing of basic procedures.
 

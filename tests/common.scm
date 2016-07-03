@@ -48,6 +48,7 @@
             make-session-for-test
             make-server-for-test
             make-libssh-log-printer
+            call-with-connected-session
             start-server-loop
             start-server/dt-test
             start-server/dist-test
@@ -165,6 +166,16 @@
         s))
     (lambda ()
       (unlock-mutex mtx))))
+
+(define (call-with-connected-session proc)
+  "Call the one-argument procedure PROC with a freshly created and connected
+SSH session object, return the result of the procedure call.  The session is
+disconnected when the PROC is finished."
+  (let ((session (make-session-for-test)))
+    (dynamic-wind
+      (lambda () (connect! session))
+      (lambda () (proc session))
+      (lambda () (disconnect! session)))))
 
 
 ;;; Port helpers.

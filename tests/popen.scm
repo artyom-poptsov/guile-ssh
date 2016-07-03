@@ -36,14 +36,13 @@
 
 ;;; Helper procedures.
 
-(define (make-session/channel-test)
+(define (call-with-connected-session/popen proc)
   "Make a session for a channel test."
-  (let ((session (make-session-for-test)))
-    (sleep 1)
-    (connect! session)
-    (authenticate-server session)
-    (userauth-none! session)
-    session))
+  (call-with-connected-session
+   (lambda (session)
+     (authenticate-server session)
+     (userauth-none! session)
+     (proc session))))
 
 (define (response=? channel string)
   "Read a line from a CHANNEL, check if the line is equal to a STRING."
@@ -63,56 +62,62 @@
   (run-client-test
    start-server/exec
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (open-remote-pipe session "ping" OPEN_READ)))
-       (and (input-only? channel)
-            (poll channel (lambda args (response=? channel "pong"))))))))
+     (call-with-connected-session/popen
+      (lambda (session)
+        (let ((channel (open-remote-pipe session "ping" OPEN_READ)))
+          (and (input-only? channel)
+               (poll channel (lambda args (response=? channel "pong"))))))))))
 
 (test-assert-with-log "open-remote-pipe, OPEN_PTY_READ"
   (run-client-test
    start-server/exec
    (lambda ()
-     (let* ((session       (make-session/channel-test))
-            (OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
-            (channel       (open-remote-pipe session "ping" OPEN_PTY_READ)))
-       (and (input-only? channel)
-            (poll channel (lambda args (response=? channel "pong"))))))))
+     (call-with-connected-session/popen
+      (lambda (session)
+        (let* ((OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
+               (channel       (open-remote-pipe session "ping" OPEN_PTY_READ)))
+          (and (input-only? channel)
+               (poll channel (lambda args (response=? channel "pong"))))))))))
 
 (test-assert-with-log "open-remote-pipe, OPEN_BOTH"
   (run-client-test
    start-server/exec
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (open-remote-pipe session "ping" OPEN_BOTH)))
-       (and (input-port? channel)
-            (output-port? channel)
-            (poll channel (lambda args (response=? channel "pong"))))))))
+     (call-with-connected-session/popen
+      (lambda (session)
+        (let ((channel (open-remote-pipe session "ping" OPEN_BOTH)))
+          (and (input-port? channel)
+               (output-port? channel)
+               (poll channel (lambda args (response=? channel "pong"))))))))))
 
 (test-assert-with-log "open-remote-pipe*"
   (run-client-test
    start-server/exec
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (open-remote-pipe* session OPEN_READ "ping")))
-       (and (input-only? channel)
-            (poll channel (lambda args (response=? channel "pong"))))))))
+     (call-with-connected-session/popen
+      (lambda (session)
+        (let ((channel (open-remote-pipe* session OPEN_READ "ping")))
+          (and (input-only? channel)
+               (poll channel (lambda args (response=? channel "pong"))))))))))
 
 (test-assert-with-log "open-remote-input-pipe"
   (run-client-test
    start-server/exec
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (open-remote-input-pipe session "ping")))
-       (and (input-only? channel)
-            (poll channel (lambda args (response=? channel "pong"))))))))
+     (call-with-connected-session/popen
+      (lambda (session)
+        (let ((channel (open-remote-input-pipe session "ping")))
+          (and (input-only? channel)
+               (poll channel (lambda args (response=? channel "pong"))))))))))
 
 (test-assert-with-log "open-remote-output-pipe"
   (run-client-test
    start-server/exec
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (open-remote-output-pipe session "ping")))
-       (output-only? channel)))))
+     (call-with-connected-session/popen
+      (lambda (session)
+        (let ((channel (open-remote-output-pipe session "ping")))
+          (output-only? channel)))))))
 
 (test-end "popen")
 
