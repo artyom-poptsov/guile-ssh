@@ -60,6 +60,16 @@
   "Print a server MESSAGE to the test log."
   (format log "    server: ~a~%" message))
 
+(define (call-with-connected-session proc)
+  "Call the one-argument procedure PROC with a freshly created and connected
+SSH session object, return the result of the procedure call.  The session is
+disconnected when the PROC is finished."
+  (let ((session (make-session-for-test)))
+    (dynamic-wind
+      (lambda () (connect! session))
+      (lambda () (proc session))
+      (lambda () (disconnect! session)))))
+
 
 ;;; Testing of basic procedures.
 
@@ -75,18 +85,13 @@
 
 (test-assert-with-log "connect!, disconnect!"
   (run-client-test
-
    ;; server
    simple-server-proc
-
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (let ((res (connected? session)))
-         (disconnect! session)
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+        (connected? session))))))
 
 (test-equal-with-log "get-protocol-version"
   2
@@ -95,46 +100,34 @@
    simple-server-proc
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (let ((res (get-protocol-version session)))
-         (disconnect! session)
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+        (get-protocol-version session))))))
 
 (test-assert-with-log "authenticate-server, not-known"
   'not-known
   (run-client-test
-
    ;; server
    simple-server-proc
-
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (let ((res (authenticate-server session)))
-         (disconnect! session)
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+       (authenticate-server session))))))
 
 (test-equal-with-log "authenticate-server, ok"
   'ok
   (run-client-test
-
    ;; server
    simple-server-proc
-
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (write-known-host! session)
-       (let ((res (authenticate-server session)))
-         (disconnect! session)
-         (delete-file %knownhosts)
-         res)))))
+     (let ((res (call-with-connected-session
+                 (lambda (session)
+                   (write-known-host! session)
+                   (authenticate-server session)))))
+       (delete-file %knownhosts)
+       res))))
 
 (test-assert-with-log "get-public-key-hash"
   (run-client-test
@@ -197,13 +190,10 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (authenticate-server session)
-       (let ((res (userauth-none! session)))
-         (disconnect! session)
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (userauth-none! session))))))
 
 
 ;; Server replies with "default", client receives 'denied.
@@ -223,13 +213,10 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (authenticate-server session)
-       (let ((res (userauth-none! session)))
-         (disconnect! session)
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (userauth-none! session))))))
 
 
 ;; Server replies with "partial success", client receives 'partial.
@@ -249,13 +236,10 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (authenticate-server session)
-       (let ((res (userauth-none! session)))
-         (disconnect! session)
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (userauth-none! session))))))
 
 
 ;;; 'userauth-password!'
@@ -290,10 +274,9 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (userauth-password! session 123)))))
+     (call-with-connected-session
+      (lambda (session)
+        (userauth-password! session 123))))))
 
 
 (test-equal-with-log "userauth-password!, success"
@@ -312,13 +295,10 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (authenticate-server session)
-       (let ((res (userauth-password! session "password")))
-         (disconnect! session)
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (userauth-password! session "password"))))))
 
 
 (test-equal-with-log "userauth-password!, denied"
@@ -337,13 +317,10 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (authenticate-server session)
-       (let ((res (userauth-password! session "password")))
-         (disconnect! session)
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (userauth-password! session "password"))))))
 
 
 (test-equal-with-log "userauth-password!, partial"
@@ -362,13 +339,10 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (authenticate-server session)
-       (let ((res (userauth-password! session "password")))
-         (disconnect! session)
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (userauth-password! session "password"))))))
 
 
 ;;; 'userauth-public-key!'
@@ -400,10 +374,9 @@
                              (message-reply-success msg)))))
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (userauth-public-key! session "Non-key object.")))))
+     (call-with-connected-session
+      (lambda (session)
+        (userauth-public-key! session "Non-key object."))))))
 
 ;; Client tries to use a public key for authentication, the procedure raises
 ;; an exception.
@@ -420,10 +393,9 @@
                              (message-reply-success msg)))))
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (userauth-public-key! session (public-key-from-file %rsakey-pub))))))
+     (call-with-connected-session
+      (lambda (session)
+        (userauth-public-key! session (public-key-from-file %rsakey-pub)))))))
 
 
 (test-equal-with-log "userauth-public-key!, success"
@@ -441,14 +413,11 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (authenticate-server session)
-       (let* ((prvkey (private-key-from-file %rsakey)))
-         (let ((res (userauth-public-key! session prvkey)))
-           (disconnect! session)
-           res))))))
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+       (let ((prvkey (private-key-from-file %rsakey)))
+         (userauth-public-key! session prvkey)))))))
 
 ;;;
 
@@ -479,13 +448,11 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (sleep 1)
-       (connect! session)
-       (authenticate-server session)
-       (userauth-none! session)
-       (let ((res (userauth-get-list session)))
-         res)))))
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (userauth-none! session)
+        (userauth-get-list session))))))
 
 
 ;;; Channel test
