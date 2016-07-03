@@ -79,6 +79,7 @@ AC_SUBST(GUILE_EFFECTIVE_VERSION)
 AC_CONFIG_FILES([Makefile libguile-ssh/Makefile examples/Makefile build-aux/Makefile])
 AC_CONFIG_FILES([m4/Makefile doc/Makefile tests/Makefile am/Makefile])
 AC_CONFIG_FILES([modules/Makefile modules/ssh/Makefile modules/ssh/dist/Makefile])
+AC_CONFIG_FILES([modules/srfi/Makefile])
 
 # Generate a Makefile, based on the results.
 AC_OUTPUT
