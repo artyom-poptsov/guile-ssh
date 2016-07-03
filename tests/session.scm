@@ -141,10 +141,9 @@
                 #:port 22
                 #:user "Random J. User"))
 
-(test-assert "blocking-flush!"
-  (let ((session (%make-session))
-        (timeout 15))
-    (eq? (blocking-flush! session timeout) 'ok)))
+(test-equal-with-log "blocking-flush!"
+  'ok
+  (blocking-flush! (%make-session) 15))
 
 (test-assert "connected?, check that we are not connected"
   (let ((session (%make-session)))
