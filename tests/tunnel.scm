@@ -37,14 +37,12 @@
 
 ;;;
 
-(define (make-session/channel-test)
-  "Make a session for a channel test."
-  (let ((session (make-session-for-test)))
-    (sleep 1)
-    (connect! session)
-    (authenticate-server session)
-    (userauth-none! session)
-    session))
+(define (call-with-connected-session/tunnel proc)
+  (call-with-connected-session
+   (lambda (session)
+     (authenticate-server session)
+     (userauth-none! session)
+     (proc session))))
 
 (define (make-channel/pf-test session)
   (let ((channel (make-channel session)))
@@ -69,30 +67,31 @@
 
    ;; client
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (make-channel/pf-test session))
-            (str     "hello world"))
-       (write-line str channel)
-       (while (not (char-ready? channel)))
-       (let ((line (read-line channel)))
-         (close channel)
-         (disconnect! session)
-         (string=? str line))))))
+     (call-with-connected-session/tunnel
+      (lambda (session)
+        (let ((channel (make-channel/pf-test session))
+              (str     "hello world"))
+          (write-line str channel)
+          (while (not (char-ready? channel)))
+          (let ((line (read-line channel)))
+            (close channel)
+            (string=? str line))))))))
 
 ;; Create a tunnel, check the result.
 (test-assert-with-log "make-tunnel"
-  (let* ((session (make-session-for-test))
-         (local-port (get-unused-port))
-         (remote-host "www.example.org")
-         (tunnel  (make-tunnel session
-                               #:port  local-port
-                               #:host remote-host)))
-    (and (eq?      (tunnel-session tunnel)      session)
-         (string=? (tunnel-bind-address tunnel) "127.0.0.1")
-         (eq?      (tunnel-port tunnel)         local-port)
-         (eq?      (tunnel-host-port tunnel)    local-port)
-         (eq?      (tunnel-host tunnel)         remote-host)
-         (eq?      (tunnel-reverse? tunnel)     #f))))
+  (call-with-connected-session/tunnel
+   (lambda (session)
+     (let* ((local-port (get-unused-port))
+            (remote-host "www.example.org")
+            (tunnel  (make-tunnel session
+                                  #:port  local-port
+                                  #:host remote-host)))
+       (and (eq?      (tunnel-session tunnel)      session)
+            (string=? (tunnel-bind-address tunnel) "127.0.0.1")
+            (eq?      (tunnel-port tunnel)         local-port)
+            (eq?      (tunnel-host-port tunnel)    local-port)
+            (eq?      (tunnel-host tunnel)         remote-host)
+            (eq?      (tunnel-reverse? tunnel)     #f))))))
 
 
 ;; Client calls 'call-with-ssh-forward' with a procedure which sends a string
@@ -149,18 +148,19 @@
    ;; Client (call/pf)
    (lambda ()
      (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
-     (let* ((session     (make-session/channel-test))
-            (local-port  (get-unused-port))
-            (remote-host "www.example.org")
-            (tunnel      (make-tunnel session
-                                      #:port local-port
-                                      #:host remote-host))
-            (str         "hello world"))
-       (call-with-ssh-forward tunnel
-                              (lambda (sock)
-                                (write-line str sock)
-                                (while (not (char-ready? sock)))
-                                (read-line sock)))))
+     (call-with-connected-session/tunnel
+      (lambda (session)
+        (let* ((local-port  (get-unused-port))
+               (remote-host "www.example.org")
+               (tunnel      (make-tunnel session
+                                         #:port local-port
+                                         #:host remote-host))
+               (str         "hello world"))
+          (call-with-ssh-forward tunnel
+                                 (lambda (sock)
+                                   (write-line str sock)
+                                   (while (not (char-ready? sock)))
+                                   (read-line sock)))))))
    ;; Predicate
    (lambda (result)
      (string=? result "hello world"))))
@@ -173,16 +173,17 @@
      (start-server/dist-test server))
    ;; Client
    (lambda ()
-     (let ((session (make-session/channel-test))
-           (portnum (get-unused-port)))
-       (and
-        (receive (result pnum)
-            (channel-listen-forward session
-                                    #:address "localhost"
-                                    #:port    portnum)
-          (and (equal? result 'ok)
-               (= pnum portnum)))
-        (eq? (channel-cancel-forward session "localhost" portnum) 'ok))))))
+     (call-with-connected-session/tunnel
+      (lambda (session)
+        (let ((portnum (get-unused-port)))
+          (and
+           (receive (result pnum)
+               (channel-listen-forward session
+                                       #:address "localhost"
+                                       #:port    portnum)
+             (and (equal? result 'ok)
+                  (= pnum portnum)))
+           (eq? (channel-cancel-forward session "localhost" portnum) 'ok))))))))
 
 (test-end "tunnel")
 
