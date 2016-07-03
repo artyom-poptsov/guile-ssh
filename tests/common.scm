@@ -43,6 +43,7 @@
             test-assert-with-log
             test-error-with-log
             test-error-with-log/=
+            test-equal-with-log
             start-session-loop
             make-session-for-test
             make-server-for-test
@@ -119,6 +120,10 @@
      (test-error-with-log/handler name error expr (const #t)))
     ((_ name expr)
      (test-error-with-log/handler name expr (const #t)))))
+
+(define-syntax-rule (test-equal-with-log name expected expr)
+  (test-assert-with-log name
+    (equal? expr expected)))
 
 
 (define (start-session-loop session body)

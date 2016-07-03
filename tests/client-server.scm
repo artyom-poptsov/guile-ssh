@@ -88,12 +88,11 @@
          (disconnect! session)
          res)))))
 
-(test-assert-with-log "get-protocol-version"
+(test-equal-with-log "get-protocol-version"
+  2
   (run-client-test
-
    ;; server
    simple-server-proc
-
    ;; client
    (lambda ()
      (let ((session (make-session-for-test)))
@@ -101,9 +100,10 @@
        (connect! session)
        (let ((res (get-protocol-version session)))
          (disconnect! session)
-         (eq? 2 res))))))
+         res)))))
 
 (test-assert-with-log "authenticate-server, not-known"
+  'not-known
   (run-client-test
 
    ;; server
@@ -116,9 +116,10 @@
        (connect! session)
        (let ((res (authenticate-server session)))
          (disconnect! session)
-         (eq? res 'not-known))))))
+         res)))))
 
-(test-assert-with-log "authenticate-server, ok"
+(test-equal-with-log "authenticate-server, ok"
+  'ok
   (run-client-test
 
    ;; server
@@ -133,7 +134,7 @@
        (let ((res (authenticate-server session)))
          (disconnect! session)
          (delete-file %knownhosts)
-         (eq? res 'ok))))))
+         res)))))
 
 (test-assert-with-log "get-public-key-hash"
   (run-client-test
@@ -180,7 +181,8 @@
 
 
 ;; Server replies with "success", client receives 'success.
-(test-assert-with-log "userauth-none!, success"
+(test-equal-with-log "userauth-none!, success"
+  'success
   (run-client-test
 
    ;; server
@@ -201,11 +203,12 @@
        (authenticate-server session)
        (let ((res (userauth-none! session)))
          (disconnect! session)
-         (eq? res 'success))))))
+         res)))))
 
 
 ;; Server replies with "default", client receives 'denied.
-(test-assert-with-log "userauth-none!, denied"
+(test-equal-with-log "userauth-none!, denied"
+  'denied
   (run-client-test
 
    ;; server
@@ -226,11 +229,12 @@
        (authenticate-server session)
        (let ((res (userauth-none! session)))
          (disconnect! session)
-         (eq? res 'denied))))))
+         res)))))
 
 
 ;; Server replies with "partial success", client receives 'partial.
-(test-assert-with-log "userauth-none!, partial"
+(test-equal-with-log "userauth-none!, partial"
+  'partial
   (run-client-test
 
    ;; server
@@ -251,7 +255,7 @@
        (authenticate-server session)
        (let ((res (userauth-none! session)))
          (disconnect! session)
-         (eq? res 'partial))))))
+         res)))))
 
 
 ;;; 'userauth-password!'
@@ -292,7 +296,8 @@
        (userauth-password! session 123)))))
 
 
-(test-assert-with-log "userauth-password!, success"
+(test-equal-with-log "userauth-password!, success"
+  'success
   (run-client-test
 
    ;; server
@@ -313,10 +318,11 @@
        (authenticate-server session)
        (let ((res (userauth-password! session "password")))
          (disconnect! session)
-         (eq? res 'success))))))
+         res)))))
 
 
-(test-assert-with-log "userauth-password!, denied"
+(test-equal-with-log "userauth-password!, denied"
+  'denied
   (run-client-test
 
    ;; server
@@ -337,10 +343,11 @@
        (authenticate-server session)
        (let ((res (userauth-password! session "password")))
          (disconnect! session)
-         (eq? res 'denied))))))
+         res)))))
 
 
-(test-assert-with-log "userauth-password!, partial"
+(test-equal-with-log "userauth-password!, partial"
+  'partial
   (run-client-test
 
    ;; server
@@ -361,7 +368,7 @@
        (authenticate-server session)
        (let ((res (userauth-password! session "password")))
          (disconnect! session)
-         (eq? res 'partial))))))
+         res)))))
 
 
 ;;; 'userauth-public-key!'
@@ -419,7 +426,8 @@
        (userauth-public-key! session (public-key-from-file %rsakey-pub))))))
 
 
-(test-assert-with-log "userauth-public-key!, success"
+(test-equal-with-log "userauth-public-key!, success"
+  'success
   (run-client-test
 
    ;; server
@@ -440,7 +448,7 @@
        (let* ((prvkey (private-key-from-file %rsakey)))
          (let ((res (userauth-public-key! session prvkey)))
            (disconnect! session)
-           (eq? res 'success)))))))
+           res))))))
 
 ;;;
 
@@ -456,7 +464,8 @@
 
 ;; Server replies "default" with the list of allowed authentication
 ;; methods.  Client receives the list.
-(test-assert-with-log "userauth-get-list"
+(test-equal-with-log "userauth-get-list"
+  '(password public-key)
   (run-client-test
 
    ;; server
@@ -476,7 +485,7 @@
        (authenticate-server session)
        (userauth-none! session)
        (let ((res (userauth-get-list session)))
-         (equal? res '(password public-key)))))))
+         res)))))
 
 
 ;;; Channel test
@@ -593,6 +602,7 @@
 
 ;; Client sends "uname" as a command to execute, server returns exit status 0.
 (test-assert-with-log "channel-request-exec, exit status"
+  0
   (run-client-test
 
    ;; server
@@ -605,7 +615,7 @@
             (channel (make-channel session)))
        (channel-open-session channel)
        (channel-request-exec channel "uname")
-       (= (channel-get-exit-status channel) 0)))))
+       (channel-get-exit-status channel)))))
 
 
 ;; data transferring
