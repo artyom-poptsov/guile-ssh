@@ -40,6 +40,7 @@
 
             ;; Procedures
             get-unused-port
+            test-begin-with-log
             test-assert-with-log
             test-error-with-log
             test-error-with-log/=
@@ -466,5 +467,9 @@ printer."
         (errors-log-file (string-append test-name "-errors.log")))
     (setup-libssh-logging! libssh-log-file)
     (setup-error-logging! errors-log-file)))
+
+(define (test-begin-with-log test-name)
+  (test-begin test-name)
+  (setup-test-suite-logging! test-name))
 
 ;;; common.scm ends here

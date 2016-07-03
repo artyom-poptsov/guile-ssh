@@ -28,12 +28,7 @@
 (define %libssh-minor-version
   (string->number (cadr (string-split (get-libssh-version) #\.))))
 
-(test-begin "server")
-
-
-;;; Logging
-
-(setup-test-suite-logging! "server")
+(test-begin-with-log "server")
 
 ;;;
 

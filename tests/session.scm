@@ -24,12 +24,7 @@
              ;; Helper procedures
              (tests common))
 
-(test-begin "session")
-
-
-;;; Logging
-
-(setup-test-suite-logging! "session")
+(test-begin-with-log "session")
 
 ;;;
 

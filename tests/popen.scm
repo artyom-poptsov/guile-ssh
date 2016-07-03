@@ -27,12 +27,7 @@
              (ssh auth)
              (ssh popen))
 
-(test-begin "popen")
-
-
-;;; Logging
-
-(setup-test-suite-logging! "popen")
+(test-begin-with-log "popen")
 
 ;;; Helper procedures.
 

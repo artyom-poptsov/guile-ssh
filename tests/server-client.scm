@@ -17,26 +17,18 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
+(add-to-load-path (getenv "abs_top_srcdir"))
+
 (use-modules (srfi srfi-64)
              (ice-9 threads)
              (ssh server)
              (ssh session)
              (ssh auth)
              (ssh message)
-             (ssh log))
+             (ssh log)
+             (tests common))
 
-(test-begin "server-client")
-
-
-;;; Load helper procedures
-
-(add-to-load-path (getenv "abs_top_srcdir"))
-(use-modules (tests common))
-
-
-;;; Logging
-
-(setup-test-suite-logging! "server-client")
+(test-begin-with-log "server-client")
 
 ;;; Helper procedures and macros
 

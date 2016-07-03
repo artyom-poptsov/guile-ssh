@@ -17,15 +17,12 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
+(add-to-load-path (getenv "abs_top_srcdir"))
+
 (use-modules (srfi srfi-64)
              (ssh key)
-             (ssh version))
-
-
-;;; Load helper procedures
-
-(add-to-load-path (getenv "abs_top_srcdir"))
-(use-modules (tests common))
+             (ssh version)
+             (tests common))
 
 ;;;
 

@@ -33,12 +33,7 @@
              (ssh server)
              (ssh tunnel))
 
-(test-begin "tunnel")
-
-
-;;; Logging
-
-(setup-test-suite-logging! "tunnel")
+(test-begin-with-log "tunnel")
 
 ;;;
 

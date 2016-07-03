@@ -17,6 +17,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
+(add-to-load-path (getenv "abs_top_srcdir"))
+
 (use-modules (srfi srfi-64)
              (srfi srfi-26)
              (ice-9 threads)
@@ -31,9 +33,10 @@
              (ssh channel)
              (ssh log)
              (ssh tunnel)
-             (srfi srfi-4))
+             (srfi srfi-4)
+             (tests common))
 
-(test-begin "client-server")
+(test-begin-with-log "client-server")
 
 
 ;;; Global symbols
@@ -42,16 +45,6 @@
 
 (define log    (test-runner-aux-value (test-runner-current)))
 (define *server-thread* #f)
-
-;;; Load helper procedures
-
-(add-to-load-path (getenv "abs_top_srcdir"))
-(use-modules (tests common))
-
-
-;;; Logging
-
-(setup-test-suite-logging! "client-server")
 
 
 ;;; Helper procedures and macros
