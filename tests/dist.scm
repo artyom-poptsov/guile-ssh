@@ -52,10 +52,16 @@
          (eq? (node-repl-port n) 37146)
          (eq? (node-session n)   s))))
 
-(test-assert "split"
-  (and (equal? (split '(a b c d e f g) 3) '((a b) (c d) (e f g)))
-       (equal? (split '(a) 2) '((a)))))
+
+(test-equal "split, 1"
+  '((a b) (c d) (e f g))
+  (split '(a b c d e f g) 3))
 
+(test-equal "split, 2"
+  '((a))
+  (split '(a) 2))
+
+
 (test-assert "make-job"
   (let* ((s (make-session-for-test))
          (n (make-node s))
