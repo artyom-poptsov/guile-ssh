@@ -22,27 +22,31 @@
 
 (test-begin "log")
 
-(test-assert "current-logging-callback"
-  (eq? (current-logging-callback) %default-log-printer))
+(test-equal "current-logging-callback"
+  %default-log-printer
+  (current-logging-callback))
 
 
 (define (custom-logging-callback priority function message useradata)
   (display "Hello Scheme World!"))
 
-(test-assert "set-logging-callback!, custom"
+(test-equal "set-logging-callback!, custom"
+  custom-logging-callback
   (begin
     (set-logging-callback! custom-logging-callback)
-    (eq? (current-logging-callback) custom-logging-callback)))
+    (current-logging-callback)))
 
-(test-assert "set-logging-callback!, default (libssh)"
+(test-equal "set-logging-callback!, default (libssh)"
+  %default-libssh-log-printer
   (begin
     (set-logging-callback! %default-libssh-log-printer)
-    (eq? (current-logging-callback) %default-libssh-log-printer)))
+    (current-logging-callback)))
 
-(test-assert "set-logging-callback!, default"
+(test-equal "set-logging-callback!, default"
+  %default-log-printer
   (begin
     (set-logging-callback! %default-log-printer)
-    (eq? (current-logging-callback) %default-log-printer)))
+    (current-logging-callback)))
 
 
 (test-assert "set-log-verbosity!"
@@ -55,8 +59,9 @@
       (lambda (key . args)
         #t))))
 
-(test-assert "get-log-verbosity"
-  (eq? (get-log-verbosity) 'functions))
+(test-equal "get-log-verbosity"
+  'functions
+  (get-log-verbosity))
 
 
 (test-end "log")
