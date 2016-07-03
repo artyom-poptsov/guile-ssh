@@ -116,7 +116,7 @@
 (define-syntax test-error-with-log
   (syntax-rules ()
     ((_ name error expr)
-     (test-error-with-log/handler error expr (const #t)))
+     (test-error-with-log/handler name error expr (const #t)))
     ((_ name expr)
      (test-error-with-log/handler name expr (const #t)))))
 
