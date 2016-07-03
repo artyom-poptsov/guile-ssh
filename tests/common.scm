@@ -54,9 +54,6 @@
             start-server/dt-test
             start-server/dist-test
             start-server/exec
-            setup-libssh-logging!
-            setup-error-logging!
-            setup-test-suite-logging!
             run-client-test
             run-client-test/separate-process
             run-server-test
