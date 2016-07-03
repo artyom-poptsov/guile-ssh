@@ -416,8 +416,8 @@ disconnected when the PROC is finished."
      (call-with-connected-session
       (lambda (session)
         (authenticate-server session)
-       (let ((prvkey (private-key-from-file %rsakey)))
-         (userauth-public-key! session prvkey)))))))
+        (let ((prvkey (private-key-from-file %rsakey)))
+          (userauth-public-key! session prvkey)))))))
 
 ;;;
 
