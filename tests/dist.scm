@@ -119,14 +119,10 @@
          (string=? module-name "(guile-user)")
          (string=? lang        "scheme"))))
 
-(test-assert "rrepl-get-result, error"
-  (catch 'node-repl-error
-         (lambda ()
-           (call-with-input-string "scheme@(guile-user)> ERROR: error."
-                                   rrepl-get-result)
-           #f)
-         (lambda (key . args)
-           (string=? (cadr args) "scheme@(guile-user)> ERROR: error."))))
+(test-error-with-log/= "rrepl-get-result, error"
+  'node-repl-error "scheme@(guile-user)> ERROR: error."
+  (call-with-input-string "scheme@(guile-user)> ERROR: error."
+                          rrepl-get-result))
 
 (test-assert "rrepl-get-result, elisp"
   (receive (result eval-num module-name lang)

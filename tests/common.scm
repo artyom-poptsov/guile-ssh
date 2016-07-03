@@ -42,6 +42,7 @@
             get-unused-port
             test-assert-with-log
             test-error-with-log
+            test-error-with-log/=
             start-session-loop
             make-session-for-test
             make-server-for-test
@@ -89,18 +90,36 @@
          (set-log-userdata! name)
          body ...)))))
 
-(define-syntax test-error-with-log
+;; Ensure that the specific ERROR is raised during the test, check the error
+;; with HANDLER.
+(define-syntax test-error-with-log/handler
   (syntax-rules ()
-    ((_ name error expr)
+    ((_ name error expr handler)
      (test-assert-with-log name
        (catch error
          (lambda () expr #f)
-         (const #t))))
-    ((_ name expr)
+         handler)))
+    ((_ name expr handler)
      (test-assert-with-log name
        (catch #t
          (lambda () expr #f)
-         (const #t))))))
+         handler)))))
+
+;; Ensure that the specific ERROR is raised during the test and the error is
+;; raised with the specified MESSAGE.
+(define-syntax-rule (test-error-with-log/= name error expected-message expr)
+  (test-error-with-log/handler error expr
+                               (lambda (key . args)
+                                 (string=? (cadr args) expected-message))))
+
+;; Ensure that the specific ERROR is raised during the test.
+(define-syntax test-error-with-log
+  (syntax-rules ()
+    ((_ name error expr)
+     (test-error-with-log/handler error expr (const #t)))
+    ((_ name expr)
+     (test-error-with-log/handler name expr (const #t)))))
+
 
 (define (start-session-loop session body)
   (let session-loop ((msg (server-message-get session)))
