@@ -37,6 +37,8 @@
 
 ;;;
 
+(define %test-string "hello scheme world")
+
 (define (call-with-connected-session/tunnel proc)
   (call-with-connected-session
    (lambda (session)
@@ -56,26 +58,24 @@
       (else => (cut error "Could not open forward" <>)))))
 
 
-(test-assert-with-log "port forwarding, direct"
+(test-equal-with-log "port forwarding, direct"
+  %test-string
   (run-client-test
-
    ;; server
    (lambda (server)
      (start-server/dt-test server
                            (lambda (channel)
                              (write-line (read-line channel) channel))))
-
    ;; client
    (lambda ()
      (call-with-connected-session/tunnel
       (lambda (session)
-        (let ((channel (make-channel/pf-test session))
-              (str     "hello world"))
-          (write-line str channel)
+        (let ((channel (make-channel/pf-test session)))
+          (write-line %test-string channel)
           (while (not (char-ready? channel)))
           (let ((line (read-line channel)))
             (close channel)
-            (string=? str line))))))))
+            line)))))))
 
 ;; Create a tunnel, check the result.
 (test-assert-with-log "make-tunnel"
@@ -138,7 +138,8 @@
 ;;  o               |                    | Check the result.
 ;;  |               |                    |
 ;;
-(test-assert-with-log "call-with-ssh-forward"
+(test-equal-with-log "call-with-ssh-forward"
+  %test-string
   (run-client-test/separate-process
    ;; Server
    (lambda (server)
@@ -154,16 +155,15 @@
                (remote-host "www.example.org")
                (tunnel      (make-tunnel session
                                          #:port local-port
-                                         #:host remote-host))
-               (str         "hello world"))
+                                         #:host remote-host)))
           (call-with-ssh-forward tunnel
                                  (lambda (sock)
-                                   (write-line str sock)
+                                   (write-line %test-string sock)
                                    (while (not (char-ready? sock)))
                                    (read-line sock)))))))
-   ;; Predicate
+   ;; Handle the result.
    (lambda (result)
-     (string=? result "hello world"))))
+     result)))
 
 
 (test-assert-with-log "channel-{listen,cancel}-forward"
