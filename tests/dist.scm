@@ -1,6 +1,6 @@
 ;;; dist.scm -- Testing of the distributed forms
 
-;; Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
