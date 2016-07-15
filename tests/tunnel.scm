@@ -82,19 +82,26 @@
 
 ;; Create a tunnel, check the result.
 (test-assert-with-log "make-tunnel"
-  (call-with-connected-session/tunnel
-   (lambda (session)
-     (let* ((local-port (get-unused-port))
-            (remote-host "www.example.org")
-            (tunnel  (make-tunnel session
-                                  #:port  local-port
-                                  #:host remote-host)))
-       (and (eq?      (tunnel-session tunnel)      session)
-            (string=? (tunnel-bind-address tunnel) "127.0.0.1")
-            (eq?      (tunnel-port tunnel)         local-port)
-            (eq?      (tunnel-host-port tunnel)    local-port)
-            (eq?      (tunnel-host tunnel)         remote-host)
-            (eq?      (tunnel-reverse? tunnel)     #f))))))
+  (run-client-test
+   ;; server
+   (lambda (server)
+     (start-server/dt-test server
+                           (lambda (channel)
+                             (write-line (read-line channel) channel))))
+   (lambda ()
+     (call-with-connected-session/tunnel
+      (lambda (session)
+        (let* ((local-port (get-unused-port))
+               (remote-host "www.example.org")
+               (tunnel  (make-tunnel session
+                                     #:port  local-port
+                                     #:host remote-host)))
+          (and (eq?      (tunnel-session tunnel)      session)
+               (string=? (tunnel-bind-address tunnel) "127.0.0.1")
+               (eq?      (tunnel-port tunnel)         local-port)
+               (eq?      (tunnel-host-port tunnel)    local-port)
+               (eq?      (tunnel-host tunnel)         remote-host)
+               (eq?      (tunnel-reverse? tunnel)     #f))))))))
 
 
 ;; Client calls 'call-with-ssh-forward' with a procedure which sends a string

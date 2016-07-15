@@ -171,7 +171,10 @@ SSH session object, return the result of the procedure call.  The session is
 disconnected when the PROC is finished."
   (let ((session (make-session-for-test)))
     (dynamic-wind
-      (lambda () (connect! session))
+      (lambda ()
+        (let ((result (connect! session)))
+          (unless (equal? result 'ok)
+            (error "Could not connect to a server" session result))))
       (lambda () (proc session))
       (lambda () (disconnect! session)))))
 
