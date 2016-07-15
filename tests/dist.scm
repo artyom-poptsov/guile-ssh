@@ -207,22 +207,17 @@
              (message-reply-success msg)))))))
    ;; Client
    (lambda ()
-     (let ((session (make-session-for-test)))
-       (session-set! session 'log-verbosity 'functions)
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
 
-       (let ((result (connect! session)))
-         (or (equal? result 'ok)
-             (error "Could not connect to a server" session result)))
+        (unless (equal? (userauth-none! session) 'success)
+          (error "Could not authenticate with a server" session))
 
-       (authenticate-server session)
-
-       (or (equal? (userauth-none! session) 'success)
-           (error "Could not authenticate with a server" session))
-
-       (let ((n (make-node session #:start-repl-server? #f)))
-         (= (with-ssh n
-              (+ 21 21))
-            42))))))
+        (let ((n (make-node session #:start-repl-server? #f)))
+          (= (with-ssh n
+                       (+ 21 21))
+             42)))))))
 
 ;;;
 
