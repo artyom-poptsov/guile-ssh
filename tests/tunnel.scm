@@ -168,8 +168,7 @@
           (call-with-ssh-forward tunnel
                                  (lambda (sock)
                                    (write-line %test-string sock)
-                                   (while (not (char-ready? sock)))
-                                   (read-line sock)))))))
+                                   (poll sock read-line)))))))
    ;; Handle the result.
    (lambda (result)
      result)))
