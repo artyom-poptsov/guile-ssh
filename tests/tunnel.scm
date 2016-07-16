@@ -77,8 +77,7 @@
         (call-with-forward-channel session
           (lambda (channel)                                   
             (write-line %test-string channel)
-            (while (not (char-ready? channel)))
-            (read-line channel))))))))
+            (poll channel read-line))))))))
 
 ;; Create a tunnel, check the result.
 (test-assert-with-log "make-tunnel"
