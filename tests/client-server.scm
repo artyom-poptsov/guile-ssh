@@ -466,33 +466,31 @@
             (else
              (message-reply-success msg))))))))
 
-(define (make-session/channel-test)
-  "Make a session for a channel test."
-  (define max-tries 30)
-  (let loop ((session (make-session-for-test))
-             (count   max-tries))
-    (if (not (eq? (connect! session) 'ok))
-        (begin
-          (format-log/scm 'nolog
-                          "make-session/channel-test"
-                          "Unable to connect in ~d tries: ~a~%"
-                          (- max-tries count)
-                          session)
-          (disconnect! session)
-          (set! session #f)
-          (sleep 1)
-          (if (zero? count)
-              (format-log/scm 'nolog
-                              "make-session/channel-test"
-                              "~a"
-                              "Giving up ...")
-              (loop (make-session-for-test)
-                    (1- count))))
-        (begin
-          (authenticate-server session)
-          (userauth-none! session)
-          session))))
+(define (call-with-connected-session/channel-test proc)
+  (define (loop count)
+    (catch #t
+      (lambda ()
+        (call-with-connected-session
+         (lambda (session)
+           (authenticate-server session)
+           (userauth-none! session)
+           (proc session))))
+      (lambda (key args)
+        (format-log/scm 'nolog
+                        "make-session/channel-test"
+                        "Unable to connect in ~d tries: ~a~%"
+                        (- max-tries count)
+                        session)
+        (sleep 1)
+        (if (zero? count)
+            (format-log/scm 'nolog
+                            "make-session/channel-test"
+                            "~a"
+                            "Giving up ...")
+            (loop (1- count))))))
+  (loop 30))
 
+
 (test-assert "make-channel"
   (run-client-test
 
@@ -502,8 +500,8 @@
 
    ;; client
    (lambda ()
-     (let ((session (make-session/channel-test)))
-       (make-channel session)))))
+     (call-with-connected-session/channel-test
+      make-channel))))
 
 (test-assert-with-log "channel-get-session"
   (run-client-test
@@ -514,9 +512,10 @@
 
    ;; client
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (make-channel session)))
-       (eq? session (channel-get-session channel))))))
+     (call-with-connected-session/channel-test
+      (lambda (session)
+        (let ((channel (make-channel session)))
+          (eq? session (channel-get-session channel))))))))
 
 (test-assert-with-log "channel-open-session"
   (run-client-test
@@ -527,10 +526,11 @@
 
    ;; client
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (make-channel session)))
-       (channel-open-session channel)
-       (not (port-closed? channel))))))
+     (call-with-connected-session/channel-test
+      (lambda (session)
+        (let ((channel (make-channel session)))
+          (channel-open-session channel)
+          (not (port-closed? channel))))))))
 
 ;; Client sends "ping" as a command to execute, server replies with "pong"
 (test-assert-with-log "channel-request-exec"
@@ -542,13 +542,14 @@
 
    ;; client
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (make-channel session)))
-       (channel-open-session channel)
-       (channel-request-exec channel "ping")
-       (let ((res (read-line channel)))
-         (and res
-              (string=? "pong" res)))))))
+     (call-with-connected-session/channel-test
+      (lambda (session)
+        (let ((channel (make-channel session)))
+          (channel-open-session channel)
+          (channel-request-exec channel "ping")
+          (let ((res (read-line channel)))
+            (and res
+                 (string=? "pong" res)))))))))
 
 ;; Client sends "uname" as a command to execute, server returns exit status 0.
 (test-assert-with-log "channel-request-exec, exit status"
@@ -561,11 +562,12 @@
 
    ;; client
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (make-channel session)))
-       (channel-open-session channel)
-       (channel-request-exec channel "uname")
-       (channel-get-exit-status channel)))))
+     (call-with-connected-session/channel-test
+      (lambda (session)
+        (let ((channel (make-channel session)))
+          (channel-open-session channel)
+          (channel-request-exec channel "uname")
+          (channel-get-exit-status channel)))))))
 
 
 ;; data transferring
@@ -589,15 +591,16 @@
 
    ;; client
    (lambda ()
-     (let* ((session (make-session/channel-test))
-            (channel (make-channel/dt-test session))
-            (str "Hello Scheme World!"))
-       (write-line str channel)
-       (poll channel
-             (lambda args
-               (let ((res (read-line channel)))
-                 (disconnect! session)
-                 (equal? res str))))))))
+     (call-with-connected-session/channel-test
+      (lambda (session)
+        (let ((channel (make-channel/dt-test session))
+              (str "Hello Scheme World!"))
+          (write-line str channel)
+          (poll channel
+                (lambda args
+                  (let ((res (read-line channel)))
+                    (disconnect! session)
+                    (equal? res str))))))))))
 
 
 (test-assert-with-log "data transferring, bytevector"
@@ -615,14 +618,15 @@
 
      ;; client
      (lambda ()
-       (let* ((session (make-session/channel-test))
-              (channel (make-channel/dt-test session))
-              (vect    (make-bytevector vect-size vect-fill)))
-         (put-bytevector channel vect)
-         (poll channel
-               (lambda args
-                 (let ((res (get-bytevector-n channel vect-size)))
-                   (equal? res vect)))))))))
+       (call-with-connected-session/channel-test
+        (lambda (session)
+          (let ((channel (make-channel/dt-test session))
+                (vect    (make-bytevector vect-size vect-fill)))
+            (put-bytevector channel vect)
+            (poll channel
+                  (lambda args
+                    (let ((res (get-bytevector-n channel vect-size)))
+                      (equal? res vect)))))))))))
 
 
 ;;;
