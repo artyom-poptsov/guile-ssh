@@ -1,9 +1,9 @@
 ## Config file for GNU Automake. 
 ##
-## Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2013, 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of Guile-SSH.
-## 
+##
 ## Guile-SSH is free software: you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
 ## published by the Free Software Foundation, either version 3 of the
@@ -19,7 +19,7 @@
 
 ACLOCAL_AMFLAGS = -I m4 --install
 
-SUBDIRS = am libguile-ssh examples build-aux m4 doc tests modules
+SUBDIRS = am libguile-ssh examples build-aux m4 doc modules tests
 
 EXTRA_DIST = \
 	.dir-locals.el			\
