@@ -77,6 +77,8 @@
             rrepl-skip-to-prompt
             rrepl-get-result))
 
+(define %guile-default-repl-port 37146)
+
 
 (define (eof-or-null? str)
   "Return #t if a STR is an EOF object or an empty string, #f otherwise."
@@ -281,10 +283,11 @@ listens on an expected port, return #f otherwise."
     (or (and (zero? rc)
              (guile-up-and-running?))
         ;; Check the default port.
-        (receive (result rc)
-            (rexec node "pgrep --full 'guile --listen'")
-          (and (zero? rc)
-               (guile-up-and-running?))))))
+        (and (= (node-repl-port node) %guile-default-repl-port)
+             (receive (result rc)
+                 (rexec node "pgrep --full 'guile --listen'")
+               (and (zero? rc)
+                    (guile-up-and-running?)))))))
 
 
 (define (node-run-server node)
