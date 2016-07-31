@@ -268,16 +268,23 @@ result, a number of the evaluation, a module name and a language name.  Throw
 (define (node-server-running? node)
   "Check if a RREPL is running on a NODE, return #t if it is running and
 listens on an expected port, return #f otherwise."
+  (define (guile-up-and-running?)
+    (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
+      (and (channel-open? rp)
+           (let ((line (read-line rp)))
+             (close rp)
+             (and (not (eof-object? line)))
+                  (string-match "^GNU Guile .*" line)))))
   (receive (result rc)
       (rexec node (format #f "pgrep --full 'guile --listen=~a'"
                           (node-repl-port node)))
-    (and (zero? rc)
-         (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
-           (and (channel-open? rp)
-                (let ((line (read-line rp)))
-                  (close rp)
-                  (and (not (eof-object? line))
-                       (string-match "^GNU Guile .*" line))))))))
+    (or (and (zero? rc)
+             (guile-up-and-running?))
+        ;; Check the default port.
+        (receive (result rc)
+            (rexec node "pgrep --full 'guile --listen'")
+          (and (zero? rc)
+               (guile-up-and-running?))))))
 
 
 (define (node-run-server node)
