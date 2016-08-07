@@ -154,7 +154,9 @@
    (lambda (server)
      (start-server/dt-test server
                            (lambda (channel)
-                             (write-line (read-line channel) channel))))
+                             (poll channel
+                                   (lambda (channel)
+                                     (write-line (read-line channel) channel))))))
    ;; Client (call/pf)
    (lambda ()
      (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
