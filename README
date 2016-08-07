@@ -105,6 +105,7 @@ Examples, in =${prefix}/share/guile-ssh/examples=:
  - rrepl.scm    -- Remote REPL example.
  - sscp.scm     -- Scheme secure copy.
  - pg-tunnel.scm -- Connect to a PostgreSQL instance through an SSH tunnel.
+ - uptop.scm    -- Uppercase =top=, through a remote pipe.
 
 * Installation
 
