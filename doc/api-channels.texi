@@ -53,6 +53,8 @@ Run a shell @var{command} without an interactive shell.  The @var{channel}
 must be open.  Throw @code{guile-ssh-error} on error.  Return value is
 undefined.
 
+This procedure is a low-level one and you should use remote pipes instead (@pxref{Remote Pipes}).
+
 @strong{Note} that the procedure only can be used to execute a single command
 on the remote host, so you should close the channel after
 @code{channel-request-exec}.  If you want to execute another command then you
