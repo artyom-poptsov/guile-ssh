@@ -10,4 +10,5 @@ rpc/client.scm
 rpc/server.scm
 sscp.scm
 pg-tunnel.scm
+uptop.scm
 Makefile.in

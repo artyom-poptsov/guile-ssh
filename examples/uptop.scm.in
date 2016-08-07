@@ -1,0 +1,82 @@
+#!@GUILE@ \
+--debug -e main
+!#
+
+;;; uptop.scm -- Uppercase top.
+
+;; Copyright (C) 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;;
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+;;; Commentary:
+
+;; Connect to a remote host, execute 'top' command on it and print the output
+;; in uppercase letters.
+
+
+;;; Code:
+
+(use-modules (srfi srfi-41)             ; streams
+             (ssh session)
+             (ssh auth)
+             (ssh popen)                ; remote pipes
+             (ssh channel))             ; channel-set-pty-size!
+
+(define (pipe->stream p)
+  "Convert a pipe P to a SRFI-41 stream."
+  (stream-let loop ((c (read-char p)))
+    (if (eof-object? c)
+        (begin
+          (close-input-port p)
+          stream-null)
+        (stream-cons c (loop (read-char p))))))
+
+(define (open-remote-input-pipe/pty* session command . args)
+  "Open remote input pipe with PTY, run a COMMAND with ARGS."
+  (define OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
+  (let ((p (apply open-remote-pipe* session OPEN_PTY_READ command args)))
+    (channel-set-pty-size! p 80 40)
+    p))
+
+(define char-upcase/skip-esc
+  (let ((state 'regular-char))
+    (lambda (chr)
+      "Return the uppercase character version of a CHR, skip therminal escape
+sequences."
+      (cond
+       ((char=? chr (integer->char 27))
+        (set! state 'escape-sequence)
+        chr)
+       ((char=? chr #\m)
+        (if (equal? state 'escape-sequence)
+            (begin
+              (set! state 'regular-char)
+              chr)
+            (char-upcase chr)))
+       (else
+        (char-upcase chr))))))
+
+
+;;;
+
+(define (main args)
+  "Entry point."
+  (let ((s (make-session #:host (cadr args))))
+    (connect! s)
+    (userauth-agent! s)
+    (let ((rs (pipe->stream (open-remote-input-pipe/pty* s "top" "-u $USER"))))
+      (stream-for-each display (stream-map char-upcase/skip-esc rs)))))
+
+;;; uptop.scm ends here.

@@ -49,3 +49,13 @@ $ sscp avp@127.0.0.1:/etc/profile profile
 $ ./pg-tunnel.scm --host=example.org --dbname=example --user=alice \
     'select * from people'
 #+END_EXAMPLE
+** =uptop.scm=
+   Connect to a remote host, execute =top= command on it and print the output
+   in uppercase letters, with terminal control characters intact.
+
+   The program shows usage of remote pipes (from =(ssh popen)= module.)
+*** Usage
+#+BEGIN_EXAMPLE
+./uptop.scm <hostname>
+#+END_EXAMPLE
+    The program can be stopped by hitting Ctrl-C.
