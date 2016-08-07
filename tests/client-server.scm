@@ -402,6 +402,22 @@
         (let ((prvkey (private-key-from-file %rsakey)))
           (userauth-public-key! session prvkey)))))))
 
+
+;;; 'userauth-public-key/auto!'
+
+;; The procedure called with a wrong object as a parameter which leads to an
+;; exception.
+(test-error-with-log "userauth-public-key/auto!, session: non-session object"
+  'wrong-type-arg
+  (userauth-public-key/auto! "Not a session."))
+
+;; Client tries to authenticate using a non-connected session which leads to
+;; an exception.
+(test-error-with-log "userauth-public-key/auto!, session: non-connected session"
+  'wrong-type-arg
+  (userauth-public-key/auto! (make-session-for-test)))
+
+
 ;;;
 
 
