@@ -141,6 +141,16 @@
    (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa))
    %ecdsakey-pub-string))
 
+(test-assert-with-log "string->public-key, RSA, gc test"
+  (let ((max-keys 1000))
+    (do ((idx 1 (+ idx 1)))
+        ((> idx max-keys))
+      (when (zero? (euclidean-remainder idx 100))
+        (format-log/scm 'nolog "" (format #f "~d / ~d keys created ..."
+                                          idx max-keys)))
+      (public-key->string (string->public-key %rsakey-pub-string 'rsa)))
+    #t))
+
 
 (test-assert-with-log "make-keypair"
   (and (let ((key (make-keypair 'rsa 1024)))
