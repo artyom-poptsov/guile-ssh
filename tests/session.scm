@@ -31,6 +31,16 @@
 (test-assert "%make-session"
   (%make-session))
 
+(test-assert-with-log "%make-session, gc test"
+  (let ((max-sessions 1000))
+    (do ((idx 1 (+ idx 1)))
+        ((> idx max-sessions))
+      (when (zero? (euclidean-remainder idx 100))
+        (format-log/scm 'nolog "" (format #f "~d / ~d sessions created ..."
+                                          idx max-sessions)))
+      (%make-session))
+    #t))
+
 (test-assert "session?"
   (let ((session (%make-session))
         (x       "string"))

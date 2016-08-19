@@ -42,6 +42,11 @@ mark_sftp_session (SCM sftp_session)
 static size_t
 free_sftp_session (SCM sftp_session)
 {
+  if (! SCM_SMOB_PREDICATE (sftp_session_tag, sftp_session))
+    {
+      _ssh_log (SSH_LOG_FUNCTIONS, "free_sftp_session", "%s", "already freed");
+      return 0;
+    }
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
   sftp_free (sftp_sd->sftp_session);
   return 0;

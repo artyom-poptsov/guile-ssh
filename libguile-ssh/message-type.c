@@ -41,6 +41,11 @@ mark_message (SCM message)
 size_t
 free_message (SCM message)
 {
+  if (! SCM_SMOB_PREDICATE (message_tag, message))
+    {
+      _ssh_log (SSH_LOG_FUNCTIONS, "free_message", "%s", "already freed");
+      return 0;
+    }
   struct message_data *msg_data = _scm_to_message_data (message);
   ssh_message_free (msg_data->message);
   return 0;

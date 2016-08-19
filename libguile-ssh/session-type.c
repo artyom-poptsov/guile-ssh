@@ -41,6 +41,11 @@ mark_session (SCM session_smob)
 size_t
 free_session (SCM session_smob)
 {
+  if (! SCM_SMOB_PREDICATE (session_tag, session_smob))
+    {
+      _ssh_log (SSH_LOG_FUNCTIONS, "free_session", "%s", "already freed");
+      return 0;
+    }
   struct session_data *data = _scm_to_session_data (session_smob);
 
   ssh_disconnect (data->ssh_session);
