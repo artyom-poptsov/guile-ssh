@@ -97,6 +97,8 @@ CLEANFILES = \
 	client-server-libssh.log		\
 	dist-errors.log				\
 	dist-libssh.log				\
+	key-errors.log				\
+	key-libssh.log				\
 	popen-errors.log			\
 	popen-libssh.log			\
 	server-client-errors.log		\
