@@ -42,7 +42,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    fail when '-j' option is used with 'make check', with value greater than 1
    (e.g. '-j4'; tested on Gentoo GNU/Linux, 4-core Intel Atom CPU)
 
-   Though sometimes tests fail, so there's still a big room for improvement.
+   Though sometimes tests fail, so there's still a room for improvement.
 
    Another improvement is that SRFI-64 module and Guile-SSH common test module
    are now compiled before use, that should speed up the tests.
