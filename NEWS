@@ -20,7 +20,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    tested.
 
    Note that [[https://www.libssh.org/2016/02/23/libssh-0-7-3-security-and-bugfix-release/][CVE-2016-0739 was found in previous libssh versions]]; though you
-   still may use 0.6.4, you really should stick with 0.7.3+ for aforementioned
+   may still use 0.6.4, you really should stick with 0.7.3+ for aforementioned
    reason. 0.7.3 is already should be in your distro's repository, so that
    won't be a big deal I guess.
 ** Bugfixes
