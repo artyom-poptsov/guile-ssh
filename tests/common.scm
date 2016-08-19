@@ -469,6 +469,7 @@ printer."
     (setup-error-logging! errors-log-file)))
 
 (define (test-begin-with-log test-name)
+  (set-log-verbosity! 'functions)
   (test-begin test-name)
   (setup-test-suite-logging! test-name))
 

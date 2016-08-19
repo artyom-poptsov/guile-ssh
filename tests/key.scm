@@ -33,15 +33,15 @@
   (or (not %openssl?)
       test))
 
-(test-begin "key")
+(test-begin-with-log "key")
 
-(test-assert "private-key-from-file"
+(test-assert-with-log "private-key-from-file"
   (and (private-key-from-file %rsakey)
        (private-key-from-file %dsakey)
        (when-openssl
         (private-key-from-file %ecdsakey))))
 
-(test-assert "public-key-from-file"
+(test-assert-with-log "public-key-from-file"
   (and (public-key-from-file %rsakey-pub)
        (public-key-from-file %dsakey-pub)
        (when-openssl
@@ -72,7 +72,7 @@
        (not (private-key? *rsa-pub-key*))
        (not (private-key? "not a key"))))
 
-(test-assert "public-key?"
+(test-assert-with-log "public-key?"
   (and (public-key? *rsa-pub-key*)
 
        ;; XXX: Currently a SSH key that has been read from a file
@@ -81,20 +81,20 @@
 
        (not (public-key? "not a key"))))
 
-(test-assert "private-key->public-key"
+(test-assert-with-log "private-key->public-key"
   (and (private-key->public-key *rsa-key*)
        (private-key->public-key *dsa-key*)
        (when-openssl
         (private-key->public-key *ecdsa-key*))))
 
-(test-assert "get-key-type"
+(test-assert-with-log "get-key-type"
   (and (eq? 'rsa   (get-key-type *rsa-key*))
        (eq? 'dss   (get-key-type *dsa-key*))
        (when-openssl
         (eq? 'ecdsa (get-key-type *ecdsa-key*)))))
 
 
-(test-assert "private-key-to-file"
+(test-assert-with-log "private-key-to-file"
   (when-openssl
    (let ((file-name "./tmp-rsa-key"))
      (private-key-to-file *rsa-key* file-name)
@@ -142,7 +142,7 @@
    %ecdsakey-pub-string))
 
 
-(test-assert "make-keypair"
+(test-assert-with-log "make-keypair"
   (and (let ((key (make-keypair 'rsa 1024)))
          (and (key? key)
               (eq? (get-key-type key) 'rsa)))
