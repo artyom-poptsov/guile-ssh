@@ -3,7 +3,7 @@ dnl   Process this file with autoconf to produce configure.
 dnl
 
 define(GUILE_SSH_CONFIGURE_COPYRIGHT, [[
-Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+Copyright (C) 2013, 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 This file is part of Guile-SSH.
 
@@ -21,7 +21,7 @@ You should have received a copy of the GNU General Public License
 along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 ]])
 
-AC_INIT([Guile-SSH], [0.9.0], [poptsov.artyom@gmail.com],
+AC_INIT([Guile-SSH], [0.10.0], [poptsov.artyom@gmail.com],
                      [guile-ssh],
                      [https://github.com/artyom-poptsov/guile-ssh])
 
@@ -70,7 +70,7 @@ if test "x$guilesitedir" = "x"; then
 fi
 AC_SUBST([guilesitedir])
 
-LIBGUILE_SSH_INTERFACE="9:0:0"
+LIBGUILE_SSH_INTERFACE="10:0:0"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 GUILE_EFFECTIVE_VERSION=`$GUILE -c '(display (effective-version))'`

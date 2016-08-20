@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.10.0 (2016-08-20)
 ** Add support of Guile 2.0.12
    Guile-SSH now builds (and works quite well, as far as I can see) with Guile
    2.0.9 and 2.0.12.  Unit tests are passing too.
