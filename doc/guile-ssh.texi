@@ -185,6 +185,8 @@ through bug reports or patches:
 
 @itemize @bullet
 @item Ludovic Courtès @email{ludo@@gnu.org}
+@item David Thompson @email{davet@@gnu.org}
+@item SaffronSnail @url{https://github.com/SaffronSnail}
 @end itemize
 
 
