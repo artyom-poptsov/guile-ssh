@@ -3,6 +3,9 @@ Authors of Guile-SSH
 See also files THANKS and ChangeLog.
 
 * Artyom V. Poptsov <poptsov.artyom@gmail.com>
+  The author and current maintainer.
+* David Kastrup <dak@gnu.org>
+  Pointed out to the bug in Guile-SSH SMOB freeing code.
 * David Thompson <davet@gnu.org>
   Bug reports, various comments and suggestions.
 * Ludovic Courtès <ludo@gnu.org>
