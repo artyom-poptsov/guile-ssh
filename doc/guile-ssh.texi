@@ -187,6 +187,7 @@ through bug reports or patches:
 @item Ludovic Courtès @email{ludo@@gnu.org}
 @item David Thompson @email{davet@@gnu.org}
 @item SaffronSnail @url{https://github.com/SaffronSnail}
+@item David Kastrup @email{dak@@gnu.org>}
 @end itemize
 
 
