@@ -7,12 +7,14 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.10.1 (2016-10-09)
 ** Bugfixes
 *** Fix SMOB freeing callbacks
     Callbacks for many Guile-SSH objects would always fail to free allocated
     resources due to wrong check added in 0.10.0.  The problem should be fixed
     now.
+** Change default 'guilesitedir' to 'PREFIX/share/guile/site/X.Y'
+   from 'PREFIX/share/guile-ssh/ssh/'
 
 * Changes in version 0.10.0 (2016-08-20)
 ** Add support of Guile 2.0.12
