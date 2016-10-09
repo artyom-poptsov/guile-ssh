@@ -48,7 +48,6 @@ AC_ARG_WITH([guilesitedir],
 # Check for needed libraries
 # -------------------------------------------------------------------------------
 
-PKG_CHECK_MODULES([GUILE_2], [guile-2.0])
 PKG_CHECK_MODULES([LIBSSH], [libssh >= 0.6.4])
 PKG_CHECK_MODULES([LIBSSH_0_7_3], [libssh >= 0.7.3],
                                 [AC_DEFINE(HAVE_LIBSSH_0_7_3, 1, [Use libssh 0.7.3])],
@@ -58,15 +57,22 @@ PKG_CHECK_MODULES([LIBSSH_0_7_3], [libssh >= 0.7.3],
 
 # -------------------------------------------------------------------------------
 
+dnl These macros must be provided by guile.m4.
+m4_pattern_forbid([^GUILE_PKG$])
+m4_pattern_forbid([^GUILE_PROGS$])
+
+dnl Currently only Guile 2.0 is supported.  Use this macro so that
+dnl 'GUILE_EFFECTIVE_VERSION' is defined here.
+GUILE_PKG([2.0])
+
 GUILE_PROGS
 GUILE_FLAGS
 GUILE_SITE_DIR
 
 LT_INIT()
 
-pkgdatadir="$datadir/$PACKAGE"
 if test "x$guilesitedir" = "x"; then
-   guilesitedir="$pkgdatadir"
+   guilesitedir="$datadir/guile/site/$GUILE_EFFECTIVE_VERSION"
 fi
 AC_SUBST([guilesitedir])
 
