@@ -7,6 +7,13 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Bugfixes
+*** Fix SMOB freeing callbacks
+    Callbacks for many Guile-SSH objects would always fail to free allocated
+    resources due to wrong check added in 0.10.0.  The problem should be fixed
+    now.
+
 * Changes in version 0.10.0 (2016-08-20)
 ** Add support of Guile 2.0.12
    Guile-SSH now builds (and works quite well, as far as I can see) with Guile

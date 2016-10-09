@@ -1,6 +1,6 @@
 /* session-type.c -- SSH session smob.
  *
- * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -41,15 +41,10 @@ mark_session (SCM session_smob)
 size_t
 free_session (SCM session_smob)
 {
-  if (! SCM_SMOB_PREDICATE (session_tag, session_smob))
-    {
-      _ssh_log (SSH_LOG_FUNCTIONS, "free_session", "%s", "already freed");
-      return 0;
-    }
-  struct session_data *data = _scm_to_session_data (session_smob);
+  struct session_data *sd = (struct session_data *) SCM_SMOB_DATA (session_smob);
 
-  ssh_disconnect (data->ssh_session);
-  ssh_free (data->ssh_session);
+  ssh_disconnect (sd->ssh_session);
+  ssh_free (sd->ssh_session);
 
   SCM_SET_SMOB_DATA (session_smob, NULL);
 

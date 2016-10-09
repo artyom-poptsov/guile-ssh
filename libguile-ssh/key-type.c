@@ -57,14 +57,7 @@ mark_key_smob (SCM key_smob)
 size_t
 free_key_smob (SCM arg1)
 {
-  struct key_data *data;
-  if (! SCM_SMOB_PREDICATE (key_tag, arg1))
-    {
-      _ssh_log (SSH_LOG_FUNCTIONS, "free_key_smob", "%s", "already freed");
-      return 0;
-    }
-
-  data = _scm_to_key_data (arg1);
+  struct key_data *data = (struct key_data *) SCM_SMOB_DATA (arg1);
 
   if (scm_is_false (data->parent))
     {

@@ -41,13 +41,8 @@ mark_server (SCM server)
 size_t
 free_server (SCM server)
 {
-  if (! SCM_SMOB_PREDICATE (server_tag, server))
-    {
-      _ssh_log (SSH_LOG_FUNCTIONS, "free_server", "%s", "already freed");
-      return 0;
-    }
-  struct server_data *server_data = _scm_to_server_data (server);
-  ssh_bind_free (server_data->bind);
+  struct server_data *sd = (struct server_data *) SCM_SMOB_DATA (server);
+  ssh_bind_free (sd->bind);
   return 0;
 }
 
