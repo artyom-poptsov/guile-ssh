@@ -12,6 +12,7 @@ Makefile.in
 configure
 
 *.tar.gz
+*.tar.gz.sig
 
 # Ignore files produced by the magic snarfer
 *.x
