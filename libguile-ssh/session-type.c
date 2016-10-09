@@ -39,14 +39,14 @@ mark_session (SCM session_smob)
 
 /* Handle GC'ing of the session smob. */
 size_t
-free_session (SCM session_smob)
+free_session (SCM session)
 {
-  struct session_data *sd = (struct session_data *) SCM_SMOB_DATA (session_smob);
+  struct session_data *sd = (struct session_data *) SCM_SMOB_DATA (session);
 
   ssh_disconnect (sd->ssh_session);
   ssh_free (sd->ssh_session);
 
-  SCM_SET_SMOB_DATA (session_smob, NULL);
+  SCM_SET_SMOB_DATA (session, NULL);
 
   return 0;
 }
