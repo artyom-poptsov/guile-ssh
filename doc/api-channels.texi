@@ -132,6 +132,48 @@ Get the session to which belongs the @var{channel}.  Throw
 @code{guile-ssh-error} on an error.  Return the session.
 @end deffn
 
+@deffn {Scheme Procedure} channel-send-eof! channel
+Send an end of file (EOF) on the @var{channel}.  This action doesn't close the
+@var{channel}; you may still read from it but not write.  Throw
+@code{guile-ssh-error} on an error.  Return value is undefined.
+
+Example:
+
+@lisp
+(use-modules (ice-9 rdelim)
+             ;; Guile-SSH modules.
+             (ssh auth)
+             (ssh popen)
+             (ssh session)
+             (ssh channel))
+
+;; Make a session
+(define s (make-session #:host "example.org"))
+
+;; Connect to the server
+(connect! s)
+
+;; Authenticate
+(userauth-agent! s)
+
+;; Open a remote pipe to 'wc' command running on
+;; the server.
+(let ((p (open-remote-pipe s "wc" OPEN_BOTH)))
+
+  ;; Send data to 'wc' command using the remote pipe.
+  (display "Hello Scheme World!" p)
+
+  ;; 'wc' reads data until EOF and writes its result
+  ;; afterwards.
+  (channel-send-eof! p)
+
+  ;; Read the 'wc' output.
+  (read-line p))
+@result{} "      0       3      19"
+@end lisp
+
+@end deffn
+
 @deffn {Scheme Procedure} channel-eof? channel
 Return @code{#t} if remote has sent @acronym{EOF}, @code{#f} otherwise.  Throw
 @code{guile-ssh-error} if the channel has been closed and freed.

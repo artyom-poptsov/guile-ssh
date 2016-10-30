@@ -646,6 +646,32 @@
 
 
 ;;;
+;;; Channels
+;;;
+
+;; Client opens a channel to a server, sends data and then sends EOF on the
+;; channel.  Server reads data and sends it back.  Client checks if the
+;; channel is closed for output, and reads the data.
+(test-assert-with-log "channel-send-eof!"
+  (run-client-test
+   (lambda (server)
+     (start-server/dt-test server
+                           (lambda (channel)
+                             (let ((str (read-line channel)))
+                               (write-line str channel)))))
+   (lambda ()
+     (call-with-connected-session/channel-test
+      (lambda (session)
+        (let ((channel (make-channel/dt-test session))
+              (str     "Hello Scheme World!"))
+          (write-line str channel)
+          (channel-send-eof! channel)
+          (and (input-port? channel)
+               (not (output-port? channel))
+               (string=? (read-line channel) str))))))))
+
+
+;;;
 
 (test-end "client-server")
 

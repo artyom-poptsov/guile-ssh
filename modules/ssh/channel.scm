@@ -1,6 +1,6 @@
 ;;; channel.scm -- API for SSH channel manipulation.
 
-;; Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013, 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -39,6 +39,7 @@
 ;;   channel-set-stream!
 ;;   channel-get-stream
 ;;   channel-open?
+;;   channel-send-eof!
 ;;   channel-eof?
 
 
@@ -66,6 +67,7 @@
             channel-get-session
             channel-get-exit-status
             channel-open?
+            channel-send-eof!
             channel-eof?))
 
 (define* (make-channel session #:optional (mode OPEN_BOTH))
@@ -113,6 +115,12 @@ incoming connection.  Return two values: the first value is the incoming
 channel, and the second value is a port number on which the connection was
 issued."
   (%channel-accept-forward session timeout))
+
+(define (channel-send-eof! channel)
+  "Send an end of file (EOF) on the CHANNEL.  This action doesn't close the
+channel; you may still read from it but not write.  Throw 'guile-ssh-error' on
+an error.  Return value is undefined."
+  (%channel-send-eof! channel))
 
 ;;;
 

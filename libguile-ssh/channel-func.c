@@ -468,6 +468,33 @@ SCM_DEFINE (guile_ssh_channel_is_open_p, "channel-open?", 1, 0, 0,
   return SCM_BOOL_F;
 }
 
+SCM_GSSH_DEFINE (gssh_channel_send_eof_x, "%channel-send-eof!",
+                 1, (SCM channel))
+#define FUNC_NAME s_gssh_channel_send_eof_x
+{
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  scm_t_bits pt_bits;
+  int rc;
+
+  GSSH_VALIDATE_CHANNEL_DATA (cd, channel, FUNC_NAME);
+
+  pt_bits = SCM_CELL_TYPE (channel);
+  if ((pt_bits & SCM_WRTNG) == 0)
+    {
+      guile_ssh_error1 (FUNC_NAME, "Could not send EOF on an input channel",
+                        channel);
+    }
+
+  rc = ssh_channel_send_eof (cd->ssh_channel);
+  if (rc == SSH_ERROR)
+    guile_ssh_error1 (FUNC_NAME, "Could not send EOF on a channel", channel);
+
+  SCM_SET_CELL_TYPE (channel, pt_bits & ~SCM_WRTNG);
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 SCM_DEFINE (guile_ssh_channel_is_eof_p, "channel-eof?", 1, 0, 0,
             (SCM channel),
             "\

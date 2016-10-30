@@ -7,6 +7,14 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** New procedures
+*** New procedure 'channel-send-eof!' in (ssh channel)
+    The procedure allows to send end-of-file (EOF) on a channel. This action
+    doesn't close the channel; you may still read from it but not write.
+    'channel-send-eof!' is handy when we deal with a remote command that reads
+    data until EOF (such as 'wc'.)
+
 * Changes in version 0.10.1 (2016-10-09)
 ** Bugfixes
 *** Fix SMOB freeing callbacks
