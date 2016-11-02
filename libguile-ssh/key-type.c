@@ -36,7 +36,7 @@
 
 scm_t_bits key_tag; /* Smob tag. */
 
-struct symbol_mapping key_types[] = {
+static const struct symbol_mapping key_types[] = {
   { "dss",     SSH_KEYTYPE_DSS     },
   { "rsa",     SSH_KEYTYPE_RSA     },
   { "rsa1",    SSH_KEYTYPE_RSA1    },
@@ -47,7 +47,7 @@ struct symbol_mapping key_types[] = {
 };
 
 /* Smob marking */
-SCM
+static SCM
 mark_key_smob (SCM key_smob)
 {
   struct key_data *kd = _scm_to_key_data (key_smob);
@@ -55,7 +55,7 @@ mark_key_smob (SCM key_smob)
 }
 
 /* Free the smob. */
-size_t
+static size_t
 free_key_smob (SCM arg1)
 {
   struct key_data *data = (struct key_data *) SCM_SMOB_DATA (arg1);
@@ -183,7 +183,7 @@ Return #t if X is a SSH private-key, #f otherwise.\
                         && _private_key_p (_scm_to_key_data (x)));
 }
 
-SCM
+static SCM
 equalp_key (SCM x1, SCM x2)
 {
   struct key_data *key1 = _scm_to_key_data (x1);

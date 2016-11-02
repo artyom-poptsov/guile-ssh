@@ -33,8 +33,6 @@ struct key_data {
   ssh_key ssh_key;
 };
 
-extern struct symbol_mapping key_types[];
-
 
 /* Procedures */
 
