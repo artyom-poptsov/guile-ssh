@@ -34,10 +34,10 @@ struct symbol_mapping {
 };
 
 extern SCM
-_ssh_const_to_scm (struct symbol_mapping *types, int value);
+_ssh_const_to_scm (const struct symbol_mapping *types, int value);
 
-extern struct symbol_mapping *
-_scm_to_ssh_const (struct symbol_mapping *types, SCM value);
+extern const struct symbol_mapping *
+_scm_to_ssh_const (const struct symbol_mapping *types, SCM value);
 
 extern SCM
 _scm_object_hex_address (SCM obj);

@@ -97,7 +97,7 @@ _ssh_key_type_to_scm (int type)
   return _ssh_const_to_scm (key_types, type);
 }
 
-struct symbol_mapping *
+const struct symbol_mapping *
 _scm_to_ssh_key_type (SCM type)
 {
   return _scm_to_ssh_const (key_types, type);
@@ -129,7 +129,7 @@ Return newly generated private key.  Throw `guile-ssh-error' on error.\
 #define FUNC_NAME s_guile_ssh_make_keypair
 {
   ssh_key key = NULL;
-  struct symbol_mapping *c_type = _scm_to_ssh_key_type (type);
+  const struct symbol_mapping *c_type = _scm_to_ssh_key_type (type);
   int c_length;
   int res;
 

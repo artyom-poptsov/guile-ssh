@@ -206,7 +206,7 @@ set_port_opt (ssh_session session, int type, SCM value)
 static inline int
 set_sym_opt (ssh_session session, int type, struct symbol_mapping *sm, SCM value)
 {
-  struct symbol_mapping *opt = _scm_to_ssh_const (sm, value);
+  const struct symbol_mapping *opt = _scm_to_ssh_const (sm, value);
   if (! opt)
     guile_ssh_error1 ("session-set!", "Wrong value", value);
   return ssh_options_set (session, type, &opt->value);
@@ -390,7 +390,7 @@ Return value is undefined.\
 #define FUNC_NAME s_guile_ssh_session_set
 {
   struct session_data* data = _scm_to_session_data (session);
-  struct symbol_mapping *opt;           /* Session option */
+  const struct symbol_mapping *opt;	/* Session option */
   int res;                              /* Result of a function call */
 
   SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
@@ -430,7 +430,7 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
 #define FUNC_NAME s_guile_ssh_session_get
 {
   struct session_data*sd     = _scm_to_session_data (session);
-  struct symbol_mapping *opt = NULL;
+  const struct symbol_mapping *opt = NULL;
   SCM value;                    /*Value of the option */
   int res;
 

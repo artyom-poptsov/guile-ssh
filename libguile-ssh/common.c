@@ -24,9 +24,9 @@
 
 /* Convert the SSH constant VALUE to a Scheme symbol */
 SCM
-_ssh_const_to_scm (struct symbol_mapping *types, int value)
+_ssh_const_to_scm (const struct symbol_mapping *types, int value)
 {
-  struct symbol_mapping *t;
+  const struct symbol_mapping *t;
   for (t = types; t->symbol; ++t)
     {
       if (t->value == value)
@@ -39,10 +39,10 @@ _ssh_const_to_scm (struct symbol_mapping *types, int value)
 
    Return the apropriate structure that contains the needed
    constant. */
-struct symbol_mapping *
-_scm_to_ssh_const (struct symbol_mapping *types, SCM value)
+const struct symbol_mapping *
+_scm_to_ssh_const (const struct symbol_mapping *types, SCM value)
 {
-  struct symbol_mapping *t;
+  const struct symbol_mapping *t;
   char *sym = scm_to_locale_string (scm_symbol_to_string (value));
   for (t = types; t->symbol; ++t)
     {

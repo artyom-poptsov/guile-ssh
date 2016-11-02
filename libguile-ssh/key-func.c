@@ -55,7 +55,7 @@ Throw `guile-ssh-error' on error.\
 #define FUNC_NAME s_guile_ssh_string_to_public_key
 {
   char *c_base64_str = NULL;
-  struct symbol_mapping *key_type = NULL;
+  const struct symbol_mapping *key_type = NULL;
   ssh_key ssh_public_key = NULL;
   int res;
 
@@ -256,7 +256,7 @@ Return a bytevector on success, #f on error.\
   size_t hash_len;
   int res;
   SCM ret;
-  struct symbol_mapping *hash_type = NULL;
+  const struct symbol_mapping *hash_type = NULL;
 
   SCM_ASSERT (scm_is_symbol (type), type, SCM_ARG2, FUNC_NAME);
 

@@ -182,7 +182,7 @@ undefined. \
 ")
 #define FUNC_NAME s_guile_ssh_write_log
 {
-  struct symbol_mapping *c_priority;
+  const struct symbol_mapping *c_priority;
   char *c_function_name;
   char *c_message;
 
@@ -212,7 +212,7 @@ error.  Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_set_log_verbosity_x
 {
-  struct symbol_mapping *opt = _scm_to_ssh_const (log_verbosity, verbosity);
+  const struct symbol_mapping *opt = _scm_to_ssh_const (log_verbosity, verbosity);
   int res;
 
   if (! opt)
