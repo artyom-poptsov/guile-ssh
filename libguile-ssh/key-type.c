@@ -41,6 +41,7 @@ struct symbol_mapping key_types[] = {
   { "rsa",     SSH_KEYTYPE_RSA     },
   { "rsa1",    SSH_KEYTYPE_RSA1    },
   { "ecdsa",   SSH_KEYTYPE_ECDSA   },
+  { "ed25519", SSH_KEYTYPE_ED25519 },
   { "unknown", SSH_KEYTYPE_UNKNOWN },
   { NULL,      -1                  }
 };
