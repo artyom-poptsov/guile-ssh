@@ -13,7 +13,13 @@ See also files THANKS and ChangeLog.
     m4/guile.m4, m4/lib-link.m4, m4/lib-ld.m4, m4/lib-prefix.m4,
     build-aux/compile, build-aux/config.rpath, Makefile.am, configure.ac
 
-  In subdirectory ssh, changes to:
+  In subdirectory libguile-ssh, changes to:
     channel-type.c
+    common.h
+    key-func.c
+    key-type.c
+    key-type.h
+    log.c
+    session-func.c
 
   Bug reports, various comments and suggestions.
