@@ -468,9 +468,9 @@ SCM_DEFINE (guile_ssh_channel_is_open_p, "channel-open?", 1, 0, 0,
   return SCM_BOOL_F;
 }
 
-SCM_GSSH_DEFINE (gssh_channel_send_eof_x, "%channel-send-eof!",
+SCM_GSSH_DEFINE (gssh_channel_send_eof, "%channel-send-eof",
                  1, (SCM channel))
-#define FUNC_NAME s_gssh_channel_send_eof_x
+#define FUNC_NAME s_gssh_channel_send_eof
 {
   struct channel_data *cd = _scm_to_channel_data (channel);
   scm_t_bits pt_bits;

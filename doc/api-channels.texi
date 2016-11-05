@@ -132,7 +132,7 @@ Get the session to which belongs the @var{channel}.  Throw
 @code{guile-ssh-error} on an error.  Return the session.
 @end deffn
 
-@deffn {Scheme Procedure} channel-send-eof! channel
+@deffn {Scheme Procedure} channel-send-eof channel
 Send an end of file (EOF) on the @var{channel}.  This action doesn't close the
 @var{channel}; you may still read from it but not write.  Throw
 @code{guile-ssh-error} on an error.  Return value is undefined.
@@ -165,7 +165,7 @@ Example:
 
   ;; 'wc' reads data until EOF and writes its result
   ;; afterwards.
-  (channel-send-eof! p)
+  (channel-send-eof p)
 
   ;; Read the 'wc' output.
   (read-line p))
