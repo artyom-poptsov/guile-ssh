@@ -9,6 +9,11 @@
 
 @printindex tp
 
+@node Procedure Index
+@unnumbered Procedure Index
+
+@printindex fn
+
 @node Concept Index
 @unnumbered Concept Index
 
