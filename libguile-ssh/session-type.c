@@ -82,7 +82,6 @@ print_session (SCM session, SCM port, scm_print_state *pstate)
   char *user = NULL;
   char *host = NULL;
   unsigned int ssh_port;
-  uint32_t smob_addr = (uint32_t) scm_object_address (session);
   int res;
 
   scm_puts ("#<session ", port);

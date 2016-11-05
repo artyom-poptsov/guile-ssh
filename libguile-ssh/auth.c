@@ -82,7 +82,6 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
   /* See "On the username" commentary above. */
   char *username = NULL;
 
-  ssh_string public_key;
   int res;
 
   /* Check types. */

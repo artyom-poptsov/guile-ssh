@@ -115,7 +115,6 @@ print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
 {
   struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
   ssh_session session = fd->file->sftp->session;
-  sftp_attributes attr = sftp_fstat (fd->file);
   char *user = NULL;
   char *host = NULL;
   unsigned int ssh_port;
@@ -156,7 +155,6 @@ static void
 ptob_flush (SCM sftp_file)
 #define FUNC_NAME "ptob_flush"
 {
-  struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
   scm_port *pt = SCM_PTAB_ENTRY (sftp_file);
   size_t wrsize = pt->write_pos - pt->write_buf;
 

@@ -288,8 +288,6 @@ get_auth_req (ssh_message msg, SCM scm_msg) /* FIXME: accept only SCM */
   const char *password = ssh_message_auth_password (msg);
   ssh_key public_key   = ssh_message_auth_pubkey (msg);
   SCM pkey_state;
-  SCM pkey_smob;
-  struct key_data *pkey_data;
 
   if (user)
     SCM_SIMPLE_VECTOR_SET (result, 0, scm_from_locale_string (user));
