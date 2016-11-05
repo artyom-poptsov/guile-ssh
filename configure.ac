@@ -35,6 +35,14 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])], [AC_SUBST([AM_DEFAULT_VERB
 
 AC_PROG_CC
 
+if test "x$GCC" = "xyes"; then
+  # Use compiler warnings.
+  WARN_CFLAGS="-Wall"
+else
+  WARN_CFLAGS=""
+fi
+AC_SUBST([WARN_CFLAGS])
+
 AC_ARG_WITH([guilesitedir],
             [AS_HELP_STRING([--with-guilesitedir],
                             [use the specified installation path for Guile modules])],
