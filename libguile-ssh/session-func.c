@@ -431,8 +431,8 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
 {
   struct session_data*sd     = _scm_to_session_data (session);
   const struct symbol_mapping *opt = NULL;
-  SCM value;                    /*Value of the option */
-  int res;
+  SCM value = SCM_UNDEFINED;                    /*Value of the option */
+  int res = SSH_OK;
 
   SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
 
