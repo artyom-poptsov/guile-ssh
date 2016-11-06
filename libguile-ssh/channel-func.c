@@ -18,6 +18,7 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
 #include <libguile.h>
 #include <libssh/libssh.h>
 #include <libssh/server.h>
@@ -216,6 +217,9 @@ Return value is undefined.\
 }
 #undef FUNC_NAME
 
+/* Asserts:
+   - RES is one of the valid contants described in 'libssh.h'.
+ */
 SCM
 _ssh_result_to_symbol (int res)
 {
@@ -227,6 +231,10 @@ _ssh_result_to_symbol (int res)
       return scm_from_locale_symbol ("again");
     case SSH_ERROR:
       return scm_from_locale_symbol ("error");
+
+    default:                    /* Must not happen. */
+      assert (0);
+      return SCM_BOOL_F;
     }
 }
 
