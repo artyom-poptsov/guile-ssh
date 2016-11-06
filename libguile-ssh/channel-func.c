@@ -437,6 +437,8 @@ Return one of the following symbols: \"stdout\", \"stderr\".\
 
   guile_ssh_error1 (FUNC_NAME, "Wrong stream.",
                     scm_from_int (cd->is_stderr));
+
+  return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
 
