@@ -1,6 +1,6 @@
 /* sftp-session-type.c -- SFTP session smob.
  *
- * Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
@@ -57,6 +57,7 @@ print_sftp_session (SCM sftp_session, SCM port, scm_print_state *pstate)
   scm_puts ("#<sftp-session ", port);
   scm_display (_scm_object_hex_address (sftp_session), port);
   scm_puts (">", port);
+  return 1;
 }
 
 
