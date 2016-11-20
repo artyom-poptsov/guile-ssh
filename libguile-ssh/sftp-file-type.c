@@ -1,6 +1,6 @@
 /* sftp-file-type.c -- SFTP file type.
  *
- * Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -182,6 +182,8 @@ ptob_close (SCM sftp_file)
   scm_gc_free (pt->write_buf, pt->write_buf_size, "port write buffer");
   scm_gc_free (pt->read_buf,  pt->read_buf_size, "port read buffer");
   SCM_SETSTREAM (sftp_file, NULL);
+
+  return 1;
 }
 
 
