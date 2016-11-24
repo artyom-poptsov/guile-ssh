@@ -21,7 +21,7 @@ You should have received a copy of the GNU General Public License
 along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 ]])
 
-AC_INIT([Guile-SSH], [0.10.1], [poptsov.artyom@gmail.com],
+AC_INIT([Guile-SSH], [0.10.2], [poptsov.artyom@gmail.com],
                      [guile-ssh],
                      [https://github.com/artyom-poptsov/guile-ssh])
 
@@ -84,7 +84,7 @@ if test "x$guilesitedir" = "x"; then
 fi
 AC_SUBST([guilesitedir])
 
-LIBGUILE_SSH_INTERFACE="10:1:0"
+LIBGUILE_SSH_INTERFACE="10:2:0"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 GUILE_EFFECTIVE_VERSION=`$GUILE -c '(display (effective-version))'`

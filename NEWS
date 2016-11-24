@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.10.2 (2016-11-25)
 ** New procedures
 *** New procedure 'channel-send-eof' in (ssh channel)
     The procedure allows to send end-of-file (EOF) on a channel. This action
@@ -16,6 +16,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     data until EOF (such as 'wc'.)
 ** Documentation
 *** Add procedure index
+** Misc
+*** Fixed several compilation warnings
 
 * Changes in version 0.10.1 (2016-10-09)
 ** Bugfixes
