@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2015 Artyom V. Poptsov
+@c Copyright (C) 2015, 2016 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Distributed Forms
@@ -35,6 +35,10 @@ If @var{stop-repl-server?} is set to #t then a REPL server will be stopped as
 soon as an evaluation is done.  Alternatively you could use
 @code{node-stop-server} procedure from @code{(ssh dist node)} to stop the
 server when it is not needed anymore.
+
+@strong{Note} that for @var{start-repl-server?} and @var{stop-repl-server?} to
+work properly you need @url{https://gitlab.com/procps-ng/procps, procps}
+version 3.3.12 or later on the server side.
 
 @end deffn
 
@@ -157,6 +161,12 @@ evaluation result, a number of the evaluation, a module name and a language
 name.  Throw @code{node-repl-error} if a non-recoverable error occured, or
 @code{node-error} if the evaluation potentially could be succesfully evaluated
 on another node.
+
+@strong{Note} that @url{https://gitlab.com/procps-ng/procps, procps} version
+3.3.12 or later is needed on the server side in case of either
+@code{start-repl-server?} or @code{stop-repl-server?} was set to @code{#t} for
+a @var{NODE} (see the documentation for @code{make-node}.)
+
 @end deffn
 
 @deffn {Scheme Procedure} node-open-rrepl node
