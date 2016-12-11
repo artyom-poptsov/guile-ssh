@@ -60,6 +60,7 @@
   #:use-module (ssh channel)
   #:use-module (ssh popen)
   #:use-module (ssh tunnel)
+  #:use-module (ssh log)
   #:export (node?
             node-session
             node-tunnel
@@ -265,29 +266,88 @@ result, a number of the evaluation, a module name and a language name.  Throw
   (rrepl-get-result rrepl-channel))
 
 
+;;; Remote shell
+
+(define (which node program-name)
+  "Check if a PROGRAM-NAME is available on a NODE.  Return two values: a check
+result and a return code."
+  (rexec node (format #f "which '~a'" program-name)))
+
+(define* (pgrep node pattern #:key (full? #f))
+  "Check if a process with a PATTERN cmdline is available on a NODE.
+Return two values: a check result and a return code."
+  (rexec node (format #f "pgrep ~a '~a'"
+                      (if full? "--full" "")
+                      pattern)))
+
+(define (fallback-pgrep node pattern)
+  "Guile-SSH implementation of 'pgrep' that uses pure bash and '/proc'
+filesystem.  Check if a process with a PATTERN cmdline is available on a NODE.
+Return two values: a check result and a return code."
+  (let ((ptrn (string-append (regexp-substitute/global #f " " pattern
+                                                       'pre "?" 'post)
+                             ".*")))
+    (rexec node
+           (string-append
+            "echo '"
+            "for p in $(ls /proc); do"
+            "  if [[ \"$p\" =~ ^[0-9]+ ]]; then"
+            "    name=$(cat \"/proc/$p/status\" 2>/dev/null | head -1);"
+            "    if [[ \"$name\" =~ Name:.*guile ]]; then"
+            "      cmdline=$(cat \"/proc/$p/cmdline\");"
+            (format #f "       if [[ \"$cmdline\" =~~ ~a ]]; then" ptrn)
+            "        exit 0;"
+            "      fi;"
+            "    fi;"
+            "  fi;"
+            "done;"
+            "exit 1;"
+            "' | bash"))))
+
+
 ;;;
 
 (define (node-server-running? node)
   "Check if a RREPL is running on a NODE, return #t if it is running and
 listens on an expected port, return #f otherwise."
+  (define (pgrep-available?)
+    "Check if 'pgrep' from procps is available on the node."
+    (receive (result rc)
+        (which node "pgrep")
+      (zero? rc)))
   (define (guile-up-and-running?)
     (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
       (and (channel-open? rp)
            (let ((line (read-line rp)))
              (close rp)
              (and (not (eof-object? line)))
-                  (string-match "^GNU Guile .*" line)))))
-  (receive (result rc)
-      (rexec node (format #f "pgrep --full 'guile --listen=~a'"
-                          (node-repl-port node)))
-    (or (and (zero? rc)
-             (guile-up-and-running?))
-        ;; Check the default port.
-        (and (= (node-repl-port node) %guile-default-repl-port)
-             (receive (result rc)
-                 (rexec node "pgrep --full 'guile --listen'")
-               (and (zero? rc)
-                    (guile-up-and-running?)))))))
+             (string-match "^GNU Guile .*" line)))))
+
+  (let ((pgrep? (pgrep-available?)))
+    (unless pgrep?
+      (format-log 'rare
+                  "node-server-running?"
+                  (string-append
+                   "WARNING: 'pgrep' from procps is not available on the node"
+                   " ~a; falling back to the Guile-SSH pgrep implementation")
+                  node))
+    (receive (result rc)
+        (if pgrep?
+            (pgrep node (format #f "guile --listen=~a"
+                                (node-repl-port node))
+                   #:full? #t)
+            (fallback-pgrep node (format #f "guile --listen=~a"
+                                         (node-repl-port node))))
+      (or (and (zero? rc)
+               (guile-up-and-running?))
+          ;; Check the default port.
+          (and (= (node-repl-port node) %guile-default-repl-port)
+               (receive (result rc)
+                   (if pgrep?
+                       (pgrep node "guile --listen" #:full? #t)
+                       (fallback-pgrep "guile --listen"))
+                 (and (zero? rc)
+                      (guile-up-and-running?))))))))
 
 
 (define (node-run-server node)
