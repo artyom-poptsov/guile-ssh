@@ -80,8 +80,8 @@
     (lambda args
       (format-warning "Could not execute a job ~a~%" job)
       (let ((nodes (delete (job-node job) nodes)))
-        (and (null? nodes)
-             (error "Could not execute a job" job))
+        (when (null? nodes)
+          (error "Could not execute a job" job))
         (format-warning "Passing a job ~a to a node ~a ...~%" job (car nodes))
         (execute-job nodes (set-job-node job (car nodes)))))))
 
@@ -99,8 +99,8 @@ job to nearly equal parts and hand out each of resulting sub-jobs to a NODES
 list.  Return the results of N expressions as a set of N multiple values."
   (let* ((jobs    (assign-eval nodes (list (quote expr) ...)))
          (results (execute-jobs nodes jobs)))
-    (and (null? results)
-         (error "Could not execute jobs" nodes jobs))
+    (when (null? results)
+      (error "Could not execute jobs" nodes jobs))
     (apply values results)))
 
 (define-syntax-rule (dist-map nodes proc lst)
@@ -109,8 +109,8 @@ nearly equal parts and hand out resulting jobs to a NODES list.  Return the
 result of computation."
   (let* ((jobs    (assign-map nodes lst (quote proc)))
          (results (execute-jobs nodes jobs)))
-    (and (null? results)
-         (error "Could not execute jobs" nodes jobs))
+    (when (null? results)
+      (error "Could not execute jobs" nodes jobs))
     results))
 
 
