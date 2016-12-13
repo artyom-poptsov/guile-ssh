@@ -262,9 +262,7 @@ result, a number of the evaluation, a module name and a language name.  Throw
 listens on an expected port, return #f otherwise."
   (define (pgrep-available?)
     "Check if 'pgrep' from procps is available on the node."
-    (receive (result rc)
-        (which (node-session node) "pgrep")
-      (zero? rc)))
+    (command-available? (node-session node) "pgrep"))
   (define (guile-up-and-running?)
     (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
       (and (channel-open? rp)

@@ -39,7 +39,7 @@
   #:use-module (ice-9 rdelim)
   #:use-module (ssh channel)
   #:use-module (ssh popen)
-  #:export (rexec which pgrep fallback-pgrep))
+  #:export (rexec which pgrep fallback-pgrep command-available?))
 
 
 ;;;
@@ -104,5 +104,11 @@ Return two values: a check result and a return code."
             "done;"
             "exit 1;"
             "' | bash"))))
+
+(define (command-available? session command)
+  "check if COMMAND is available on a remote side."
+  (receive (result rc)
+      (which session command)
+    (zero? rc)))
 
 ;;; shell.scm ends here.
