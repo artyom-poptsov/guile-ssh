@@ -86,25 +86,28 @@ Return two values: a check result and a return code."
   "Guile-SSH implementation of 'pgrep' that uses pure bash and '/proc'
 filesystem.  Check if a process with a PATTERN cmdline is available on a NODE.
 Return two values: a check result and a return code."
+  (define (make-command ptrn)
+    (format #f "\
+echo '
+for p in $(ls /proc); do
+  if [[ \"$p\" =~ ^[0-9]+ ]]; then
+    name=$(cat \"/proc/$p/status\" 2>/dev/null | head -1);
+    if [[ \"$name\" =~~ Name:.*guile ]]; then
+      cmdline=$(cat \"/proc/$p/cmdline\");
+      if [[ \"$cmdline\" =~~ ~a ]]; then
+        exit 0;
+      fi;
+    fi;
+  fi;
+done;
+exit 1;
+' | bash
+" ptrn))
+
   (let ((ptrn (string-append (regexp-substitute/global #f " " pattern
                                                        'pre "?" 'post)
                              ".*")))
-    (rexec session
-           (string-append
-            "echo '"
-            "for p in $(ls /proc); do"
-            "  if [[ \"$p\" =~ ^[0-9]+ ]]; then"
-            "    name=$(cat \"/proc/$p/status\" 2>/dev/null | head -1);"
-            "    if [[ \"$name\" =~ Name:.*guile ]]; then"
-            "      cmdline=$(cat \"/proc/$p/cmdline\");"
-            (format #f "       if [[ \"$cmdline\" =~~ ~a ]]; then" ptrn)
-            "        exit 0;"
-            "      fi;"
-            "    fi;"
-            "  fi;"
-            "done;"
-            "exit 1;"
-            "' | bash"))))
+    (rexec session (make-command ptrn))))
 
 (define (command-available? session command)
   "check if COMMAND is available on a remote side."
