@@ -39,6 +39,7 @@
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 regex)
   #:use-module (ice-9 format)
+  #:use-module (ice-9 receive)
   #:use-module (ssh channel)
   #:use-module (ssh popen)
   #:export (rexec which pgrep fallback-pgrep command-available?))
