@@ -38,6 +38,7 @@
 (define-module (ssh shell)
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 regex)
+  #:use-module (ice-9 format)
   #:use-module (ssh channel)
   #:use-module (ssh popen)
   #:export (rexec which pgrep fallback-pgrep command-available?))
@@ -90,7 +91,7 @@ Return two values: a check result and a return code."
     (format #f "\
 echo '
 for p in $(ls /proc); do
-  if [[ \"$p\" =~ ^[0-9]+ ]]; then
+  if [[ \"$p\" =~~ ^[0-9]+ ]]; then
     name=$(cat \"/proc/$p/status\" 2>/dev/null | head -1);
     if [[ \"$name\" =~~ Name:.*guile ]]; then
       cmdline=$(cat \"/proc/$p/cmdline\");
