@@ -313,9 +313,9 @@ listens on an expected port, return #f otherwise."
 
 (define (node-stop-server node)
   "Stop a RREPL server on a NODE."
-  (close (open-remote-input-pipe (node-session node)
-                          (format #f "pkill --full 'guile --listen=~a'"
-                                  (node-repl-port node))))
+  (pkill (node-session node)
+         (format #f "guile --listen=~a" (node-repl-port node))
+         #:full? #t)
   (while (node-server-running? node)
     (sleep 1)))
 

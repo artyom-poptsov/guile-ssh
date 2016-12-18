@@ -42,7 +42,7 @@
   #:use-module (ice-9 receive)
   #:use-module (ssh channel)
   #:use-module (ssh popen)
-  #:export (rexec which pgrep fallback-pgrep command-available?))
+  #:export (rexec which pgrep pkill fallback-pgrep command-available?))
 
 
 ;;;
@@ -81,6 +81,11 @@ a check result and a return code."
   "Check if a process with a PATTERN cmdline is available on a NODE.
 Return two values: a check result and a return code."
   (rexec session (format #f "pgrep ~a '~a'"
+                         (if full? "--full" "")
+                         pattern)))
+
+(define* (pkill session pattern #:key (full? #f))
+  (rexec session (format #f "pkill ~a '~a'"
                          (if full? "--full" "")
                          pattern)))
 
