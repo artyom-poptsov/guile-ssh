@@ -1,4 +1,4 @@
-;;; node.scm -- Distributed computing node
+;;; shell.scm -- Remote shell.
 
 ;; Copyright (C) 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
