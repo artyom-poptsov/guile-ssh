@@ -77,16 +77,23 @@ a check result and a return code."
   (rexec session (format #f "which '~a'" program-name)))
 
 
+;; We should use short '-f' option for pgrep and pkill instead of the long
+;; version of it ('--full') because the long version was added on september
+;; 2011 (according to the commit log of procps-ng [1]) and some systems may
+;; not support it due to older procps.
+;;
+;; [1] https://gitlab.com/procps-ng/procps/commit/4581ac2240d3c2108c6a65ba2d19599195b512bc
+
 (define* (pgrep session pattern #:key (full? #f))
   "Check if a process with a PATTERN cmdline is available on a NODE.
 Return two values: a check result and a return code."
   (rexec session (format #f "pgrep ~a '~a'"
-                         (if full? "--full" "")
+                         (if full? "--f" "")
                          pattern)))
 
 (define* (pkill session pattern #:key (full? #f))
   (rexec session (format #f "pkill ~a '~a'"
-                         (if full? "--full" "")
+                         (if full? "-f" "")
                          pattern)))
 
 (define (fallback-pgrep session pattern)
