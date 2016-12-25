@@ -273,7 +273,8 @@ listens on an expected port, return #f otherwise."
              (and (not (eof-object? line))
                   (string-match "^GNU Guile .*" line))))))
 
-  (let ((pgrep? (procps-available? node)))
+  (let* ((pgrep? (procps-available? node))
+         (pgrep  (if pgrep? pgrep fallback-pgrep)))
     (unless pgrep?
       (format-log 'rare
                   "node-server-running?"
@@ -282,25 +283,18 @@ listens on an expected port, return #f otherwise."
                    " ~a; falling back to the Guile-SSH pgrep implementation")
                   node))
     (receive (result rc)
-        (if pgrep?
             (pgrep (node-session node)
                    (format #f "guile --listen=~a"
                            (node-repl-port node))
                    #:full? #t)
-            (fallback-pgrep (node-session node)
-                            (format #f "guile --listen=~a"
-                                    (node-repl-port node))))
       (or (and (zero? rc)
                (guile-up-and-running?))
           ;; Check the default port.
           (and (= (node-repl-port node) %guile-default-repl-port)
                (receive (result rc)
-                   (if pgrep?
                        (pgrep (node-session node)
                               "guile --listen"
                               #:full? #t)
-                       (fallback-pgrep (node-session node)
-                                       "guile --listen"))
                  (and (zero? rc)
                       (guile-up-and-running?))))))))
 

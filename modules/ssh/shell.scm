@@ -110,10 +110,11 @@ return code."
                          signal
                          pattern)))
 
-(define (fallback-pgrep session pattern)
+(define* (fallback-pgrep session pattern #:key (full? #f))
   "Guile-SSH implementation of 'pgrep' that uses pure bash and '/proc'
 filesystem.  Check if a process with a PATTERN cmdline is available on a NODE.
-Return two values: a check result and a return code."
+Note that FULL? option is not used at the time (the procedure always perform
+full search.)  Return two values: a check result and a return code."
   (define (make-command ptrn)
     (format #f "\
 echo '
