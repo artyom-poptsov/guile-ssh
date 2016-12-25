@@ -93,9 +93,11 @@ Return two values: a check result and a return code."
                          (if full? "-f" "")
                          pattern)))
 
-(define* (pkill session pattern #:key (full? #f))
-  (rexec session (format #f "pkill ~a '~a'"
+(define* (pkill session pattern #:key (full? #f)
+                (signal 'SIGTERM))
+  (rexec session (format #f "pkill ~a --signal ~a '~a'"
                          (if full? "-f" "")
+                         signal
                          pattern)))
 
 (define (fallback-pgrep session pattern)

@@ -313,10 +313,19 @@ listens on an expected port, return #f otherwise."
 
 (define (node-stop-server node)
   "Stop a RREPL server on a NODE."
+  (format-log 'functions "[scm] node-stop-server"
+              "trying to SIGTERM the RREPL server on ~a ..." node)
   (pkill (node-session node)
          (format #f "guile --listen=~a" (node-repl-port node))
          #:full? #t)
   (while (node-server-running? node)
+    (format-log 'functions "[scm] node-stop-server"
+                "trying to SIGKILL the RREPL server on ~a ..."
+                node)
+    (pkill (node-session node)
+           (format #f "guile --listen=~a" (node-repl-port node))
+           #:signal 'SIGKILL
+           #:full? #t)
     (sleep 1)))
 
 
