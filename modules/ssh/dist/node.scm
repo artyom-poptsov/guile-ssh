@@ -268,8 +268,8 @@ listens on an expected port, return #f otherwise."
       (and (channel-open? rp)
            (let ((line (read-line rp)))
              (close rp)
-             (and (not (eof-object? line)))
-             (string-match "^GNU Guile .*" line)))))
+             (and (not (eof-object? line))
+                  (string-match "^GNU Guile .*" line))))))
 
   (let ((pgrep? (pgrep-available?)))
     (unless pgrep?
