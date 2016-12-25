@@ -257,12 +257,14 @@ result, a number of the evaluation, a module name and a language name.  Throw
 
 ;;;
 
+(define (procps-available? node)
+  "Check if procps is available on a NODE."
+  (command-available? (node-session node) "pgrep"))
+
+
 (define (node-server-running? node)
   "Check if a RREPL is running on a NODE, return #t if it is running and
 listens on an expected port, return #f otherwise."
-  (define (pgrep-available?)
-    "Check if 'pgrep' from procps is available on the node."
-    (command-available? (node-session node) "pgrep"))
   (define (guile-up-and-running?)
     (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
       (and (channel-open? rp)
@@ -271,7 +273,7 @@ listens on an expected port, return #f otherwise."
              (and (not (eof-object? line))
                   (string-match "^GNU Guile .*" line))))))
 
-  (let ((pgrep? (pgrep-available?)))
+  (let ((pgrep? (procps-available? node)))
     (unless pgrep?
       (format-log 'rare
                   "node-server-running?"
@@ -313,11 +315,9 @@ listens on an expected port, return #f otherwise."
 
 (define (node-stop-server node)
   "Stop a RREPL server on a NODE."
-  (define (pkill-available?)
-    (command-available? (node-session node) "pkill"))
   (format-log 'functions "[scm] node-stop-server"
               "trying to SIGTERM the RREPL server on ~a ..." node)
-  (let* ((pkill? (pkill-available?))
+  (let* ((pkill? (procps-available? node))
          (pkill (if pkill? pkill fallback-pkill)))
     (unless pkill?
       (format-log 'rare
