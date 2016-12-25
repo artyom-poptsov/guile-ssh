@@ -93,14 +93,18 @@ a check result and a return code."
 ;; [1] https://gitlab.com/procps-ng/procps/commit/4581ac2240d3c2108c6a65ba2d19599195b512bc
 
 (define* (pgrep session pattern #:key (full? #f))
-  "Check if a process with a PATTERN cmdline is available on a NODE.
-Return two values: a check result and a return code."
+  "Check if a process with a PATTERN cmdline is available on a machine
+represented by a SESSION.  Return two values: a check result and a return
+code."
   (rexec session (format #f "pgrep ~a '~a'"
                          (if full? "-f" "")
                          pattern)))
 
 (define* (pkill session pattern #:key (full? #f)
                 (signal 'SIGTERM))
+  "Send a SIGNAL to a process which name matches to PATTERN on a remote
+machine represented by a SESSION.  Return two values: a pkill result and a
+return code."
   (rexec session (format #f "pkill ~a --signal ~a '~a'"
                          (if full? "-f" "")
                          signal
@@ -136,6 +140,13 @@ exit 1;
 
 (define* (fallback-pkill session pattern #:key (full? #f)
                          (signal 'SIGTERM))
+  "Guile-SSH implementation of 'pkill' that uses pure bash, '/proc' filsystem
+and Guile itself to kill a process.  Note that this procedure won't work if
+Guile is missing on a target machine.
+
+Send a SIGNAL to a process which name matches to PATTERN on a remote machine
+represented by a SESSION.  Return two values: a pkill result and a return
+code."
   (let-values (((pids exit-status) (fallback-pgrep session pattern)))
     (format-log 'functions "[scm] fallback-pkill"
                 "pids: ~a (pgrep exit status: ~a)"
