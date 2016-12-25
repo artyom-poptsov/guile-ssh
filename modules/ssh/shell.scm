@@ -106,17 +106,6 @@ Return two values: a check result and a return code."
                          signal
                          pattern)))
 
-(define* (fallback-pkill session pattern #:key (full? #f)
-                         (signal 'SIGTERM))
-  (let-values (((pids exit-status) (pgrep session pattern #:full? full?)))
-    (format-log 'functions "[scm] fallback-pkill"
-                "pids: ~a (pgrep exit status: ~a)"
-                (car pids) exit-status)
-    (let ((cmd (format "guile -c '(kill ~a ~a)'" (car pids) signal)))
-      (format-log 'functions "[scm] fallback-pkill"
-                "going to use this kill command: ~a" cmd)
-      (rexec session cmd))))
-
 (define (fallback-pgrep session pattern)
   "Guile-SSH implementation of 'pgrep' that uses pure bash and '/proc'
 filesystem.  Check if a process with a PATTERN cmdline is available on a NODE.
@@ -130,6 +119,7 @@ for p in $(ls /proc); do
     if [[ \"$name\" =~~ Name:.*guile ]]; then
       cmdline=$(cat \"/proc/$p/cmdline\");
       if [[ \"$cmdline\" =~~ ~a ]]; then
+        echo $p
         exit 0;
       fi;
     fi;
@@ -143,6 +133,17 @@ exit 1;
                                                        'pre "?" 'post)
                              ".*")))
     (rexec session (make-command ptrn))))
+
+(define* (fallback-pkill session pattern #:key (full? #f)
+                         (signal 'SIGTERM))
+  (let-values (((pids exit-status) (fallback-pgrep session pattern)))
+    (format-log 'functions "[scm] fallback-pkill"
+                "pids: ~a (pgrep exit status: ~a)"
+                (car pids) exit-status)
+    (let ((cmd (format "guile -c '(kill ~a ~a)'" (car pids) signal)))
+      (format-log 'functions "[scm] fallback-pkill"
+                "going to use this kill command: ~a" cmd)
+      (rexec session cmd))))
 
 (define (command-available? session command)
   "check if COMMAND is available on a remote side."
