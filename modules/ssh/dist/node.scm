@@ -313,20 +313,31 @@ listens on an expected port, return #f otherwise."
 
 (define (node-stop-server node)
   "Stop a RREPL server on a NODE."
+  (define (pkill-available?)
+    (command-available? (node-session node) "pkill"))
   (format-log 'functions "[scm] node-stop-server"
               "trying to SIGTERM the RREPL server on ~a ..." node)
-  (pkill (node-session node)
-         (format #f "guile --listen=~a" (node-repl-port node))
-         #:full? #t)
-  (while (node-server-running? node)
-    (format-log 'functions "[scm] node-stop-server"
-                "trying to SIGKILL the RREPL server on ~a ..."
-                node)
+  (let* ((pkill? (pkill-available?))
+         (pkill (if pkill? pkill fallback-pkill)))
+    (unless pkill?
+      (format-log 'rare
+                  "node-server-running?"
+                  (string-append
+                   "WARNING: 'pkill' from procps is not available on the node"
+                   " ~a; falling back to the Guile-SSH pkill implementation")
+                  node))
     (pkill (node-session node)
            (format #f "guile --listen=~a" (node-repl-port node))
-           #:signal 'SIGKILL
            #:full? #t)
-    (sleep 1)))
+    (while (node-server-running? node)
+      (format-log 'functions "[scm] node-stop-server"
+                  "trying to SIGKILL the RREPL server on ~a ..."
+                  node)
+      (pkill (node-session node)
+             (format #f "guile --listen=~a" (node-repl-port node))
+             #:signal 'SIGKILL
+             #:full? #t)
+      (sleep 1))))
 
 
 (define (node-open-rrepl node)

@@ -36,13 +36,16 @@
 ;;; Code:
 
 (define-module (ssh shell)
+  #:use-module (srfi srfi-11)
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 regex)
   #:use-module (ice-9 format)
   #:use-module (ice-9 receive)
   #:use-module (ssh channel)
   #:use-module (ssh popen)
-  #:export (rexec which pgrep pkill fallback-pgrep command-available?))
+  #:use-module (ssh log)
+  #:export (rexec which pgrep pkill fallback-pgrep command-available?
+                  fallback-pkill))
 
 
 ;;;
@@ -99,6 +102,17 @@ Return two values: a check result and a return code."
                          (if full? "-f" "")
                          signal
                          pattern)))
+
+(define* (fallback-pkill session pattern #:key (full? #f)
+                         (signal 'SIGTERM))
+  (let-values (((pids exit-status) (pgrep session pattern #:full? full?)))
+    (format-log 'functions "[scm] fallback-pkill"
+                "pids: ~a (pgrep exit status: ~a)"
+                (car pids) exit-status)
+    (let ((cmd (format "guile -c '(kill ~a ~a)'" (car pids) signal)))
+      (format-log 'functions "[scm] fallback-pkill"
+                "going to use this kill command: ~a" cmd)
+      (rexec session cmd))))
 
 (define (fallback-pgrep session pattern)
   "Guile-SSH implementation of 'pgrep' that uses pure bash and '/proc'
