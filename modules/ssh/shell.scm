@@ -59,14 +59,16 @@
 (define (rexec session cmd)
   "Execute a command CMD on the remote side.  Return two values: list of
 output lines returned by CMD and its exit code."
-  (let ((channel (open-remote-input-pipe session cmd)))
-    (values (let loop ((line   (read-line channel))
-                       (result '()))
-              (if (eof-or-null? line)
-                  (reverse result)
-                  (loop (read-line channel)
-                        (cons line result))))
-            (channel-get-exit-status channel))))
+  (let* ((channel (open-remote-input-pipe session cmd))
+         (result  (let loop ((line   (read-line channel))
+                             (result '()))
+                    (if (eof-or-null? line)
+                        (reverse result)
+                        (loop (read-line channel)
+                              (cons line result)))))
+         (exit-status (channel-get-exit-status channel)))
+    (close channel)
+    (values result exit-status)))
 
 
 ;;;
