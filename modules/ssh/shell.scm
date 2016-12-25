@@ -27,7 +27,10 @@
 ;;   rexec
 ;;   which
 ;;   pgrep
+;;   pkill
 ;;   fallback-pgrep
+;;   fallback-pkill
+;;   command-available?
 ;;
 ;; See the Info documentation for detailed description of these exceptions and
 ;; aforementioned procedures.
