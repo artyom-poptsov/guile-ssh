@@ -88,7 +88,7 @@ a check result and a return code."
   "Check if a process with a PATTERN cmdline is available on a NODE.
 Return two values: a check result and a return code."
   (rexec session (format #f "pgrep ~a '~a'"
-                         (if full? "--f" "")
+                         (if full? "-f" "")
                          pattern)))
 
 (define* (pkill session pattern #:key (full? #f))
