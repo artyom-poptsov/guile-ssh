@@ -23,6 +23,7 @@
   #:use-module (ice-9 rdelim)
   #:use-module (ice-9 format)
   #:use-module (ssh session)
+  #:use-module (ssh channel)
   #:use-module (ssh server)
   #:use-module (ssh log)
   #:use-module (ssh message)
@@ -249,18 +250,25 @@ disconnected when the PROC is finished."
     (let ((channel #f))
       (lambda (msg)
         (let ((msg-type (message-get-type msg)))
+          (format-log/scm 'nolog "start-server/exec"
+                          "msg-type: ~a" msg-type)
           (case (car msg-type)
             ((request-channel-open)
              (set! channel (message-channel-request-open-reply-accept msg)))
             ((request-channel)
              (if (equal? (cadr msg-type) 'channel-request-exec)
                  (let ((cmd (exec-req:cmd (message-get-req msg))))
+                   (format-log/scm 'nolog "start-server/exec"
+                          "command: ~A" cmd)
                    (cond
                     ((string=? cmd "ping")
-                     (write-line "pong" channel))
+                     (write-line "pong" channel)
+                     (channel-send-eof channel))
                     ((string=? cmd "uname") ; For exit status testing
+                     (write-line "pong" channel)
                      (message-reply-success msg)
-                     (channel-request-send-exit-status channel 0)))
+                     (channel-request-send-exit-status channel 0)
+                     (channel-send-eof channel)))
                    (message-reply-success msg))
                  (message-reply-success msg)))
             (else
