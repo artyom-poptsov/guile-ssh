@@ -36,6 +36,9 @@
 ;;   node-run-server
 ;;   node-stop-server
 ;;   node-server-running?
+;;   node-loadavg
+;;   with-ssh
+;;
 ;;   rrepl-eval
 ;;   rrepl-skip-to-prompt
 ;;
@@ -73,6 +76,8 @@
             node-run-server
             node-stop-server
             node-server-running?
+            node-loadavg
+            with-ssh
 
             node-open-rrepl
             rrepl-eval
@@ -369,5 +374,31 @@ procedure returns the 1st evaluated value if multiple values were returned."
       (rexec node "which guile > /dev/null && guile --version")
     (and (zero? rc)
          (car result))))
+
+
+(define-syntax-rule (with-ssh node exp ...)
+  "Evaluate expressions on a remote REPL using a NODE, return four values: an
+evaluation result, a number of the evaluation, a module name and a language
+name.  Throw 'node-error' or 'node-repl-error' on an error."
+  (node-eval node (quote (begin exp ...))))
+
+(define (node-loadavg node)
+  "Get average load of a NODE.  Return an alist of five elements as described in
+proc(5) man page."
+  (with-ssh node
+    (use-modules (ice-9 rdelim))
+    (define (list-element->number l n)
+      (string->number (list-ref l n)))
+    (let* ((p   (open-input-file "/proc/loadavg"))
+           (raw (read-line p)))
+      (close p)
+      (let ((raw-list (string-split raw #\space)))
+        `((one                 . ,(list-element->number raw-list 0))
+          (five                . ,(list-element->number raw-list 1))
+          (fifteen             . ,(list-element->number raw-list 2))
+          (scheduling-entities . ,(map string->number
+                                       (string-split (list-ref raw-list 3)
+                                                     #\/)))
+          (last-pid            . ,(list-element->number raw-list 4)))))))
 
 ;;; node.scm ends here

@@ -50,8 +50,8 @@
   #:use-module (ssh channel)
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
-  #:re-export (node? node-session node-repl-port make-node)
-  #:export (distribute dist-map with-ssh rrepl))
+  #:re-export (node? node-session node-repl-port make-node with-ssh)
+  #:export (distribute dist-map rrepl))
 
 
 ;;; Helper procedures
@@ -112,13 +112,6 @@ result of computation."
     (when (null? results)
       (error "Could not execute jobs" nodes jobs))
     results))
-
-
-(define-syntax-rule (with-ssh node exp ...)
-  "Evaluate expressions on a remote REPL using a NODE, return four values: an
-evaluation result, a number of the evaluation, a module name and a language
-name.  Throw 'node-error' or 'node-repl-error' on an error."
-  (node-eval node (quote (begin exp ...))))
 
 
 (define (rrepl node)
