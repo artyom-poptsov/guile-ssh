@@ -25,6 +25,7 @@ SCM_TESTS = \
 	session.scm \
 	client-server.scm \
 	popen.scm \
+	shell.scm \
 	server-client.scm \
 	sssh-ssshd.scm \
 	key.scm \
