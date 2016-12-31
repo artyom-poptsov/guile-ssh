@@ -53,22 +53,13 @@
 
 ;;;
 
-;; TODO: Move to some other file do prevent duplicating of the procedure in
-;; (ssh dist node).
-(define (eof-or-null? str)
-  "Return #t if a STR is an EOF object or an empty string, #f otherwise."
-  (or (eof-object? str) (string-null? str)))
-
-
-;;;
-
 (define (rexec session cmd)
   "Execute a command CMD on the remote side.  Return two values: list of
 output lines returned by CMD and its exit code."
   (let* ((channel (open-remote-input-pipe session cmd))
          (result  (let loop ((line   (read-line channel))
                              (result '()))
-                    (if (eof-or-null? line)
+                    (if (eof-object? line)
                         (reverse result)
                         (loop (read-line channel)
                               (cons line result)))))
