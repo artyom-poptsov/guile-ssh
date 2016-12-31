@@ -48,7 +48,7 @@
   #:use-module (ssh popen)
   #:use-module (ssh log)
   #:export (rexec which pgrep pkill fallback-pgrep command-available?
-                  fallback-pkill))
+                  fallback-pkill loadavg))
 
 
 ;;;
@@ -153,5 +153,13 @@ code."
   (receive (result rc)
       (which session command)
     (zero? rc)))
+
+(define (loadavg session)
+  "Get average load of a host using a SESSION."
+  (receive (result exit-status)
+      (rexec session "cat /proc/loadavg")
+    (unless (zero? exit-status)
+      (throw 'guile-ssh-error "Could not get average load for a host" session))
+    (string-split (car result) #\space)))
 
 ;;; shell.scm ends here.
