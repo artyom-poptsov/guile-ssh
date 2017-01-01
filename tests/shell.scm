@@ -1,6 +1,6 @@
 ;;; shell.scm -- Remote shell tests.
 
-;; Copyright (C) 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2016, 2017 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
