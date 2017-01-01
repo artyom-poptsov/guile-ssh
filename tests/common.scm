@@ -274,6 +274,7 @@ disconnected when the PROC is finished."
                     ((string-match "echo '.*" cmd)
                      (let ((p (open-input-pipe cmd)))
                        (write-line (read-line p) channel)
+                       (close p)
                        (message-reply-success msg)
                        (channel-request-send-exit-status channel 0)
                        (channel-send-eof channel)))
