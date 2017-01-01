@@ -268,6 +268,11 @@ disconnected when the PROC is finished."
                      (write-line "pong" channel)
                      (message-reply-success msg)
                      (channel-request-send-exit-status channel 0)
+                     (channel-send-eof channel))
+                    (else
+                     (write-line cmd channel)
+                     (message-reply-success msg)
+                     (channel-request-send-exit-status channel 0)
                      (channel-send-eof channel)))
                    (message-reply-success msg))
                  (message-reply-success msg)))

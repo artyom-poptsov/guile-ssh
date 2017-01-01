@@ -55,6 +55,17 @@
             (rexec session "uname")
           (list result exit-code)))))))
 
+(test-assert-with-log "which"
+  (run-client-test
+   start-server/exec
+   (lambda ()
+     (call-with-connected-session/shell
+      (lambda (session)
+        (receive (result exit-code)
+            (which session "uname")
+          (and (zero? exit-code)
+               (string=? (car result) "which 'uname'"))))))))
+
 
 ;;;
 
