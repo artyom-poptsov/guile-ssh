@@ -66,6 +66,14 @@
           (and (zero? exit-code)
                (string=? (car result) "which 'uname'"))))))))
 
+(test-assert-with-log "command-available?"
+  (run-client-test
+   start-server/exec
+   (lambda ()
+     (call-with-connected-session/shell
+      (lambda (session)
+        (command-available? session "guile"))))))
+
 (test-assert-with-log "fallback-pgrep"
   (run-client-test
    start-server/exec
