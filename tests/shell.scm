@@ -85,6 +85,15 @@
           (and (zero? exit-code)
                result)))))))
 
+(test-assert-with-log "loadavg"
+  (run-client-test
+   start-server/exec
+   (lambda ()
+     (call-with-connected-session/shell
+      (lambda (session)
+        (equal? (loadavg session)
+                '("0.01" "0.05" "0.10" "4/1927" "242011")))))))
+
 
 ;;;
 

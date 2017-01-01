@@ -278,6 +278,11 @@ disconnected when the PROC is finished."
                        (message-reply-success msg)
                        (channel-request-send-exit-status channel 0)
                        (channel-send-eof channel)))
+                    ((string=? cmd "cat /proc/loadavg")
+                     (write-line "0.01 0.05 0.10 4/1927 242011" channel)
+                     (message-reply-success msg)
+                     (channel-request-send-exit-status channel 0)
+                     (channel-send-eof channel))
                     (else
                      (write-line cmd channel)
                      (message-reply-success msg)
