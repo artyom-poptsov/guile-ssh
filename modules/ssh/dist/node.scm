@@ -153,10 +153,8 @@ to #t then a REPL server will be stopped as soon as an evaluation is done."
   "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
 error."
   (let loop ((line (read-line repl-channel)))
-
-    (and (eof-object? line)
-         (node-error "Could not locate REPL prompt" repl-channel))
-
+    (when (eof-object? line)
+      (node-error "Could not locate REPL prompt" repl-channel))
     (or (string=? "Enter `,help' for help." line)
         (loop (read-line repl-channel)))))
 
