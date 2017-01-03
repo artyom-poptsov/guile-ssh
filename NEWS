@@ -7,6 +7,23 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** New module (ssh shell)
+   The module provides some procedures build upon (ssh popen) for working with
+   remote shell.
+** Changes in (ssh dist node)
+*** 'node-eval' now can work without procps
+    The procedure now checks if procps package is present on a node and uses
+    fallback Guile-SSH implementation of 'pgrep' and 'pkill' if it is not.
+    The fallback implementation of 'pgrep' is built upon pure bash, and
+    'pkill' in addition requires Guile itself on the remote side.
+*** New procedure 'node-loadavg'
+    The procedure can be used to get average load of a node.
+** Update unit tests
+*** Add test cases for (ssh shell) module
+** Update documentation
+*** Add documentation for (ssh shell) module
+
 * Changes in version 0.10.2 (2016-11-25)
 ** New procedures
 *** New procedure 'channel-send-eof' in (ssh channel)
