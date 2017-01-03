@@ -96,7 +96,7 @@ and comments from the community!), there are practical goals that the project
 struggling to achieve.
 
 For me, the main goal is to provide convenient means to write truly
-distributed applications in my favourite language.
+distributed applications in my favourite programming language.
 
 Computers getting cheaper and more and more ubiquitous, and so different kind
 of networks.  In my opinion the question is -- how we are going to utilize
