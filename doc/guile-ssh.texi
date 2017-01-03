@@ -83,6 +83,43 @@ protocol for programs written in
 to the underlying @url{http://www.libssh.org/, libssh} library.  This
 manual is partly based on libssh documentation.
 
+@section The goals of this (humble) project
+@quotation
+Most projects are humble, it's the combination that's interesting :-)
+@author Ludovic Courtès
+@end quotation
+
+Now let me explain what are the goals of the whole project.  Aside from the
+fact that I am having lots of fun with the project itself (and the project is
+helping me to grow as a free software developer, many thanks to all advices
+and comments from the community!), there are practical goals that the project
+struggling to achieve.
+
+For me, the main goal is to provide convenient means to write truly
+distributed applications in my favourite language.
+
+Computers getting cheaper and more and more ubiquitous, and so different kind
+of networks.  In my opinion the question is -- how we are going to utilize
+those new computational resources?  Using multi-core systems effectively may
+be tricky; fortunately some languages (such as as Scheme/GNU Guile) already
+provide convenient API to utilize those systems.  But what about systems that
+distributed over a network?
+
+I am dreaming of the times when using computer resources distributed over a
+network in GNU Guile will be as easy as using local ones.  You should not be
+asking question ``how to do it?'' -- what you should be asking yourself is
+``how can I use it?''
+
+But Guile-SSH itself is just a library; a tool that can be used to solve some
+problems (and, perhaps, causing new ones ;-)).  So, as was noted in the
+quotation above, it's the combination of projects that may lead to the most
+interesting results.  With that said, I would love to see Guile-SSH used in
+another projects, and to hear positive (and negative) feedback from you.
+
+Happy hacking!
+
+- avp
+
 @node Installation
 @chapter Installation
 
