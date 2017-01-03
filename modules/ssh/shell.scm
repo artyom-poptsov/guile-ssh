@@ -1,6 +1,6 @@
 ;;; shell.scm -- Remote shell.
 
-;; Copyright (C) 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2016, 2017 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -31,6 +31,7 @@
 ;;   fallback-pgrep
 ;;   fallback-pkill
 ;;   command-available?
+;;   loadavg
 ;;
 ;; See the Info documentation for detailed description of these exceptions and
 ;; aforementioned procedures.
