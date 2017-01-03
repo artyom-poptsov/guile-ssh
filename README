@@ -82,6 +82,7 @@ Guile modules, in =${GUILE_SITE}/ssh=:
  - server.scm  -- Server API.
  - session.scm -- Session management.
  - sftp.scm    -- SFTP client API.
+ - shell.scm   -- High-level API to a remote shell.
  - tunnel.scm  -- SSH tunnels.
  - version.scm -- Information about versions.
 
