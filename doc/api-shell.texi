@@ -80,4 +80,19 @@ result and a return code.
 @deffn {Scheme Procedure} loadavg session
 Get average load of a host using a @var{session}.  Return a list of five
 elements as described in proc(5) man page.
+
+Example:
+
+@lisp
+(use-modules (ssh session)
+             (ssh auth)
+             (ssh shell))
+
+(let ((s (make-session #:host "example.org")))
+  (connect! s)
+  (userauth-agent! s)
+  (loadavg s))
+@result{} ("0.01" "0.05" "0.10" "4/1927" "242011")
+@end lisp
+
 @end deffn
