@@ -54,6 +54,31 @@ Get underlying SSH session from @var{node}.
 Get REPL port number from a @var{node}.
 @end deffn
 
+@deffn {Scheme Procedure} node-loadavg node
+Get average load of a @var{node}.  Return multiple values.  The 1st value is
+an alist of five elements as described in proc(5) man page.  The rest of
+values are as described in documentation for @code{node-eval} procedure.
+
+For example:
+
+@lisp
+(use-modules (ssh auth)
+             (ssh session)
+             (ssh dist node))
+
+(let ((s (make-session #:host "example.org")))
+  (connect! s)
+  (userauth-agent! s)
+  (let ((n (make-node s)))
+    (node-loadavg n)))
+@result{} ((one . 0.15) (five . 0.14) (fifteen . 0.16) (scheduling-entities 1 189) (last-pid . 15629))
+@result{} 1
+@result{} "(guile-user)"
+@result{} "scheme"
+@end lisp
+
+@end deffn
+
 Interaction with remote REPLs:
 
 @deffn {Scheme Procedure} distribute nodes expr ...
@@ -201,7 +226,6 @@ name.  Throw @code{node-repl-error} on an error.
 Read from @var{rrepl-channel} until REPL is observed.  Throw @code{node-error}
 on an error.
 @end deffn
-
 
 @subsubsection Jobs
 @tindex job
