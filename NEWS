@@ -11,6 +11,10 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** New module (ssh shell)
    The module provides some procedures build upon (ssh popen) for working with
    remote shell.
+** Bugfixes
+*** In (ssh tunnel)
+**** 'main-loop' now handles "interrupted system call" errors
+     that sometimes occur on 'select' call.
 ** Changes in (ssh dist node)
 *** 'node-eval' now can work without procps
     The procedure now checks if procps package is present on a node and uses
