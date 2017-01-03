@@ -193,19 +193,23 @@ when no data is available."
          (timeout-s  (and timeout (quotient  timeout 1000000)))
          (timeout-us (and timeout (remainder timeout 1000000))))
     (while (connected? (tunnel-session tunnel))
-      (let* ((channel           (tunnel-open-forward-channel tunnel))
-             (client-connection (accept sock))
-             (client            (car client-connection)))
+      (catch #t
+        (lambda ()
+          (let* ((channel           (tunnel-open-forward-channel tunnel))
+                 (client-connection (accept sock))
+                 (client            (car client-connection)))
 
-          (while (channel-open? channel)
-            (cond-io
-             (client -> channel => transfer)
-             (channel -> client => transfer)
-             (else
-              (let ((selected (select (list client) '() '()
-                                      timeout-s timeout-us)))
-                (and (null? (car selected))
-                     (idle-proc client channel))))))))))
+            (while (channel-open? channel)
+              (cond-io
+               (client -> channel => transfer)
+               (channel -> client => transfer)
+               (else
+                (let ((selected (select (list client) '() '()
+                                        timeout-s timeout-us)))
+                  (and (null? (car selected))
+                       (idle-proc client channel))))))))
+        (const #t)))))
+
 
 (define (main-loop/reverse tunnel idle-proc)
   (let* ((timeout    (tunnel-timeout tunnel))
