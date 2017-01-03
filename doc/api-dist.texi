@@ -36,9 +36,12 @@ soon as an evaluation is done.  Alternatively you could use
 @code{node-stop-server} procedure from @code{(ssh dist node)} to stop the
 server when it is not needed anymore.
 
-@strong{Note} that for @var{start-repl-server?} and @var{stop-repl-server?} to
-work properly you need @url{https://gitlab.com/procps-ng/procps, procps}
-version 3.3.12 or later on the server side.
+Note that when either @var{start-repl-server?} or @var{stop-repl-server?} are
+specified, Guile-SSH tries to use @command{pgrep}/@command{pkill} from
+@url{https://gitlab.com/procps-ng/procps, procps} package first to start/stop
+a remote Guile process, but if the package is missing then the Guile-SSH falls
+back to its own implementation of the commands (for more details see
+@pxref{Shell, Guile-SSH shell API})
 
 @end deffn
 
