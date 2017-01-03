@@ -110,6 +110,14 @@ Examples, in =${prefix}/share/guile-ssh/examples=:
 
 * Installation
 
+The library can be installed by the following means:
+  - Using GNU Guix: https://www.gnu.org/software/guix/
+  - Using Arch GNU/Linux AUR package:
+    https://aur.archlinux.org/packages/guile-ssh/
+  - Manually.  If you're considering manual installation, see the notes below.
+
+Thanks for all the people who helped with packaging of Guile-SSH!
+
 For a basic explanation of the installation of the package, see the
 INSTALL file.
 
