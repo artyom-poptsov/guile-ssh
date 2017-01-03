@@ -1,0 +1,83 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2017 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Shell
+@section Shell
+
+@cindex secure shell
+
+A high-level interface to a remote shell built upon @code{(ssh popen)} API.
+The procedures described in this section uses GNU Coreutils on the remote side
+and may depend on some other packages; see the notes for each procedure.
+
+@deffn {Scheme Procedure} rexec session command
+Execute a @var{command} on the remote side.  Return two values: list of output
+lines returned by a @var{command} and its exit code.
+@end deffn
+
+@deffn {Scheme Procedure} which session program-name
+Check if a @var{program-name} is available on a remote side.  Return two
+values: a path to a command if it is found and a return code.
+
+The procedure uses shell build-in command @command{which} on the remote side.
+
+Example:
+
+@lisp
+(use-modules (ssh session)
+             (ssh auth)
+             (ssh shell))
+
+(let ((s (make-session #:host "example.org")))
+  (connect! s)
+  (userauth-agent! s)
+  (which s "guile"))
+@result{} ("/usr/bin/guile")
+@result{} 0
+@end lisp
+
+@end deffn
+
+@deffn {Scheme Procedure} command-available? session command
+Check if a @var{command} is available on a remote machine represented by a
+@var{session}.
+@end deffn
+
+@deffn {Scheme Procedure} pgrep session pattern [#:full?=#f]
+Search for a process with a @var{pattern} cmdline on a machine represented by
+a @var{session}.  Return two values: a list of PIDs and a return code.
+
+The procedure uses a @command{pgrep} from procps package on the remote side.
+@end deffn
+
+@deffn {Scheme Procedure} pkill session pattern [#:full?=#f] [#:signal='SIGTERM]
+Send a @var{session} to a process which name matches to @var{pattern} on a
+remote machine represented by a @var{session}.  Return two values: a pkill
+result and a return code.
+@end deffn
+
+@deffn {Scheme Procedure} fallback-pgrep session pattern [#:full?=#f]
+Guile-SSH implementation of @command{pgrep} that uses pure Bash and
+@file{/proc} filesystem.  Check if a process with a @var{pattern} cmdline is
+available on a machine represented by a @var{session}.  Note that @var{full?}
+option is not used at the time (the procedure always perform full search.)
+
+Return two values: a check result and a return code.
+@end deffn
+
+@deffn {Scheme Procedure} fallback-pkill session pattern [#:full?=#f] [#:signal='SIGTERM]
+Guile-SSH implementation of @command{pkill} that uses pure Bash, @file{/proc}
+filsystem and Guile itself to kill a process.  Note that this procedure won't
+work if Guile is missing on a target machine.
+
+Send a @var{signal} to a process which name matches to @var{pattern} on a
+remote machine represented by a @var{session}.  Return two values: a pkill
+result and a return code.
+@end deffn
+
+@deffn {Scheme Procedure} loadavg session
+Get average load of a host using a @var{session}.  Return a list of five
+elements as described in proc(5) man page.
+@end deffn

@@ -15,6 +15,7 @@ guile_ssh_TEXINFOS = \
 	api-dist.texi \
 	api-sftp.texi \
 	api-popen.texi \
+	api-shell.texi \
 	examples.texi \
 	fdl.texi \
 	indices.texi

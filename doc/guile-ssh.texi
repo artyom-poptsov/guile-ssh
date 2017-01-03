@@ -143,6 +143,8 @@ and it will give you a suggestion.
 * Tunnels::      SSH tunnels
 * Remote Pipes:: Creating of input, output or bidirectional pipes to remote
                  processes
+* Shell::        A high-level interface to remote shell built upon remote
+                 pipes
 * Logging::      Interface to the libssh logging
 * Version::      Get information about versions
 
@@ -170,6 +172,7 @@ Distributed Computing
 @include api-dist.texi
 @include api-sftp.texi
 @include api-popen.texi
+@include api-shell.texi
 
 @include examples.texi
 
