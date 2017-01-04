@@ -9,8 +9,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 * Unreleased
 ** New module (ssh shell)
-   The module provides some procedures build upon (ssh popen) for working with
-   remote shell.
+   The module provides some procedures build upon (ssh popen) module for
+   working with remote shell.
 ** Bugfixes
 *** In (ssh tunnel)
 **** 'main-loop' now handles "interrupted system call" errors
@@ -23,10 +23,19 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     'pkill' in addition requires Guile itself on the remote side.
 *** New procedure 'node-loadavg'
     The procedure can be used to get average load of a node.
+** Changes in (ssh dist)
+   Procedures in the module now are capable of checking presence of procps
+   package on a remote side and switching to fallback implementation of some
+   of the procps tools when the package is not present -- thanks to updated
+   'node-eval' procedure (see above.)
+
+   At the end of the day it means that now the code can start/stop Guile REPL
+   server on a remote side even without procps installed.
 ** Update unit tests
 *** Add test cases for (ssh shell) module
 ** Update documentation
 *** Add documentation for (ssh shell) module
+*** Describe project goals in "Introduction" section
 
 * Changes in version 0.10.2 (2016-11-25)
 ** New procedures
