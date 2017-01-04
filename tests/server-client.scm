@@ -89,11 +89,11 @@
 
 (test-assert-with-log "message-get-type"
   (run-server-test
-
    ;; client
    (lambda (session)
-     (sleep 1)
-     (connect! session)
+     (while (not (connected? session))
+       (sleep 1)
+       (connect! session))
      (clnmsg "connected")
      (authenticate-server session)
      (clnmsg "server authenticated")
