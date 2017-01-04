@@ -264,6 +264,16 @@ result, a number of the evaluation, a module name and a language name.  Throw
   "Check if procps is available on a NODE."
   (command-available? (node-session node) "pgrep"))
 
+(define (issue-procps-warning function node missing-procps-tool)
+  "Issue procps warning due to a MISSING-PROCPS-TOOL on a NODE to the libssh
+log."
+  (format-log 'rare
+              function
+              (string-append
+               "WARNING: '~a' from procps is not available on the node"
+               " ~a; falling back to the Guile-SSH '~a' implementation")
+              missing-procps-tool node missing-procps-tool))
+
 
 (define (node-server-running? node)
   "Check if a RREPL is running on a NODE, return #t if it is running and
@@ -279,12 +289,7 @@ listens on an expected port, return #f otherwise."
   (let* ((pgrep? (procps-available? node))
          (pgrep  (if pgrep? pgrep fallback-pgrep)))
     (unless pgrep?
-      (format-log 'rare
-                  "node-server-running?"
-                  (string-append
-                   "WARNING: 'pgrep' from procps is not available on the node"
-                   " ~a; falling back to the Guile-SSH pgrep implementation")
-                  node))
+      (issue-procps-warning "node-server-running?" node "pgrep"))
     (receive (result rc)
             (pgrep (node-session node)
                    (format #f "guile --listen=~a"
@@ -317,12 +322,7 @@ listens on an expected port, return #f otherwise."
   (let* ((pkill? (procps-available? node))
          (pkill (if pkill? pkill fallback-pkill)))
     (unless pkill?
-      (format-log 'rare
-                  "node-server-running?"
-                  (string-append
-                   "WARNING: 'pkill' from procps is not available on the node"
-                   " ~a; falling back to the Guile-SSH pkill implementation")
-                  node))
+      (issue-procps-warning "node-stop-server" node "pkill"))
     (pkill (node-session node)
            (format #f "guile --listen=~a" (node-repl-port node))
            #:full? #t)
