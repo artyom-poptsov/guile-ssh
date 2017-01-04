@@ -201,8 +201,8 @@
                              (error "Wrong result 2" result)))
 
                        (write-line "scheme@(guile-user)> $1 = 42\n" c)
-
-                       (sleep 60)))))
+                       (while #t
+                         (sleep 60))))))
             (else
              (message-reply-success msg)))))))
    ;; Client
