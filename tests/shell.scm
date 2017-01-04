@@ -66,6 +66,18 @@
           (and (zero? exit-code)
                (string=? (car result) "which 'uname'"))))))))
 
+(test-assert-with-log "pgrep"
+  (run-client-test
+   start-server/exec
+   (lambda ()
+     (call-with-connected-session/shell
+      (lambda (session)
+        (receive (result exit-code)
+            (pgrep session "guile --listen=37146" #:full? #t)
+          (and (zero? exit-code)
+               (string=? "pgrep -f 'guile --listen=37146'"
+                         (car result)))))))))
+
 (test-assert-with-log "command-available?"
   (run-client-test
    start-server/exec
