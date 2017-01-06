@@ -111,7 +111,7 @@ asking question ``how to do it?'' -- what you should be asking yourself is
 ``how can I use it?''
 
 But Guile-SSH itself is just a library; a tool that can be used to solve some
-problems (and, perhaps, causing new ones ;-)).  So, as was noted in the
+problems (and, perhaps, to cause new ones ;-)).  So, as was noted in the
 quotation above, it's the combination of projects that may lead to the most
 interesting results.  With that said, I would love to see Guile-SSH used in
 another projects, and to hear positive (and negative) feedback from you.
