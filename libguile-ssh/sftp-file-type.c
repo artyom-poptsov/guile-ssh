@@ -84,19 +84,6 @@ ptob_input_waiting (SCM file)
 #undef FUNC_NAME
 
 static SCM
-mark_sftp_file (SCM sftp_file)
-{
-  struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
-  return fd->sftp_session;
-}
-
-static size_t
-free_sftp_file (SCM sftp_file)
-{
-  return 0;
-}
-
-static SCM
 equalp_sftp_file (SCM x1, SCM x2)
 {
   struct sftp_file_data *fd1 = _scm_to_sftp_file_data (x1);
@@ -337,8 +324,6 @@ init_sftp_file_type (void)
   scm_set_port_close (sftp_file_tag, ptob_close);
   scm_set_port_flush (sftp_file_tag, ptob_flush);
   scm_set_port_input_waiting (sftp_file_tag, ptob_input_waiting);
-  scm_set_port_mark (sftp_file_tag, mark_sftp_file);
-  scm_set_port_free (sftp_file_tag, free_sftp_file);
   scm_set_port_print (sftp_file_tag, print_sftp_file);
   scm_set_port_equalp (sftp_file_tag, equalp_sftp_file);
   scm_set_port_seek (sftp_file_tag, ptob_seek);
