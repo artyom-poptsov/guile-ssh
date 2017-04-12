@@ -1,6 +1,6 @@
 # -*- makefile -*-
 
-GUILEC = `which guild` compile
+GUILEC = $(GUILD) compile
 
 AM_V_GUILEC = $(AM_V_GUILEC_$(V))
 AM_V_GUILEC_ = $(AM_V_GUILEC_$(AM_DEFAULT_VERBOSITY))
