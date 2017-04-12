@@ -27,7 +27,7 @@
 #include "error.h"
 #include "common.h"
 
-scm_t_bits channel_tag;         /* Smob tag. */
+static scm_t_bits channel_tag;
 
 enum {
   DEFAULT_PORT_R_BUFSZ = 256,      /* Default read buffer size */

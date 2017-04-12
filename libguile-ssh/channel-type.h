@@ -22,8 +22,6 @@
 #include <libguile.h>
 #include <libssh/libssh.h>
 
-extern scm_t_bits channel_tag;
-
 
 /* Smob data. */
 struct channel_data {
