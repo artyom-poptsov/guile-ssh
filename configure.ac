@@ -69,9 +69,9 @@ dnl These macros must be provided by guile.m4.
 m4_pattern_forbid([^GUILE_PKG$])
 m4_pattern_forbid([^GUILE_PROGS$])
 
-dnl Currently only Guile 2.0 is supported.  Use this macro so that
-dnl 'GUILE_EFFECTIVE_VERSION' is defined here.
-GUILE_PKG([2.0])
+dnl Use this macro so that 'GUILE_EFFECTIVE_VERSION' is defined here.
+dnl Try Guile 2.2, then Guile 2.0.
+GUILE_PKG([2.2 2.0])
 
 GUILE_PROGS
 GUILE_FLAGS

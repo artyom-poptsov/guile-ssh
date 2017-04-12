@@ -22,6 +22,11 @@
 #include <libguile.h>
 
 
+/* Whether we're using Guile < 2.2.  */
+#define USING_GUILE_BEFORE_2_2					\
+  (SCM_MAJOR_VERSION < 2					\
+   || (SCM_MAJOR_VERSION == 2 && SCM_MINOR_VERSION == 0))
+
 /* Simplified version of 'SCM_DEFINE' macro that defines a procedure with
    empty docstring and without optional and "rest" arguments. */
 #define SCM_GSSH_DEFINE(c_name, scheme_name, req, arglist) \

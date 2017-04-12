@@ -1,6 +1,7 @@
 /* sftp-file-type.c -- SFTP file type.
  *
  * Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2017 Ludovic Courtès <ludo@gnu.org>
  *
  * This file is part of Guile-SSH.
  *
@@ -27,7 +28,13 @@
 #include "sftp-file-type.h"
 
 
+/* The SFTP file port type.  Guile 2.2 introduced a new port API, so we have a
+   separate implementation for these newer versions.  */
+#if USING_GUILE_BEFORE_2_2
 static scm_t_bits sftp_file_tag;       /* Smob tag. */
+#else
+static scm_t_port_type *sftp_file_tag;
+#endif
 
 
 enum {
@@ -37,6 +44,8 @@ enum {
 
 
 /* Ptob callbacks. */
+
+#if USING_GUILE_BEFORE_2_2
 
 /* Read data from the channel.  Return EOF if no data is available or
    throw `guile-ssh-error' if an error occured. */
@@ -72,6 +81,41 @@ ptob_write (SCM file, const void* data, size_t sz)
 }
 #undef FUNC_NAME
 
+#else /* !USING_GUILE_BEFORE_2_2 */
+
+static size_t
+read_from_sftp_file_port (SCM file, SCM dst, size_t start, size_t count)
+#define FUNC_NAME "read_from_sftp_file_port"
+{
+  char *data = (char *) SCM_BYTEVECTOR_CONTENTS (dst) + start;
+  struct sftp_file_data *fd = _scm_to_sftp_file_data (file);
+  ssize_t res;
+
+  res = sftp_read (fd->file, data, count);
+  if (res < 0)
+    guile_ssh_error1 (FUNC_NAME, "Error reading the file", file);
+
+  return res;
+}
+#undef FUNC_NAME
+
+static size_t
+write_to_sftp_file_port (SCM file, SCM src, size_t start, size_t count)
+#define FUNC_NAME "write_to_sftp_file_port"
+{
+  char *data = (char *) SCM_BYTEVECTOR_CONTENTS (src) + start;
+  struct sftp_file_data *fd = _scm_to_sftp_file_data (file);
+  ssize_t nwritten = sftp_write (fd->file, data, count);
+
+  if (nwritten < 0)
+    guile_ssh_error1 (FUNC_NAME, "Error reading the file", file);
+
+  return nwritten;
+}
+#undef FUNC_NAME
+
+#endif /* !USING_GUILE_BEFORE_2_2 */
+
 static int
 ptob_input_waiting (SCM file)
 #define FUNC_NAME "ptob_input_waiting"
@@ -83,6 +127,7 @@ ptob_input_waiting (SCM file)
 }
 #undef FUNC_NAME
 
+#if USING_GUILE_BEFORE_2_2
 static SCM
 equalp_sftp_file (SCM x1, SCM x2)
 {
@@ -96,6 +141,7 @@ equalp_sftp_file (SCM x1, SCM x2)
   else
     return SCM_BOOL_T;
 }
+#endif
 
 static int
 print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
@@ -127,7 +173,7 @@ print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
                port);
   scm_putc (' ', port);
 
-  scm_display (SCM_FILENAME (sftp_file), port);
+  scm_display (scm_port_filename (sftp_file), port);
 
   scm_putc (' ', port);
 
@@ -135,6 +181,8 @@ print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
   scm_puts (">", port);
   return 1;
 }
+
+#if USING_GUILE_BEFORE_2_2
 
 /* Complete the processing of buffered output data.  Currently this callback
    makes no effect because a SFTP_FILE uses unbuffered output. */
@@ -152,25 +200,35 @@ ptob_flush (SCM sftp_file)
 }
 #undef FUNC_NAME
 
+#endif
+
+#if USING_GUILE_BEFORE_2_2
 static int
+#else
+static void
+#endif
 ptob_close (SCM sftp_file)
 {
   struct sftp_file_data *fd = _scm_to_sftp_file_data (sftp_file);
+
+#if USING_GUILE_BEFORE_2_2
   scm_port *pt = SCM_PTAB_ENTRY (sftp_file);
 
   ptob_flush (sftp_file);
+#endif
 
   if (fd)
     {
       sftp_close (fd->file);
     }
 
-  scm_gc_free (fd, sizeof (struct sftp_file_data), "sftp file");
+#if USING_GUILE_BEFORE_2_2
   scm_gc_free (pt->write_buf, pt->write_buf_size, "port write buffer");
   scm_gc_free (pt->read_buf,  pt->read_buf_size, "port read buffer");
   SCM_SETSTREAM (sftp_file, NULL);
 
   return 1;
+#endif
 }
 
 
@@ -179,14 +237,21 @@ ptob_seek (SCM port, scm_t_off offset, int whence)
 #define FUNC_NAME "ptob_seek"
 {
   struct sftp_file_data *fd = _scm_to_sftp_file_data (port);
-  scm_t_port *pt = SCM_PTAB_ENTRY (port);
   scm_t_off target;
 
-  if (pt->rw_active == SCM_PORT_WRITE)
-    ptob_flush (port);
+  /* In Guile 2.2, PORT is flushed before this function is called; in 2.0 that
+     wasn't the case.  */
+#if USING_GUILE_BEFORE_2_2
+  {
+    scm_t_port *pt = SCM_PTAB_ENTRY (port);
 
-  if (pt->rw_active == SCM_PORT_READ)
-    scm_end_input (port);
+    if (pt->rw_active == SCM_PORT_WRITE)
+      ptob_flush (port);
+
+    if (pt->rw_active == SCM_PORT_READ)
+      scm_end_input (port);
+  }
+#endif
 
   switch (whence)
     {
@@ -263,7 +328,12 @@ SCM_GSSH_DEFINE (gssh_sftp_open, "%gssh-sftp-open", 4,
 
 SCM_GSSH_DEFINE (gssh_sftp_file_p, "%gssh-sftp-file?", 1, (SCM x))
 {
+#if USING_GUILE_BEFORE_2_2
   return scm_from_bool (SCM_SMOB_PREDICATE (sftp_file_tag, x));
+#else
+  return scm_from_bool (SCM_PORTP (x)
+			&& SCM_PORT_TYPE (x) == sftp_file_tag);
+#endif
 }
 
 
@@ -274,10 +344,14 @@ SCM_GSSH_DEFINE (gssh_sftp_file_p, "%gssh-sftp-file?", 1, (SCM x))
 struct sftp_file_data *
 _scm_to_sftp_file_data (SCM x)
 {
+#if USING_GUILE_BEFORE_2_2
   scm_assert_smob_type (sftp_file_tag, x);
-  return SCM_PTAB_ENTRY (x)
-    ? (struct sftp_file_data *) SCM_STREAM (x)
-    : (struct sftp_file_data *) NULL;
+#else
+  SCM_ASSERT_TYPE (SCM_PORTP (x) && SCM_PORT_TYPE (x) == sftp_file_tag,
+		   x, 1, __func__, "sftp-file-port");
+#endif
+
+  return (struct sftp_file_data *) SCM_STREAM (x);
 }
 
 /* Convert SFTP file FD to a SCM object; set SFTP_SESSION as a parent of the
@@ -286,29 +360,39 @@ SCM
 _scm_from_sftp_file (const sftp_file file, const SCM name, SCM sftp_session)
 {
   SCM ptob;
-  scm_port *pt;
   struct sftp_file_data *fd = scm_gc_malloc (sizeof (struct sftp_file_data),
                                              "sftp file");
   fd->sftp_session = sftp_session;
   fd->file         = file;
-  ptob = scm_new_port_table_entry (sftp_file_tag);
-  pt   = SCM_PTAB_ENTRY (ptob);
 
-  /* Output init */
-  pt->write_buf_size = DEFAULT_PORT_R_BUFSZ;
-  pt->write_buf = scm_gc_malloc (pt->write_buf_size, "port write buffer");
-  pt->write_pos = pt->write_end = pt->write_buf;
+#if USING_GUILE_BEFORE_2_2
+  {
+    scm_port *pt;
 
-  /* Input init */
-  pt->read_buf_size = DEFAULT_PORT_W_BUFSZ;
-  pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
-  pt->read_pos = pt->read_end = pt->read_buf;
+    ptob = scm_new_port_table_entry (sftp_file_tag);
+    pt   = SCM_PTAB_ENTRY (ptob);
 
-  pt->rw_random = 1;
+    /* Output init */
+    pt->write_buf_size = DEFAULT_PORT_R_BUFSZ;
+    pt->write_buf = scm_gc_malloc (pt->write_buf_size, "port write buffer");
+    pt->write_pos = pt->write_end = pt->write_buf;
 
-  SCM_SET_FILENAME (ptob, name);
-  SCM_SET_CELL_TYPE (ptob, sftp_file_tag | SCM_RDNG | SCM_WRTNG | SCM_OPN);
-  SCM_SETSTREAM (ptob, fd);
+    /* Input init */
+    pt->read_buf_size = DEFAULT_PORT_W_BUFSZ;
+    pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
+    pt->read_pos = pt->read_end = pt->read_buf;
+
+    pt->rw_random = 1;
+
+    SCM_SET_CELL_TYPE (ptob, sftp_file_tag | SCM_RDNG | SCM_WRTNG | SCM_OPN);
+    SCM_SETSTREAM (ptob, fd);
+  }
+#else
+  ptob = scm_c_make_port (sftp_file_tag, SCM_RDNG | SCM_WRTNG | SCM_OPN,
+			  (scm_t_bits) fd);
+#endif
+
+  scm_set_port_filename_x (ptob, name);
 
   return ptob;
 }
@@ -319,13 +403,22 @@ void
 init_sftp_file_type (void)
 {
   sftp_file_tag = scm_make_port_type ("sftp-file",
+#if USING_GUILE_BEFORE_2_2
                                       &ptob_fill_input,
-                                      &ptob_write);
-  scm_set_port_close (sftp_file_tag, ptob_close);
+                                      &ptob_write
+#else
+				      read_from_sftp_file_port,
+				      write_to_sftp_file_port
+#endif
+				      );
+#if USING_GUILE_BEFORE_2_2
   scm_set_port_flush (sftp_file_tag, ptob_flush);
+  scm_set_port_equalp (sftp_file_tag, equalp_sftp_file);
+#endif
+
+  scm_set_port_close (sftp_file_tag, ptob_close);
   scm_set_port_input_waiting (sftp_file_tag, ptob_input_waiting);
   scm_set_port_print (sftp_file_tag, print_sftp_file);
-  scm_set_port_equalp (sftp_file_tag, equalp_sftp_file);
   scm_set_port_seek (sftp_file_tag, ptob_seek);
 
 #include "sftp-file-type.x"

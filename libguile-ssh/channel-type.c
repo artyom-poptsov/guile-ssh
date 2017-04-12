@@ -1,6 +1,7 @@
 /* channel-type.c -- SSH channel smob.
  *
  * Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2017 Ludovic Courtès <ludo@gnu.org>
  *
  * This file is part of Guile-SSH.
  *
@@ -27,7 +28,14 @@
 #include "error.h"
 #include "common.h"
 
+
+/* The channel port type.  Guile 2.2 introduced a new port API, so we have a
+   separate implementation for these newer versions.  */
+#if USING_GUILE_BEFORE_2_2
 static scm_t_bits channel_tag;
+#else
+static scm_t_port_type *channel_tag;
+#endif
 
 enum {
   DEFAULT_PORT_R_BUFSZ = 256,      /* Default read buffer size */
@@ -36,6 +44,8 @@ enum {
 
 
 /* Ptob specific procedures */
+
+#if USING_GUILE_BEFORE_2_2
 
 /* Read data from the channel.  Return EOF if no data is available or
    throw `guile-ssh-error' if an error occured. */
@@ -123,6 +133,62 @@ ptob_flush (SCM channel)
 }
 #undef FUNC_NAME
 
+#else /* !USING_GUILE_BEFORE_2_2 */
+
+static size_t
+read_from_channel_port (SCM channel, SCM dst, size_t start, size_t count)
+#define FUNC_NAME "read_from_channel_port"
+{
+  char *data = (char *) SCM_BYTEVECTOR_CONTENTS (dst) + start;
+  struct channel_data *cd = _scm_to_channel_data (channel);
+  int res;
+
+  if (! ssh_channel_is_open (cd->ssh_channel))
+    return 0;
+
+  /* Update state of the underlying channel and check whether we have
+     data to read or not. */
+  res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
+  if (res == SSH_ERROR)
+    guile_ssh_error1 (FUNC_NAME, "Error polling channel", channel);
+  else if (res == SSH_EOF)
+    return 0;
+
+  /* Note: `ssh_channel_read' sometimes returns 0 even if `ssh_channel_poll'
+     returns a positive value.  */
+  res = ssh_channel_read (cd->ssh_channel, data, count, cd->is_stderr);
+
+  if (res == SSH_AGAIN)
+    res = 0;
+  else if (res == SSH_ERROR)
+    guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", channel);
+
+  assert (res >= 0);
+  return res;
+}
+#undef FUNC_NAME
+
+static size_t
+write_to_channel_port (SCM channel, SCM src, size_t start, size_t count)
+#define FUNC_NAME "write_to_channel_port"
+{
+  char *data = (char *) SCM_BYTEVECTOR_CONTENTS (src) + start;
+  struct channel_data *channel_data = _scm_to_channel_data (channel);
+
+  int res = ssh_channel_write (channel_data->ssh_channel, data, count);
+  if (res == SSH_ERROR)
+    {
+      ssh_session session = ssh_channel_get_session (channel_data->ssh_channel);
+      guile_ssh_session_error1 (FUNC_NAME, session, channel);
+    }
+
+  assert (res >= 0);
+  return res;
+}
+#undef FUNC_NAME
+
+#endif /* !USING_GUILE_BEFORE_2_2 */
+
 /* Poll the underlying SSH channel for data, return amount of data
    available for reading.  Throw `guile-ssh-error' on error. */
 static int
@@ -140,13 +206,20 @@ ptob_input_waiting (SCM channel)
 #undef FUNC_NAME
 
 /* Close underlying SSH channel and free all allocated resources. */
+#if USING_GUILE_BEFORE_2_2
 static int
+#else
+static void
+#endif
 ptob_close (SCM channel)
 {
-  scm_port *pt = SCM_PTAB_ENTRY (channel);
   struct channel_data *ch = _scm_to_channel_data (channel);
 
+#if USING_GUILE_BEFORE_2_2
+  scm_port *pt = SCM_PTAB_ENTRY (channel);
+
   ptob_flush (channel);
+#endif
 
   if (ch)
     {
@@ -154,12 +227,13 @@ ptob_close (SCM channel)
       ssh_channel_free (ch->ssh_channel);
     }
 
-  scm_gc_free (ch, sizeof (struct channel_data), "channel");
+#if USING_GUILE_BEFORE_2_2
   scm_gc_free (pt->write_buf, pt->write_buf_size, "port write buffer");
   scm_gc_free (pt->read_buf,  pt->read_buf_size, "port read buffer");
   SCM_SETSTREAM (channel, NULL);
 
   return 0;
+#endif
 }
 
 
@@ -223,9 +297,15 @@ SCM_DEFINE (guile_ssh_is_channel_p, "channel?", 1, 0, 0,
 Return #t if X is a SSH channel, #f otherwise.\
 ")
 {
+#if USING_GUILE_BEFORE_2_2
   return scm_from_bool (SCM_SMOB_PREDICATE (channel_tag, x));
+#else
+  return scm_from_bool (SCM_PORTP (x)
+			&& SCM_PORT_TYPE (x) == channel_tag);
+#endif
 }
 
+#if USING_GUILE_BEFORE_2_2
 SCM
 equalp_channel (SCM x1, SCM x2)
 {
@@ -239,6 +319,7 @@ equalp_channel (SCM x1, SCM x2)
   else
     return SCM_BOOL_T;
 }
+#endif
 
 
 /* Helper procedures */
@@ -252,9 +333,8 @@ equalp_channel (SCM x1, SCM x2)
 SCM
 _scm_from_channel_data (ssh_channel ch, SCM session, long flags)
 {
-  struct channel_data *channel_data;
   SCM ptob;
-  scm_port *pt;
+  struct channel_data *channel_data;
 
   assert ((flags & ~(SCM_RDNG | SCM_WRTNG)) == 0);
 
@@ -264,26 +344,37 @@ _scm_from_channel_data (ssh_channel ch, SCM session, long flags)
   channel_data->is_stderr = 0;  /* Reading from stderr disabled by default */
   channel_data->session = session;
 
-  ptob = scm_new_port_table_entry (channel_tag);
-  pt   = SCM_PTAB_ENTRY (ptob);
+#if USING_GUILE_BEFORE_2_2
+  {
+    scm_port *pt;
 
-  pt->rw_random = 0;
+    ptob = scm_new_port_table_entry (channel_tag);
+    pt   = SCM_PTAB_ENTRY (ptob);
 
-  /* Output init */
-  pt->write_buf_size = DEFAULT_PORT_W_BUFSZ;
-  pt->write_buf = scm_gc_malloc (pt->write_buf_size, "port write buffer");
-  pt->write_pos = pt->write_buf;
-  pt->write_end = pt->write_buf;
+    pt->rw_random = 0;
 
-  /* Input init */
-  pt->read_buf_size = DEFAULT_PORT_R_BUFSZ;
-  pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
-  pt->read_pos = pt->read_buf;
-  pt->read_end = pt->read_buf;
+    /* Output init */
+    pt->write_buf_size = DEFAULT_PORT_W_BUFSZ;
+    pt->write_buf = scm_gc_malloc (pt->write_buf_size, "port write buffer");
+    pt->write_pos = pt->write_buf;
+    pt->write_end = pt->write_buf;
 
-  SCM_SET_CELL_TYPE (ptob, channel_tag | flags);
+    /* Input init */
+    pt->read_buf_size = DEFAULT_PORT_R_BUFSZ;
+    pt->read_buf = scm_gc_malloc (pt->read_buf_size, "port read buffer");
+    pt->read_pos = pt->read_buf;
+    pt->read_end = pt->read_buf;
 
-  SCM_SETSTREAM (ptob, channel_data);
+    SCM_SET_CELL_TYPE (ptob, channel_tag | flags);
+    SCM_SETSTREAM (ptob, channel_data);
+  }
+#else
+  /* As for file ports returned by 'socket', 'accept', & co., make the port
+     unbuffered by default so that writes go straight to the remote host, as
+     people typically expect.  */
+  ptob = scm_c_make_port (channel_tag, flags | SCM_BUF0,
+			  (scm_t_bits) channel_data);
+#endif
 
   return ptob;
 }
@@ -293,10 +384,16 @@ _scm_from_channel_data (ssh_channel ch, SCM session, long flags)
 struct channel_data *
 _scm_to_channel_data (SCM x)
 {
+  /* In Guile 2.0 ports and SMOBs were all alike; that is no longer the case
+     in 2.2.  */
+#if USING_GUILE_BEFORE_2_2
   scm_assert_smob_type (channel_tag, x);
-  return SCM_PTAB_ENTRY (x)
-    ? (struct channel_data *) SCM_STREAM (x)
-    : (struct channel_data *) NULL;
+#else
+  SCM_ASSERT_TYPE (SCM_PORTP (x) && SCM_PORT_TYPE (x) == channel_tag,
+		   x, 1, __func__, "channel-port");
+#endif
+
+  return (struct channel_data *) SCM_STREAM (x);
 }
 
 
@@ -305,13 +402,26 @@ void
 init_channel_type (void)
 {
   channel_tag = scm_make_port_type ("channel",
+#if USING_GUILE_BEFORE_2_2
                                     &ptob_fill_input,
-                                    &ptob_write);
+                                    &ptob_write
+#else
+				    read_from_channel_port,
+				    write_to_channel_port
+#endif
+				    );
   scm_set_port_close (channel_tag, ptob_close);
+
+#if USING_GUILE_BEFORE_2_2
   scm_set_port_flush (channel_tag, ptob_flush);
+
+  /* The 'equalp' function has no equivalent with Guile 2.2 but 'eq?' should
+     be equivalent in practice.  */
+  scm_set_port_equalp (channel_tag, equalp_channel);
+#endif
+
   scm_set_port_input_waiting (channel_tag, ptob_input_waiting);
   scm_set_port_print (channel_tag, print_channel);
-  scm_set_port_equalp (channel_tag, equalp_channel);
 
   scm_c_define ("RDNG",  scm_from_long (SCM_RDNG));
   scm_c_define ("WRTNG", scm_from_long (SCM_WRTNG));
