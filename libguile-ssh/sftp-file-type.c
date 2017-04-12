@@ -27,7 +27,7 @@
 #include "sftp-file-type.h"
 
 
-scm_t_bits sftp_file_tag;       /* Smob tag. */
+static scm_t_bits sftp_file_tag;       /* Smob tag. */
 
 
 enum {
