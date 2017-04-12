@@ -51,7 +51,7 @@
    " --identity-file=" %rsakey
    " --port=" (number->string *srv-port*)
    " --known-hosts-file=" %knownhosts
-   " " (inet-ntoa *srv-address*)
+   " " (inet-ntop AF_INET *srv-address*)
    " '" *test-cmd* "'"))
 
 (setenv "GUILE_LOAD_PATH" (string-append %topdir "/modules"))
