@@ -162,20 +162,7 @@ ptob_close (SCM channel)
   return 0;
 }
 
-SCM
-mark_channel (SCM channel_smob)
-{
-  struct channel_data *cd = _scm_to_channel_data (channel_smob);
-  return cd->session;
-}
 
-size_t
-free_channel (SCM channel_smob)
-{
-  /* All resources allocated by the SSH channel will be freed along
-     with the related SSH session. */
-  return 0;
-}
 
 /* Print the CHANNEL object to port PORT. */
 static int
@@ -323,8 +310,6 @@ init_channel_type (void)
   scm_set_port_close (channel_tag, ptob_close);
   scm_set_port_flush (channel_tag, ptob_flush);
   scm_set_port_input_waiting (channel_tag, ptob_input_waiting);
-  scm_set_port_mark (channel_tag, mark_channel);
-  scm_set_port_free (channel_tag, free_channel);
   scm_set_port_print (channel_tag, print_channel);
   scm_set_port_equalp (channel_tag, equalp_channel);
 
