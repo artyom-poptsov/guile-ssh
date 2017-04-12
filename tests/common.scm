@@ -31,6 +31,7 @@
   #:use-module (ssh message)
   #:export (;; Variables
             %topdir
+            %topbuilddir
             %knownhosts
             %config
             %addr
@@ -65,6 +66,7 @@
 
 
 (define %topdir (getenv "abs_top_srcdir"))
+(define %topbuilddir (getenv "abs_top_builddir"))
 (define %addr   "127.0.0.1")
 (define *port*  12400)
 

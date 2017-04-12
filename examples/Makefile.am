@@ -41,6 +41,7 @@ substitute = sed -e 's,[@]GUILE[@],$(GUILE),g'
 SUFFIXES = .in
 
 .in:
+	$(MKDIR_P) "`dirname "$@"`"
 	$(substitute) "$^" > "$@.tmp" && 	\
 	chmod +x "$@.tmp" &&			\
 	mv "$@.tmp" "$@"

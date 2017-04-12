@@ -39,7 +39,7 @@
 
 (define *ssshd-cmd*
   (string-append
-   %topdir "/examples/ssshd.scm --detach"
+   %topbuilddir "/examples/ssshd.scm --detach"
    " --pid-file=" *srv-pid-file*
    " --port=" (number->string *srv-port*)
    " --rsakey=" %rsakey
@@ -47,7 +47,7 @@
 
 (define *sssh-cmd*
   (string-append
-   %topdir "/examples/sssh.scm"
+   %topbuilddir "/examples/sssh.scm"
    " --identity-file=" %rsakey
    " --port=" (number->string *srv-port*)
    " --known-hosts-file=" %knownhosts
