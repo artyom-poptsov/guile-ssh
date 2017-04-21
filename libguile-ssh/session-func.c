@@ -18,6 +18,8 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
+
 #include <libguile.h>
 #include <libssh/libssh.h>
 #include <libssh/callbacks.h>

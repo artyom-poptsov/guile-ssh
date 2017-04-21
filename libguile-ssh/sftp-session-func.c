@@ -19,6 +19,8 @@
  */
 
 
+#include <config.h>
+
 /* Guile */
 #include <libguile.h>
 

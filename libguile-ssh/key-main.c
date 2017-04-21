@@ -18,6 +18,8 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
+
 #include "key-type.h"
 #include "key-func.h"
 #include "threads.h"

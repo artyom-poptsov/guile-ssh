@@ -17,6 +17,8 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
+
 #include "channel-type.h"
 #include "channel-func.h"
 #include "threads.h"
