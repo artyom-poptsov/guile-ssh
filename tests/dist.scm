@@ -104,6 +104,8 @@
   (receive (result eval-num module-name lang)
       (call-with-input-string "scheme@(guile-user)> $0 = test"
                               rrepl-get-result)
+    ;; (format (current-error-port)
+    ;;         "\tresult: ~a\neval-num: ~a"
     (and (eq?      result      'test)
          (=        eval-num    0)
          (string=? module-name "(guile-user)")
@@ -122,6 +124,14 @@
   'node-repl-error "scheme@(guile-user)> ERROR: error."
   (call-with-input-string "scheme@(guile-user)> ERROR: error."
                           rrepl-get-result))
+
+;; See <https://github.com/artyom-poptsov/guile-ssh/issues/3>.
+(test-error-with-log/= "rrepl-get-result, compilation error"
+  'node-repl-error "scheme@(guile-user)> While compiling expression:\nERROR: no code for module (module-that-doesnt-exist)"
+  (call-with-input-string
+   (string-append "scheme@(guile-user)> While compiling expression:\n"
+                  "ERROR: no code for module (module-that-doesnt-exist)")
+   rrepl-get-result))
 
 (test-assert "rrepl-get-result, elisp"
   (receive (result eval-num module-name lang)
@@ -175,28 +185,31 @@
        (start-session-loop
         session
         (lambda (msg type)
+          (format-log/scm 'nolog
+                          "server"
+                          "msg: ~a; type: ~a" msg type)
           (case (car type)
             ((request-channel-open)
              (let ((c (message-channel-request-open-reply-accept msg)))
-
+               (format-log/scm 'nolog "server" "channel 0: ~a" c)
                ;; Write the last line of Guile REPL greeting message to
                ;; pretend that we're a REPL server.
                (write-line "Enter `,help' for help." c)
-
+               (format-log/scm 'nolog "server" "channel 1: ~a" c)
                (usleep 100)
                (poll c
                      (lambda args
                        ;; Read expression
                        (let ((result (read-line c)))
-                         (format-log 'nolog "server"
-                                     "[SCM] sexp: ~a" result)
+                         (format-log/scm 'nolog "server"
+                                         "sexp: ~a" result)
                          (or (string=? result "(begin (+ 21 21))")
                              (error "Wrong result 1" result)))
 
                        ;; Read newline
                        (let ((result (read-line c)))
-                         (format-log 'nolog "server"
-                                     "[SCM] sexp: ~a" result)
+                         (format-log/scm 'nolog "server"
+                                         "sexp: ~a" result)
                          (or (string=? result "(newline)")
                              (error "Wrong result 2" result)))
 
@@ -210,7 +223,7 @@
      (call-with-connected-session
       (lambda (session)
         (authenticate-server session)
-
+        (format-log/scm 'nolog "client" "session: ~a" session)
         (unless (equal? (userauth-none! session) 'success)
           (error "Could not authenticate with a server" session))
 
