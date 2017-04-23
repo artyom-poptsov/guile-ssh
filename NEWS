@@ -15,17 +15,17 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 *** In (ssh tunnel)
 **** 'main-loop' now handles "interrupted system call" errors
      that sometimes occur on 'select' call.
-** In (ssh dist node)
-**** 'rrepl-get-result' now handles compilation errors
-     The procedure would always fail to read compilation errors properly
-     because it considered the message as "undefined" result.  Now this bug
-     should be fixed.
+*** In (ssh dist node)
+***** 'rrepl-get-result' now handles compilation errors
+      The procedure would always fail to read compilation errors properly
+      because it considered the message as "undefined" result.  Now this bug
+      should be fixed.
 
-     An example of an error that now should be handled is "no code for module"
-     due to using a non-existing module in 'with-ssh' expression.
+      An example of an error that now should be handled is "no code for module"
+      due to using a non-existing module in 'with-ssh' expression.
 
-     Reported by Mathieu, in
-     <https://github.com/artyom-poptsov/guile-ssh/issues/3>
+      Reported by Mathieu, in
+      <https://github.com/artyom-poptsov/guile-ssh/issues/3>
 ** Changes in (ssh dist node)
 *** 'node-eval' now can work without procps
     The procedure now checks if procps package is present on a node and uses
