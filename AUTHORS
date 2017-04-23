@@ -23,3 +23,5 @@ See also files THANKS and ChangeLog.
     session-func.c
 
   Bug reports, various comments and suggestions.
+* Mathieu <https://github.com/mothacehe>
+  Pointed out to a bug in 'rrepl-get-result' from (ssh dist node).

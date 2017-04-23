@@ -229,6 +229,7 @@ through bug reports or patches:
 @item David Thompson @email{davet@@gnu.org}
 @item SaffronSnail @url{https://github.com/SaffronSnail}
 @item David Kastrup @email{dak@@gnu.org>}
+@item Mathieu @url{https://github.com/mothacehe}
 @end itemize
 
 
