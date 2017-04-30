@@ -26,6 +26,13 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
       Reported by Mathieu, in
       <https://github.com/artyom-poptsov/guile-ssh/issues/3>
+***** 'rrepl-get-result' now handles "unbound variable" errors
+      The procedure would always fail to read "unbound variable" errors
+      properly, returning wrong result with only two values (current module
+      name and current language name).  Now this bug should be fixed.
+
+      Reported by Mathieu, in
+      <https://github.com/artyom-poptsov/guile-ssh/issues/3>
 ** Changes in (ssh dist node)
 *** 'node-eval' now can work without procps
     The procedure now checks if procps package is present on a node and uses

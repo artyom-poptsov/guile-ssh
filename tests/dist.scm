@@ -133,6 +133,19 @@
                   "ERROR: no code for module (module-that-doesnt-exist)")
    rrepl-get-result))
 
+(test-error-with-log/= "rrepl-get-result, unbound variable error"
+  'node-repl-error "scheme@(guile-user)> ;;; socket:9:7: warning: \
+possibly unbound variable `e'\nsocket:9:7: In procedure #<procedure \
+1a44920 at socket:9:7 ()>:\nsocket:9:7: In procedure module-lookup: \
+Unbound variable: e"
+  (call-with-input-string
+   (string-append (string-append
+                   "scheme@(guile-user)> ;;; socket:9:7: warning: "
+                   "possibly unbound variable `e'\nsocket:9:7: "
+                   "In procedure #<procedure 1a44920 at socket:9:7 ()>:\n"
+                   "socket:9:7: In procedure module-lookup: Unbound variable: e"))
+   rrepl-get-result))
+
 (test-assert "rrepl-get-result, elisp"
   (receive (result eval-num module-name lang)
       (call-with-input-string "elisp@(guile-user)> $0 = #nil"

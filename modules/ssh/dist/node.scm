@@ -182,6 +182,12 @@ error."
 (define %repl-error-regexp-2
   (make-regexp "^ERROR: .*"))
 
+;; Regexp for parsing "unbound variable" errors.
+(define %repl-error-unbound-variable
+  (make-regexp "socket:[0-9]+:[0-9]+: \
+In procedure module-lookup: Unbound variable: .*"))
+
+
 (define (rrepl-get-result repl-channel)
   "Get result of evaluation form REPL-CHANNEL, return four values: an
 evaluation result, a number of the evaluation, a module name and a language
@@ -227,7 +233,8 @@ name.  Throw 'node-repl-error' on an error."
   (define (error? line)
     "Does a LINE contain an REPL error message?"
     (or (regexp-exec %repl-error-regexp line)
-        (regexp-exec %repl-error-regexp-2 line)))
+        (regexp-exec %repl-error-regexp-2 line)
+        (regexp-exec %repl-error-unbound-variable line)))
 
   (define (error-message? result)
     "Does a RESULT of evaluation contains a REPL error message?"
