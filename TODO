@@ -3,6 +3,18 @@
 * Ideas
 ** Make channel buffers configurable.
 ** Make use of libssh callbacks to track asynchronous events on channels
+** Use more robust approach to evaluate Lisp code on a remote side
+   Quoting Ludovic Courtès, "[...] it might be best to not use the REPL at
+   all.  In the Shepherd I used a simple protocol whereby the sexp to evaluate
+   is passed to the other process, which returns an sexp denoting success and
+   a list of return values, or failure and an exception.
+
+   That way you don’t have to “parse” anything; you just get a clear
+   description of the return values or the exception that you got."
+
+   Food for thought.
+
+   GNU Shepherd: https://www.gnu.org/software/shepherd/
 ** Allow to specify the load coefficient for each node
    in (ssh dist node)
 ** 'dist-load' procedure
