@@ -193,9 +193,9 @@ In procedure module-lookup: Unbound variable: .*"))
 evaluation result, a number of the evaluation, a module name and a language
 name.  Throw 'node-repl-error' on an error."
 
-  (define (raise-repl-error result)
+  (define (raise-repl-error result . rest)
     "Raise an REPL error with a RESULT of evaluation."
-    (node-repl-error "Evaluation failed" result))
+    (node-repl-error "Evaluation failed" result rest))
 
   (define (parse-result matches lines)
     (if (null? lines)
@@ -210,25 +210,38 @@ name.  Throw 'node-repl-error' on an error."
   (define (read-result match rest)
     (let* ((matches (parse-result (list match) rest))
            (len     (length matches)))
-      (if (= len 1)
-          (let ((m (car matches)))
-            (values (read-string (match:substring m 4))
-                    (string->number (match:substring m 3))))
-          (let ((rv (make-vector len))
-                (nv (make-vector len)))
+      (catch #t
+        (lambda ()
+          (if (= len 1)
+              (let ((m (car matches)))
+                (values (read-string (match:substring m 4))
+                        (string->number (match:substring m 3))))
+              (let ((rv (make-vector len))
+                    (nv (make-vector len)))
+                ;; The 1st match also contains a module name and language name,
+                ;; but we want only the evaluation result and the result number.
+                (let ((m (car matches)))
+                  (vector-set! rv 0 (read-string (match:substring m 4)))
+                  (vector-set! nv 0 (string->number (match:substring m 3))))
 
-            ;; The 1st match also contains a module name and language name,
-            ;; but we want only the evaluation result and the result number.
-            (let ((m (car matches)))
-              (vector-set! rv 0 (read-string (match:substring m 4)))
-              (vector-set! nv 0 (string->number (match:substring m 3))))
-
-            (do ((i 1 (1+ i)))
-                ((= i len))
-              (let ((m (list-ref matches i)))
-                (vector-set! rv i (read-string (match:substring m 2)))
-                (vector-set! nv i (string->number (match:substring m 1)))))
-            (values rv nv)))))
+                (do ((i 1 (1+ i)))
+                    ((= i len))
+                  (let ((m (list-ref matches i)))
+                    (vector-set! rv i (read-string (match:substring m 2)))
+                    (vector-set! nv i (string->number (match:substring m 1)))))
+                (values rv nv))))
+        (lambda (key . message)
+          (case key
+            ((read-error)
+             (raise-repl-error (format #f "Reader error: ~a: ~a: ~a"
+                                       (car message)
+                                       (apply format #f (cadr message) (cddr message))
+                                       (string-join (map (lambda (match) (match:substring match 0))
+                                                         matches)))))
+            (else
+             (raise-repl-error message
+                               (map (lambda (match) (match:substring match 0))
+                                    matches))))))))
 
   (define (error? line)
     "Does a LINE contain an REPL error message?"

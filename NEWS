@@ -33,6 +33,14 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
       Reported by Mathieu, in
       <https://github.com/artyom-poptsov/guile-ssh/issues/3>
+***** 'rrepl-get-result' now handles unknown # objects
+      The procedure would always fail to read unknown objects (e.g. instances
+      of Guile-SSH session) properly, raising an obscure errors like
+      "Unknown # object: #\<".  Now the procedure raises 'node-repl-error'
+      with full evaluation result gotten from RREPL.
+
+      Reported by Mathieu, in
+      <https://github.com/artyom-poptsov/guile-ssh/issues/3>
 ** Changes in (ssh dist node)
 *** 'node-eval' now can work without procps
     The procedure now checks if procps package is present on a node and uses
