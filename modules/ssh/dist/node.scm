@@ -235,9 +235,13 @@ name.  Throw 'node-repl-error' on an error."
             ((read-error)
              (raise-repl-error (format #f "Reader error: ~a: ~a: ~a"
                                        (car message)
-                                       (apply format #f (cadr message) (cddr message))
-                                       (string-join (map (lambda (match) (match:substring match 0))
-                                                         matches)))))
+                                       (apply format #f
+                                              (cadr message)
+                                              (cddr message))
+                                       (string-join
+                                        (map (lambda (match)
+                                               (match:substring match 0))
+                                             matches)))))
             (else
              (raise-repl-error message
                                (map (lambda (match) (match:substring match 0))
