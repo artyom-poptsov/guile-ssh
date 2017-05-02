@@ -226,19 +226,19 @@ unspecified."
     (while (connected? (tunnel-session tunnel))
       (receive (channel port)
           (channel-accept-forward (tunnel-session tunnel) 1000)
-        (and channel
-             (let* ((sock (socket PF_INET SOCK_STREAM 0)))
-               (tunnel-connect tunnel sock)
-               (while (channel-open? channel)
-                 (cond-io
-                  (channel -> sock => transfer)
-                  (sock -> channel => transfer)
-                  (else
-                   ;; XXX: Very hacky.  We should use something like 'select'
-                   ;; here.
-                   (when (channel-open? channel)
-                     (usleep timeout)
-                     (idle-proc sock channel)))))))))))
+        (when channel
+          (let ((sock (socket PF_INET SOCK_STREAM 0)))
+            (tunnel-connect tunnel sock)
+            (while (channel-open? channel)
+              (cond-io
+               (channel -> sock => transfer)
+               (sock -> channel => transfer)
+               (else
+                ;; XXX: Very hacky.  We should use something like 'select'
+                ;; here.
+                (when (channel-open? channel)
+                  (usleep timeout)
+                  (idle-proc sock channel)))))))))))
 
 
 (define* (start-forward tunnel #:optional (idle-proc (const #f)))
