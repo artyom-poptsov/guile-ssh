@@ -212,6 +212,14 @@ when no data is available."
 
 
 (define (main-loop/reverse tunnel idle-proc)
+
+  (define (tunnel-connect tunnel sock)
+    "Make a connection for a reverse TUNNEL.  The return value is
+unspecified."
+    (connect sock AF_INET
+             (inet-aton (tunnel-host tunnel))
+             (tunnel-host-port tunnel)))
+
   (let* ((timeout    (tunnel-timeout tunnel))
          (timeout-s  (and timeout (quotient  timeout 1000000)))
          (timeout-us (and timeout (remainder timeout 1000000))))
@@ -220,9 +228,7 @@ when no data is available."
           (channel-accept-forward (tunnel-session tunnel) 1000)
         (and channel
              (let* ((sock (socket PF_INET SOCK_STREAM 0)))
-               (connect sock AF_INET
-                        (inet-aton (tunnel-host tunnel))
-                        (tunnel-host-port tunnel))
+               (tunnel-connect tunnel sock)
                (while (channel-open? channel)
                  (cond-io
                   (channel -> sock => transfer)
