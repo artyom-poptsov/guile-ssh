@@ -30,6 +30,7 @@
   #:use-module (rnrs io ports)
   #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-9 gnu)
+  #:use-module (srfi srfi-11)
   #:use-module (ice-9 receive)
   #:use-module (rnrs bytevectors)
   #:use-module (ssh session)
@@ -182,6 +183,12 @@ the PORT-1 returns EOF."
           (close port-1)
           (close port-2)))))
 
+(define (tunnel-timeout/s+us tunnel)
+  "Get a TUNNEL timeout as two values: timeout in seconds and microseconds."
+  (let ((timeout (tunnel-timeout tunnel)))
+    (values (and timeout (quotient  timeout 1000000))
+            (and timeout (remainder timeout 1000000)))))
+
 (define (main-loop tunnel sock idle-proc)
   "Start the main loop of a TUNNEL.  Accept connections on SOCK, transfer data
 between SOCK and the remote side.  Call IDLE-PROC as
@@ -189,25 +196,25 @@ between SOCK and the remote side.  Call IDLE-PROC as
   (idle-proc client-socket channel)
 
 when no data is available."
-  (let* ((timeout    (tunnel-timeout tunnel))
-         (timeout-s  (and timeout (quotient  timeout 1000000)))
-         (timeout-us (and timeout (remainder timeout 1000000))))
+  (let-values (((timeout-s timeout-us) (tunnel-timeout/s+us tunnel)))
+
+    (define (select-client client)
+      (select (list client) '() '() timeout-s timeout-us))
+
     (while (connected? (tunnel-session tunnel))
       (catch #t
         (lambda ()
           (let* ((channel           (tunnel-open-forward-channel tunnel))
                  (client-connection (accept sock))
                  (client            (car client-connection)))
-
             (while (channel-open? channel)
               (cond-io
                (client -> channel => transfer)
                (channel -> client => transfer)
                (else
-                (let ((selected (select (list client) '() '()
-                                        timeout-s timeout-us)))
-                  (and (null? (car selected))
-                       (idle-proc client channel))))))))
+                (let ((selected (select-client client)))
+                  (when (null? (car selected))
+                    (idle-proc client channel))))))))
         (const #t)))))
 
 
