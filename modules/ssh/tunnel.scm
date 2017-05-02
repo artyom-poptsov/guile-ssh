@@ -227,9 +227,7 @@ unspecified."
              (inet-aton (tunnel-host tunnel))
              (tunnel-host-port tunnel)))
 
-  (let* ((timeout    (tunnel-timeout tunnel))
-         (timeout-s  (and timeout (quotient  timeout 1000000)))
-         (timeout-us (and timeout (remainder timeout 1000000))))
+  (let ((timeout (tunnel-timeout tunnel)))
     (while (connected? (tunnel-session tunnel))
       (receive (channel port)
           (channel-accept-forward (tunnel-session tunnel) 1000)
