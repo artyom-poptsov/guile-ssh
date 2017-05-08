@@ -156,7 +156,8 @@
                            (lambda (channel)
                              (poll channel
                                    (lambda (channel)
-                                     (write-line (read-line channel) channel))))))
+                                     (write-line (read-line channel) channel)
+                                     (while #t (sleep 5)))))))
    ;; Client (call/pf)
    (lambda ()
      (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
