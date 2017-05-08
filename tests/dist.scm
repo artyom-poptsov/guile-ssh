@@ -236,6 +236,7 @@ $4 = #<session #<undefined>@#<undefined>:22 (disconnected) 453fff>"
                              (error "Wrong result 2" result)))
 
                        (write-line "scheme@(guile-user)> $1 = 42\n" c)
+                       (sleep 5)
                        (close c)
                        (while #t
                          (sleep 60))))))
