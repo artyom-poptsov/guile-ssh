@@ -75,7 +75,7 @@
      (call-with-connected-session/tunnel
       (lambda (session)
         (call-with-forward-channel session
-          (lambda (channel)                                   
+          (lambda (channel)
             (write-line %test-string channel)
             (poll channel read-line))))))))
 
