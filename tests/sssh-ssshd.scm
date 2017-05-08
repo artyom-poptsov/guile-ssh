@@ -26,7 +26,7 @@
              ;; Helper procedures
              (tests common))
 
-(test-begin "sssh-ssshd")
+(test-begin-with-log "sssh-ssshd")
 
 
 ;;;
