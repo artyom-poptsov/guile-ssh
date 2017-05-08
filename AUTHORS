@@ -12,15 +12,46 @@ See also files THANKS and ChangeLog.
   In the root directory, changes to:
     m4/guile.m4, m4/lib-link.m4, m4/lib-ld.m4, m4/lib-prefix.m4,
     build-aux/compile, build-aux/config.rpath, Makefile.am, configure.ac
+    am/guilec
 
-  In subdirectory libguile-ssh, changes to:
+  In subdirectory 'libguile-ssh', changes to:
+    auth.c
+    channel-func.c
+    channel-main.c
     channel-type.c
+    common.c
     common.h
+    configure.ac
+    error.c
     key-func.c
+    key-main.c
     key-type.c
     key-type.h
     log.c
+    message-func.c
+    message-type.c
+    server-func.c
+    server-main.c
+    server-type.c
     session-func.c
+    session-func.c
+    session-main.c
+    session-type.c
+    sftp-file-main.c
+    sftp-file-type.c
+    sftp-file-type.c
+    sftp-session-func.c
+    sftp-session-main.c
+    sftp-session-type.c
+    threads.c
+    version.c
+
+  In subdirectory 'tests', changes to:
+    common.scm
+    sssh-ssshd.scm
+
+  In subdirectory 'examples', changes to:
+    Makefile.am
 
   Bug reports, various comments and suggestions.
 * Mathieu <https://github.com/mothacehe>
