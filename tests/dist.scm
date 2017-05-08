@@ -1,6 +1,6 @@
 ;;; dist.scm -- Testing of the distributed forms
 
-;; Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015, 2016, 2017 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -236,6 +236,7 @@ $4 = #<session #<undefined>@#<undefined>:22 (disconnected) 453fff>"
                              (error "Wrong result 2" result)))
 
                        (write-line "scheme@(guile-user)> $1 = 42\n" c)
+                       (close c)
                        (while #t
                          (sleep 60))))))
             (else
