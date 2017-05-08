@@ -229,7 +229,13 @@ disconnected when the PROC is finished."
 
 (define (start-server-loop server proc)
   "Start a SERVER loop, call PROC on incoming messages."
-  (server-listen server)
+  (let loop ()
+    (catch #t
+      (lambda () (server-listen server))
+      (lambda (key args)
+        (format-log/scm 'nolog "start-server-loop"
+                        "ERROR: ~a: ~a" key args)
+        (loop))))
   (let ((session (server-accept server)))
     (server-handle-key-exchange session)
     (start-session-loop session
@@ -423,11 +429,15 @@ returned by a CLIENT-PROC with a predicate PRED."
        (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
          (bind sock AF_UNIX sock-path)
          (listen sock 1)
-         (let ((result (client-proc))
-               (client (car (accept sock))))
-           (write-line result client)
-           (sleep 10)
-           (close client))))
+         (while #t
+           (let ((result (client-proc))
+                 (client (car (accept sock))))
+             (format-log/scm 'nolog
+                             "run-client-test/separate-process"
+                             "client: result: ~a" result)
+             (write-line result client)
+             (sleep 10)
+             (close client)))))
      ;; Main procedure
      (lambda ()
        (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
@@ -444,6 +454,9 @@ returned by a CLIENT-PROC with a predicate PRED."
          (poll sock
                (lambda (sock)
                  (let ((result (read-line sock)))
+                   (format-log/scm 'nolog
+                                   "run-client-test/separate-process"
+                                   "main: result: ~a" result)
                    (close sock)
                    (pred result)))))))))
 
