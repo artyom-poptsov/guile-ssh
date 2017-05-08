@@ -91,19 +91,25 @@
   (run-server-test
    ;; client
    (lambda (session)
+
+     (usleep 100)
+     (connect! session)
      (while (not (connected? session))
-       (sleep 1)
+       (usleep 100)
        (connect! session))
      (clnmsg "connected")
      (authenticate-server session)
      (clnmsg "server authenticated")
      (userauth-none! session)
-     (clnmsg "client authenticated"))
+     (clnmsg "client authenticated")
+     (while #t (sleep 5)))
 
    ;; server
    (lambda (server)
      (server-listen server)
      (let ((session (server-accept server)))
+       (format-log/scm 'nolog "server"
+                        "session: ~a" session)
        (server-handle-key-exchange session)
        (let ((msg (server-message-get session)))
          (let ((msg-type (message-get-type msg))
@@ -125,7 +131,8 @@
      (authenticate-server session)
      (clnmsg "server authenticated")
      (userauth-none! session)
-     (clnmsg "client authenticated"))
+     (clnmsg "client authenticated")
+     (while #t (sleep 5)))
 
    ;; server
    (lambda (server)
