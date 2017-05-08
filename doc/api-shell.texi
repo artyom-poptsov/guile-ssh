@@ -62,7 +62,8 @@ result and a return code.
 Guile-SSH implementation of @command{pgrep} that uses pure Bash and
 @file{/proc} filesystem.  Check if a process with a @var{pattern} cmdline is
 available on a machine represented by a @var{session}.  Note that @var{full?}
-option is not used at the time (the procedure always perform full search.)
+option is not used at the time (the procedure is always performing full
+search.)
 
 Return two values: a check result and a return code.
 @end deffn
