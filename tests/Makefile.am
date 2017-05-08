@@ -110,4 +110,9 @@ CLEANFILES = \
 	session-libssh.log			\
 	tunnel-errors.log			\
 	tunnel-libssh.log			\
+	shell-errors.log			\
+	shell-libssh.log			\
+	sssh-ssshd.log				\
+	sssh-ssshd-libssh.log			\
+	sssh-ssshd-errors.log			\
 	$(GOBJECTS)
