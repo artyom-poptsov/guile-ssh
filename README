@@ -118,6 +118,9 @@ The library can be installed by the following means:
 
 Thanks for all the people who helped with packaging of Guile-SSH!
 
+Also there is a [[https://hub.docker.com/r/avvp/debian-guile/][Docker image]] based on Debian GNU/Linux that contains the
+latest version of GNU Guile and Guile-SSH installed -- give it a try!
+
 For a basic explanation of the installation of the package, see the
 INSTALL file.
 
