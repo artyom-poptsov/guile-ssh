@@ -7,7 +7,12 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.11.0 (2017-05-09)
+** Add support of Guile 2.2
+   Tested with GNU Guile version 2.0.14 (on Gentoo GNU/Linux) and
+   2.2.2.3-0c102 (on Debian GNU/Linux.)
+
+   Many thanks to Ludovic Courtès for patches!
 ** New module (ssh shell)
    The module provides some procedures build upon (ssh popen) module for
    working with remote shell.
