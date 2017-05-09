@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.11.1 (2017-05-09)
 ** Bugfixes
 *** Fix building scripts
     The building process would always fail on fresh source tree because
@@ -15,6 +15,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
     present yet.  This should be fixed by now.
 
     Reported by Ludovic Courtès, on #guix IRC channel.
+
 * Changes in version 0.11.0 (2017-05-09)
 ** Add support of Guile 2.2
    Tested with GNU Guile version 2.0.14 (on Gentoo GNU/Linux) and
