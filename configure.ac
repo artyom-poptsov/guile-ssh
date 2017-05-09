@@ -91,11 +91,6 @@ AC_SUBST(LIBGUILE_SSH_INTERFACE)
 GUILE_EFFECTIVE_VERSION=`$GUILE -c '(display (effective-version))'`
 AC_SUBST(GUILE_EFFECTIVE_VERSION)
 
-dnl We need example programs for 'ssssh-ssshd.scm' test suite so they must be
-dnl present in the build directory.
-AC_CONFIG_LINKS([examples/ssshd.scm:examples/ssshd.scm])
-AC_CONFIG_LINKS([examples/sssh.scm:examples/sssh.scm])
-
 AC_CONFIG_FILES([Makefile libguile-ssh/Makefile examples/Makefile build-aux/Makefile])
 AC_CONFIG_FILES([m4/Makefile doc/Makefile tests/Makefile am/Makefile])
 AC_CONFIG_FILES([modules/Makefile modules/ssh/Makefile modules/ssh/dist/Makefile])

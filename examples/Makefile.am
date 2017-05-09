@@ -16,6 +16,10 @@
 ## along with libguile-ssh.  If not, see
 ## <http://www.gnu.org/licenses/>.
 
+bin_SCRIPTS = sssh.scm ssshd.scm
+sssh_scm_SOURCES = sssh.scm.in
+ssshd_scm_SOURCES = ssshd.scm.in
+
 EXTRA_DIST = \
 	sssh.scm.in		\
 	ssshd.scm.in		\
@@ -28,10 +32,20 @@ EXTRA_DIST = \
 	pg-tunnel.scm.in	\
 	uptop.scm.in
 
+SOURCES = \
+	echo/server.scm.in	\
+	echo/client.scm.in	\
+	rrepl.scm.in		\
+	rpc/client.scm.in	\
+	rpc/server.scm.in	\
+	sscp.scm.in		\
+	pg-tunnel.scm.in	\
+	uptop.scm.in
+
 examplesdir = $(pkgdatadir)/examples
 examples_echodir = $(pkgdatadir)/examples/echo
 examples_rpcdir = $(pkgdatadir)/examples/rpc
-dist_examples_DATA = README sssh.scm ssshd.scm rrepl.scm sscp.scm pg-tunnel.scm \
+dist_examples_DATA = README rrepl.scm sscp.scm pg-tunnel.scm \
 	uptop.scm
 dist_examples_echo_DATA = echo/server.scm echo/client.scm
 dist_examples_rpc_DATA = rpc/client.scm rpc/server.scm
@@ -47,7 +61,7 @@ SUFFIXES = .in
 	mv "$@.tmp" "$@"
 
 CLEANFILES = \
-	sssh.scm ssshd.scm			\
+	$(bin_SCRIPTS) 				\
 	echo/server.scm echo/client.scm		\
 	rrepl.scm				\
 	rpc/server.scm rpc/client.scm		\
