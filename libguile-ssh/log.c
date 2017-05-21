@@ -255,6 +255,21 @@ _gssh_log_error (const char* function_name, const char* msg, SCM args)
   scm_dynwind_end ();
 }
 
+void
+_gssh_log_warning (const char* function_name, const char* msg, SCM args)
+{
+  char *c_str;
+  scm_dynwind_begin (0);
+
+  c_str = scm_to_locale_string (scm_object_to_string (args, SCM_UNDEFINED));
+  scm_dynwind_free (c_str);
+
+  _ssh_log (SSH_LOG_WARNING, function_name, "[GSSH WARNING] %s: %s",
+            msg, c_str);
+
+  scm_dynwind_end ();
+}
+
 
 /* Initialization */
 

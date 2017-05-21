@@ -26,6 +26,7 @@
 #include <libssh/server.h>
 
 #include "common.h"
+#include "log.h"
 #include "error.h"
 #include "channel-type.h"
 #include "session-type.h"
@@ -106,6 +107,11 @@ returned (yet). \
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
 
   res = ssh_channel_get_exit_status (cd->ssh_channel);
+  if (res == SSH_ERROR) {
+    _gssh_log_warning (FUNC_NAME,
+                       "Could not get exit status",
+                       channel);
+  }
   return (res == SSH_ERROR) ? SCM_BOOL_F : scm_from_int (res);
 }
 #undef FUNC_NAME
