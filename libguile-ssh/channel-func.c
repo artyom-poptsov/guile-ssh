@@ -101,11 +101,12 @@ returned (yet). \
 ")
 #define FUNC_NAME s_guile_ssh_channel_get_exit_status
 {
-  struct channel_data *cd = _scm_to_channel_data (channel);
+  struct channel_data *cd = NULL;
   int res;
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
 
+  cd = _scm_to_channel_data (channel);
   res = ssh_channel_get_exit_status (cd->ssh_channel);
   if (res == SSH_ERROR) {
     _gssh_log_warning (FUNC_NAME,

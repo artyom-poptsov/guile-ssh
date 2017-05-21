@@ -9,6 +9,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 * Unreleased
 ** Bugfixes
+*** In (ssh channel)
+    'channel-get-exit-status' now handles freed channels properly by throwing
+    'wrong-type-arg' error.
 *** In (ssh dist node)
 **** 'node-guile-version' now does not fail
      The procedure would always fail to get Guile version.  Now that should be

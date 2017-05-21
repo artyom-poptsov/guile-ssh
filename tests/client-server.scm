@@ -483,6 +483,7 @@
             (else
              (message-reply-success msg))))))))
 
+;; TODO: Fix the bug: the procedure cannot be used to test errors.
 (define (call-with-connected-session/channel-test proc)
   (define (loop count)
     (catch #t
@@ -603,6 +604,22 @@
           (close channel)
           (string-match "#<unknown channel \\(freed\\) [0-9a-f]+>"
                         (object->string channel))))))))
+
+(test-error-with-log "channel-get-exit-status, freed channel"
+  'wrong-type-arg
+  (run-client-test
+   start-server/channel-test
+   ;; client
+   (lambda ()
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (userauth-none! session)
+        (let ((channel (make-channel session)))
+          (channel-open-session channel)
+          (channel-request-exec channel "uname")
+          (close channel)
+          (channel-get-exit-status channel)))))))
 
 
 ;; data transferring

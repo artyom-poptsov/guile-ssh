@@ -99,11 +99,6 @@
 ;; with HANDLER.
 (define-syntax test-error-with-log/handler
   (syntax-rules ()
-    ((_ name error expr handler)
-     (test-assert-with-log name
-       (catch error
-         (lambda () expr #f)
-         handler)))
     ((_ name expr handler)
      (test-assert-with-log name
        (catch #t
@@ -113,15 +108,41 @@
 ;; Ensure that the specific ERROR is raised during the test and the error is
 ;; raised with the specified MESSAGE.
 (define-syntax-rule (test-error-with-log/= name error expected-message expr)
-  (test-error-with-log/handler error expr
+  (test-error-with-log/handler name expr
                                (lambda (key . args)
-                                 (string=? (cadr args) expected-message))))
+                                 (if (equal? key error)
+                                     (let* ((message (cadr args))
+                                            (result  (string=? message
+                                                               expected-message)))
+                                       (unless result
+                                         (format-log/scm 'nolog name
+                                                         (string-append
+                                                          "Messages do not match: "
+                                                          "expected \"~a\", got \"~a\"")
+                                                         result expected-message))
+                                       result)
+                                     (begin
+                                       (format-log/scm 'nolog name
+                                                       (string-append
+                                                        "Errors do not match: "
+                                                        "expected '~a', got '~a' (args: ~a)")
+                                                       error key args)
+                                       #f)))))
 
 ;; Ensure that the specific ERROR is raised during the test.
 (define-syntax test-error-with-log
   (syntax-rules ()
     ((_ name error expr)
-     (test-error-with-log/handler name error expr (const #t)))
+     (test-error-with-log/handler name expr
+                                  (lambda (key . args)
+                                    (let ((result (equal? key error)))
+                                      (unless result
+                                        (format-log/scm 'nolog name
+                                                        (string-append
+                                                         "Errors do not match: "
+                                                         "expected ~a, got ~a (args: ~a)")
+                                                        error key args))
+                                      result))))
     ((_ name expr)
      (test-error-with-log/handler name expr (const #t)))))
 

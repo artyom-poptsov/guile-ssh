@@ -44,6 +44,8 @@ struct channel_data {
 /* Make sure that the channel SCM is open. */
 #define GSSH_VALIDATE_OPEN_CHANNEL(scm, pos, fn)                        \
   do {                                                                  \
+    if (! SCM_PTAB_ENTRY (channel))                                     \
+      scm_wrong_type_arg_msg (fn, pos, scm, "open channel");            \
     SCM_ASSERT_TYPE (SCM_OPPORTP (scm), scm, pos, fn, "open channel");  \
   } while (0)
 
