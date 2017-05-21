@@ -246,8 +246,12 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
 {
   struct channel_data *ch = NULL;
 
+#if USING_GUILE_BEFORE_2_2
   if (SCM_PTAB_ENTRY (channel))
     ch = _scm_to_channel_data (channel);
+#else
+  ch = _scm_to_channel_data (channel);
+#endif
 
   scm_puts ("#<", port);
 
