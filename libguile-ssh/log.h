@@ -18,6 +18,9 @@
 
 extern struct symbol_mapping log_verbosity[];
 
+extern void _gssh_log_error (const char* function_name, const char* msg,
+                             SCM args);
+
 extern void init_log_func (void);
 
 /* log.h ends here */

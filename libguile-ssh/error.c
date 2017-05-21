@@ -36,18 +36,10 @@ guile_ssh_error (const char *proc, const char *msg, SCM args, SCM rest)
 void
 guile_ssh_error1 (const char *proc, const char *msg, SCM args)
 {
-  char *c_str;
-  scm_dynwind_begin (0);
-
-  c_str = scm_to_locale_string (scm_object_to_string (args, SCM_UNDEFINED));
-  scm_dynwind_free (c_str);
-
-  _ssh_log (SSH_LOG_RARE, proc, "%s: %s", msg, c_str);
+  _gssh_log_error (proc, msg, args);
 
   scm_error (scm_from_locale_symbol (GUILE_SSH_ERROR), proc, msg, args,
              SCM_BOOL_F);
-
-  scm_dynwind_end ();
 }
 
 /* Report a session error. */
