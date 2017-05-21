@@ -190,6 +190,23 @@ $4 = #<session #<undefined>@#<undefined>:22 (disconnected) 453fff>"
                           (lambda (port)
                             (rrepl-skip-to-prompt port))))
 
+(test-assert-with-log "node-guile-version, valid response"
+  (run-client-test
+   ;; Server
+   start-server/exec
+   ;; Client
+   (lambda ()
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (format-log/scm 'nolog "client" "session: ~a" session)
+        (unless (equal? (userauth-none! session) 'success)
+          (error "Could not authenticate with a server" session))
+
+        (let ((n (make-node session #:start-repl-server? #f)))
+          (string=? (node-guile-version n)
+                    "guile (GNU Guile) 2.0.14")))))))
+
 
 ;;; Distributed forms.
 

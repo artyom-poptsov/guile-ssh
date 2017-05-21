@@ -7,6 +7,15 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Bugfixes
+*** In (ssh dist node)
+**** 'node-guile-version' now does not fail
+     The procedure would always fail to get Guile version.  Now that should be
+     fixed.
+** Update uit tests
+*** Add test cases for fixed bugs
+
 * Changes in version 0.11.1 (2017-05-09)
 ** Bugfixes
 *** Fix building scripts

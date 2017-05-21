@@ -411,7 +411,7 @@ procedure returns the 1st evaluated value if multiple values were returned."
   "Get Guile version installed on a NODE, return the version string.  Return
 #f if Guile is not installed."
   (receive (result rc)
-      (rexec node "which guile > /dev/null && guile --version")
+      (rexec (node-session node) "which guile > /dev/null && guile --version")
     (and (zero? rc)
          (car result))))
 
