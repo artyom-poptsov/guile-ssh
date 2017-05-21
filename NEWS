@@ -13,7 +13,15 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 **** 'node-guile-version' now does not fail
      The procedure would always fail to get Guile version.  Now that should be
      fixed.
-** Update uit tests
+*** In (ssh channel)
+**** Printing a freed channel doesn't lead to SIGSEGV anymore
+     Guile-SSH would always crash with SIGSEGV errors when tried to print a
+     freed channel object (e.g. after calling 'close' on a channel).  This bug
+     is fixed now by introducing new checks.
+
+     Now a freed channel will be printed like this:
+       #<unknown channel (freed) 9412f0>
+** Update unit tests
 *** Add test cases for fixed bugs
 
 * Changes in version 0.11.1 (2017-05-09)

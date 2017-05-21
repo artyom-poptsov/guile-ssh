@@ -23,6 +23,7 @@
              (srfi srfi-26)
              (ice-9 threads)
              (ice-9 rdelim)
+             (ice-9 regex)
              (rnrs bytevectors)
              (rnrs io ports)
              (ssh server)
@@ -584,6 +585,24 @@
           (channel-open-session channel)
           (channel-request-exec channel "uname")
           (channel-get-exit-status channel)))))))
+
+(test-assert-with-log "channel-request-exec, printing a freed channel"
+  (run-client-test
+
+   ;; server
+   (lambda (server)
+     (start-server/channel-test server))
+
+   ;; client
+   (lambda ()
+     (call-with-connected-session/channel-test
+      (lambda (session)
+        (let ((channel (make-channel session)))
+          (channel-open-session channel)
+          (channel-request-exec channel "uname")
+          (close channel)
+          (string-match "#<unknown channel \\(freed\\) [0-9a-f]+>"
+                        (object->string channel))))))))
 
 
 ;; data transferring

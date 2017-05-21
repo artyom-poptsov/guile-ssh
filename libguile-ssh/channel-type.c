@@ -1,6 +1,6 @@
 /* channel-type.c -- SSH channel smob.
  *
- * Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2015, 2016, 2017 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  * Copyright (C) 2017 Ludovic Courtès <ludo@gnu.org>
  *
  * This file is part of Guile-SSH.
@@ -244,24 +244,30 @@ ptob_close (SCM channel)
 static int
 print_channel (SCM channel, SCM port, scm_print_state *pstate)
 {
-  struct channel_data *ch = _scm_to_channel_data (channel);
+  struct channel_data *ch = NULL;
+
+  if (SCM_PTAB_ENTRY (channel))
+    ch = _scm_to_channel_data (channel);
 
   scm_puts ("#<", port);
-  scm_print_port_mode (channel, port);
-  scm_puts ("channel ", port);
 
   if (! ch)
     {
-      scm_puts ("(freed) ", port);
-    }
-  else if (SCM_OPPORTP (channel))
-    {
-      int is_open = ssh_channel_is_open (ch->ssh_channel);
-      scm_puts (is_open ? "(open) " : "(closed) ", port);
+      scm_puts ("unknown channel (freed) ", port);
     }
   else
     {
-      scm_puts ("(closed) ", port);
+      scm_print_port_mode (channel, port);
+      scm_puts ("channel ", port);
+      if (SCM_OPPORTP (channel))
+        {
+          int is_open = ssh_channel_is_open (ch->ssh_channel);
+          scm_puts (is_open ? "(open) " : "(closed) ", port);
+        }
+      else
+        {
+          scm_puts ("(closed) ", port);
+        }
     }
   scm_display (_scm_object_hex_address (channel), port);
   scm_puts (">", port);
