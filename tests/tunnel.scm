@@ -79,6 +79,21 @@
             (write-line %test-string channel)
             (poll channel read-line))))))))
 
+(test-error-with-log "port forwarding, direct, disconnected session"
+  (run-client-test
+   ;; server
+   (lambda (server)
+     (start-server/dt-test server
+                           (lambda (channel)
+                             (write-line (read-line channel) channel))))
+   ;; client
+   (lambda ()
+     (call-with-connected-session/tunnel
+      (lambda (session)
+        (disconnect! session)
+        (call-with-forward-channel session
+          (const #f)))))))
+
 ;; Create a tunnel, check the result.
 (test-assert-with-log "make-tunnel"
   (run-client-test

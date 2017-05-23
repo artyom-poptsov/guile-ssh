@@ -275,8 +275,15 @@ SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
                                   c_remote_host, scm_to_int32 (remote_port),
                                   c_source_host, scm_to_int32 (local_port));
 
-  if (res == SSH_OK)
+  if (res == SSH_OK) {
     SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
+  } else {
+    _gssh_log_warning (FUNC_NAME,
+                       "Could not open forwarding channel",
+                       scm_list_n (channel, remote_host,
+                                   remote_port, source_host,
+                                   local_port, SCM_UNDEFINED));
+  }
 
   scm_dynwind_end ();
 
