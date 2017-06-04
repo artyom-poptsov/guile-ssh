@@ -16,6 +16,11 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __LOG_H__
+#define __LOG_H__
+
+#include "common.h"
+
 extern struct symbol_mapping log_verbosity[];
 
 extern void _gssh_log_error (const char* function_name, const char* msg,
@@ -25,5 +30,7 @@ extern void _gssh_log_warning (const char* function_name, const char* msg,
                                SCM args);
 
 extern void init_log_func (void);
+
+#endif /* ifndef __LOG_H__ */
 
 /* log.h ends here */
