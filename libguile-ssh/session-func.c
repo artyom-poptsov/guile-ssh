@@ -403,8 +403,10 @@ Return value is undefined.\
     guile_ssh_error1 (FUNC_NAME, "No such option", option);
 
   res = set_option (session, data, opt->value, value);
-  if (res != SSH_OK)
-    guile_ssh_error1 (FUNC_NAME, "Unable to set the option", option);
+  if (res != SSH_OK) {
+    guile_ssh_error1 (FUNC_NAME, "Unable to set the option",
+                      scm_list_2 (option, value));
+  }
 
   scm_remember_upto_here_1 (session);
 
