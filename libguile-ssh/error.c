@@ -24,6 +24,7 @@
 #include <libssh/libssh.h>
 
 #include "error.h"
+#include "log.h"
 
 /* Report an error */
 void
