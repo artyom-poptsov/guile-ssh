@@ -391,11 +391,18 @@ listens on an expected port, return #f otherwise."
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
   (let ((repl-channel (node-open-rrepl node)))
     (rrepl-skip-to-prompt repl-channel)
-    (call-with-values (lambda () (rrepl-eval repl-channel quoted-exp))
-      (lambda vals
-        (and (node-stop-repl-server? node)
-             (node-stop-server node))
-        (apply values vals)))))
+    (dynamic-wind
+      (const #t)
+      (lambda ()
+        (rrepl-eval repl-channel quoted-exp))
+      (lambda ()
+        (when (node-stop-repl-server? node)
+          (node-stop-server node))
+
+        ;; Close REPL-CHANNEL right away to prevent finalization from
+        ;; happening in another thread at the wrong time (see
+        ;; <https://bugs.gnu.org/26976>.)
+        (close-port repl-channel)))))
 
 (define (node-eval-1 node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result.  The
