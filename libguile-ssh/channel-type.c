@@ -229,10 +229,11 @@ ptob_close (SCM channel)
       ssh_channel_free (ch->ssh_channel);
     }
 
+  SCM_SETSTREAM (channel, NULL);
+
 #if USING_GUILE_BEFORE_2_2
   scm_gc_free (pt->write_buf, pt->write_buf_size, "port write buffer");
   scm_gc_free (pt->read_buf,  pt->read_buf_size, "port read buffer");
-  SCM_SETSTREAM (channel, NULL);
 
   return 0;
 #endif

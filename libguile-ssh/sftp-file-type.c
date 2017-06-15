@@ -224,10 +224,11 @@ ptob_close (SCM sftp_file)
       sftp_close (fd->file);
     }
 
+  SCM_SETSTREAM (sftp_file, NULL);
+
 #if USING_GUILE_BEFORE_2_2
   scm_gc_free (pt->write_buf, pt->write_buf_size, "port write buffer");
   scm_gc_free (pt->read_buf,  pt->read_buf_size, "port read buffer");
-  SCM_SETSTREAM (sftp_file, NULL);
 
   return 1;
 #endif
