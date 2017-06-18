@@ -36,6 +36,9 @@
 ;;; Code:
 
 (define-module (ssh auth)
+  #:use-module (ice-9 popen)
+  #:use-module (ice-9 rdelim)
+  #:use-module (ice-9 regex)
   #:use-module (ssh log)
   #:use-module (ssh session)
   #:export (userauth-public-key!
@@ -44,7 +47,84 @@
             userauth-agent!
             userauth-password!
             userauth-none!
-            userauth-get-list))
+            userauth-get-list
+            openssh-agent-start
+            openssh-agent-info
+            openssh-agent-setenv))
+
+;;;
+
+(define %ssh-auth-sock-regexp
+  (make-regexp "SSH_AUTH_SOCK=(.*); export SSH_AUTH_SOCK;"))
+
+(define %ssh-agent-pid-regexp
+  (make-regexp "SSH_AGENT_PID=(.*); export SSH_AGENT_PID;"))
+
+(define (openssh-agent-start)
+  "Start an OpenSSH agent.  Return a list with SSH agent information."
+  (let ((p (open-input-pipe "ssh-agent -s")))
+    (let ((ssh-auth-sock-data (read-line p))
+          (ssh-agent-pid-data (read-line p)))
+      `((SSH_AUTH_SOCK
+         . ,(let ((match (regexp-exec %ssh-auth-sock-regexp
+                                      ssh-auth-sock-data)))
+              (match:substring match 1)))
+        (SSH_AGENT_PID
+         . ,(let ((match (regexp-exec %ssh-agent-pid-regexp
+                                      ssh-agent-pid-data)))
+              (match:substring match 1)))))))
+
+
+;;;
+
+(define %ssh-agent-dir-regexp
+  (make-regexp "ssh-[0-9A-Za-z]+$"))
+
+(define* (openssh-agent-info #:optional (user (getenv "USER")))
+  "Get OpenSSH agent information for a given USER as a list."
+
+  (define (owned-by-user? file-name uid)
+    (= (stat:uid (stat file-name)) uid))
+
+  (define (user->uid user)
+    (passwd:uid (getpwnam user)))
+
+  (define (readdir-3rd dir-name)
+    (let ((stream (opendir dir-name)))
+      (readdir stream)
+      (readdir stream)
+      (let ((file (readdir stream)))
+        (closedir stream)
+        file)))
+
+  (define (agent-socket->pid agent-socket)
+    (cdr (string-split agent-socket #\.)))
+
+  (let ((dir (opendir "/tmp"))
+        (uid (user->uid user)))
+    (let loop ((entry (readdir dir))
+               (info  '()))
+      (if (eof-object? entry)
+          info
+          (let ((file-name (string-append "/tmp/" entry)))
+            (if (and (regexp-exec %ssh-agent-dir-regexp entry)
+                     (owned-by-user? file-name uid))
+                (let ((agent-socket (readdir-3rd file-name)))
+                  (loop (readdir dir)
+                        (cons `(,(string-append file-name "/" agent-socket)
+                                . ,(agent-socket->pid agent-socket))
+                              info)))
+                (loop (readdir dir) info)))))))
+
+
+;;;
+
+(define (openssh-agent-setenv)
+  "Setup openssh agent environment variables for the current user."
+  (setenv "SSH_AUTH_SOCK" (caar (openssh-agent-info))))
+
+
+;;;
 
 (load-extension "libguile-ssh" "init_auth_func")
 
