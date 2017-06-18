@@ -9,14 +9,31 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 * Unreleased
 ** Bugfixes
-*** In (ssh channel)
-    'channel-get-exit-status' now handles freed channels properly by throwing
-    'wrong-type-arg' error.
+*** Always reset the channel and sftp streams when closing ports
+    In Guile 2.2 objects (and thus Guile-SSH channels) are finalized in a
+    separate finalizer thread, but libssh does not work properly in such a
+    multi-threaded fashion -- which leads to segfaults in Guile-SSH.
+
+    To address that problem the following changes are made:
+    - In (ssh dist node) REPL channels opened in 'node-eval' are closed
+      explicitly.
+    - Channels and SFTP streams are always reset when closing ports.
+
+    Thanks to Ludovic Courtès for the patches!
+
+    Reported by Ludovic Courtès and Mark H Weaver, in
+    <https://bugs.gnu.org/26976>
 *** In (ssh dist node)
 **** 'node-guile-version' now does not fail
      The procedure would always fail to get Guile version.  Now that should be
      fixed.
+*** In (ssh session)
+**** 'session-set!' now throws an option with its value on an error
 *** In (ssh channel)
+**** Printing a channel now works with Guile 2.2
+**** 'channel-get-exit-status' handle freed channels properly
+     'channel-get-exit-status' now handles freed channels properly by throwing
+     'wrong-type-arg' error.
 **** Printing a freed channel doesn't lead to SIGSEGV anymore
      Guile-SSH would always crash with SIGSEGV errors when tried to print a
      freed channel object (e.g. after calling 'close' on a channel).  This bug
@@ -27,6 +44,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Update unit tests
 *** Add test cases for fixed bugs
 
+** Misc
+*** Improve logging
 * Changes in version 0.11.1 (2017-05-09)
 ** Bugfixes
 *** Fix building scripts
