@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.11.2 (2017-06-18)
 ** Bugfixes
 *** Always reset the channel and sftp streams when closing ports
     In Guile 2.2 objects (and thus Guile-SSH channels) are finalized in a
@@ -27,6 +27,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 **** 'node-guile-version' now does not fail
      The procedure would always fail to get Guile version.  Now that should be
      fixed.
+
+     Reported by Mark H Weaver and Ludovic Courtès, in
+     <https://bugs.gnu.org/26976>
 *** In (ssh session)
 **** 'session-set!' now throws an option with its value on an error
 *** In (ssh channel)
@@ -43,9 +46,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
        #<unknown channel (freed) 9412f0>
 ** Update unit tests
 *** Add test cases for fixed bugs
-
 ** Misc
 *** Improve logging
+
 * Changes in version 0.11.1 (2017-05-09)
 ** Bugfixes
 *** Fix building scripts
