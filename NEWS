@@ -7,6 +7,16 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Bugfixes
+*** 'node-run-server' now checks for errors
+    When 'node-run-server' fails to start the server it would go down an
+    infinite loop.  The procedure now checks if the RREPL server started
+    correctly and throws 'node-error' if it's not.
+
+    Reported by Marius Bakke and Ludovic Courtès, in
+    <https://bugs.gnu.org/30522>
+ 
 * Changes in version 0.11.2 (2017-06-18)
 ** Bugfixes
 *** Always reset the channel and sftp streams when closing ports

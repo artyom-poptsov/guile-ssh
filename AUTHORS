@@ -56,3 +56,5 @@ See also files THANKS and ChangeLog.
   Bug reports, various comments and suggestions.
 * Mathieu <https://github.com/mothacehe>
   Pointed out to bugs in 'rrepl-get-result' from (ssh dist node).
+* Marius Bakke <mbakke@fastmail.com>
+  Pointed out to buigs in 'node-run-server' from (ssh dist node).

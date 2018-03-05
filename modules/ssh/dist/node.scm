@@ -349,13 +349,16 @@ listens on an expected port, return #f otherwise."
                       (guile-up-and-running?))))))))
 
 
+(define %guile-listen-command "nohup guile --listen=~a 0<&- &>/dev/null")
+
 (define (node-run-server node)
-  "Run a RREPL server on a NODE."
-  (open-remote-input-pipe (node-session node)
-                          (format #f "nohup guile --listen=~a 0<&- &>/dev/null"
-                                  (node-repl-port node)))
-  (while (not (node-server-running? node))
-    (usleep 100)))
+  "Run a RREPL server on a NODE.  Throw 'node-error on an error."
+  (let* ((cmd     (format #f %guile-listen-command (node-repl-port node)))
+         (channel (open-remote-input-pipe (node-session node) cmd)))
+    (when (not (zero? (channel-get-exit-status channel)))
+      (node-error "node-run-server: Could not execute command" cmd))
+    (while (not (node-server-running? node))
+      (usleep 100))))
 
 (define (node-stop-server node)
   "Stop a RREPL server on a NODE."
