@@ -202,7 +202,8 @@ Open a remote REPL (RREPL).  Return a new RREPL channel.
 @end deffn
 
 @deffn {Scheme Procedure} node-run-server node
-Run a REPL server on a @var{node}.
+Run a REPL server on a @var{node}. Throw @code{node-error} with the current
+node and the Guile return code from a server on an error.
 @end deffn
 
 @deffn {Scheme Procedure} node-stop-server node
