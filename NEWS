@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.11.3 (2018-03-27)
 ** Bugfixes
 *** 'node-run-server' now checks for errors
     When 'node-run-server' fails to start the server it would go down an
