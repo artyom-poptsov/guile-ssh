@@ -29,6 +29,7 @@
 #include "channel-type.h"
 #include "error.h"
 #include "common.h"
+#include "log.h"
 
 
 /* The channel port type.  Guile 2.2 introduced a new port API, so we have a
@@ -223,10 +224,17 @@ ptob_close (SCM channel)
   ptob_flush (channel);
 #endif
 
-  if (ch)
+  if (ch && ssh_channel_is_open (ch->ssh_channel))
     {
+      _gssh_log_debug ("ptob_close", "closing and freeing the channel...",
+                       channel);
       ssh_channel_close (ch->ssh_channel);
       ssh_channel_free (ch->ssh_channel);
+      _gssh_log_debug1 ("ptob_close", "closing and freeing the channel... done");
+    }
+  else
+    {
+      _gssh_log_debug1 ("ptob_close", "the channel is already freeed.");
     }
 
   SCM_SETSTREAM (channel, NULL);
