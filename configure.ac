@@ -64,6 +64,13 @@ PKG_CHECK_MODULES([LIBSSH_0_7_3], [libssh >= 0.7.3],
   Using a potentially vulnerable version of libssh
   <https://www.libssh.org/2016/02/23/libssh-0-7-3-security-and-bugfix-release/>])])
 
+dnl Checking for libssh 0.8.x
+PKG_CHECK_MODULES([LIBSSH_0_8], [libssh >= 0.8.0],
+                                [AC_DEFINE(HAVE_LIBSSH_0_8, 1, [Use libssh 0.8])],
+                                [AC_DEFINE(HAVE_LIBSSH_0_8, 0, [Use libssh < 0.8])])
+
+AM_CONDITIONAL(HAVE_LIBSSH_0_8, $HAVE_LIBSSH_0_8)
+
 # -------------------------------------------------------------------------------
 
 dnl These macros must be provided by guile.m4.

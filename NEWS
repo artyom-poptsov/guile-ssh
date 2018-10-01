@@ -7,6 +7,23 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Bugfixes
+*** Fix a segfault in 'libguile-ssh'
+    The library would always fail with segmentation fault error when an
+    application tried to free a closed channel.  Now it should be fixed.
+
+    Reported by Michael Bowcutt <mbowcutt@case.edu> in
+    <https://github.com/artyom-poptsov/guile-ssh/issues/8>
+    and Njagi Mwaniki in a personal email.
+*** Fix building with libssh 0.8
+    The 'libguile-ssh' library would fail to build due to missing
+    'libssh_threads' library that was removed libssh 0.8.  Now 'libguile-ssh'
+    builds without 'libssh_threads' when using libssh 0.8+.
+
+    Reported by lantw44 in
+    <https://github.com/artyom-poptsov/guile-ssh/issues/9>
+
 * Changes in version 0.11.3 (2018-03-27)
 ** Bugfixes
 *** 'node-run-server' now checks for errors

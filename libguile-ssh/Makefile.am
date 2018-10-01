@@ -44,7 +44,12 @@ BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 
 libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
 
-libguile_ssh_la_LDFLAGS = -module -no-undefined -lssh_threads -lssh \
+SSH_LD_FLAGS = -lssh
+if ! HAVE_LIBSSH_0_8
+SSH_LD_FLAGS += -lssh_threads
+endif
+
+libguile_ssh_la_LDFLAGS = -module -no-undefined $(SSH_LD_FLAGS)  \
 	-version-info $(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)
 
 AM_CFLAGS = $(WARN_CFLAGS)
