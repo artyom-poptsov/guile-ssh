@@ -52,7 +52,7 @@
          (topdir  (getenv "abs_top_srcdir"))
          (options `((bindaddr      "127.0.0.1")
                     (bindport      22)
-                    ,(if (= %libssh-minor-version 7)
+                    ,(if (>= %libssh-minor-version 7)
                          (list 'hostkey %rsakey %dsakey)
                          '(hostkey "ssh-rsa" "ssh-dss"))
                     (rsakey        ,%rsakey)
