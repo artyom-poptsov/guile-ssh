@@ -32,15 +32,6 @@
 
 (test-begin-with-log "shell")
 
-(define (call-with-connected-session/shell proc)
-  "Make a session for a shell test."
-  (call-with-connected-session
-   (lambda (session)
-     (format-log/scm 'nolog "call-with-connected-session/shell"
-                     "session: ~a" session)
-     (authenticate-server session)
-     (userauth-none! session)
-     (proc session))))
 
 ;;;
 

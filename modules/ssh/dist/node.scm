@@ -28,14 +28,10 @@
 ;; The module provides the following procedures:
 ;;   node?
 ;;   node-session
-;;   node-repl-port
 ;;   make-node
 ;;   node-eval
 ;;   node-open-rrepl
 ;;   node-guile-version
-;;   node-run-server
-;;   node-stop-server
-;;   node-server-running?
 ;;   node-loadavg
 ;;   with-ssh
 ;;
@@ -68,19 +64,14 @@
   #:use-module (ssh shell)
   #:export (node?
             node-session
-            node-tunnel
-            node-repl-port
+            node-rrepl-port
             make-node
             node-eval
             node-eval-1
             node-guile-version
-            node-run-server
-            node-stop-server
-            node-server-running?
             node-loadavg
             with-ssh
 
-            node-open-rrepl
             rrepl-eval
             rrepl-skip-to-prompt
             rrepl-get-result))
@@ -107,41 +98,67 @@
 ;;; Node type
 
 (define-record-type <node>
-  (%make-node tunnel repl-port start-repl-server? stop-repl-server?)
+  (%make-node session rrepl-port guile-version)
   node?
-  (tunnel node-tunnel)                          ; <tunnel>
-  (repl-port node-repl-port)                    ; number
-  (start-repl-server? node-start-repl-server?)  ; boolean
-  (stop-repl-server?  node-stop-repl-server?))  ; boolean
-
-(define (node-session node)
-  "Get node session."
-  (tunnel-session (node-tunnel node)))
+  (session node-session)                                       ; <session>
+  (rrepl-port node-rrepl-port node-rrepl-port-set!)            ; <port>
+  (guile-version node-guile-version node-guile-version-set!))  ; <string>
 
 (set-record-type-printer!
  <node>
  (lambda (node port)
    (let ((s (node-session node)))
-     (format port "#<node ~a@~a:~a/~a ~a>"
+     (format port "#<node ~a@~a:~a/~a (~a) ~a>"
              (session-get s 'user)
              (session-get s 'host)
              (session-get s 'port)
-             (node-repl-port node)
+             (node-guile-version node)
+             (if (port-closed? (node-rrepl-port node))
+                 "stopped"
+                 "running")
              (number->string (object-address node) 16)))))
 
 
-(define* (make-node session #:optional (repl-port 37146)
-                    #:key (start-repl-server? #t)
-                    (stop-repl-server? #f))
-  "Make a new distributed computing node.  If START-REPL-SERVER? is set to
-#t (which is by default) then start a REPL server on a remote host
-automatically in case when it is not started yet.  If STOP-REPL-SERVER? is set
-to #t then a REPL server will be stopped as soon as an evaluation is done."
-  (let ((tunnel (make-tunnel session
-                             #:port 0          ;Won't be used
-                             #:host "localhost"
-                             #:host-port repl-port)))
-    (%make-node tunnel repl-port start-repl-server? stop-repl-server?)))
+;;;  Helper procedures.
+
+(define (rrepl-skip-to-prompt repl-channel)
+  "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
+error."
+  (let loop ((line (read-line repl-channel)))
+    (when (eof-object? line)
+      (node-error "Could not locate RREPL prompt" repl-channel))
+    (or (string=? "Enter `,help' for help." line)
+        (loop (read-line repl-channel)))))
+
+(define (session-open-rrepl session)
+  "Open a stateless RREPL.  Return a new RREPL channel."
+  (open-remote-pipe* session OPEN_BOTH "guile" "-q"))
+
+(define (make-rrepl session)
+  (let ((rrepl-port (session-open-rrepl session)))
+    (let ((guile-version (read-line rrepl-port)))
+      (when (eof-object? guile-version)
+        (node-repl-error "Could not locate GNU Guile on the node." session))
+      (rrepl-skip-to-prompt rrepl-port)
+      (values rrepl-port guile-version))))
+
+
+;;;
+
+(define* (make-node session)
+  "Make a new distributed computing node."
+  (receive (rrepl-port guile-version)
+      (make-rrepl session)
+    (%make-node session rrepl-port guile-version)))
+
+(define (node-stop-rrepl! node)
+  (close-port (node-rrepl-port node)))
+
+(define (node-start-rrepl! node)
+  (receive (rrepl-port guile-version)
+      (make-rrepl session)
+    (node-rrepl-port-set! node rrepl-port)
+    (node-guile-version-set! node guile-version)))
 
 
 ;;; Remote REPL (RREPL)
@@ -149,15 +166,6 @@ to #t then a REPL server will be stopped as soon as an evaluation is done."
 (define (read-string str)
   "Read a string STR."
   (call-with-input-string str read))
-
-(define (rrepl-skip-to-prompt repl-channel)
-  "Read from REPL-CHANNEL until REPL is observed.  Throw 'node-error' on an
-error."
-  (let loop ((line (read-line repl-channel)))
-    (when (eof-object? line)
-      (node-error "Could not locate REPL prompt" repl-channel))
-    (or (string=? "Enter `,help' for help." line)
-        (loop (read-line repl-channel)))))
 
 
 ;; Regexp for parsing a result of evaluation of an expression that returns a
@@ -302,115 +310,10 @@ result, a number of the evaluation, a module name and a language name.  Throw
 
 ;;;
 
-(define (procps-available? node)
-  "Check if procps is available on a NODE."
-  (command-available? (node-session node) "pgrep"))
-
-(define (issue-procps-warning function node missing-procps-tool)
-  "Issue procps warning due to a MISSING-PROCPS-TOOL on a NODE to the libssh
-log."
-  (format-log 'rare
-              function
-              (string-append
-               "WARNING: '~a' from procps is not available on the node"
-               " ~a; falling back to the Guile-SSH '~a' implementation")
-              missing-procps-tool node missing-procps-tool))
-
-
-(define (node-server-running? node)
-  "Check if a RREPL is running on a NODE, return #t if it is running and
-listens on an expected port, return #f otherwise."
-  (define (guile-up-and-running?)
-    (let ((rp (tunnel-open-forward-channel (node-tunnel node))))
-      (and (channel-open? rp)
-           (let ((line (read-line rp)))
-             (close rp)
-             (and (not (eof-object? line))
-                  (string-match "^GNU Guile .*" line))))))
-
-  (let* ((pgrep? (procps-available? node))
-         (pgrep  (if pgrep? pgrep fallback-pgrep)))
-    (unless pgrep?
-      (issue-procps-warning "node-server-running?" node "pgrep"))
-    (receive (result rc)
-            (pgrep (node-session node)
-                   (format #f "guile --listen=~a"
-                           (node-repl-port node))
-                   #:full? #t)
-      (or (and (zero? rc)
-               (guile-up-and-running?))
-          ;; Check the default port.
-          (and (= (node-repl-port node) %guile-default-repl-port)
-               (receive (result rc)
-                       (pgrep (node-session node)
-                              "guile --listen"
-                              #:full? #t)
-                 (and (zero? rc)
-                      (guile-up-and-running?))))))))
-
-
-(define %guile-listen-command "nohup guile --listen=~a 0<&- &>/dev/null")
-
-(define (node-run-server node)
-  "Run a RREPL server on a NODE.  Throw 'node-error' with the current node and
-the Guile return code from a server on an error."
-  (let* ((cmd     (format #f %guile-listen-command (node-repl-port node)))
-         (channel (open-remote-input-pipe (node-session node) cmd))
-         (rc      (channel-get-exit-status channel)))
-    (format-log 'functions "[scm] node-run-server"
-                "commmand: '~a'; return code: ~a" cmd rc)
-    (when (not (zero? rc))
-      (node-error "node-run-server: Could not run a RREPL server"
-                  node rc))
-    (while (not (node-server-running? node))
-      (usleep 100))))
-
-(define (node-stop-server node)
-  "Stop a RREPL server on a NODE."
-  (format-log 'functions "[scm] node-stop-server"
-              "trying to SIGTERM the RREPL server on ~a ..." node)
-  (let* ((pkill? (procps-available? node))
-         (pkill (if pkill? pkill fallback-pkill)))
-    (unless pkill?
-      (issue-procps-warning "node-stop-server" node "pkill"))
-    (pkill (node-session node)
-           (format #f "guile --listen=~a" (node-repl-port node))
-           #:full? #t)
-    (while (node-server-running? node)
-      (format-log 'functions "[scm] node-stop-server"
-                  "trying to SIGKILL the RREPL server on ~a ..."
-                  node)
-      (pkill (node-session node)
-             (format #f "guile --listen=~a" (node-repl-port node))
-             #:signal 'SIGKILL
-             #:full? #t)
-      (sleep 1))))
-
-
-(define (node-open-rrepl node)
-  "Open a RREPL.  Return a new RREPL channel."
-  (and (node-start-repl-server? node)
-       (not (node-server-running? node))
-       (node-run-server node))
-  (tunnel-open-forward-channel (node-tunnel node)))
-
 
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
-  (let ((repl-channel (node-open-rrepl node)))
-    (rrepl-skip-to-prompt repl-channel)
-    (dynamic-wind
-      (const #t)
-      (lambda ()
-        (rrepl-eval repl-channel quoted-exp))
-      (lambda ()
-        (when (node-stop-repl-server? node)
-          (node-stop-server node))
-
-        ;; Close REPL-CHANNEL right away to prevent finalization from
-        ;; happening in another thread at the wrong time (see
-        ;; <https://bugs.gnu.org/26976>.)
-        (close-port repl-channel)))))
+  (rrepl-eval (node-rrepl-port node) quoted-exp))
 
 (define (node-eval-1 node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result.  The
@@ -420,15 +323,6 @@ procedure returns the 1st evaluated value if multiple values were returned."
     (if (vector? eval-num)
         (vector-ref result 0)
         result)))
-
-
-(define (node-guile-version node)
-  "Get Guile version installed on a NODE, return the version string.  Return
-#f if Guile is not installed."
-  (receive (result rc)
-      (rexec (node-session node) "which guile > /dev/null && guile --version")
-    (and (zero? rc)
-         (car result))))
 
 
 (define-syntax-rule (with-ssh node exp ...)

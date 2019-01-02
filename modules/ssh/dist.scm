@@ -32,7 +32,7 @@
 ;;   make-node
 ;;   node?
 ;;   node-session
-;;   node-repl-port
+;;   node-rrepl-port
 ;;
 ;; See the Info documentation for the detailed description of these
 ;; procedures.
@@ -50,7 +50,7 @@
   #:use-module (ssh channel)
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
-  #:re-export (node? node-session node-repl-port make-node with-ssh)
+  #:re-export (node? node-session node-rrepl-port make-node with-ssh)
   #:export (distribute dist-map rrepl))
 
 

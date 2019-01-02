@@ -49,7 +49,7 @@
   #:use-module (ssh popen)
   #:use-module (ssh log)
   #:export (rexec which pgrep pkill fallback-pgrep command-available?
-                  fallback-pkill loadavg))
+                  fallback-pkill guile-version loadavg))
 
 
 ;;;
@@ -154,6 +154,18 @@ code."
   (receive (result rc)
       (which session command)
     (zero? rc)))
+
+(define (procps-available? session)
+  "Check if procps is available on a NODE."
+  (command-available? session "pgrep"))
+
+(define (guile-version session)
+  "Get Guile version installed on a remote side, return the version string.
+Return #f if Guile is not installed."
+  (receive (result rc)
+      (rexec session "which guile > /dev/null && guile --version")
+    (and (zero? rc)
+         (car result))))
 
 (define (loadavg session)
   "Get average load of a host using a SESSION."

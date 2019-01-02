@@ -27,6 +27,7 @@
   #:use-module (ssh session)
   #:use-module (ssh channel)
   #:use-module (ssh server)
+  #:use-module (ssh auth)
   #:use-module (ssh log)
   #:use-module (ssh message)
   #:export (;; Variables
@@ -54,6 +55,7 @@
             make-server-for-test
             make-libssh-log-printer
             call-with-connected-session
+            call-with-connected-session/shell
             start-server-loop
             start-server/dt-test
             start-server/dist-test
@@ -204,6 +206,16 @@ disconnected when the PROC is finished."
       (lambda () (proc session))
       (lambda () (disconnect! session)))))
 
+(define (call-with-connected-session/shell proc)
+  "Make a session for a shell test."
+  (call-with-connected-session
+   (lambda (session)
+     (format-log/scm 'nolog "call-with-connected-session/shell"
+                     "session: ~a" session)
+     (authenticate-server session)
+     (userauth-none! session)
+     (proc session))))
+
 
 ;;; Port helpers.
 
@@ -290,7 +302,7 @@ disconnected when the PROC is finished."
              (if (equal? (cadr msg-type) 'channel-request-exec)
                  (let ((cmd (exec-req:cmd (message-get-req msg))))
                    (format-log/scm 'nolog "start-server/exec"
-                          "command: ~A" cmd)
+                                   "command: ~A" cmd)
                    (cond
                     ((string=? cmd "ping")
                      (write-line "pong" channel)
@@ -312,7 +324,8 @@ disconnected when the PROC is finished."
                      (message-reply-success msg)
                      (channel-request-send-exit-status channel 0)
                      (channel-send-eof channel))
-                    ((string=? cmd "which guile > /dev/null && guile --version")
+                    ((or (string=? cmd "which guile > /dev/null && guile --version")
+                         (string=? cmd "guile -q"))
                      (write-line "\
 guile (GNU Guile) 2.0.14
 Copyright (C) 2016 Free Software Foundation, Inc.
@@ -320,6 +333,8 @@ Copyright (C) 2016 Free Software Foundation, Inc.
 License LGPLv3+: GNU LGPL 3 or later <http://gnu.org/licenses/lgpl.html>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
+
+Enter `,help' for help.
 " channel)
                      (message-reply-success msg)
                      (channel-request-send-exit-status channel 0)
