@@ -117,6 +117,8 @@ The library can be installed by the following means:
     https://aur.archlinux.org/packages/guile-ssh/
   - Using Parabola GNU/Linux package:
     https://www.parabola.nu/packages/?q=guile-ssh
+  - Using openSUSE GNU/Linux package:
+    https://software.opensuse.org/package/guile-ssh
   - Manually.  If you're considering manual installation, see the notes below.
 
 Thanks for all the people who helped with packaging of Guile-SSH!
