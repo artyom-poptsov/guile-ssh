@@ -28,9 +28,18 @@ extern void _gssh_log_error (const char* function_name, const char* msg,
 
 extern void _gssh_log_warning (const char* function_name, const char* msg,
                                SCM args);
+
+#ifdef DEBUG
 extern void _gssh_log_debug (const char* function_name, const char* msg,
                              SCM args);
 extern void _gssh_log_debug1 (const char* function_name, const char* msg);
+extern void _gssh_log_debug_format(const char* function_name, SCM args,
+                                   const char* fmt, ...);
+#else
+#  define _gssh_log_debug(function_name, msg, args)
+#  define _gssh_log_debug1(function_name, msg)
+#  define _gssh_log_debug_format(function_name, args, fmt, ...)
+#endif  /* ifdef DEBUG */
 
 extern void init_log_func (void);
 

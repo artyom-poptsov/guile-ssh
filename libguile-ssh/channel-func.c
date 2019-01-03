@@ -51,6 +51,7 @@ Return value is undefined.\
   int res;
   GSSH_VALIDATE_CHANNEL_DATA (data, channel, FUNC_NAME);
   res = ssh_channel_open_session (data->ssh_channel);
+  _gssh_log_debug_format(FUNC_NAME, channel, "result: %d", res);
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
@@ -80,6 +81,8 @@ Run a shell command CMD without an interactive shell.\
 
   c_cmd = scm_to_locale_string (cmd);
   res = ssh_channel_request_exec (data->ssh_channel, c_cmd);
+  _gssh_log_debug_format(FUNC_NAME, scm_list_2 (channel, cmd),
+                         "result: %d", res);
   free (c_cmd);
   if (res != SSH_OK)
     {
@@ -108,6 +111,7 @@ returned (yet). \
 
   cd = _scm_to_channel_data (channel);
   res = ssh_channel_get_exit_status (cd->ssh_channel);
+  _gssh_log_debug_format(FUNC_NAME, channel, "result: %d", res);
   if (res == SSH_ERROR) {
     _gssh_log_warning (FUNC_NAME,
                        "Could not get exit status",
@@ -136,6 +140,8 @@ Return value is undefined.\
 
   res = ssh_channel_request_send_exit_status (cd->ssh_channel,
                                               scm_to_uint32 (exit_status));
+  _gssh_log_debug_format(FUNC_NAME, scm_list_2 (channel, exit_status),
+                         "result: %d", res);
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (cd->ssh_channel);
@@ -160,6 +166,7 @@ Return value is undefined.\
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
 
   res = ssh_channel_request_pty (data->ssh_channel);
+  _gssh_log_debug_format(FUNC_NAME, channel, "result: %d", res);
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
@@ -184,6 +191,7 @@ Return value is undefined.\
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
 
   res = ssh_channel_request_shell (data->ssh_channel);
+  _gssh_log_debug_format(FUNC_NAME, channel, "result: %d", res);
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
@@ -216,6 +224,8 @@ Return value is undefined.\
   c_name  = scm_to_locale_string (name);
   c_value = scm_to_locale_string (value);
   res = ssh_channel_request_env (data->ssh_channel, c_name, c_value);
+  _gssh_log_debug_format(FUNC_NAME, scm_list_3 (channel, name, value),
+                         "result: %d", res);
   if (res != SSH_OK)
     {
       ssh_session session = ssh_channel_get_session (data->ssh_channel);
@@ -274,7 +284,10 @@ SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
   res = ssh_channel_open_forward (cd->ssh_channel,
                                   c_remote_host, scm_to_int32 (remote_port),
                                   c_source_host, scm_to_int32 (local_port));
-
+  _gssh_log_debug_format(FUNC_NAME, scm_list_5 (channel, remote_host,
+                                                remote_port, source_host,
+                                                local_port),
+                         "result: %d", res);
   if (res == SSH_OK) {
     SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
   } else {
@@ -317,6 +330,8 @@ SCM_GSSH_DEFINE (guile_ssh_channel_listen_forward,
                             c_address,
                             scm_to_int (port),
                             &bound_port);
+  _gssh_log_debug_format(FUNC_NAME, scm_list_3 (session, address, port),
+                         "result: %d", res);
   if (res != SSH_OK)
     bound_port = -1;
   else if (scm_zero_p (port))

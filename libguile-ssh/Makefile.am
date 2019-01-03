@@ -42,7 +42,7 @@ BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
 	version.x log.x sftp-session-type.x sftp-session-func.x \
 	sftp-file-type.x
 
-libguile_ssh_la_CPPFLAGS = $(GUILE_CFLAGS)
+libguile_ssh_la_CPPFLAGS = $(CFLAGS) $(GUILE_CFLAGS)
 
 SSH_LD_FLAGS = -lssh
 if ! HAVE_LIBSSH_0_8

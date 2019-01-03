@@ -403,6 +403,10 @@ Return value is undefined.\
     guile_ssh_error1 (FUNC_NAME, "No such option", option);
 
   res = set_option (session, data, opt->value, value);
+
+  _gssh_log_debug_format (FUNC_NAME, scm_list_3 (session, option, value),
+                          "result: %d", res);
+
   if (res != SSH_OK) {
     guile_ssh_error1 (FUNC_NAME, "Unable to set the option",
                       scm_list_2 (option, value));
@@ -458,6 +462,10 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
     {
       char *c_value = NULL;
       res = ssh_options_get (sd->ssh_session, opt->value, &c_value);
+
+      _gssh_log_debug_format (FUNC_NAME, scm_list_2 (session, option),
+                              "result: %d", res);
+
       value = (res == SSH_OK) ? scm_from_locale_string (c_value) : SCM_UNDEFINED;
     }
 
@@ -495,6 +503,10 @@ SCM_GSSH_DEFINE (gssh_session_parse_config, "%gssh-session-parse-config!", 2,
                                   /* 'NULL' means that we should read the
                                      default '~/.ssh/config' file. */
                                   c_file_name);
+
+  _gssh_log_debug_format (FUNC_NAME, scm_list_2 (session, file_name),
+                          "result: %d", res);
+
   if (res != SSH_OK)
     {
       guile_ssh_error1 (FUNC_NAME, "Could not read the configuration file",

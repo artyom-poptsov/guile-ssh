@@ -166,7 +166,7 @@
    #:timeout 10        ;seconds
    #:user    "bob"
    #:knownhosts %knownhosts
-   #:log-verbosity 'rare))
+   #:log-verbosity 'functions))
 
 (define (make-server-for-test)
   "Make a server with predefined parameters for a test."
@@ -185,7 +185,7 @@
                 #:bindport *port*
                 #:rsakey   %rsakey
                 #:dsakey   %dsakey
-                #:log-verbosity 'rare)))
+                #:log-verbosity 'functions)))
         (server-listen s)
         s))
     (lambda ()

@@ -19,7 +19,7 @@
  */
 
 #include <config.h>
-
+#include <stdarg.h>
 #include <libguile.h>
 #include <libssh/libssh.h>
 #include <libssh/callbacks.h>
@@ -290,6 +290,22 @@ _gssh_log_debug1 (const char* function_name, const char* msg)
 {
   _ssh_log (SSH_LOG_FUNCTIONS, function_name, "[GSSH DEBUG] %s", msg);
 }
+
+#ifdef DEBUG
+void
+_gssh_log_debug_format(const char* function_name, SCM args, const char* fmt, ...)
+{
+  va_list arg;
+  enum { MSG_SZ = 100 };
+  char msg[MSG_SZ];
+  va_start (arg, fmt);
+  vsnprintf (msg, MSG_SZ, fmt, arg);
+  va_end (arg);
+  _gssh_log_debug(function_name, msg, args);
+}
+#else
+#define _gssh_log_debug_format(function_name, args, fmt, ...)
+#endif  /* ifdef DEBUG */
 
 
 /* Initialization */

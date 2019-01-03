@@ -30,6 +30,7 @@
 #include "message-func.h"
 #include "key-type.h"
 #include "error.h"
+#include "log.h"
 
 
 /* Procedures that are used for replying on requests. */
@@ -47,6 +48,7 @@ Return value is undefined.\
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
   int res = ssh_message_reply_default (msg_data->message);
+  _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
   return SCM_UNDEFINED;
@@ -64,6 +66,7 @@ Return value is undefined.\
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
   int res = ssh_message_service_reply_success (msg_data->message);
+  _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
   return SCM_UNDEFINED;
@@ -82,6 +85,7 @@ Return value is undefined.\
   struct message_data *msg_data = _scm_to_message_data (msg);
   int c_partial_p = scm_to_bool (partial_p);
   int res = ssh_message_auth_reply_success (msg_data->message, c_partial_p);
+  _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
   if (res != SSH_OK)
     {
       guile_ssh_error1 (FUNC_NAME, "Unable to reply",
@@ -102,6 +106,7 @@ Return value is undefined.\
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
   int res = ssh_message_auth_reply_pk_ok_simple (msg_data->message);
+  _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
   return SCM_UNDEFINED;
@@ -119,6 +124,7 @@ Return value is undefined.\
 {
   struct message_data *msg_data = _scm_to_message_data (msg);
   int res = ssh_message_channel_request_reply_success (msg_data->message);
+  _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to reply", msg);
   return SCM_UNDEFINED;
@@ -161,6 +167,8 @@ SCM_DEFINE (gssh_message_global_request_reply_success,
 
   res = ssh_message_global_request_reply_success (md->message,
                                                   scm_to_uint16 (bound_port));
+  _gssh_log_debug_format(FUNC_NAME, scm_list_2 (msg, bound_port),
+                         "result: %d", res);
   if (res != SSH_OK)
     {
       guile_ssh_error1 (FUNC_NAME, "Unable to reply",
@@ -522,6 +530,8 @@ Return value is undefined.\
     methods |= SSH_AUTH_METHOD_HOSTBASED;
 
   res = ssh_message_auth_set_methods (message_data->message, methods);
+  _gssh_log_debug_format(FUNC_NAME, scm_list_2 (msg, methods_list),
+                         "result: %d", res);
   if (res != SSH_OK)
     {
       guile_ssh_error1 (FUNC_NAME, "Unable to set auth methods",

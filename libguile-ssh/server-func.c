@@ -167,6 +167,10 @@ Return value is undefined.\
     guile_ssh_error1 (FUNC_NAME, "No such option", option);
 
   res = set_option (server_data->bind, opt->value, value);
+
+  _gssh_log_debug_format(FUNC_NAME, scm_list_3 (server, option, value),
+                         "result: %d", res);
+
   if (res != SSH_OK)
     {
       guile_ssh_error1 (FUNC_NAME, "Unable to set the option",
@@ -210,6 +214,9 @@ Return value is undefined.\
 {
   struct server_data *server_data = _scm_to_server_data (server);
   int res = ssh_bind_listen (server_data->bind);
+
+  _gssh_log_debug_format(FUNC_NAME, server, "result: %d", res);
+
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Couldn't listen the socket.", server);
   return SCM_UNDEFINED;
@@ -229,6 +236,9 @@ Throw `guile-ssh-error' on error.  Return a new SSH session.\
   SCM session = guile_ssh_make_session ();
   struct session_data *session_data = _scm_to_session_data (session);
   int res = ssh_bind_accept (server_data->bind, session_data->ssh_session);
+
+  _gssh_log_debug_format(FUNC_NAME, server, "result: %d", res);
+
   if (res != SSH_OK)
     guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
 
@@ -248,6 +258,9 @@ Return value is undefined.\
 {
   struct session_data *session_data = _scm_to_session_data (session);
   int res = ssh_handle_key_exchange (session_data->ssh_session);
+
+  _gssh_log_debug_format(FUNC_NAME, session, "result: %d", res);
+
   if (res != SSH_OK)
     guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
 
