@@ -28,6 +28,7 @@
 ;; The module provides the following procedures:
 ;;   node?
 ;;   node-session
+;;   node-rrepl-port
 ;;   make-node
 ;;   node-eval
 ;;   node-open-rrepl
@@ -37,6 +38,7 @@
 ;;
 ;;   rrepl-eval
 ;;   rrepl-skip-to-prompt
+;;   rrepl-get-result
 ;;
 ;; There are two specific exceptions that the module procedures can throw:
 ;;   node-error
@@ -75,8 +77,6 @@
             rrepl-eval
             rrepl-skip-to-prompt
             rrepl-get-result))
-
-(define %guile-default-repl-port 37146)
 
 
 (define (eof-or-null? str)
@@ -152,9 +152,11 @@ error."
     (%make-node session rrepl-port guile-version)))
 
 (define (node-stop-rrepl! node)
+  "Stop a RREPL on a NODE."
   (close-port (node-rrepl-port node)))
 
 (define (node-start-rrepl! node)
+  "Start a new RREPL on a NODE."
   (receive (rrepl-port guile-version)
       (make-rrepl session)
     (node-rrepl-port-set! node rrepl-port)
@@ -296,7 +298,6 @@ name.  Throw 'node-repl-error' on an error."
 
   (read-response '()))
 
-
 (define (rrepl-eval rrepl-channel quoted-exp)
   "Evaluate QUOTED-EXP using RREPL-CHANNEL, return four values: an evaluation
 result, a number of the evaluation, a module name and a language name.  Throw
@@ -308,9 +309,8 @@ result, a number of the evaluation, a module name and a language name.  Throw
   (rrepl-get-result rrepl-channel))
 
 
-;;;
+;;; Evaluation procedures.
 
-
 (define (node-eval node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result."
   (rrepl-eval (node-rrepl-port node) quoted-exp))
@@ -325,6 +325,8 @@ procedure returns the 1st evaluated value if multiple values were returned."
         result)))
 
 
+;;; Useful macros and procedures.
+
 (define-syntax-rule (with-ssh node exp ...)
   "Evaluate expressions on a remote REPL using a NODE, return four values: an
 evaluation result, a number of the evaluation, a module name and a language
