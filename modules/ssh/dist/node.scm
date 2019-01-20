@@ -127,8 +127,8 @@ error."
   (let loop ((line (read-line repl-channel)))
     (when (eof-object? line)
       (node-error "Could not locate RREPL prompt" repl-channel))
-    (or (string=? "Enter `,help' for help." line)
-        (loop (read-line repl-channel)))))
+    (unless (string=? "Enter `,help' for help." line)
+      (loop (read-line repl-channel)))))
 
 (define (session-open-rrepl session)
   "Open a stateless RREPL.  Return a new RREPL channel."
@@ -305,7 +305,6 @@ result, a number of the evaluation, a module name and a language name.  Throw
   (write quoted-exp rrepl-channel)
   (newline rrepl-channel)
   (write-line '(newline) rrepl-channel)
-  (write-line '(exit) rrepl-channel)
   (rrepl-get-result rrepl-channel))
 
 
