@@ -25,7 +25,10 @@
              (ssh channel)
              (ssh session)
              (ssh auth)
+             (ssh log)
              (ssh popen))
+
+(set-log-verbosity! 'functions)
 
 (test-begin-with-log "popen")
 
@@ -55,9 +58,10 @@
 
 (test-assert-with-log "open-remote-pipe, OPEN_READ"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
-     (call-with-connected-session/popen
+     (call-with-connected-session/shell
       (lambda (session)
         (let ((channel (open-remote-pipe session "ping" OPEN_READ)))
           (and (input-only? channel)
@@ -65,53 +69,63 @@
 
 (test-assert-with-log "open-remote-pipe, OPEN_PTY_READ"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
-     (call-with-connected-session/popen
+     (call-with-connected-session/shell
       (lambda (session)
         (let* ((OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
                (channel       (open-remote-pipe session "ping" OPEN_PTY_READ)))
+          (format-log/scm 'nolog "open-remote-pipe, OPEN_PTY_READ" "channel: ~A" channel)
           (and (input-only? channel)
                (poll channel (lambda args (response=? channel "pong"))))))))))
 
 (test-assert-with-log "open-remote-pipe, OPEN_BOTH"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
-     (call-with-connected-session/popen
+     (call-with-connected-session/shell
       (lambda (session)
         (let ((channel (open-remote-pipe session "ping" OPEN_BOTH)))
+          (format-log/scm 'nolog "open-remote-pipe, OPEN_BOTH" "channel: ~A" channel)
           (and (input-port? channel)
                (output-port? channel)
                (poll channel (lambda args (response=? channel "pong"))))))))))
 
 (test-assert-with-log "open-remote-pipe*"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
-     (call-with-connected-session/popen
+     (call-with-connected-session/shell
       (lambda (session)
         (let ((channel (open-remote-pipe* session OPEN_READ "ping")))
+          (format-log/scm 'nolog "open-remote-pipe*" "channel: ~A" channel)
           (and (input-only? channel)
                (poll channel (lambda args (response=? channel "pong"))))))))))
 
 (test-assert-with-log "open-remote-input-pipe"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
-     (call-with-connected-session/popen
+     (call-with-connected-session/shell
       (lambda (session)
         (let ((channel (open-remote-input-pipe session "ping")))
+          (format-log/scm 'nolog "open-remote-input-pipe" "channel: ~A" channel)
           (and (input-only? channel)
                (poll channel (lambda args (response=? channel "pong"))))))))))
 
 (test-assert-with-log "open-remote-output-pipe"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
-     (call-with-connected-session/popen
+     (call-with-connected-session/shell
       (lambda (session)
         (let ((channel (open-remote-output-pipe session "ping")))
+          (format-log/scm 'nolog "open-remote-output-pipe"  "channel: ~A" channel)
           (output-only? channel)))))))
 
 (test-end "popen")

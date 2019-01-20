@@ -28,6 +28,8 @@
              (ssh log)
              (tests common))
 
+(set-log-verbosity! 'functions)
+
 (test-begin-with-log "server-client")
 
 ;;; Helper procedures and macros

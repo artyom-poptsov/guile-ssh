@@ -24,6 +24,7 @@
   #:use-module (ice-9 format)
   #:use-module (ice-9 regex)
   #:use-module (ice-9 popen)
+  #:use-module (ice-9 threads)
   #:use-module (ssh session)
   #:use-module (ssh channel)
   #:use-module (ssh server)
@@ -80,6 +81,11 @@
 (define %dsakey-pub   (format #f "~a/tests/keys/dsakey.pub"   %topdir))
 (define %ecdsakey     (format #f "~a/tests/keys/ecdsakey"     %topdir))
 (define %ecdsakey-pub (format #f "~a/tests/keys/ecdsakey.pub" %topdir))
+
+
+(define (format-log/scm level proc-name message . args)
+  "Format a log MESSAGE, append \"[SCM]\" to a PROC-NAME."
+  (apply format-log level (string-append "[SCM] " proc-name)  message args))
 
 
 (define %knownhosts (format #f "~a/tests/knownhosts"
@@ -154,14 +160,28 @@
 
 
 (define (start-session-loop session body)
-  (let session-loop ((msg (server-message-get session)))
-    (when (and msg (not (eof-object? msg)))
-      (body msg (message-get-type msg)))
-    (when (connected? session)
-      (session-loop (server-message-get session)))))
+  (let session-loop ((msg         (server-message-get session))
+                     (msg-counter 0))
+    (format-log/scm 'nolog "start-session-loop"
+                    "message: ~a" msg)
+    (when msg
+      (format-log/scm 'nolog "start-session-loop"
+                      "message being handled: ~a" msg)
+      (body msg)
+      (format-log/scm 'nolog "start-session-loop"
+                      "message handled: ~a" msg))
+    (if (connected? session)
+        (begin
+          (format-log/scm 'nolog "start-session-loop"
+                          "message counter: ~a" msg-counter)
+          (session-loop (server-message-get session) (1+ msg-counter)))
+        (format-log/scm 'nolog "start-session-loop"
+                        "disconnected; message counter: ~a" msg-counter))))
 
 (define (make-session-for-test)
   "Make a session with predefined parameters for a test."
+  (format-log/scm 'nolog "make-session-for-test"
+                  "host: ~a; port: ~a" %addr *port*)
   (make-session
    #:host    %addr
    #:port    *port*
@@ -170,9 +190,9 @@
    #:knownhosts %knownhosts
    #:log-verbosity 'functions))
 
+(define mtx (make-mutex 'allow-external-unlock))
 (define (make-server-for-test)
   "Make a server with predefined parameters for a test."
-  (define mtx (make-mutex 'allow-external-unlock))
   (lock-mutex mtx)
   (dynamic-wind
     (const #f)
@@ -182,12 +202,17 @@
       ;; automatically through global `port' symbol as well.
       (set! *port* (get-unused-port))
 
+      (format-log/scm 'nolog "make-server-for-test"
+                      "bindaddr: ~a; bindport: ~a" %addr *port*)
+
       (let ((s (make-server
                 #:bindaddr %addr
                 #:bindport *port*
                 #:rsakey   %rsakey
                 #:dsakey   %dsakey
                 #:log-verbosity 'functions)))
+        (format-log/scm 'nolog "make-server-for-test"
+                        "***** bindaddr: ~a; bindport: ~a" %addr *port*)
         (server-listen s)
         s))
     (lambda ()
@@ -198,10 +223,21 @@
 SSH session object, return the result of the procedure call.  The session is
 disconnected when the PROC is finished."
   (let ((session (make-session-for-test)))
+    (format-log/scm 'nolog
+                    "call-with-connected-session"
+                    "session: ~a" session)
     (dynamic-wind
       (lambda ()
+        (format-log/scm 'nolog
+                        "call-with-connected-session"
+                        "~a" "connecting...")
         (let ((result (connect! session)))
+          (format-log/scm 'nolog
+                          "call-with-connected-session"
+                          "result: ~a" result)
           (unless (equal? result 'ok)
+            (format-log/scm 'nolog "call-with-connected-session"
+                            "ERROR: Could not connect to a server: ~a" result)
             (error "Could not connect to a server" session result))))
       (lambda () (proc session))
       (lambda () (disconnect! session)))))
@@ -212,8 +248,12 @@ disconnected when the PROC is finished."
    (lambda (session)
      (format-log/scm 'nolog "call-with-connected-session/shell"
                      "session: ~a" session)
-     (authenticate-server session)
-     (userauth-none! session)
+     (let ((auth-result (authenticate-server session)))
+       (format-log/scm 'nolog "call-with-connected-session/shell"
+                       "server auth result: ~a" auth-result))
+     (let ((auth-result (userauth-none! session)))
+       (format-log/scm 'nolog "call-with-connected-session/shell"
+                       "client auth result: ~a" auth-result))
      (proc session))))
 
 
@@ -241,6 +281,8 @@ disconnected when the PROC is finished."
         (if (port-in-use? num)
             (loop (1+ num))
             (begin
+              (format-log/scm 'nolog "get-unused-port"
+                              "port choosen: ~a" num)
               (set! port-num num)
               (unlock-mutex mtx)
               num))))))
@@ -261,93 +303,156 @@ disconnected when the PROC is finished."
 ;;; Test Servers
 
 (define (start-server-loop server proc)
-  "Start a SERVER loop, call PROC on incoming messages."
-  (let loop ()
+  "Start a SERVER loop, call PROC on incoming sessions."
+
+  (define (state:init)
+    (format-log/scm 'nolog "start-server-loop [state:init]"
+                    "server: ~a" server)
     (catch #t
-      (lambda () (server-listen server))
+      (lambda ()
+        (server-listen server)
+        (state:accept))
       (lambda (key args)
         (format-log/scm 'nolog "start-server-loop"
                         "ERROR: ~a: ~a" key args)
-        (loop))))
-  (let ((session (server-accept server)))
-    (server-handle-key-exchange session)
-    (start-session-loop session
-                        (lambda (msg type)
-                          (proc msg)))
-    (primitive-exit)))
+        (state:init))))
+
+  (define (state:accept)
+    (format-log/scm 'nolog "start-server-loop [state:accept]"
+                    "server: ~a" server)
+    (let ((session (server-accept server)))
+      (format-log/scm 'nolog "start-server-loop [state:accept]"
+                      "session: ~a" session)
+      (server-handle-key-exchange session)
+      (format-log/scm 'nolog "start-server-loop [state:accept]"
+                      "~a" "key exchange handled")
+      (proc session)
+      (state:accept)))
+
+  (state:init))
 
 
 (define (start-server/dt-test server rwproc)
   (start-server-loop server
-    (lambda (msg)
-      (case (car (message-get-type msg))
-        ((request-channel-open)
-         (let ((channel (message-channel-request-open-reply-accept msg)))
-           (poll channel rwproc)))
-        (else
-         (message-reply-success msg))))))
-
-(define (start-server/exec server)
-  "Start SERVER for a command execution test."
-  (start-server-loop server
-    (let ((channel #f))
-      (lambda (msg)
-        (let ((msg-type (message-get-type msg)))
-          (format-log/scm 'nolog "start-server/exec"
-                          "msg-type: ~a" msg-type)
-          (case (car msg-type)
+    (lambda (session)
+      (start-session-loop session
+        (lambda (msg)
+          (case (car (message-get-type msg))
             ((request-channel-open)
-             (set! channel (message-channel-request-open-reply-accept msg)))
-            ((request-channel)
-             (if (equal? (cadr msg-type) 'channel-request-exec)
-                 (let ((cmd (exec-req:cmd (message-get-req msg))))
-                   (format-log/scm 'nolog "start-server/exec"
-                                   "command: ~A" cmd)
-                   (cond
-                    ((string=? cmd "ping")
-                     (write-line "pong" channel)
-                     (channel-send-eof channel))
-                    ((string=? cmd "uname") ; For exit status testing
-                     (write-line "pong" channel)
-                     (message-reply-success msg)
-                     (channel-request-send-exit-status channel 0)
-                     (channel-send-eof channel))
-                    ((string-match "echo '.*" cmd)
-                     (let ((p (open-input-pipe cmd)))
-                       (write-line (read-line p) channel)
-                       (close p)
-                       (message-reply-success msg)
-                       (channel-request-send-exit-status channel 0)
-                       (channel-send-eof channel)))
-                    ((string=? cmd "cat /proc/loadavg")
-                     (write-line "0.01 0.05 0.10 4/1927 242011" channel)
-                     (message-reply-success msg)
-                     (channel-request-send-exit-status channel 0)
-                     (channel-send-eof channel))
-                    ((or (string=? cmd "which guile > /dev/null && guile --version")
-                         (string=? cmd "guile -q"))
-                     (write-line "\
-guile (GNU Guile) 2.0.14
-Copyright (C) 2016 Free Software Foundation, Inc.
-
-License LGPLv3+: GNU LGPL 3 or later <http://gnu.org/licenses/lgpl.html>.
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-
-Enter `,help' for help.
-" channel)
-                     (message-reply-success msg)
-                     (channel-request-send-exit-status channel 0)
-                     (channel-send-eof channel))
-                    (else
-                     (write-line cmd channel)
-                     (message-reply-success msg)
-                     (channel-request-send-exit-status channel 0)
-                     (channel-send-eof channel)))
-                   (message-reply-success msg))
-                 (message-reply-success msg)))
+             (let ((channel (message-channel-request-open-reply-accept msg)))
+               (poll channel rwproc)))
             (else
              (message-reply-success msg))))))))
+
+
+(define %guile-version-string "\
+GNU Guile 2.2.3
+Copyright (C) 1995-2017 Free Software Foundation, Inc.
+
+Guile comes with ABSOLUTELY NO WARRANTY; for details type `,show w'.
+This program is free software, and you are welcome to redistribute it
+under certain conditions; type `,show c' for details.
+
+Enter `,help' for help.
+scheme@(guile-user)> ")
+
+(define (start-server/exec server body)
+  "Start SERVER for a command execution test."
+  (define *channel* #f)
+
+  (define (state:message-handle-exec message session)
+      (format-log/scm 'nolog "start-server/exec" "state:message-handle-exec: message: ~A" message)
+    (let ((command (exec-req:cmd (message-get-req message))))
+      (format-log/scm 'nolog "start-server/exec" "command: ~A" command)
+      (cond
+       ((string=? command "ping")
+        (message-reply-success message)
+        (channel-request-send-exit-status *channel* 0)
+        (write-line "pong" *channel*)
+        (channel-send-eof *channel*))
+       ((string=? command "uname") ; For exit status testing
+        (body session message *channel*))
+       ((string-match "echo '.*" command) ; fallback commands
+        (message-reply-success message)
+        ;; (let ((p (open-input-pipe command)))
+        ;;   (write-line (read-line p) *channel*)
+        ;;   (close p))
+        (channel-request-send-exit-status *channel* 0)
+        (channel-send-eof *channel*))
+       ((string=? command "cat /proc/loadavg")
+        (message-reply-success message)
+        (write-line "0.01 0.05 0.10 4/1927 242011" *channel*)
+        (channel-request-send-exit-status *channel* 0)
+        (channel-send-eof *channel*))
+       ((string=? command "which guile > /dev/null && guile --version")
+        (write-line %guile-version-string *channel*)
+        (message-reply-success message)
+        (channel-request-send-exit-status *channel* 0)
+        (channel-send-eof *channel*))
+       ((string=? command "guile -q")
+        (message-reply-success message)
+        (display %guile-version-string *channel*)
+        (body session message *channel*))
+       (else
+        (message-reply-success message)
+        (write-line command *channel*)
+        (channel-request-send-exit-status *channel* 0)
+        (channel-send-eof *channel*)))))
+
+  (define (state:handle-tcpip-forward message)
+    (let* ((proc (lambda (session message user-data)
+                   (let ((type (message-get-type message))
+                         (req  (message-get-req  message)))
+                     (format (current-error-port) "global req: type: ~a~%"
+                             type)
+                     (case (cadr type)
+                       ((global-request-tcpip-forward)
+                        (let ((pnum (global-req:port req)))
+                          (format (current-error-port) "global req: port: ~a~%"
+                                  pnum)
+                          (message-reply-success message
+                                                 pnum)))
+                       ((global-request-cancel-tcpip-forward)
+                        (message-reply-success message 1))))))
+           (callbacks `((user-data               . #f)
+                        (global-request-callback . ,proc))))
+      (session-set! (message-get-session message) 'callbacks callbacks)
+      (message-reply-success message 1)))
+
+  (define (state:process-message message)
+      (format-log/scm 'nolog "start-server/exec"
+                      "message: ~a" message)
+    (let ((message-type (message-get-type message)))
+      (format-log/scm 'nolog "start-server/exec"
+                      "message-type: ~a" message-type)
+      (case (car message-type)
+        ((request-channel-open)
+         (set! *channel* (message-channel-request-open-reply-accept message)))
+        ((request-channel)
+         (state:message-handle-request-channel message message-type))
+        ((request-global)
+         (state:handle-tcpip-forward message))
+        (else
+         (message-reply-success message)))))
+
+  (define (state:message-handle-request-channel message message-type)
+    (let ((subtype (cadr message-type)))
+      (format-log/scm 'nolog "start-server/exec"
+                      "message-subtype: ~a" subtype)
+      (case subtype
+        ((channel-request-exec)
+         (state:message-handle-exec message (message-get-session message)))
+        (else
+         (message-reply-success message)))))
+
+  (define (state:init)
+    (start-server-loop server
+      (lambda (session)
+        (format-log/scm 'nolog "start-server/exec"
+                        "session: ~a" session)
+        (start-session-loop session state:process-message))))
+
+  (state:init))
 
 (define (start-server/dist-test server)
   (server-listen server)
@@ -379,10 +484,6 @@ Enter `,help' for help.
 
 
 ;;; Tests
-
-(define (format-log/scm level proc-name message . args)
-  "Format a log MESSAGE, append \"[SCM]\" to a PROC-NAME."
-  (apply format-log level (string-append "[SCM] " proc-name)  message args))
 
 (define (multifork . procs)
   "Execute each procedure from PROCS list in a separate process.  The last
@@ -423,14 +524,25 @@ CLIENT-PROC call."
     (multifork
      ;; server
      (lambda ()
+                          (let ((p (open-file "/tmp/a" "a+")))
+                     (write-line "server 0" p)
+                     (close p))
        (dynamic-wind
          (const #f)
          (lambda ()
+           (let ((p (open-file "/tmp/a" "a+")))
+             (write-line "server 2" p)
+             (close p))
            (format-log/scm 'nolog "run-client-test"
                            "Server process is up and running")
            (set-log-userdata! (string-append (get-log-userdata) " (server)"))
-           (server-set! server 'log-verbosity 'rare)
+                                     (let ((p (open-file "/tmp/a" "a+")))
+                     (write-line "server 3" p)
+                     (close p))
            (server-proc server)
+                                     (let ((p (open-file "/tmp/a" "a+")))
+                     (write-line "server 4" p)
+                     (close p))
            (format-log/scm 'nolog "run-client-test"
                            "Server procedure is finished")
            (primitive-exit 0))

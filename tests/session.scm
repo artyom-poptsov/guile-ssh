@@ -21,8 +21,11 @@
 
 (use-modules (srfi srfi-64)
              (ssh session)
+             (ssh log)
              ;; Helper procedures
              (tests common))
+
+(set-log-verbosity! 'functions)
 
 (test-begin-with-log "session")
 
@@ -137,6 +140,9 @@
   (let ((session (make-session #:host "example")))
     (session-parse-config! session %config)
     (format (current-error-port) "session: ~a~%" session)
+    (format (current-error-port) "host: ~a~%" (session-get session 'host))
+    (format (current-error-port) "user: ~a~%" (session-get session 'user))
+    (format (current-error-port) "port: ~a~%" (session-get session 'port))
     (and (string=? (session-get session 'host) "example.org")
          (string=? (session-get session 'user) "alice")
          (=        (session-get session 'port) 2222))))

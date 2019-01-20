@@ -168,7 +168,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-auth-set-methods! msg '(none))
                              (message-reply-success msg)))))
 
@@ -191,7 +191,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-auth-set-methods! msg '(public-key))
                              (message-reply-default msg)))))
 
@@ -214,7 +214,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-auth-set-methods! msg '(none))
                              (message-reply-success msg 'partial)))))
 
@@ -252,7 +252,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-auth-set-methods! msg '(password))
                              (message-reply-success msg)))))
 
@@ -273,7 +273,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-auth-set-methods! msg '(password))
                              (message-reply-success msg)))))
 
@@ -295,7 +295,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-auth-set-methods! msg '(password))
                              (message-reply-default msg)))))
 
@@ -317,7 +317,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-auth-set-methods! msg '(password))
                              (message-reply-success msg 'partial)))))
 
@@ -354,7 +354,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-reply-success msg)))))
    ;; client
    (lambda ()
@@ -373,7 +373,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-reply-success msg)))))
    ;; client
    (lambda ()
@@ -392,7 +392,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-reply-success msg)))))
 
    ;; client
@@ -442,7 +442,7 @@
      (let ((session (server-accept server)))
        (server-handle-key-exchange session)
        (start-session-loop session
-                           (lambda (msg type)
+                           (lambda (msg)
                              (message-auth-set-methods! msg '(password public-key))
                              (message-reply-default msg)))))
 
@@ -462,54 +462,73 @@
 (define (start-server/channel-test server)
   "Start SERVER for a channel test."
   (start-server-loop server
-    (let ((channel #f))
-      (lambda (msg)
-        (let ((msg-type (message-get-type msg)))
-          (srvmsg msg-type)
-          (case (car msg-type)
-            ((request-channel-open)
-             (set! channel (message-channel-request-open-reply-accept msg)))
-            ((request-channel)
-             (if (equal? (cadr msg-type) 'channel-request-exec)
-                 (let ((cmd (exec-req:cmd (message-get-req msg))))
-                   (cond
-                    ((string=? cmd "ping")
-                     (write-line "pong" channel)
-                     (message-reply-success msg))
-                    ((string=? cmd "uname") ; For exit status testing
-                     (message-reply-success msg)
-                     (channel-request-send-exit-status channel 0))))
-                 (message-reply-success msg)))
-            (else
-             (message-reply-success msg))))))))
+    (lambda (session)
+      (start-session-loop session
+        (let ((channel #f))
+          (lambda (msg)
+            (format-log/scm 'nolog "start-server/channel-test"
+                            "message: ~a" msg)
+            (let ((msg-type (message-get-type msg)))
+              (format-log/scm 'nolog
+                              "start-server/channel-test"
+                              "msg-type: ~a" msg-type)
+              (case (car msg-type)
+                ((request-channel-open)
+                 (set! channel (message-channel-request-open-reply-accept msg)))
+                ((request-channel)
+                 (if (equal? (cadr msg-type) 'channel-request-exec)
+                     (let ((cmd (exec-req:cmd (message-get-req msg))))
+                       (cond
+                        ((string=? cmd "ping")
+                         (write-line "pong" channel)
+                         (message-reply-success msg))
+                        ((string=? cmd "uname") ; For exit status testing
+                         (message-reply-success msg)
+                         (channel-request-send-exit-status channel 0))))
+                     (message-reply-success msg)))
+                (else
+                 (message-reply-success msg))))))))))
 
 ;; TODO: Fix the bug: the procedure cannot be used to test errors.
 (define (call-with-connected-session/channel-test proc)
+  (define max-tries 30)
   (define (loop count)
     (catch #t
       (lambda ()
         (call-with-connected-session
          (lambda (session)
-           (authenticate-server session)
-           (userauth-none! session)
+           (format-log/scm 'nolog
+                           "call-with-connected-session/channel-test"
+                           "connected in ~d tries: ~a" count session)
+           (let ((result (authenticate-server session)))
+             (format-log/scm 'nolog
+                             "call-with-connected-session/channel-test"
+                             "server authentication result: ~a" result)
+             (when (equal? result 'error)
+               (error "Could not authenticate server" session result)))
+           (let ((result (userauth-none! session)))
+             (format-log/scm 'nolog
+                             "call-with-connected-session/channel-test"
+                             "client authentication result: ~a" result))
+             ;; (unless (equal? result 'ok)
+             ;;   (error "Could not authenticate client" session result)))
            (proc session))))
-      (lambda (key args)
+      (lambda args
         (format-log/scm 'nolog
                         "make-session/channel-test"
-                        "Unable to connect in ~d tries: ~a~%"
-                        (- max-tries count)
-                        session)
+                        "Unable to connect in ~d tries~%"
+                        count)
         (sleep 1)
-        (if (zero? count)
+        (if (= count max-tries)
             (format-log/scm 'nolog
                             "make-session/channel-test"
                             "~a"
                             "Giving up ...")
-            (loop (1- count))))))
-  (loop 30))
+            (loop (1+ count))))))
+  (loop 1))
 
 
-(test-assert "make-channel"
+(test-assert-with-log "make-channel"
   (run-client-test
 
    ;; server
@@ -540,14 +559,23 @@
 
    ;; server
    (lambda (server)
-     (start-server/channel-test server))
+     (format-log/scm 'nolog "channel-open-session [server]"
+                     "server: ~a" server)
+     ;; (start-server/channel-test server))
+     (start-server/exec server (const #t)))
 
    ;; client
    (lambda ()
      (call-with-connected-session/channel-test
       (lambda (session)
+        (format-log/scm 'nolog "channel-open-session [client]"
+                        "session: ~a" session)
         (let ((channel (make-channel session)))
+          (format-log/scm 'nolog "channel-open-session [client]"
+                          "channel: ~a" channel)
           (channel-open-session channel)
+          (format-log/scm 'nolog "channel-open-session [client]"
+                          "channel 2: ~a" channel)
           (not (port-closed? channel))))))))
 
 ;; Client sends "ping" as a command to execute, server replies with "pong"
@@ -556,7 +584,8 @@
 
    ;; server
    (lambda (server)
-     (start-server/channel-test server))
+     ;; (start-server/channel-test server))
+     (start-server/exec server (const #t)))
 
    ;; client
    (lambda ()
@@ -599,9 +628,17 @@
      (call-with-connected-session/channel-test
       (lambda (session)
         (let ((channel (make-channel session)))
+          (format-log/scm 'nolog "channel-request-exec, printing a freed channel"
+                          "channel 0: ~a" channel)
           (channel-open-session channel)
+          (format-log/scm 'nolog "channel-request-exec, printing a freed channel"
+                          "channel 1: ~a" channel)
           (channel-request-exec channel "uname")
+          (format-log/scm 'nolog "channel-request-exec, printing a freed channel"
+                          "channel 2: ~a" channel)
           (close channel)
+          (format-log/scm 'nolog "channel-request-exec, printing a freed channel"
+                          "channel: ~a" channel)
           (string-match "#<unknown channel \\(freed\\) [0-9a-f]+>"
                         (object->string channel))))))))
 

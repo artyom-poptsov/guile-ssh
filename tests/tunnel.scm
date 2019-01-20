@@ -197,7 +197,7 @@
   (run-client-test
    ;; Server
    (lambda (server)
-     (start-server/dist-test server))
+     (start-server/exec server (const #t)))
    ;; Client
    (lambda ()
      (call-with-connected-session/tunnel

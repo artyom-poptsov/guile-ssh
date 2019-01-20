@@ -32,16 +32,20 @@
              (ssh  dist job)
              (ssh  dist node)
              (tests common))
+
+(set-log-verbosity! 'functions)
+
 
 (test-begin-with-log "dist")
 
 ;;;
 
 
-(test-assert "make-node"
+(test-assert-with-log "make-node"
   (run-client-test
    ;; Server
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    ;; Client
    (lambda ()
      (call-with-connected-session/shell
@@ -59,64 +63,85 @@
   (split '(a) 2))
 
 
-;; (test-assert "make-job"
-;;   (let* ((s (make-session-for-test))
-;;          (n (make-node s))
-;;          (data '(1 2 3))
-;;          (proc '(lambda (n) (1+ n)))
-;;          (j (make-job 'map n data proc)))
-;;     (and (eq? (job-type j) 'map)
-;;          (eq? (job-node j) n)
-;;          (eq? (job-data j) data)
-;;          (eq? (job-proc j) proc))))
+(test-assert-with-log "make-job"
+  (run-client-test
+   ;; Server
+   (lambda (server)
+     (start-server/exec server (const #f)))
+   ;; Client
+   (lambda ()
+     (call-with-connected-session/shell
+      (lambda (session)
+        (let* ((node (make-node session))
+               (data '(1 2 3))
+               (proc '(lambda (n) (1+ n)))
+               (j (make-job 'map node data proc)))
+          (and (eq? (job-type j) 'map)
+               (eq? (job-node j) node)
+               (eq? (job-data j) data)
+               (eq? (job-proc j) proc))))))))
 
-;; (test-assert "set-job-node"
-;;   (let* ((s    (make-session-for-test))
-;;          (n1   (make-node s))
-;;          (n2   (make-node s))
-;;          (data '())
-;;          (proc '(lambda (n) (1+ n)))
-;;          (j1   (make-job 'map n1 data proc))
-;;          (j2   (set-job-node j1 n2)))
-;;     (and (not (eq? j1 j2))
-;;          (eq? (job-type j1) (job-type j2))
-;;          (eq? (job-node j1) n1)
-;;          (eq? (job-node j2) n2)
-;;          (eq? (job-data j1) (job-data j2))
-;;          (eq? (job-proc j1) (job-proc j2)))))
 
-;; (test-error-with-log "hand-out-job, invalid type"
-;;   (run-client-test
-;;    ;; server
-;;    start-server/exec
-;;    ;; client
-;;    (lambda ()
-;;      (call-with-connected-session/shell
-;;       (lambda (session)
-;;         (let ((n (make-node session)))
-;;           (hand-out-job (make-job 'invalid-job n '() (const #t)))))))))
+(test-assert-with-log "set-job-node"
+  (run-client-test
+   ;; Server
+   (lambda (server)
+     (start-server/exec server (const #t)))
+   ;; Client
+   (lambda ()
+     (call-with-connected-session/shell
+      (lambda (session)
+        (let* ((n1   (make-node session))
+               (n2   (make-node session))
+               (data '())
+               (proc '(lambda (n) (1+ n)))
+               (j1   (make-job 'map n1 data proc))
+               (j2   (set-job-node j1 n2)))
+          (and (not (eq? j1 j2))
+               (eq? (job-type j1) (job-type j2))
+               (eq? (job-node j1) n1)
+               (eq? (job-node j2) n2)
+               (eq? (job-data j1) (job-data j2))
+               (eq? (job-proc j1) (job-proc j2)))))))))
+
+(test-error-with-log "hand-out-job, invalid type"
+  (run-client-test
+   ;; server
+   (lambda (server)
+     (start-server/exec server (const #t)))
+   ;; client
+   (lambda ()
+     (call-with-connected-session/shell
+      (lambda (session)
+        (let ((n (make-node session)))
+          (hand-out-job (make-job 'invalid-job n '() (const #t)))))))))
 
 
-;; (test-assert "assign-eval"
-;;   (let* ((s     (make-session-for-test))
-;;          (nodes (make-list 2 (make-node s)))
-;;          (exprs (make-list 10 '(lambda (x) (1+ x))))
-;;          (jobs  (assign-eval nodes exprs)))
-;;     (and (eq? (length jobs) 2)
-;;          (eq? (job-type (car jobs)) 'eval)
-;;          (eq? (length (job-proc (car jobs))) 5))))
+(test-assert-with-log "assign-eval"
+  (run-client-test
+   ;; server
+   (lambda (server)
+     (start-server/exec server (const #t)))
+   ;; client
+   (lambda ()
+     (call-with-connected-session/shell
+      (lambda (session)
+        (let* ((nodes (make-list 2 (make-node session)))
+               (exprs (make-list 10 '(lambda (x) (1+ x))))
+               (jobs  (assign-eval nodes exprs)))
+          (and (eq? (length jobs) 2)
+               (eq? (job-type (car jobs)) 'eval)
+               (eq? (length (job-proc (car jobs))) 5))))))))
 
 
 ;;; Testing of 'rrepl-get-result'.
 ;; These test cases are intended to test various inputs for 'rrepl-get-result'
 ;; procedure.
-
+#!
 (test-assert "rrepl-get-result"
   (receive (result eval-num module-name lang)
       (call-with-input-string "scheme@(guile-user)> $0 = test"
                               rrepl-get-result)
-    ;; (format (current-error-port)
-    ;;         "\tresult: ~a\neval-num: ~a"
     (and (eq?      result      'test)
          (=        eval-num    0)
          (string=? module-name "(guile-user)")
@@ -204,7 +229,8 @@ $4 = #<session #<undefined>@#<undefined>:22 (disconnected) 453fff>"
 (test-assert-with-log "node-guile-version, valid response"
   (run-client-test
    ;; Server
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    ;; Client
    (lambda ()
      (call-with-connected-session/shell
@@ -212,28 +238,38 @@ $4 = #<session #<undefined>@#<undefined>:22 (disconnected) 453fff>"
         (format-log/scm 'nolog "client" "session: ~a" session)
         (let ((n (make-node session)))
           (string=? (node-guile-version n)
-                    "guile (GNU Guile) 2.0.14")))))))
+                    "GNU Guile 2.2.3")))))))
 
 
 ;;; Distributed forms.
 
-The client uses distributed form 'with-ssh' to evaluate (+ 21 21).  The
-server pretends to be a RREPL server and returns the evaluation "result",
-42.
+;; The client uses distributed form 'with-ssh' to evaluate (+ 21 21).  The
+;; server pretends to be a RREPL server and returns the evaluation "result",
+;; 42.
 (test-assert-with-log "with-ssh"
   (run-client-test
    ;; server
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (lambda (session message channel)
+                                 (let ((line (read-line channel)))
+                                   (format-log/scm 'nolog "with-ssh"
+                                                   "client request: ~A"
+                                                   line)
+                                   (write-line "$1 = 42\n" channel)))))
    ;; client
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
+              (let ((p (open-file "/tmp/a" "a+")))
+                (display "session: " p)
+                (display session p)
+                (close p))
         (format-log/scm 'nolog "client" "session: ~a" session)
         (let ((n (make-node session)))
           (= (with-ssh n
-                       (+ 21 21))
+               (+ 21 21))
              42)))))))
-
+!#
 ;;;
 
 

@@ -20,15 +20,20 @@
 (add-to-load-path (getenv "abs_top_srcdir"))
 
 (use-modules (srfi srfi-64)
+             (ice-9 rdelim)
              (ice-9 receive)
              (srfi srfi-4)
              (ssh session)
+             (ssh channel)
              (ssh auth)
              (ssh key)
              (ssh log)
              (ssh shell)
              (ssh popen)
+             (ssh message)
              (tests common))
+
+(set-log-verbosity! 'functions)
 
 (test-begin-with-log "shell")
 
@@ -38,17 +43,28 @@
 ;; Client executes "uname", server replies with success code 0.
 (test-assert-with-log "rexec"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec
+      server
+      (lambda (session message channel)
+        (format-log/scm 'nolog "rexec" "session: ~A; message: ~A; channel: ~A"
+                        session message channel)
+        (message-reply-success message)
+        (write-line "pong" channel)
+        (channel-request-send-exit-status channel 0)
+        (channel-send-eof channel))))
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
+        (format-log/scm 'nolog "rexec" "session: ~a" session)
         (receive (result exit-code)
             (rexec session "uname")
           (list result exit-code)))))))
 
 (test-assert-with-log "which"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
@@ -59,7 +75,8 @@
 
 (test-assert-with-log "pgrep"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
@@ -71,7 +88,8 @@
 
 (test-assert-with-log "command-available?"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
@@ -79,7 +97,8 @@
 
 (test-assert-with-log "fallback-pgrep"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
@@ -90,7 +109,8 @@
 
 (test-assert-with-log "loadavg"
   (run-client-test
-   start-server/exec
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
