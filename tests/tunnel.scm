@@ -135,47 +135,28 @@
 ;;
 ;; test
 ;;  |
-;;  o                                      Fork.
-;;  |___________________________________
-;;  o                                   \  Fork.
-;;  |______________                      |
-;;  |              \                     |
-;;  |               |                    |
-;;  |               |                    |
-;;  |            call/pf               server
-;;  |               |                    |
-;;  |               o                    | 'call-with-ssh-forward'
-;;  |               |______________      |
-;;  |               |              \     |
-;;  |               | "hello world" :    |
-;;  |               |-------------->:    |
-;;  |               |               o    | Re-send the message
-;;  |               |               :--->|   to the server.
-;;  |               |               :    o Echoing back.
-;;  |               |               :<---|
-;;  |               | "hello world" o    | Re-send the message
-;;  |               |<--------------:    |   to the caller.
-;;  |               |               o    | Stop the thread.
-;;  |               o                    | Bind/listen a socket.
-;;  | "hello world" |                    |
-;;  |<--------------|                    |
-;;  o               |                    | Check the result.
-;;  |               |                    |
+;;  o                      Fork.
+;;  |____________________
+;;  |                    \
+;;  | call/pf            | server
+;;  |                    |
+;;  o                    | 'call-with-ssh-forward'
+;;  |                    |
+;;  o "hello world"      | Sending a message to the server.
+;;  |------------------->|
+;;  |                    o Echoing back.
+;;  |<-------------------|
 ;;
 (test-equal-with-log "call-with-ssh-forward"
   %test-string
-  (run-client-test/separate-process
+  (run-client-test
    ;; Server
    (lambda (server)
-     (start-server/dt-test server
-                           (lambda (channel)
-                             (poll channel
-                                   (lambda (channel)
-                                     (write-line (read-line channel) channel)
-                                     (while #t (sleep 5)))))))
+     (start-server/exec server
+                        (lambda (channel)
+                          (write-line (read-line channel) channel))))
    ;; Client (call/pf)
    (lambda ()
-     (set-log-userdata! (string-append (get-log-userdata) " (call/pf)"))
      (call-with-connected-session/tunnel
       (lambda (session)
         (let* ((local-port  (get-unused-port))
@@ -186,11 +167,7 @@
           (call-with-ssh-forward tunnel
                                  (lambda (sock)
                                    (write-line %test-string sock)
-                                   (sleep 1)
-                                   (poll sock read-line)))))))
-   ;; Handle the result.
-   (lambda (result)
-     result)))
+                                   (poll sock read-line)))))))))
 
 
 (test-assert-with-log "channel-{listen,cancel}-forward"

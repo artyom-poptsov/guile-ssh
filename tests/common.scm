@@ -294,7 +294,9 @@ disconnected when the PROC is finished."
 
 (define (poll port proc)
   "Poll a PORT, call a PROC when data is available."
+  (format-log/scm 'nolog "poll" "Polling ...")
   (let p ((ready? #f))
+  (format-log/scm 'nolog "poll" "ready? ~a ..." ready?)
     (if ready?
         (proc port)
         (p (char-ready? port)))))
@@ -420,14 +422,17 @@ scheme@(guile-user)> ")
       (message-reply-success message 1)))
 
   (define (state:process-message message)
-      (format-log/scm 'nolog "start-server/exec"
-                      "message: ~a" message)
+    (format-log/scm 'nolog "start-server/exec"
+                    "message: ~a" message)
     (let ((message-type (message-get-type message)))
       (format-log/scm 'nolog "start-server/exec"
                       "message-type: ~a" message-type)
       (case (car message-type)
         ((request-channel-open)
-         (set! *channel* (message-channel-request-open-reply-accept message)))
+         (set! *channel* (message-channel-request-open-reply-accept message))
+         (case (cadr message-type)
+           ((channel-direct-tcpip)
+            (write-line (read-line *channel*) *channel*))))
         ((request-channel)
          (state:message-handle-request-channel message message-type))
         ((request-global)
@@ -489,16 +494,24 @@ scheme@(guile-user)> ")
   "Execute each procedure from PROCS list in a separate process.  The last
 procedure from PROCS is executed in the main process; return the result of the
 main procedure."
+  (define (signal-handler args)
+    (primitive-exit 0))
   (format-log/scm 'nolog "multifork" "procs 1: ~a~%" procs)
   (let* ((len      (length procs))
          (mainproc (car (list-tail procs (- len 1))))
          (procs    (list-head procs (- len 1)))
          (pids     (map (lambda (proc)
                           (let ((pid (primitive-fork)))
-                            (when (zero? pid)
-                              (proc)
-                              (primitive-exit 0))
-                            pid))
+                            (if (zero? pid)
+                                (begin
+                                  (sigaction SIGTERM signal-handler)
+                                  (format-log/scm 'nolog "multifork" "Running proc ...~%")
+                                  (proc)
+                                  (format-log/scm 'nolog "multifork" "Exiting ...~%")
+                                  (primitive-exit 0))
+                                (begin
+                                  (format-log/scm 'nolog "multifork" "PID: ~a~%" pid)
+                                  pid))))
                         procs)))
     (format-log/scm 'nolog "multifork" "procs 2: ~a~%" procs)
     (format-log/scm 'nolog "multifork" "mainproc: ~a~%" mainproc)
@@ -507,8 +520,9 @@ main procedure."
       (const #f)
       mainproc
       (lambda ()
-        (format-log/scm 'nolog "multifork" "killing spawned processes ...")
+        (format-log/scm 'nolog "multifork" "killing spawned processes ~a ...~%" pids)
         (for-each (cut kill <> SIGTERM) pids)
+        (format-log/scm 'nolog "multifork" "waiting for processes status ~a ...~%" pids)
         (for-each waitpid pids)))))
 
 
@@ -580,6 +594,9 @@ CLIENT-PROC call."
 returned by a CLIENT-PROC with a predicate PRED."
   (let ((server (make-server-for-test))
         (sock-path (tmpnam)))
+    (format-log/scm 'nolog
+                    "run-client-test/separate-process"
+                    "socket path: ~a" sock-path)
     (multifork
      ;; Server procedure
      (lambda ()
@@ -618,6 +635,7 @@ returned by a CLIENT-PROC with a predicate PRED."
                                    "run-client-test/separate-process"
                                    "main: result: ~a" result)
                    (close sock)
+                   (delete-file sock-path)
                    (pred result)))))))))
 
 
