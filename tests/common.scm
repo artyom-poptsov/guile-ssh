@@ -376,9 +376,6 @@ scheme@(guile-user)> ")
         (body session message *channel*))
        ((string-match "echo '.*" command) ; fallback commands
         (message-reply-success message)
-        ;; (let ((p (open-input-pipe command)))
-        ;;   (write-line (read-line p) *channel*)
-        ;;   (close p))
         (channel-request-send-exit-status *channel* 0)
         (channel-send-eof *channel*))
        ((string=? command "cat /proc/loadavg")
@@ -538,25 +535,13 @@ CLIENT-PROC call."
     (multifork
      ;; server
      (lambda ()
-                          (let ((p (open-file "/tmp/a" "a+")))
-                     (write-line "server 0" p)
-                     (close p))
        (dynamic-wind
          (const #f)
          (lambda ()
-           (let ((p (open-file "/tmp/a" "a+")))
-             (write-line "server 2" p)
-             (close p))
            (format-log/scm 'nolog "run-client-test"
                            "Server process is up and running")
            (set-log-userdata! (string-append (get-log-userdata) " (server)"))
-                                     (let ((p (open-file "/tmp/a" "a+")))
-                     (write-line "server 3" p)
-                     (close p))
            (server-proc server)
-                                     (let ((p (open-file "/tmp/a" "a+")))
-                     (write-line "server 4" p)
-                     (close p))
            (format-log/scm 'nolog "run-client-test"
                            "Server procedure is finished")
            (primitive-exit 0))
