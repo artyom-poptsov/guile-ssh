@@ -70,7 +70,9 @@
 (test-assert-with-log "connect!, disconnect!"
   (run-client-test
    ;; server
-   simple-server-proc
+   (lambda (server)
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)))
    ;; client
    (lambda ()
      (call-with-connected-session
@@ -81,7 +83,9 @@
   2
   (run-client-test
    ;; server
-   simple-server-proc
+   (lambda (server)
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)))
    ;; client
    (lambda ()
      (call-with-connected-session
@@ -92,7 +96,9 @@
   'not-known
   (run-client-test
    ;; server
-   simple-server-proc
+   (lambda (server)
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)))
    ;; client
    (lambda ()
      (call-with-connected-session
@@ -103,7 +109,9 @@
   'ok
   (run-client-test
    ;; server
-   simple-server-proc
+   (lambda (server)
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)))
    ;; client
    (lambda ()
      (let ((res (call-with-connected-session
@@ -117,7 +125,9 @@
   (run-client-test
 
    ;; server
-   simple-server-proc
+   (lambda (server)
+     (let ((s (server-accept server)))
+       (server-handle-key-exchange s)))
 
    ;; client
    (lambda ()
@@ -137,7 +147,7 @@
               (string=? (bytevector->hex-string md5-res) hash-md5-str)
               (bytevector=? sha1-res hash-sha1-bv)
               (string=? (bytevector->hex-string sha1-res) hash-sha1-str)))))))
-
+#!
 
 ;;;
 ;;; Authentication
@@ -459,7 +469,7 @@
 
 ;; make, open, exec
 
-(define (start-server/channel-test server)
+(define-macro (start-server/channel-test server)
   "Start SERVER for a channel test."
   (start-server-loop server
     (lambda (session)
@@ -745,6 +755,8 @@
 
 
 ;;;
+
+!#
 
 (test-end "client-server")
 

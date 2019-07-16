@@ -59,18 +59,18 @@
 (test-assert-with-log "open-remote-pipe, OPEN_READ"
   (run-client-test
    (lambda (server)
-     (start-server/exec server (const #t)))
+     (start-server/exec server (lambda () #t)))
    (lambda ()
+     (sleep 1)
      (call-with-connected-session/shell
       (lambda (session)
         (let ((channel (open-remote-pipe session "ping" OPEN_READ)))
           (and (input-only? channel)
-               (poll channel (lambda args (response=? channel "pong"))))))))))
+               (poll channel (lambda args (response=? channel "pong")))))))))) 
 
 (test-assert-with-log "open-remote-pipe, OPEN_PTY_READ"
   (run-client-test
-   (lambda (server)
-     (start-server/exec server (const #t)))
+   (lambda (server) #t)
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
