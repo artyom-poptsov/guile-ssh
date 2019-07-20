@@ -70,7 +70,8 @@
 
 (test-assert-with-log "open-remote-pipe, OPEN_PTY_READ"
   (run-client-test
-   (lambda (server) #t)
+   (lambda (server)
+     (start-server/exec server (const #t)))
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
