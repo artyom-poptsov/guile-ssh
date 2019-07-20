@@ -147,7 +147,7 @@
               (string=? (bytevector->hex-string md5-res) hash-md5-str)
               (bytevector=? sha1-res hash-sha1-bv)
               (string=? (bytevector->hex-string sha1-res) hash-sha1-str)))))))
-#!
+
 
 ;;;
 ;;; Authentication
@@ -469,36 +469,6 @@
 
 ;; make, open, exec
 
-(define-macro (start-server/channel-test server)
-  "Start SERVER for a channel test."
-  (start-server-loop server
-    (lambda (session)
-      (start-session-loop session
-        (let ((channel #f))
-          (lambda (msg)
-            (format-log/scm 'nolog "start-server/channel-test"
-                            "message: ~a" msg)
-            (let ((msg-type (message-get-type msg)))
-              (format-log/scm 'nolog
-                              "start-server/channel-test"
-                              "msg-type: ~a" msg-type)
-              (case (car msg-type)
-                ((request-channel-open)
-                 (set! channel (message-channel-request-open-reply-accept msg)))
-                ((request-channel)
-                 (if (equal? (cadr msg-type) 'channel-request-exec)
-                     (let ((cmd (exec-req:cmd (message-get-req msg))))
-                       (cond
-                        ((string=? cmd "ping")
-                         (write-line "pong" channel)
-                         (message-reply-success msg))
-                        ((string=? cmd "uname") ; For exit status testing
-                         (message-reply-success msg)
-                         (channel-request-send-exit-status channel 0))))
-                     (message-reply-success msg)))
-                (else
-                 (message-reply-success msg))))))))))
-
 ;; TODO: Fix the bug: the procedure cannot be used to test errors.
 (define (call-with-connected-session/channel-test proc)
   (define max-tries 30)
@@ -543,7 +513,7 @@
 
    ;; server
    (lambda (server)
-     (start-server/channel-test server))
+     (start-server/exec server (const #t)))
 
    ;; client
    (lambda ()
@@ -555,7 +525,7 @@
 
    ;; server
    (lambda (server)
-     (start-server/channel-test server))
+     (start-server/exec server (const #t)))
 
    ;; client
    (lambda ()
@@ -569,9 +539,6 @@
 
    ;; server
    (lambda (server)
-     (format-log/scm 'nolog "channel-open-session [server]"
-                     "server: ~a" server)
-     ;; (start-server/channel-test server))
      (start-server/exec server (const #t)))
 
    ;; client
@@ -594,7 +561,6 @@
 
    ;; server
    (lambda (server)
-     ;; (start-server/channel-test server))
      (start-server/exec server (const #t)))
 
    ;; client
@@ -615,7 +581,7 @@
 
    ;; server
    (lambda (server)
-     (start-server/channel-test server))
+     (start-server/exec server (const #t)))
 
    ;; client
    (lambda ()
@@ -623,7 +589,7 @@
       (lambda (session)
         (let ((channel (make-channel session)))
           (channel-open-session channel)
-          (channel-request-exec channel "uname")
+          (channel-request-exec channel "exit status")
           (channel-get-exit-status channel)))))))
 
 (test-assert-with-log "channel-request-exec, printing a freed channel"
@@ -631,7 +597,7 @@
 
    ;; server
    (lambda (server)
-     (start-server/channel-test server))
+     (start-server/exec server (const #t)))
 
    ;; client
    (lambda ()
@@ -643,7 +609,7 @@
           (channel-open-session channel)
           (format-log/scm 'nolog "channel-request-exec, printing a freed channel"
                           "channel 1: ~a" channel)
-          (channel-request-exec channel "uname")
+          (channel-request-exec channel "exit status")
           (format-log/scm 'nolog "channel-request-exec, printing a freed channel"
                           "channel 2: ~a" channel)
           (close channel)
@@ -655,7 +621,9 @@
 (test-error-with-log "channel-get-exit-status, freed channel"
   'wrong-type-arg
   (run-client-test
-   start-server/channel-test
+   ;; server
+   (lambda (server)
+     (start-server/exec server (const #t)))
    ;; client
    (lambda ()
      (call-with-connected-session
@@ -664,7 +632,7 @@
         (userauth-none! session)
         (let ((channel (make-channel session)))
           (channel-open-session channel)
-          (channel-request-exec channel "uname")
+          (channel-request-exec channel "exit status")
           (close channel)
           (channel-get-exit-status channel)))))))
 
@@ -755,8 +723,6 @@
 
 
 ;;;
-
-!#
 
 (test-end "client-server")
 

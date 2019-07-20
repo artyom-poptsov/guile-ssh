@@ -408,6 +408,9 @@ scheme@(guile-user)> ")
         (channel-send-eof *channel*))
        ((string=? command "uname") ; For exit status testing
         (body session message *channel*))
+       ((string=? command "exit status") ; For exit status testing
+        (message-reply-success message)
+        (channel-request-send-exit-status *channel* 0))
        ((string-match "echo '.*" command) ; fallback commands
         (message-reply-success message)
         (channel-request-send-exit-status *channel* 0)
