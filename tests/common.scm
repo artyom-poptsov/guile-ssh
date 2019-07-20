@@ -61,6 +61,7 @@
             start-server-loop
             start-server/dt-test
             start-server/dist-test
+            start-server/channel-test
             start-server/exec
             run-client-test
             run-client-test/separate-process
@@ -350,6 +351,36 @@ disconnected when the PROC is finished."
                (poll channel rwproc)))
             (else
              (message-reply-success msg))))))))
+
+(define-macro (start-server/channel-test server)
+  "Start SERVER for a channel test."
+  (start-server-loop server
+    (lambda (session)
+      (start-session-loop session
+        (let ((channel #f))
+          (lambda (msg)
+            (format-log/scm 'nolog "start-server/channel-test"
+                            "message: ~a" msg)
+            (let ((msg-type (message-get-type msg)))
+              (format-log/scm 'nolog
+                              "start-server/channel-test"
+                              "msg-type: ~a" msg-type)
+              (case (car msg-type)
+                ((request-channel-open)
+                 (set! channel (message-channel-request-open-reply-accept msg)))
+                ((request-channel)
+                 (if (equal? (cadr msg-type) 'channel-request-exec)
+                     (let ((cmd (exec-req:cmd (message-get-req msg))))
+                       (cond
+                        ((string=? cmd "ping")
+                         (write-line "pong" channel)
+                         (message-reply-success msg))
+                        ((string=? cmd "uname") ; For exit status testing
+                         (message-reply-success msg)
+                         (channel-request-send-exit-status channel 0))))
+                     (message-reply-success msg)))
+                (else
+                 (message-reply-success msg))))))))))
 
 
 (define %guile-version-string "\
