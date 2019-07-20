@@ -528,33 +528,35 @@ main procedure."
         (for-each waitpid pids)))))
 
 
-(define-macro (run-client-test server-proc client-proc)
-  "Run a SERVER-PROC in newly created process.  The server passed to a
-SERVER-PROC as an argument.  CLIENT-PROC is expected to be a thunk that should
-be executed in the parent process.  The procedure returns a result of
-CLIENT-PROC call."
-  (format-log/scm 'nolog "run-client-test" "Making a server ...")
-  (let ((port (get-unused-port)))
-    (set-port! port)
-    (format-log/scm 'nolog "run-client-test" "Spawning processes ...")
-    (multifork
-     ;; server
-     (lambda ()
-       (execle "/usr/bin/guile"
-               (environ)
-               "/usr/bin/guile"
-               "-L" (format #f "~a" %topdir)
-               "-e" "main"
-               "-s" (format #f "~a/tests/common/test-server.scm" %topdir)
-               (test-runner-test-name (test-runner-current))
-               (number->string port)
-               (format #f "'~a'" server-proc))
-       (format-log/scm 'nolog "run-client-test" "Could not spawn process!")
-       (exit 1))
-     ;; client
-     (lambda ()
-       (sleep 1)
-       client-proc))))
+;;   "Run a SERVER-PROC in newly created process.  The server passed to a
+;; SERVER-PROC as an argument.  CLIENT-PROC is expected to be a thunk that should
+;; be executed in the parent process.  The procedure returns a result of
+;; CLIENT-PROC call."
+(define-syntax-rule (run-client-test server-proc client-proc)
+  (begin
+    (format-log/scm 'nolog "run-client-test" "Making a server ...")
+    (let ((port (get-unused-port)))
+      (set-port! port)
+      (format-log/scm 'nolog "run-client-test" "Spawning processes ...")
+      (multifork
+       ;; server
+       (lambda ()
+         (execle "/usr/bin/guile"
+                 (environ)
+                 "/usr/bin/guile"
+                 "-L" (format #f "~a/" %topdir)
+                 "-L" (format #f "~a/modules/" %topdir)
+                 "-e" "main"
+                 "-s" (format #f "~a/tests/common/test-server.scm" %topdir)
+                 (test-runner-test-name (test-runner-current))
+                 (number->string port)
+                 (format #f "~a" (quote server-proc)))
+         (format-log/scm 'nolog "run-client-test" "Could not spawn process!")
+         (exit 1))
+       ;; client
+       (lambda ()
+         (sleep 2)
+         (client-proc))))))
 
 ;; Run a client test in a separate process; only a PRED procedure is running
 ;; in the main test process:
