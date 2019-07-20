@@ -290,8 +290,6 @@ disconnected when the PROC is finished."
               (unlock-mutex mtx)
               num))))))
 
-(set! *port* (get-unused-port))
-
 (define (set-port! port)
   (set! *port* port))
 
