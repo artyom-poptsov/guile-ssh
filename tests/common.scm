@@ -535,6 +535,8 @@ main procedure."
                           (let ((pid (primitive-fork)))
                             (if (zero? pid)
                                 (begin
+                                  (test-runner-reset (test-runner-current))
+                                  (set! test-log-to-file #f)
                                   (sigaction SIGTERM signal-handler)
                                   (format-log/scm 'nolog "multifork" "Running proc ...~%")
                                   (proc)
