@@ -564,7 +564,7 @@ main procedure."
 ;; be executed in the parent process.  The procedure returns a result of
 ;; CLIENT-PROC call."
 (define-syntax-rule (run-client-test server-proc client-proc)
-  (begin
+  (let ((test-name (test-runner-test-name (test-runner-current))))
     (format-log/scm 'nolog "run-client-test" "Making a server ...")
     (let ((port (get-unused-port)))
       (set-port! port)
@@ -579,14 +579,20 @@ main procedure."
                  "-L" (format #f "~a/modules/" %topdir)
                  "-e" "main"
                  "-s" (format #f "~a/tests/common/test-server.scm" %topdir)
-                 (test-runner-test-name (test-runner-current))
+                 test-name
                  (number->string port)
                  (format #f "~a" (quote server-proc)))
          (format-log/scm 'nolog "run-client-test" "Could not spawn process!")
          (exit 1))
        ;; client
        (lambda ()
-         (sleep 2)
+
+         ;; Wait for synchronization.
+         (let ((run-file (string-append test-name ".run")))
+           (while (not (file-exists? run-file))
+             (usleep 10))
+           (delete-file run-file))
+
          (client-proc))))))
 
 ;; Run a client test in a separate process; only a PRED procedure is running
