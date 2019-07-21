@@ -274,7 +274,7 @@ disconnected when the PROC is finished."
         #t))))
 
 (define get-unused-port
-  (let ((port-num 12345)
+  (let ((port-num (+ 10000 (random 2345)))
         (mtx      (make-mutex 'allow-external-unlock)))
     (lambda ()
       "Get an unused port number."
