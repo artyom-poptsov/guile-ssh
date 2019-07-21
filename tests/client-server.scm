@@ -671,29 +671,35 @@
 
 
 (test-assert-with-log "data transferring, bytevector"
-  (let ((vect-size 10)
-        (vect-fill 10))
+  (run-client-test
 
-    (run-client-test
+   ;; server
+   (lambda (server)
+     (use-modules (rnrs bytevectors)
+                  (rnrs io ports))
+     (start-server/dt-test server
+                           (lambda (channel)
+                             (let ((v (get-bytevector-n channel 10)))
+                               (put-bytevector channel v)))))
 
-     ;; server
-     (lambda (server)
-       (start-server/dt-test server
-                             (lambda (channel)
-                               (let ((v (get-bytevector-n channel vect-size)))
-                                 (put-bytevector channel v)))))
-
-     ;; client
-     (lambda ()
-       (call-with-connected-session/channel-test
-        (lambda (session)
-          (let ((channel (make-channel/dt-test session))
-                (vect    (make-bytevector vect-size vect-fill)))
-            (put-bytevector channel vect)
-            (poll channel
-                  (lambda args
-                    (let ((res (get-bytevector-n channel vect-size)))
-                      (equal? res vect)))))))))))
+   ;; client
+   (lambda ()
+     (call-with-connected-session/channel-test
+      (lambda (session)
+        (let* ((vect-size 10)
+               (channel   (make-channel/dt-test session))
+               (vect      (make-bytevector vect-size 42)))
+          (format-log/scm 'nolog
+                          "data transferring, bytevector"
+                          "vect: ~a" vect)
+          (put-bytevector channel vect)
+          (poll channel
+                (lambda args
+                  (let ((res (get-bytevector-n channel vect-size)))
+                    (format-log/scm 'nolog
+                                    "data transferring, bytevector"
+                                    "res: ~a" res)
+                    (equal? res vect))))))))))
 
 
 ;;;
