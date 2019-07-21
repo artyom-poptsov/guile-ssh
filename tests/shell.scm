@@ -43,22 +43,16 @@
 ;; Client executes "uname", server replies with success code 0.
 (test-assert-with-log "rexec"
   (run-client-test
+   ;; Server
    (lambda (server)
-     (start-server/exec
-      server
-      (lambda (session message channel)
-        (format-log/scm 'nolog "rexec" "session: ~A; message: ~A; channel: ~A"
-                        session message channel)
-        (message-reply-success message)
-        (write-line "pong" channel)
-        (channel-request-send-exit-status channel 0)
-        (channel-send-eof channel))))
+     (start-server/exec server (const #t)))
+   ;; Client
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
         (format-log/scm 'nolog "rexec" "session: ~a" session)
         (receive (result exit-code)
-            (rexec session "uname")
+            (rexec session "ping")
           (list result exit-code)))))))
 
 (test-assert-with-log "which"
