@@ -129,13 +129,10 @@
    (lambda (session)
      (sleep 1)
      (connect! session)
-     (clnmsg "connected")
      (usleep 100)
      (authenticate-server session)
-     (clnmsg "server authenticated")
      (usleep 100)
      (userauth-none! session)
-     (clnmsg "client authenticated")
      (while #t (sleep 5)))
 
    ;; server
