@@ -523,7 +523,7 @@ main procedure."
     (format-log/scm 'nolog "multifork" "PIDs: ~a~%" pids)
     (dynamic-wind
       (const #f)
-      mainproc
+      (lambda () (mainproc pids))
       (lambda ()
         (format-log/scm 'nolog "multifork" "killing spawned processes ~a ...~%" pids)
         (for-each (cut kill <> SIGTERM) pids)
@@ -536,7 +536,8 @@ main procedure."
 ;; be executed in the parent process.  The procedure returns a result of
 ;; CLIENT-PROC call."
 (define-syntax-rule (run-client-test server-proc client-proc)
-  (let ((test-name (test-runner-test-name (test-runner-current))))
+  (let ((test-suite-name (car (test-runner-group-stack (test-runner-current))))
+        (test-name (test-runner-test-name (test-runner-current))))
     (format-log/scm 'nolog "run-client-test" "Making a server ...")
     (let ((port (get-unused-port)))
       (set-port! port)
@@ -551,18 +552,38 @@ main procedure."
                  "-L" (format #f "~a/modules/" %topdir)
                  "-e" "main"
                  "-s" (format #f "~a/tests/common/test-server.scm" %topdir)
+                 test-suite-name
                  test-name
                  (number->string port)
                  (format #f "~a" (quote server-proc)))
          (format-log/scm 'nolog "run-client-test" "Could not spawn process!")
          (exit 1))
        ;; client
-       (lambda ()
-
+       (lambda (pids)
+         (format-log/scm 'nolog "run-client-test"
+                         "PIDs: ~a" pids)
+         (format-log/scm 'nolog "run-client-test"
+                         "***** group stack: ~a"
+                         (test-runner-group-stack
+                          (test-runner-current)))
          ;; Wait for synchronization.
          (let ((run-file (string-append test-name ".run")))
            (while (not (file-exists? run-file))
-             (usleep 10))
+             (usleep 10)
+                     (format-log/scm 'nolog "run-client-test"
+                                     "***** pid: ~a"
+                                     (car pids))
+             (let ((res (waitpid (car pids) WNOHANG)))
+                     (format-log/scm 'nolog "run-client-test"
+                                     "***** waitpid: ~a"
+                                     res)
+               (if (> (car res) 0)
+                   (begin
+                     (format-log/scm 'nolog "run-client-test"
+                                     "Child process finished: ~a"
+                                     (car pids))
+                     (exit 1)))))
+
            (delete-file run-file))
 
          (client-proc))))))
@@ -618,7 +639,7 @@ returned by a CLIENT-PROC with a predicate PRED."
              (sleep 10)
              (close client)))))
      ;; Main procedure
-     (lambda ()
+     (lambda (pids)
        (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
 
          ;; XXX: This operation can potentially block the process forever.
@@ -657,7 +678,7 @@ argument.  The procedure returns a result of SERVER-PROC call."
          (lambda ()
            (primitive-exit 1))))
      ;; client
-     (lambda ()
+     (lambda (pids)
        (server-proc server)))))
 
 

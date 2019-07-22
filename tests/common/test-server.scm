@@ -20,11 +20,15 @@
 
 (define (main args)
   (log args)
-  (let ((test-name (list-ref args 1)))
-    (setup-test-suite-logging! test-name)
+  (let ((test-suite-name (list-ref args 1))
+        (test-name       (list-ref args 2)))
+    (unless (file-exists? test-suite-name)
+      (mkdir test-suite-name))
+    (set-log-userdata! test-name)
+    (setup-test-suite-logging! (string-append test-suite-name "/" test-name))
     (log "test 1")
-    (let* ((port      (string->number (list-ref args 2)))
-           (handler   (eval-string (list-ref args 3)))
+    (let* ((port      (string->number (list-ref args 3)))
+           (handler   (eval-string (list-ref args 4)))
            (s         (make-server
                        #:bindaddr %addr
                        #:bindport port
