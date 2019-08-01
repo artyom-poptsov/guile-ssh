@@ -59,6 +59,7 @@ AM_SCM_LOG_FLAGS = \
 EXTRA_DIST = \
 	${SCM_TESTS}		\
 	common.scm		\
+	common/test-server.scm	\
 	keys/dsakey		\
 	keys/dsakey.pub		\
 	keys/ecdsakey		\
@@ -95,22 +96,28 @@ guilec_env  = 									\
 ###
 
 CLEANFILES = \
+	client-server/*.log			\
 	client-server-errors.log		\
 	client-server-libssh.log		\
+	dist/*.log				\
 	dist-errors.log				\
 	dist-libssh.log				\
 	key-errors.log				\
 	key-libssh.log				\
+	popen/*.log				\
 	popen-errors.log			\
 	popen-libssh.log			\
+	server-client/*.log			\
 	server-client-errors.log		\
 	server-client-libssh.log		\
 	server-errors.log			\
 	server-libssh.log			\
 	session-errors.log			\
 	session-libssh.log			\
+	tunnel/*.log				\
 	tunnel-errors.log			\
 	tunnel-libssh.log			\
+	shell/*.log				\
 	shell-errors.log			\
 	shell-libssh.log			\
 	sssh-ssshd.log				\
