@@ -23,6 +23,13 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
     Reported by lantw44 in
     <https://github.com/artyom-poptsov/guile-ssh/issues/9>
+*** Fix failing tests
+    Tests would fail from time to time due to problems with an implementation
+    of the Guile-SSH testing framework.  Now Guile-SSH uses updated (and
+    hopefully better) version of tests; that should fix most of the failures.
+
+    Reported by Pilifer, Carl Dong and Vagrant Cascadian in
+    <https://github.com/artyom-poptsov/guile-ssh/issues/12>
 
 * Changes in version 0.11.3 (2018-03-27)
 ** Bugfixes
