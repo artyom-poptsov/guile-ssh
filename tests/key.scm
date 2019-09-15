@@ -89,9 +89,11 @@
 
 (test-assert-with-log "get-key-type"
   (and (eq? 'rsa   (get-key-type *rsa-key*))
-       (eq? 'dss   (get-key-type *dsa-key*))
+       (eq? 'dss   (get-key-type *dsa-key*)) ;))
        (when-openssl
-        (eq? 'ecdsa (get-key-type *ecdsa-key*)))))
+        (or (eq? 'ecdsa-p256 (get-key-type *ecdsa-key*))
+            ;; For libssh versions prior to 0.9
+            (eq? 'ecdsa (get-key-type *ecdsa-key*))))))
 
 
 (test-assert-with-log "private-key-to-file"
@@ -138,7 +140,9 @@
 
 (when-openssl
  (test-equal "string->public-key, ECDSA"
-   (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa))
+   (if (string=? (cadr (string-split (get-libssh-version) #\.)) "9")
+       (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa-p256))
+       (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa)))
    %ecdsakey-pub-string))
 
 (test-assert-with-log "string->public-key, RSA, gc test"
@@ -162,7 +166,8 @@
        (when-openssl
         (let ((key (make-keypair 'ecdsa 256)))
           (and (key? key)
-               (eq? (get-key-type key) 'ecdsa))))))
+               (or (eq? (get-key-type key) 'ecdsa) ; libssh < 0.9
+                   (eq? (get-key-type key) 'ecdsa-p256)))))))
 
 ;;;
 
