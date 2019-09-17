@@ -69,6 +69,8 @@ PKG_CHECK_MODULES([LIBSSH_0_8], [libssh >= 0.8.0],
                                 [AC_DEFINE(HAVE_LIBSSH_0_8, 1, [Use libssh 0.8])],
                                 [AC_DEFINE(HAVE_LIBSSH_0_8, 0, [Use libssh < 0.8])])
 
+AM_CONDITIONAL(HAVE_LIBSSH_0_8, $HAVE_LIBSSH_0_8)
+
 PKG_CHECK_MODULES([LIBSSH_0_9], [libssh >= 0.9.0],
                                 [AC_DEFINE(HAVE_LIBSSH_0_9, 1, [Use libssh 0.9])],
                                 [AC_DEFINE(HAVE_LIBSSH_0_9, 0, [Use libssh < 0.9])])
