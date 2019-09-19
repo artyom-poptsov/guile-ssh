@@ -44,7 +44,7 @@ static const struct symbol_mapping key_types[] = {
   { "rsa1",    SSH_KEYTYPE_RSA1    },
   { "ecdsa",   SSH_KEYTYPE_ECDSA   }, /* Deprecated in libssh 0.9 */
 
-#ifdef HAVE_LIBSSH_0_9
+#if HAVE_LIBSSH_0_9
   { "ecdsa-p256",        SSH_KEYTYPE_ECDSA_P256        },
   { "ecdsa-p384",        SSH_KEYTYPE_ECDSA_P384        },
   { "ecdsa-p521",        SSH_KEYTYPE_ECDSA_P521        },
