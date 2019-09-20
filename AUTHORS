@@ -58,3 +58,7 @@ See also files THANKS and ChangeLog.
   Pointed out to bugs in 'rrepl-get-result' from (ssh dist node).
 * Marius Bakke <mbakke@fastmail.com>
   Pointed out to buigs in 'node-run-server' from (ssh dist node).
+* Ting-Wei Lan <lantw44@gmail.com>
+  Bug reports.
+  Author and maintainer of an AUR package for Arch GNU/Linux:
+  <https://aur.archlinux.org/packages/guile-ssh/>
