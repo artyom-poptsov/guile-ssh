@@ -32,6 +32,7 @@
   #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-11)
   #:use-module (ice-9 receive)
+  #:use-module (ice-9 threads)
   #:use-module (rnrs bytevectors)
   #:use-module (ssh session)
   #:use-module (ssh channel)
