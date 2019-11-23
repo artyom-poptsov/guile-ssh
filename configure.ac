@@ -84,8 +84,8 @@ m4_pattern_forbid([^GUILE_PKG$])
 m4_pattern_forbid([^GUILE_PROGS$])
 
 dnl Use this macro so that 'GUILE_EFFECTIVE_VERSION' is defined here.
-dnl Try Guile 2.2, then Guile 2.0.
-GUILE_PKG([2.2 2.0])
+dnl Try Guile 3.0, then 2.2, and finally 2.0.
+GUILE_PKG([3.0 2.2 2.0])
 
 GUILE_PROGS
 GUILE_FLAGS
