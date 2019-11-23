@@ -506,14 +506,21 @@ main procedure."
          (pids     (map (lambda (proc)
                           (let ((pid (primitive-fork)))
                             (if (zero? pid)
-                                (begin
-                                  (test-runner-reset (test-runner-current))
-                                  (set! test-log-to-file #f)
-                                  (sigaction SIGTERM signal-handler)
-                                  (format-log/scm 'nolog "multifork" "Running proc ...~%")
-                                  (proc)
-                                  (format-log/scm 'nolog "multifork" "Exiting ...~%")
-                                  (primitive-exit 0))
+                                (dynamic-wind
+                                  (lambda ()
+                                    (test-runner-reset (test-runner-current))
+                                    (set! test-log-to-file #f)
+                                    (sigaction SIGTERM signal-handler)
+                                    (format-log/scm 'nolog "multifork"
+                                                    "Running proc ...~%"))
+                                  proc
+                                  (lambda ()
+                                    ;; This handler makes sure the child
+                                    ;; process exits when PROC exit, be it a
+                                    ;; non-local exit or a normal return.
+                                    (format-log/scm 'nolog "multifork"
+                                                    "Exiting ...~%")
+                                    (primitive-exit 0)))
                                 (begin
                                   (format-log/scm 'nolog "multifork" "PID: ~a~%" pid)
                                   pid))))
