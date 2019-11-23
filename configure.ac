@@ -91,6 +91,12 @@ GUILE_PROGS
 GUILE_FLAGS
 GUILE_SITE_DIR
 
+dnl (srfi srfi-64) appeared in Guile 2.0.10.  Make sure we have it.
+GUILE_MODULE_AVAILABLE([have_srfi64], [(srfi srfi-64)])
+if test "x$have_srfi64" != "xyes"; then
+  AC_MSG_ERROR([(srfi srfi-64) is missing; please install a more recent Guile.])
+fi
+
 LT_INIT()
 
 if test "x$guilesitedir" = "x"; then
@@ -107,7 +113,6 @@ AC_SUBST(GUILE_EFFECTIVE_VERSION)
 AC_CONFIG_FILES([Makefile libguile-ssh/Makefile examples/Makefile build-aux/Makefile])
 AC_CONFIG_FILES([m4/Makefile doc/Makefile tests/Makefile am/Makefile])
 AC_CONFIG_FILES([modules/Makefile modules/ssh/Makefile modules/ssh/dist/Makefile])
-AC_CONFIG_FILES([modules/srfi/Makefile])
 
 # Generate a Makefile, based on the results.
 AC_OUTPUT

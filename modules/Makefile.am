@@ -15,11 +15,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = ssh srfi
-
-EXTRA_DIST = \
-	srfi/srfi-64.scm		\
-	srfi/srfi-64.upstream.scm
+SUBDIRS = ssh
 
 clean-go:
 	@cd ssh; make clean-go
