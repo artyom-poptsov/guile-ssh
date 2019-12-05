@@ -29,6 +29,7 @@
 ;;   userauth-public-key/try
 ;;   userauth-agent!
 ;;   userauth-password!
+;;   userauth-gssapi!
 ;;   userauth-none!
 ;;   userauth-get-list
 
@@ -46,6 +47,7 @@
             userauth-public-key/try
             userauth-agent!
             userauth-password!
+            userauth-gssapi!
             userauth-none!
             userauth-get-list
             openssh-agent-start
