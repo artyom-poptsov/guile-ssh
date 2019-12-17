@@ -8,6 +8,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
+** API change: Implement new version of the new RREPL API
+   As proposed by Ludovic Courtès, this Guile-SSH version includes an
+   implementation of a new stateless RREPL.
 ** Bugfixes
 *** Fix a segfault in 'libguile-ssh'
     The library would always fail with segmentation fault error when an
