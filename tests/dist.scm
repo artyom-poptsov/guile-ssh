@@ -260,10 +260,6 @@ $4 = #<session #<undefined>@#<undefined>:22 (disconnected) 453fff>"
    (lambda ()
      (call-with-connected-session/shell
       (lambda (session)
-              (let ((p (open-file "/tmp/a" "a+")))
-                (display "session: " p)
-                (display session p)
-                (close p))
         (format-log/scm 'nolog "client" "session: ~a" session)
         (let ((n (make-node session)))
           (= (with-ssh n
