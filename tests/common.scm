@@ -533,9 +533,17 @@ main procedure."
       (lambda () (mainproc pids))
       (lambda ()
         (format-log/scm 'nolog "multifork" "killing spawned processes ~a ...~%" pids)
-        (for-each (cut kill <> SIGTERM) pids)
+        (catch #t
+          (lambda () (for-each (cut kill <> SIGTERM) pids))
+          (lambda args
+            (format-log/scm 'nolog "multifork"
+                            "ERROR: Could not kill process ~a: ~a~%" pids args)))
         (format-log/scm 'nolog "multifork" "waiting for processes status ~a ...~%" pids)
-        (for-each waitpid pids)))))
+        (catch #t
+          (lambda () (for-each waitpid pids))
+          (lambda args
+            (format-log/scm 'nolog "multifork"
+                            "ERROR: Could not wait for PIDS ~a: ~a" pids args)))))))
 
 
 ;;   "Run a SERVER-PROC in newly created process.  The server passed to a
