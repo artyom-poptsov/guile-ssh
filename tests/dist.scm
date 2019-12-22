@@ -137,7 +137,7 @@
 ;;; Testing of 'rrepl-get-result'.
 ;; These test cases are intended to test various inputs for 'rrepl-get-result'
 ;; procedure.
-#!
+
 (test-assert "rrepl-get-result"
   (receive (result eval-num module-name lang)
       (call-with-input-string "scheme@(guile-user)> $0 = test"
