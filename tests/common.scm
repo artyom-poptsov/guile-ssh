@@ -570,7 +570,7 @@ main procedure."
                  test-suite-name
                  test-name
                  (number->string port)
-                 (format #f "~a" (quote server-proc)))
+                 (format #f "~S" (quote server-proc)))
          (format-log/scm 'nolog "run-client-test" "Could not spawn process!")
          (exit 1))
        ;; client
