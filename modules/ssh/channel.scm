@@ -125,6 +125,8 @@ an error.  Return value is undefined."
 ;;;
 
 
-(load-extension "libguile-ssh" "init_channel")
+
+(unless (getenv "GUILE_SSH_CROSS_COMPILING")
+  (load-extension "libguile-ssh" "init_channel"))
 
 ;;; channel.scm ends here.

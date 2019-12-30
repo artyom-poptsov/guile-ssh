@@ -250,8 +250,9 @@ behavior is implementation dependent."
 
 ;;; Load libraries.
 
-(load-extension "libguile-ssh" "init_sftp_session")
-(load-extension "libguile-ssh" "init_sftp_file")
+(unless (getenv "GUILE_SSH_CROSS_COMPILING")
+  (load-extension "libguile-ssh" "init_sftp_session")
+  (load-extension "libguile-ssh" "init_sftp_file"))
 
 ;;; sftp-session.scm ends here.
 

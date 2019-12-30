@@ -109,6 +109,8 @@ AC_CONFIG_FILES([m4/Makefile doc/Makefile tests/Makefile am/Makefile])
 AC_CONFIG_FILES([modules/Makefile modules/ssh/Makefile modules/ssh/dist/Makefile])
 AC_CONFIG_FILES([modules/srfi/Makefile])
 
+AM_CONDITIONAL([CROSS_COMPILING], [test "x$cross_compiling" = "xyes"])
+
 # Generate a Makefile, based on the results.
 AC_OUTPUT
 

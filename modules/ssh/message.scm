@@ -145,6 +145,8 @@ to use will be selected depending on a type of the message MSG."
        (error "Unknown message type" msg-type)))))
 
 
-(load-extension "libguile-ssh" "init_message")
+
+(unless (getenv "GUILE_SSH_CROSS_COMPILING")
+  (load-extension "libguile-ssh" "init_message"))
 
 ;;; message.scm ends here

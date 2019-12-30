@@ -50,7 +50,8 @@
             ;; Low-level procedures
             %get-libssh-version))
 
-(load-extension "libguile-ssh" "init_version")
+(unless (getenv "GUILE_SSH_CROSS_COMPILING")
+  (load-extension "libguile-ssh" "init_version"))
 
 (define (get-libssh-version)
   "Get version of the libssh."

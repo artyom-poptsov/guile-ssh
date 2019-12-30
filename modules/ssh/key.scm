@@ -66,6 +66,7 @@
                     (bytevector->u8-list bv))
                ":"))
 
-(load-extension "libguile-ssh" "init_key")
+(unless (getenv "GUILE_SSH_CROSS_COMPILING")
+  (load-extension "libguile-ssh" "init_key"))
 
 ;;; key.scm ends here.
