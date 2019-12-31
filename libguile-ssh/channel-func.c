@@ -241,6 +241,7 @@ Return value is undefined.\
  */
 SCM
 _ssh_result_to_symbol (int res)
+#define FUNC_NAME "_ssh_result_to_symbol"
 {
   switch (res)
     {
@@ -250,12 +251,17 @@ _ssh_result_to_symbol (int res)
       return scm_from_locale_symbol ("again");
     case SSH_ERROR:
       return scm_from_locale_symbol ("error");
+    case SSH_EOF:
+      return scm_from_locale_symbol ("eof");
 
     default:                    /* Must not happen. */
+      _gssh_log_error_format(FUNC_NAME, SCM_BOOL_F,
+                             "Unknown SSH result: %d", res);
       assert (0);
       return SCM_BOOL_F;
     }
 }
+#undef FUNC_NAME
 
 SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
                  "%channel-open-forward", 5,

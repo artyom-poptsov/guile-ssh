@@ -25,6 +25,8 @@ extern struct symbol_mapping log_verbosity[];
 
 extern void _gssh_log_error (const char* function_name, const char* msg,
                              SCM args);
+extern void _gssh_log_error_format (const char* function_name, SCM args,
+                                    const char* fmt, ...);
 
 extern void _gssh_log_warning (const char* function_name, const char* msg,
                                SCM args);

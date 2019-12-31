@@ -256,6 +256,18 @@ _gssh_log_error (const char* function_name, const char* msg, SCM args)
 }
 
 void
+_gssh_log_error_format (const char* function_name, SCM args, const char* fmt, ...)
+{
+  va_list arg;
+  enum { MSG_SZ = 100 };
+  char msg[MSG_SZ];
+  va_start (arg, fmt);
+  vsnprintf (msg, MSG_SZ, fmt, arg);
+  va_end (arg);
+  _gssh_log_error(function_name, msg, args);
+}
+
+void
 _gssh_log_warning (const char* function_name, const char* msg, SCM args)
 {
   char *c_str;
