@@ -429,6 +429,19 @@
   (userauth-public-key/auto! (make-session-for-test)))
 
 
+;;; 'userauth-gssapi!'
+
+;; The procedure called with a wrong object as a parameter which leads to an
+;; exception.
+(test-error-with-log "userauth-gssapi!, wrong parameter" 'wrong-type-arg
+  (userauth-gssapi! "Not a session."))
+
+;; Client tries to authenticate using a non-connected session which leads to
+;; an exception.
+(test-error-with-log "userauth-gssapi!, not connected" 'wrong-type-arg
+  (userauth-gssapi! (make-session-for-test)))
+
+
 ;;;
 
 

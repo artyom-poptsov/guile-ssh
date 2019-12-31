@@ -206,6 +206,27 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 }
 #undef FUNC_NAME
 
+SCM_DEFINE (guile_ssh_userauth_gssapi_x,
+            "userauth-gssapi!", 1, 0, 0,
+            (SCM session),
+            "\
+Try to authenticate through the \"gssapi-with-mic\" method.\
+Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
+")
+#define FUNC_NAME s_guile_ssh_userauth_gssapi_x
+{
+  struct session_data *sd = _scm_to_session_data (session);
+
+  int res;
+
+  GSSH_VALIDATE_CONNECTED_SESSION (sd, session, SCM_ARG1);
+
+  res = ssh_userauth_gssapi (sd->ssh_session);
+
+  return ssh_auth_result_to_symbol (res);
+}
+#undef FUNC_NAME
+
 
 /* Try to authenticate through the "none" method.
 
