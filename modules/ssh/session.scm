@@ -120,6 +120,7 @@ set, the default SSH '~/.ssh/config' is used.  Throw 'guile-ssh-error' on an
 error.  Return value is undefined."
   (%gssh-session-parse-config! session file-name))
 
-(load-extension "libguile-ssh" "init_session")
+(unless (getenv "GUILE_SSH_CROSS_COMPILING")
+  (load-extension "libguile-ssh" "init_session"))
 
 ;;; session.scm ends here

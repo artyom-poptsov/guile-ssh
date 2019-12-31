@@ -51,9 +51,16 @@ guilec_opts = 					\
 	--target=$(host)			\
 	$(guilec_warnings)
 
+if CROSS_COMPILING
+CROSS_COMPILING_VARIABLE = GUILE_SSH_CROSS_COMPILING=yes
+else
+CROSS_COMPILING_VARIABLE =
+endif
+
 # TODO: Move environment setup to a separate file.
 guilec_env  = 									\
 	GUILE_AUTO_COMPILE=0 							\
+	$(CROSS_COMPILING_VARIABLE)                                      	\
 	LD_LIBRARY_PATH="$(abs_top_builddir)/libguile-ssh/.libs/:${LD_LIBRARY_PATH}"	\
 	GUILE_LOAD_PATH="$(abs_top_srcdir)/modules"				\
 	GUILE_LOAD_COMPILED_PATH="$(builddir)/ssh:$$GUILE_LOAD_COMPILED_PATH"

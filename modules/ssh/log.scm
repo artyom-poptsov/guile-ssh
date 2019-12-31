@@ -64,9 +64,10 @@ Return value is undefined."
   (let ((message (apply format #f format-string args)))
     (%write-log priority procedure-name message)))
 
-(load-extension "libguile-ssh" "init_log_func")
+(unless (getenv "GUILE_SSH_CROSS_COMPILING")
+  (load-extension "libguile-ssh" "init_log_func")
 
-;; Set the default log printer.
-(set-logging-callback! %default-log-printer)
+  ;; Set the default log printer.
+  (set-logging-callback! %default-log-printer))
 
 ;;; log.scm ends here

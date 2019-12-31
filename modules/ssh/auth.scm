@@ -128,6 +128,7 @@
 
 ;;;
 
-(load-extension "libguile-ssh" "init_auth_func")
+(unless (getenv "GUILE_SSH_CROSS_COMPILING")
+  (load-extension "libguile-ssh" "init_auth_func"))
 
 ;;; auth.scm ends here.

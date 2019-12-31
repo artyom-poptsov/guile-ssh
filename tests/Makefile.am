@@ -19,6 +19,8 @@
 
 include $(top_srcdir)/am/guilec
 
+if !CROSS_COMPILING
+
 SCM_TESTS = \
 	log.scm \
 	server.scm \
@@ -124,3 +126,10 @@ CLEANFILES = \
 	sssh-ssshd-libssh.log			\
 	sssh-ssshd-errors.log			\
 	$(GOBJECTS)
+
+else CROSS_COMPILING
+
+TESTS =
+SCM_TESTS =
+
+endif CROSS_COMPILING

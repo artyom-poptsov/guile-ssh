@@ -70,6 +70,7 @@ Return a new SSH server."
     (server-set-if-specified! blocking-mode)
     server))
 
-(load-extension "libguile-ssh" "init_server")
+(unless (getenv "GUILE_SSH_CROSS_COMPILING")
+  (load-extension "libguile-ssh" "init_server"))
 
 ;;; server.scm ends here
