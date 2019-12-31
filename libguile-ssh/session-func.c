@@ -19,6 +19,7 @@
  */
 
 #include <config.h>
+#include <stdio.h>
 
 #include <libguile.h>
 #include <libssh/libssh.h>
