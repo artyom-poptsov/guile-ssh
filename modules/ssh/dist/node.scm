@@ -317,7 +317,7 @@ result, a number of the evaluation, a module name and a language name.  Throw
 (define (node-eval-1 node quoted-exp)
   "Evaluate QUOTED-EXP on the node and return the evaluated result.  The
 procedure returns the 1st evaluated value if multiple values were returned."
-  (receive (result eval-num)
+  (receive (result eval-num module-name language-name)
       (node-eval node quoted-exp)
     (if (vector? eval-num)
         (vector-ref result 0)

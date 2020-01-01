@@ -52,6 +52,7 @@
   #:use-module (srfi srfi-9 gnu)
   #:use-module (srfi srfi-26)
   #:use-module (ssh dist node)
+  #:use-module (ssh log)
   #:export (make-job
             job?
             job-type
@@ -146,6 +147,8 @@ list and assign each part of work to a node.  Return a list of assigned jobs."
 
 (define (hand-out-job job)
   "Hand out JOB to the assigned node and return the result of computation."
+  (format-log 'functions "hand-out-job" "node: ~a; type: ~a; proc: ~a; data: ~a"
+              (job-node job) (job-type job) (job-proc job) (job-data job))
   (case (job-type job)
     ((map)
      (node-eval-1 (job-node job)
