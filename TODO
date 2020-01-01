@@ -3,7 +3,7 @@
 * Ideas
 ** Make channel buffers configurable.
 ** Make use of libssh callbacks to track asynchronous events on channels
-** Use more robust approach to evaluate Lisp code on a remote side
+** DONE Use more robust approach to evaluate Lisp code on a remote side
    Quoting Ludovic Courtès, "[...] it might be best to not use the REPL at
    all.  In the Shepherd I used a simple protocol whereby the sexp to evaluate
    is passed to the other process, which returns an sexp denoting success and
@@ -21,13 +21,4 @@
    that allows to load a local Scheme program on specified host(s).
 
 * Known Bugs
-** Tests
-   - 'client-server.scm' sometimes fails when 'make check' is called with
-     number of jobs > 1 (see '-j' flag).
-** distributed forms
-   - 'dist-map' sometimes failes during the job migration with the
-     following error:
-#+BEGIN_EXAMPLE
-In thread:
-ERROR: Could not open forward channel #<tunnel 127.0.0.1:0 -> localhost:37147 91b72a8> error
-#+END_EXAMPLE
+

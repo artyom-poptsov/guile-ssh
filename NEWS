@@ -8,9 +8,33 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
-** API change: Implement new version of the new RREPL API
+** API change: Implement new version of the RREPL API
    As proposed by Ludovic Courtès, this Guile-SSH version includes an
    implementation of a new stateless RREPL.
+** Prepare for Guile 2.9/3.0
+   Allow to build Guile-SSH with Guile versions 2.0, 2.2, 3.0.
+
+   Pull request has been made by Ludovic Courtès in
+   <https://github.com/artyom-poptsov/guile-ssh/pull/14>
+** Remove bundled SRFI-64
+   This test framework is included in Guile since version 2.0.12.
+
+   This request has been made by Ludovic Courtès in
+   <https://github.com/artyom-poptsov/guile-ssh/pull/14>
+** Cross-compilation support
+   Now Guile-SSH should allow cross-compilation.
+
+   Pull request has been made by Mathieu Othacehe in
+   <https://github.com/artyom-poptsov/guile-ssh/pull/16>
+** Changes in (ssh auth):
+*** New procedure 'userauth-gssapi!'
+    The procedure allows to authenticate through GSSAPI (Generic Security
+    Services Application Program Interface.)
+
+    Pull request has been made by Lars-Dominik Braun in
+    <https://github.com/artyom-poptsov/guile-ssh/pull/15>
+** Generic compilation fixes
+   Fix some warnings that surface during compilation and linking.
 ** Bugfixes
 *** Fix a segfault in 'libguile-ssh'
     The library would always fail with segmentation fault error when an

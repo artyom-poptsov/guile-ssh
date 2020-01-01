@@ -53,12 +53,18 @@ See also files THANKS and ChangeLog.
   In subdirectory 'examples', changes to:
     Makefile.am
 
+  Guile 3.0 support.
+
   Bug reports, various comments and suggestions.
-* Mathieu <https://github.com/mothacehe>
+* Mathieu Othacehe <m.othacehe@gmail.com>
   Pointed out to bugs in 'rrepl-get-result' from (ssh dist node).
+
+  Cross-compilation fixes.
 * Marius Bakke <mbakke@fastmail.com>
   Pointed out to buigs in 'node-run-server' from (ssh dist node).
 * Ting-Wei Lan <lantw44@gmail.com>
   Bug reports.
   Author and maintainer of an AUR package for Arch GNU/Linux:
   <https://aur.archlinux.org/packages/guile-ssh/>
+* Lars-Dominik Braun <ldb@leibniz-psychology.org>
+  GSSAPI support.
