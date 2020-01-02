@@ -91,6 +91,9 @@ GUILE_PROGS
 GUILE_FLAGS
 GUILE_SITE_DIR
 
+GUILD=`which guild`
+AC_SUBST(GUILD)
+
 dnl (srfi srfi-64) appeared in Guile 2.0.10.  Make sure we have it.
 GUILE_MODULE_AVAILABLE([have_srfi64], [(srfi srfi-64)])
 if test "x$have_srfi64" != "xyes"; then
