@@ -1,6 +1,6 @@
 /* channel-func.c -- SSH channel manipulation functions.
  *
- * Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -19,7 +19,6 @@
  */
 
 #include <config.h>
-
 #include <assert.h>
 #include <libguile.h>
 #include <libssh/libssh.h>

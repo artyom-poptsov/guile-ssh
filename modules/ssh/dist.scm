@@ -50,6 +50,7 @@
   #:use-module (ssh channel)
   #:use-module (ssh dist node)
   #:use-module (ssh dist job)
+  #:use-module (ssh log)
   #:re-export (node? node-session node-rrepl-port make-node with-ssh)
   #:export (distribute dist-map rrepl))
 
@@ -87,6 +88,7 @@
 
 (define (execute-jobs nodes jobs)
   "Execute JOBS on NODES, return the result."
+  (format-log 'functions "execute-jobs" "nodes: ~a; jobs: ~a" nodes jobs)
   (flatten-1 (n-par-map (length jobs) (cut execute-job nodes <>) jobs)))
 
 
@@ -109,6 +111,7 @@ nearly equal parts and hand out resulting jobs to a NODES list.  Return the
 result of computation."
   (let* ((jobs    (assign-map nodes lst (quote proc)))
          (results (execute-jobs nodes jobs)))
+    (format-log 'functions "dist-map" "jobs: ~a; results: ~a" jobs results)
     (when (null? results)
       (error "Could not execute jobs" nodes jobs))
     results))
