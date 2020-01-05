@@ -109,7 +109,7 @@ if test "x$guilesitedir" = "x"; then
 fi
 AC_SUBST([guilesitedir])
 
-LIBGUILE_SSH_INTERFACE="11:0:0"
+LIBGUILE_SSH_INTERFACE="12:0:0"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 GUILE_EFFECTIVE_VERSION=`$GUILE -c '(display (effective-version))'`
