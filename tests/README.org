@@ -83,6 +83,12 @@
     |-----------+-------------------------------------+-------------------------------------------------------------|
     | option    | - [x] valid option: "session-get"   | - [x] invalid option: "session-get, invalid option"         |
     |-----------+-------------------------------------+-------------------------------------------------------------|
+*** =make-session=
+    | Parameter  | Valid                                                                                            | Non-Valid                                                                           |
+    |------------+--------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------|
+    | =#:config= | - [x] =#:config= and =#:host= is specified: "make-session, '#:config' and '#:host' is specified" | - [x] only =#:config= is specified: "make-session, only '#:config' is specified"    |
+    |            | - [x] =#:config= is a boolean value: "make-session, '#:config' as a boolean value"               | - [x] =#:config= is of non-string type: "make-session, wrong '#:config' value type" |
+    |------------+--------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------|
 ** =(ssh sftp)=
 ** =(ssh tunnel)=
 

@@ -166,6 +166,18 @@
                 #:port 22
                 #:user "Random J. User"))
 
+(test-assert "make-session, '#:config' and '#:host' is specified"
+  (make-session #:host   "localhost"
+                #:config %config))
+
+(test-assert "make-session, '#:config' as a boolean value"
+  (make-session #:host   "localhost"
+                #:config #f))
+
+(test-error "make-session, only '#:config' is specified"
+  'guile-ssh-error
+  (make-session #:config %config))
+
 (test-equal-with-log "blocking-flush!"
   'ok
   (blocking-flush! (%make-session) 15))
