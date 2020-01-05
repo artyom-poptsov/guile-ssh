@@ -1,0 +1,58 @@
+@c -*-texinfo-*-
+@c This file is part of Guile-SSH Reference Manual.
+@c Copyright (C) 2020 Artyom V. Poptsov
+@c See the file guile-ssh.texi for copying conditions.
+
+@node Agent
+@section Agent
+
+@cindex agent
+
+The @code{(ssh agent)} module provides procedures for interacting with SSH
+agent instances.
+
+@deffn {Scheme Procedure} ssh-agent-sock-get
+Get the @env{SSH__AGENT__SOCK} environment variable value.
+@end deffn
+
+@deffn {Scheme Procedure} ssh-agent-sock-set! sock-file
+Set the value of @env{SSH__AGENT__SOCK} environment variable to the
+@var{sock-file}.
+@end deffn
+
+@deffn {Scheme Procedure} ssh-agent-find-socks [keywords]
+The procedure tries to find socket file paths of all running SSH agent
+instances by searching the specified @var{search-dir} and all sub-directories
+that meet @var{subdir-pattern} regexp.
+
+@table @samp
+@item search-dir
+A directory to search SSH agent socket files. Value of @env{TMPDIR}
+environment variable is used by default. If @env{TMPDIR} is empty, the
+procedure will use @file{/tmp} as the search directory name.
+@item subdir-pattern
+All sub-directories in @code{search-dir} that should be searched have to match
+this pattern. Default pattern is set to match @code{ssh-XXXXXXXXXX} names, as
+specified by @command{ssh-agent} man page.
+@end table
+
+To summarize, if both @code{search-dir} and @code{subdir-pattern} are left
+with default values, the procedure will search for
+@code{$TMPDIR/ssh-XXXXXXXXXX/agent.<ppid>}
+
+One might use the procedure to configure the environment in a REPL to use SSH
+@code{userauth-agent!} procedure later:
+
+@lisp
+(define s (make-session #:host "localhost"))
+(connect! s)
+(ssh-agent-sock-set! (car (ssh-agent-find-socks)))
+(userauth-agent! s)
+(with-ssh (make-node s) (version))
+@end lisp
+
+@end deffn
+
+@c Local Variables:
+@c TeX-master: "guile-ssh.texi"
+@c End:

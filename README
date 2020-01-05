@@ -72,6 +72,7 @@ Libraries, in =${prefix}/lib=:
 
 Guile modules, in =${GUILE_SITE}/ssh=:
  - auth.scm    -- User authentication.
+ - agent.scm   -- Interaction with SSH authentication agent instances.
  - channel.scm -- Channel manipulation.
  - dist.scm    -- Distributed forms.
    - dist/job.scm  -- Low-level distributed job API.

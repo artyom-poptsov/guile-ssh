@@ -11,6 +11,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** API change: Implement new version of the RREPL API
    As proposed by Ludovic Courtès, this Guile-SSH version includes an
    implementation of a new stateless RREPL.
+** New module: (ssh agent)
+   The module contains procedures for interaction with running SSH agent
+   instances.
 ** Prepare for Guile 2.9/3.0
    Allow to build Guile-SSH with Guile versions 2.0, 2.2, 3.0.
 

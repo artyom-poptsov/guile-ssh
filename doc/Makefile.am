@@ -4,6 +4,7 @@ info_TEXINFOS = guile-ssh.texi
 
 guile_ssh_TEXINFOS = \
 	api-auth.texi \
+	api-agent.texi \
 	api-channels.texi \
 	api-tunnels.texi \
 	api-keys.texi \

@@ -175,6 +175,7 @@ and it will give you a suggestion.
 @menu
 * Sessions::     Session management
 * Auth::         Authentication procedures
+* Agent::        Interaction with SSH agent instances.
 * Keys::         Public and private keys
 * Channels::     Channel manipulation procedures
 * Tunnels::      SSH tunnels
@@ -198,6 +199,7 @@ Distributed Computing
 @end menu
 
 @include api-auth.texi
+@include api-agent.texi
 @include api-channels.texi
 @include api-tunnels.texi
 @include api-sessions.texi

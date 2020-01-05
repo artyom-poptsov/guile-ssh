@@ -23,14 +23,14 @@ SCM_SOURCES = \
 	auth.scm channel.scm key.scm session.scm	\
 	server.scm message.scm version.scm log.scm	\
 	tunnel.scm dist.scm sftp.scm popen.scm		\
-	shell.scm
+	shell.scm agent.scm
 
 pkgguilesitedir = $(guilesitedir)/ssh
 
 nobase_dist_pkgguilesite_DATA = $(SCM_SOURCES)
 
 ETAGS_ARGS = auth.scm channel.scm key.scm session.scm server.scm \
-	message.scm version.scm popen.scm
+	message.scm version.scm popen.scm agent.scm
 
 GOBJECTS = $(SCM_SOURCES:%.scm=%.go)
 $(GOBJECTS): $(lib_LTLIBRARIES)	# Build the library first
