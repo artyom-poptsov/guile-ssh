@@ -158,17 +158,17 @@
 
 ;; The procedure called with a wrong object as a parameter which leads to an
 ;; exception.
-(test-error-with-log "userauth-none!, wrong parameter" 'wrong-type-arg
+(test-error-with-log "userauth-none!, session: non-session object" 'wrong-type-arg
   (userauth-none! "Not a session."))
 
 ;; Client tries to authenticate using a non-connected session which leads to
 ;; an exception.
-(test-error-with-log "userauth-none!, not connected" 'wrong-type-arg
+(test-error-with-log "userauth-none!, session: non-connected session" 'wrong-type-arg
   (userauth-none! (make-session-for-test)))
 
 
 ;; Server replies with "success", client receives 'success.
-(test-equal-with-log "userauth-none!, success"
+(test-equal-with-log "userauth-none!, session: connected session"
   'success
   (run-client-test
 

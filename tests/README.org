@@ -6,8 +6,8 @@
 *** =userauth-agent!=
     | Parameter | Valid                   | Non-Valid                   |
     |-----------+-------------------------+-----------------------------|
-    | session   | - [ ] connected session | - [ ] non-session object    |
-    |           |                         | - [ ] non-connected session |
+    | session   | - [x] connected session | - [x] non-session object    |
+    |           |                         | - [x] non-connected session |
     |-----------+-------------------------+-----------------------------|
 *** =userauth-none!=
     | Parameter | Valid                   | Non-Valid                   |
