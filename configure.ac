@@ -3,7 +3,7 @@ dnl   Process this file with autoconf to produce configure.
 dnl
 
 define(GUILE_SSH_CONFIGURE_COPYRIGHT, [[
-Copyright (C) 2013, 2014, 2015, 2016, 2017, 2018 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+Copyright (C) 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 This file is part of Guile-SSH.
 
@@ -91,8 +91,10 @@ GUILE_PROGS
 GUILE_FLAGS
 GUILE_SITE_DIR
 
-GUILD=`which guild`
-AC_SUBST(GUILD)
+if test "x$GUILD" = "x"; then
+   GUILD=`which guild`
+   AC_SUBST(GUILD)
+fi
 
 dnl (srfi srfi-64) appeared in Guile 2.0.10.  Make sure we have it.
 GUILE_MODULE_AVAILABLE([have_srfi64], [(srfi srfi-64)])
