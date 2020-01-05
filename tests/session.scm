@@ -161,6 +161,14 @@
          (string=? (session-get session 'user) "alice")
          (=        (session-get session 'port) 2222))))
 
+(test-error "session-parse-config!, non-session object"
+  'wrong-type-arg
+  (session-parse-config! "non-session object" "wrong-value"))
+
+(test-error "session-parse-config!, wrong config file"
+  'guile-ssh-error
+  (session-parse-config! (%make-session) "wrong-value"))
+
 (test-assert "make-session"
   (make-session #:host "localhost"
                 #:port 22
@@ -181,6 +189,10 @@
 (test-equal-with-log "blocking-flush!"
   'ok
   (blocking-flush! (%make-session) 15))
+
+(test-error "connected?, non-session object"
+  'wrong-type-arg
+  (connected? "non-session object"))
 
 (test-assert "connected?, check that we are not connected"
   (let ((session (%make-session)))

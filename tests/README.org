@@ -86,9 +86,22 @@
 *** =make-session=
     | Parameter  | Valid                                                                                            | Non-Valid                                                                           |
     |------------+--------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------|
-    | =#:config= | - [x] =#:config= and =#:host= is specified: "make-session, '#:config' and '#:host' is specified" | - [x] only =#:config= is specified: "make-session, only '#:config' is specified"    |
+    | =#:config= | - [x] =#:config= and =#:host= is specified: "make-session, '#:config' and '#:host' is specified"  | - [x] only =#:config= is specified: "make-session, only '#:config' is specified"    |
     |            | - [x] =#:config= is a boolean value: "make-session, '#:config' as a boolean value"               | - [x] =#:config= is of non-string type: "make-session, wrong '#:config' value type" |
     |------------+--------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------|
+*** =session-parse-config!=
+    | Parameter | Valid                                                 | Non-Valid                                                               |
+    |-----------+-------------------------------------------------------+-------------------------------------------------------------------------|
+    | session   | - [x] valid session: "session-parse-config!"          | - [x] non-session object: "session-parse-config!, non-session object"   |
+    |-----------+-------------------------------------------------------+-------------------------------------------------------------------------|
+    | config    | - [x] valid config file name: "session-parse-config!" | - [x] non-valid config file: "session-parse-config!, wrong config file" |
+    |-----------+-------------------------------------------------------+-------------------------------------------------------------------------|
+
+*** =connected?=
+    | Parameter | Valid                                                              | Non-Valid                                                  |
+    |-----------+--------------------------------------------------------------------+------------------------------------------------------------|
+    | session   | - [x] valid session: "connected?, check that we are not connected" | - [x] non-session object: "connected?, non-session object" |
+    |-----------+--------------------------------------------------------------------+------------------------------------------------------------|
 ** =(ssh sftp)=
 ** =(ssh tunnel)=
 
