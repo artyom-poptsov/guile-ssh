@@ -1,0 +1,88 @@
+* Equivalence Classes
+  [[https://en.wikipedia.org/wiki/Equivalence_partitioning][Equivalence classes]] for Guile-SSH.
+
+  Implemented test cases marked with "[x]".
+** =(ssh auth)=
+*** =userauth-agent!=
+    | Parameter | Valid                   | Non-Valid                   |
+    |-----------+-------------------------+-----------------------------|
+    | session   | - [ ] connected session | - [ ] non-session object    |
+    |           |                         | - [ ] non-connected session |
+    |-----------+-------------------------+-----------------------------|
+*** =userauth-none!=
+    | Parameter | Valid                   | Non-Valid                   |
+    |-----------+-------------------------+-----------------------------|
+    | session   | - [x] connected session | - [x] non-session object    |
+    |           |                         | - [x] non-connected session |
+    |-----------+-------------------------+-----------------------------|
+*** =userauth-password!=
+    | Parameter | Valid                   | Non-Valid                   |
+    |-----------+-------------------------+-----------------------------|
+    | session   | - [x] connected session | - [x] non-session object    |
+    |           |                         | - [x] non-connected session |
+    |-----------+-------------------------+-----------------------------|
+    | password  | - [x] string            | - [x] non-string object     |
+    |-----------+-------------------------+-----------------------------|
+*** =userauth-public-key!=
+    | Parameter   | Valid                   | Non-Valid                   |
+    |-------------+-------------------------+-----------------------------|
+    | session     | - [x] connected session | - [x] non-session object    |
+    |             |                         | - [x] non-connected session |
+    |-------------+-------------------------+-----------------------------|
+    | private-key | - [x] private key       | - [x] non-key object        |
+    |             |                         | - [x] public key            |
+    |             |                         | - [ ] invalid key           |
+    |-------------+-------------------------+-----------------------------|
+*** =userauth-public-key/auto!=
+    | Parameter | Valid                   | Non-Valid                   |
+    |-----------+-------------------------+-----------------------------|
+    | session   | - [x] connected session | - [x] non-session object    |
+    |           |                         | - [x] non-connected session |
+    |-----------+-------------------------+-----------------------------|
+*** =userauth-public-key/try=
+    | Parameter  | Valid                   | Non-Valid                   |
+    |------------+-------------------------+-----------------------------|
+    | session    | - [ ] connected session | - [ ] non-session object    |
+    |            |                         | - [ ] non-connected session |
+    |------------+-------------------------+-----------------------------|
+    | public-key | - [ ] public key        | - [ ] non-key object        |
+    |            |                         | - [ ] invalid key           |
+    |------------+-------------------------+-----------------------------|
+*** =userauth-get-list=
+    | Parameter | Valid                   | Non-Valid                   |
+    |-----------+-------------------------+-----------------------------|
+    | session   | - [x] connected session | - [x] non-session object    |
+    |           |                         | - [x] non-connected session |
+    |-----------+-------------------------+-----------------------------|
+** =(ssh channel)=
+** =(ssh dist)=
+** =(ssh key)=
+** =(ssh message)=
+** =(ssh popen)=
+** =(ssh server)=
+** =(ssh session)=
+*** =session?=
+    | Parameter | Valid                   | Non-Valid                   |
+    |-----------+-------------------------+-----------------------------|
+    | session   | - [x] session object    | - [x] non-session object    |
+    |-----------+-------------------------+-----------------------------|
+*** =session-set!=
+    | Parameter | Valid                | Non-Valid                |
+    |-----------+----------------------+--------------------------|
+    | session   | - [x] session object | - [x] non-session object |
+    |-----------+----------------------+--------------------------|
+    | option    | - [x] valid option   | - [x] non-valid option   |
+    |           |                      | - [x] non-symbol object  |
+    |-----------+----------------------+--------------------------|
+    | value     | - [x] valid value    | - [x] non-valid value    |
+    |-----------+----------------------+--------------------------|
+*** =session-get=
+    | Parameter | Valid                               | Non-Valid                                                   |
+    |-----------+-------------------------------------+-------------------------------------------------------------|
+    | session   | - [x] session object: "session-get" | - [x] non-session object: "session-get, non-session object" |
+    |-----------+-------------------------------------+-------------------------------------------------------------|
+    | option    | - [x] valid option: "session-get"   | - [x] invalid option: "session-get, invalid option"         |
+    |-----------+-------------------------------------+-------------------------------------------------------------|
+** =(ssh sftp)=
+** =(ssh tunnel)=
+
