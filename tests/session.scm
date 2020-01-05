@@ -115,6 +115,11 @@
      options)
     res))
 
+(test-error "session-set!, invalid option type"
+  'wrong-type-arg
+  (let ((session (%make-session)))
+    (session-set! session "non-valid type" "value")))
+
 (test-assert "session-get"
   (let* ((host         "example.com")
          (port         12345)
@@ -135,6 +140,15 @@
          (equal?   (session-get session 'callbacks)    callbacks)
          ;; Make sure that default callbacks value is '#f'.
          (equal?   (session-get (%make-session) 'callbacks) #f))))
+
+(test-error "session-get, non-session object"
+  'wrong-type-arg
+  (session-get "non-session object" 'test))
+
+(test-error "session-get, invalid option"
+  'guile-ssh-error
+  (let ((session (%make-session)))
+    (session-get session 'wrong-option)))
 
 (test-assert "session-parse-config!"
   (let ((session (make-session #:host "example")))
