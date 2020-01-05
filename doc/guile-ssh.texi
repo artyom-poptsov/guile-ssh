@@ -231,7 +231,10 @@ through bug reports or patches:
 @item David Thompson @email{davet@@gnu.org}
 @item SaffronSnail @url{https://github.com/SaffronSnail}
 @item David Kastrup @email{dak@@gnu.org>}
-@item Mathieu @url{https://github.com/mothacehe}
+@item Mathieu Othacehe @email{m.othacehe@@gmail.com}
+@item Marius Bakke @email{mbakke@@fastmail.com}
+@item Ting-Wei Lan @email{lantw44@@gmail.com}
+@item Lars-Dominik Braun @email{ldb@@leibniz-psychology.org}
 @end itemize
 
 
