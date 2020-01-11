@@ -29,7 +29,7 @@ Get the parent SSH session for a @var{sftp-session}.
 
 @deffn {Scheme Procedure} sftp-get-error sftp-session
 Get the last SFTP error from a @var{sftp-session}.  Return the error name as a
-symbol, or throw @code{guile-ssh-error} on if an error occured in the
+symbol, or throw @code{guile-ssh-error} on if an error occurred in the
 procedure itself.
 
 The procedure returns one of the following values:
