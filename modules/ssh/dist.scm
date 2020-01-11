@@ -106,7 +106,7 @@ list.  Return the results of N expressions as a set of N multiple values."
     (apply values results)))
 
 (define-syntax-rule (dist-map nodes proc lst)
-  "Do list mapping using distributed computation.  The job is splitted to
+  "Do list mapping using distributed computation.  The job is split into
 nearly equal parts and hand out resulting jobs to a NODES list.  Return the
 result of computation."
   (let* ((jobs    (assign-map nodes lst (quote proc)))
