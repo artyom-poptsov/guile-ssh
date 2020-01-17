@@ -284,7 +284,7 @@ disconnected when the PROC is finished."
             (loop (1+ num))
             (begin
               (format-log/scm 'nolog "get-unused-port"
-                              "port choosen: ~a" num)
+                              "port chosen: ~a" num)
               (set! port-num num)
               (unlock-mutex mtx)
               num))))))

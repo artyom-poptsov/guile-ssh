@@ -113,7 +113,7 @@ on an error"
 
 (define (sftp-get-error sftp-session)
   "Get the last SFTP error from a SFTP-SESSION.  Return the error name as a symbol,
-or throw 'guile-ssh-error' on if an error occured in the procedure itself."
+or throw 'guile-ssh-error' on if an error occurred in the procedure itself."
   (%gssh-sftp-get-error sftp-session))
 
 

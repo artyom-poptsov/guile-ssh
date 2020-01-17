@@ -88,9 +88,9 @@ the following symbols:
 @item ok
 Success.
 @item again
-@var{timeout} occured.
+@var{timeout} occurred.
 @item error
-An error occured.
+An error occurred.
 @end table
 @end deffn
 
@@ -306,7 +306,7 @@ The server is unknown. User should confirm the MD5 is correct.
 The known host file does not exist. The host is thus unknown. File
 will be created if host key is accepted.
 @item error
-An error occured.
+An error occurred.
 @end table
 
 @end deffn

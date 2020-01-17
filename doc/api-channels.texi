@@ -209,7 +209,7 @@ Success.
 @item again
 We are in the nonblocking mode and the call to be done again.
 @item error
-An error occured.
+An error occurred.
 @end table
 
 The local port forwarding works as follows:
@@ -265,7 +265,7 @@ Success.
 @item again
 We are in the nonblocking mode and the call to be done again.
 @item error
-An error occured.
+An error occurred.
 @end table
 
 Reverse port forwarding looks as follows:
@@ -306,7 +306,7 @@ Success.
 @item again
 We are in the nonblocking mode and the call to be done again.
 @item error
-An error occured.
+An error occurred.
 @end table
 
 Here's an example Guile program that uses @code{channel-cancel-forward} to

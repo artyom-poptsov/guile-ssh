@@ -101,7 +101,7 @@ connection to a remote REPL fails), @code{dist-map} transfers the job to
 another node from the @var{nodes} list.  When job execution failed on all
 nodes, an error is reported.
 
-In a case when an error that occured during job execution is considered
+In a case when an error that occurred during job execution is considered
 non-recoverable (eg. when evaluation of @var{proc} on a node failed due to an
 unbound variable) then execution of a job stops immediately.
 @end deffn
@@ -172,11 +172,11 @@ Here's the description of the format of node type printed representation:
 
 There are two types of node errors: recoverable and non-recoverable.  The
 first group is represented by @code{node-error} exceptions.  If an exception
-of this kind is occured then there is a chance that a job can be executed on
+of this kind is occurred then there is a chance that a job can be executed on
 another node.  That's because such an exception occures in cases when a node
 is unreachable, for example.  The second group is represented by
 @code{node-repl-error} exceptions.  Such exceptions mean that an error is
-occured during execution of a job on a node's REPL -- eg. due to the malformed
+occurred during execution of a job on a node's REPL -- eg. due to the malformed
 job.  Those errors are non-recoverable because if the job is broken it will
 likely fail on another nodes as well.
 
@@ -186,7 +186,7 @@ In addition to @code{make-node}, @code{node?}, @code{node-session} and
 @deffn {Scheme Procedure} node-eval node quoted-exp
 Evaluate a @var{quoted-exp} on a @var{node} and return four values: an
 evaluation result, a number of the evaluation, a module name and a language
-name.  Throw @code{node-repl-error} if a non-recoverable error occured, or
+name.  Throw @code{node-repl-error} if a non-recoverable error occurred, or
 @code{node-error} if the evaluation potentially could be succesfully evaluated
 on another node.
 

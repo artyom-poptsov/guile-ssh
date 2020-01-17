@@ -50,7 +50,7 @@ enum {
 #if USING_GUILE_BEFORE_2_2
 
 /* Read data from the channel.  Return EOF if no data is available or
-   throw `guile-ssh-error' if an error occured. */
+   throw `guile-ssh-error' if an error occurred. */
 static int
 ptob_fill_input (SCM file)
 #define FUNC_NAME "ptob_fill_input"

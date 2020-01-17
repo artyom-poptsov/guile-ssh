@@ -51,7 +51,7 @@ enum {
 #if USING_GUILE_BEFORE_2_2
 
 /* Read data from the channel.  Return EOF if no data is available or
-   throw `guile-ssh-error' if an error occured. */
+   throw `guile-ssh-error' if an error occurred. */
 static int
 ptob_fill_input (SCM channel)
 #define FUNC_NAME "ptob_fill_input"
@@ -202,7 +202,7 @@ ptob_input_waiting (SCM channel)
   int res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
 
   if (res == SSH_ERROR)
-    guile_ssh_error1 (FUNC_NAME, "An error occured.", channel);
+    guile_ssh_error1 (FUNC_NAME, "An error occurred.", channel);
 
   return (res != SSH_EOF) ? res : 0;
 }
