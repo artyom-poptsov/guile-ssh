@@ -23,6 +23,8 @@ jobs:
           sudo apt install gcc-9
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Autoreconf
+        run: autoreconf -vif
       - name: Configure
         run: ./configure
       - name: Make
