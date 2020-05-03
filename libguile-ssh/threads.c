@@ -1,6 +1,6 @@
 /* threads.c -- Initialization of SSH threads
  *
- * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -32,7 +32,9 @@ init_pthreads (void)
 {
   if (pthreads_state == SSH_PTHREADS_DISABLED)
     {
+#ifndef HAVE_LIBSSH_0_8
       ssh_threads_set_callbacks (ssh_threads_get_pthread ());
+#endif
       ssh_init ();
       pthreads_state = SSH_PTHREADS_ENABLED;
     }
