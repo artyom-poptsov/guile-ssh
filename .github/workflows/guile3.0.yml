@@ -1,0 +1,26 @@
+name: GNU Guile 3.0
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Required Packages
+    strategy:
+      matrix:
+        distro:
+          - 'ubuntu:20.04'
+        include:
+          - distro: 'ubuntu:20.04'
+            pre: 'apt -qy install guile-3.0 guile-3.0-libs guile-3.0-dev guile-library texinfo libssh-dev libtool texlive gettext make automake autoconf gcc-9'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Test building on ${{ matrix.distro }}
+        env:
+          PRE: ${{ matrix.pre }}
+        run: |
+          docker run --rm -e PRE -e DEBIAN_FRONTEND=noninteractive -v $PWD:/guile-ssh -w /guile-ssh ${{ matrix.distro }} /bin/sh -c '[ -n "${PRE}" ] && apt update && ${PRE} && autoreconf -vif && ./configure && make check'
