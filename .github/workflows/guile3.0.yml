@@ -15,7 +15,7 @@ jobs:
           - 'ubuntu:20.04'
         include:
           - distro: 'ubuntu:20.04'
-            pre: 'apt -qy install guile-3.0 guile-3.0-libs guile-3.0-dev guile-library texinfo libssh-dev libtool texlive gettext make automake autoconf gcc-9'
+            pre: 'apt -qy install guile-3.0 guile-3.0-libs guile-3.0-dev guile-library texinfo libssh-dev libtool texlive gettext make automake autoconf gcc'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
