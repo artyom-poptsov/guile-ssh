@@ -35,6 +35,7 @@ AM_INIT_AUTOMAKE([color-tests])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])], [AC_SUBST([AM_DEFAULT_VERBOSITY],1)])
 
 AC_PROG_CC
+LT_INIT([disable-static])
 
 if test "x$GCC" = "xyes"; then
   # Use compiler warnings.
