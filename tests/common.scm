@@ -72,6 +72,7 @@
 
 (define %topdir (getenv "abs_top_srcdir"))
 (define %topbuilddir (getenv "abs_top_builddir"))
+(define %guile (getenv "GUILE"))
 (define %addr   "127.0.0.1")
 (define *port*  12400)
 
@@ -560,9 +561,9 @@ main procedure."
       (multifork
        ;; server
        (lambda ()
-         (execle "/usr/bin/guile"
+         (execle %guile
                  (environ)
-                 "/usr/bin/guile"
+                 %guile
                  "-L" (format #f "~a/" %topdir)
                  "-L" (format #f "~a/modules/" %topdir)
                  "-e" "main"
