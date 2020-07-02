@@ -70,6 +70,7 @@
                                   nolog)
                    (compression   "yes" "no")
                    (compression-level 1 2 3 4 5 6 7 8 9)
+                   (nodelay      #f #t)
                    (callbacks     ((user-data . "hello")
                                    (global-request-callback . ,(const #f))))))
         (res #t))
@@ -95,6 +96,7 @@
                    (log-verbosity     "string" -1 0 1 2 3 4 5)
                    (compression       12345)
                    (compression-level -1 0 10)
+                   (nodelay           12345 "string")
                    (callbacks         "not a list"
                                       ((global-request-callback . #f)))))
         (res #t))
