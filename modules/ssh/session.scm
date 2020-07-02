@@ -74,7 +74,7 @@
                        knownhosts timeout timeout-usec ssh1 ssh2 log-verbosity
                        ciphers-c-s ciphers-s-c compression-c-s compression-s-c
                        proxycommand stricthostkeycheck compression
-                       compression-level callbacks config)
+                       compression-level nodelay callbacks config)
   "Make a new SSH session with specified configuration.\n
 Return a new SSH session."
   (let ((session (%make-session)))
@@ -98,6 +98,7 @@ Return a new SSH session."
     (session-set-if-specified! stricthostkeycheck)
     (session-set-if-specified! compression)
     (session-set-if-specified! compression-level)
+    (session-set-if-specified! nodelay)
     (session-set-if-specified! callbacks)
 
     (when config
