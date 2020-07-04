@@ -66,8 +66,8 @@ endif
 guilec_env  = 									\
 	GUILE_AUTO_COMPILE=0 							\
 	$(CROSS_COMPILING_VARIABLE)                                      	\
-	LD_LIBRARY_PATH="$(abs_top_builddir)/libguile-ssh/.libs/:${LD_LIBRARY_PATH}"	\
-	GUILE_LOAD_PATH="$(abs_top_srcdir)/modules"					\
+	GUILE_SYSTEM_EXTENSIONS_PATH="$(abs_top_builddir)/libguile-ssh/.libs/:${GUILE_SYSTEM_EXTENSIONS_PATH}"	\
+	GUILE_LOAD_PATH="$(abs_top_srcdir)/modules"				\
 	GUILE_LOAD_COMPILED_PATH="$(builddir)/ssh:$$GUILE_LOAD_COMPILED_PATH"
 
 .scm.go:

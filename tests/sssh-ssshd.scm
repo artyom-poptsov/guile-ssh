@@ -31,7 +31,7 @@
 
 ;;;
 
-(define *test-cmd* "uname --all")
+(define *test-cmd* "uname -a")
 
 (define *srv-address* INADDR_LOOPBACK)
 (define *srv-port*    12600)
