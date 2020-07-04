@@ -151,17 +151,6 @@ error."
       (make-rrepl session)
     (%make-node session rrepl-port guile-version)))
 
-(define (node-stop-rrepl! node)
-  "Stop a RREPL on a NODE."
-  (close-port (node-rrepl-port node)))
-
-(define (node-start-rrepl! node)
-  "Start a new RREPL on a NODE."
-  (receive (rrepl-port guile-version)
-      (make-rrepl session)
-    (node-rrepl-port-set! node rrepl-port)
-    (node-guile-version-set! node guile-version)))
-
 
 ;;; Remote REPL (RREPL)
 
