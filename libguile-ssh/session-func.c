@@ -625,7 +625,7 @@ Return one of the following symbols: 'ok, 'known-changed, 'found-other,\n\
 
   GSSH_VALIDATE_CONNECTED_SESSION (data, session, SCM_ARG1);
 
-#ifdef HAVE_LIBSSH_0_8
+#ifdef HAVE_LIBSSH_0_9
   res = ssh_session_is_known_server (data->ssh_session);
 #else
   res = ssh_is_server_known (data->ssh_session);
@@ -676,7 +676,7 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
   kd = (struct key_data *) scm_gc_malloc (sizeof (struct key_data), "ssh key");
   /* TODO: Check `kd' for NULL. */
 
-#ifdef HAVE_LIBSSH_0_8
+#ifdef HAVE_LIBSSH_0_9
   res = ssh_get_server_publickey (sd->ssh_session, &kd->ssh_key);
 #else
   res = ssh_get_publickey (sd->ssh_session, &kd->ssh_key);
@@ -704,7 +704,7 @@ Return value is undefined.\
 
   GSSH_VALIDATE_CONNECTED_SESSION (session_data, session, SCM_ARG1);
 
-#ifdef HAVE_LIBSSH_0_8
+#ifdef HAVE_LIBSSH_0_9
   res = ssh_session_update_known_hosts (session_data->ssh_session);
 #else
   res = ssh_write_knownhost (session_data->ssh_session);
