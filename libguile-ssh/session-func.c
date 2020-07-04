@@ -625,7 +625,11 @@ Return one of the following symbols: 'ok, 'known-changed, 'found-other,\n\
 
   GSSH_VALIDATE_CONNECTED_SESSION (data, session, SCM_ARG1);
 
+#ifdef HAVE_LIBSSH_0_8
+  res = ssh_session_is_known_server (data->ssh_session);
+#else
   res = ssh_is_server_known (data->ssh_session);
+#endif
 
   switch (res)
     {
