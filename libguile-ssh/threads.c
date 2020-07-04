@@ -32,7 +32,7 @@ init_pthreads (void)
 {
   if (pthreads_state == SSH_PTHREADS_DISABLED)
     {
-#ifndef HAVE_LIBSSH_0_8
+#if ! HAVE_LIBSSH_0_8
       ssh_threads_set_callbacks (ssh_threads_get_pthread ());
 #endif
       ssh_init ();
