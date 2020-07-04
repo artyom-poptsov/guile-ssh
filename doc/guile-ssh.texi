@@ -198,20 +198,20 @@ Distributed Computing
 
 @end menu
 
+@include api-sessions.texi
 @include api-auth.texi
 @include api-agent.texi
+@include api-keys.texi
 @include api-channels.texi
 @include api-tunnels.texi
-@include api-sessions.texi
-@include api-keys.texi
-@include api-messages.texi
-@include api-servers.texi
-@include api-logging.texi
-@include api-version.texi
-@include api-dist.texi
-@include api-sftp.texi
 @include api-popen.texi
 @include api-shell.texi
+@include api-logging.texi
+@include api-version.texi
+@include api-servers.texi
+@include api-messages.texi
+@include api-sftp.texi
+@include api-dist.texi
 
 @include examples.texi
 
