@@ -676,7 +676,12 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
   kd = (struct key_data *) scm_gc_malloc (sizeof (struct key_data), "ssh key");
   /* TODO: Check `kd' for NULL. */
 
+#ifdef HAVE_LIBSSH_0_8
+  res = ssh_get_server_publickey (sd->ssh_session, &kd->ssh_key);
+#else
   res = ssh_get_publickey (sd->ssh_session, &kd->ssh_key);
+#endif
+
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to get the server key", session);
 
@@ -699,7 +704,11 @@ Return value is undefined.\
 
   GSSH_VALIDATE_CONNECTED_SESSION (session_data, session, SCM_ARG1);
 
+#ifdef HAVE_LIBSSH_0_8
+  res = ssh_session_update_known_hosts (session_data->ssh_session);
+#else
   res = ssh_write_knownhost (session_data->ssh_session);
+#endif
 
   if (res != SSH_OK)
     guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
