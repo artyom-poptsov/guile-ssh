@@ -71,7 +71,9 @@ static struct symbol_mapping session_options[] = {
   { "stricthostkeycheck", SSH_OPTIONS_STRICTHOSTKEYCHECK },
   { "compression",        SSH_OPTIONS_COMPRESSION        },
   { "compression-level",  SSH_OPTIONS_COMPRESSION_LEVEL  },
+#if HAVE_LIBSSH_0_8_1
   { "nodelay",            SSH_OPTIONS_NODELAY            },
+#endif
   { "callbacks",          GSSH_OPTIONS_CALLBACKS         },
   { NULL,                 -1 }
 };
@@ -367,7 +369,9 @@ set_option (SCM scm_session, struct session_data* sd, int type, SCM value)
     case SSH_OPTIONS_SSH1:
     case SSH_OPTIONS_SSH2:
     case SSH_OPTIONS_STRICTHOSTKEYCHECK:
+#if HAVE_LIBSSH_0_8_1
     case SSH_OPTIONS_NODELAY:
+#endif
       return set_bool_opt (session, type, value);
 
     case SSH_OPTIONS_FD:

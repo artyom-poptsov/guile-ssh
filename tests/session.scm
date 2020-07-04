@@ -22,8 +22,12 @@
 (use-modules (srfi srfi-64)
              (ssh session)
              (ssh log)
+             (ssh version)
              ;; Helper procedures
              (tests common))
+
+(define %libssh-minor-version
+  (string->number (cadr (string-split (get-libssh-version) #\.))))
 
 (set-log-verbosity! 'functions)
 
@@ -68,12 +72,15 @@
                    (ssh2         #f #t)
                    (log-verbosity nolog rare protocol packet functions
                                   nolog)
-                   (compression   "yes" "no")
                    (compression-level 1 2 3 4 5 6 7 8 9)
-                   (nodelay      #f #t)
+                   (compression   "yes" "no")
                    (callbacks     ((user-data . "hello")
                                    (global-request-callback . ,(const #f))))))
         (res #t))
+
+    (if (>= %libssh-minor-version 8)
+        (set! options (cons  '(nodelay #f #t) options)))
+
     (for-each
      (lambda (opt)
        (for-each
@@ -96,10 +103,13 @@
                    (log-verbosity     "string" -1 0 1 2 3 4 5)
                    (compression       12345)
                    (compression-level -1 0 10)
-                   (nodelay           12345 "string")
                    (callbacks         "not a list"
                                       ((global-request-callback . #f)))))
         (res #t))
+
+    (if (>= %libssh-minor-version 8)
+        (set! options (cons '(nodelay 12345 "string") options)))
+
     (for-each
      (lambda (opt)
        (for-each
