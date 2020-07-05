@@ -278,6 +278,9 @@ SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
   SCM_ASSERT (scm_is_string (source_host), source_host, SCM_ARG4, FUNC_NAME);
   SCM_ASSERT (scm_is_number (local_port),  local_port,  SCM_ARG5, FUNC_NAME);
 
+  if (! cd)
+      guile_ssh_error1 (FUNC_NAME, "Channel is freed: ", channel);
+
   scm_dynwind_begin (0);
 
   c_remote_host = scm_to_locale_string (remote_host);
