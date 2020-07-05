@@ -308,6 +308,8 @@ SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
 
   scm_dynwind_end ();
 
+  scm_remember_upto_here_1 (channel);
+
   return _ssh_result_to_symbol (res);
 }
 #undef FUNC_NAME
