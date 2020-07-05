@@ -479,6 +479,8 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
   if (res == SSH_ERROR)
     guile_ssh_error1 (FUNC_NAME, "Unable to get value of the option", option);
 
+  scm_remember_upto_here_1 (option);
+
   return value;
 }
 #undef FUNC_NAME
@@ -682,7 +684,7 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
   kd = (struct key_data *) scm_gc_malloc (sizeof (struct key_data), "ssh key");
   /* TODO: Check `kd' for NULL. */
 
-#if HAVE_LIBSSH_0_9
+#if HAVE_LIBSSH_0_8
   res = ssh_get_server_publickey (sd->ssh_session, &kd->ssh_key);
 #else
   res = ssh_get_publickey (sd->ssh_session, &kd->ssh_key);
