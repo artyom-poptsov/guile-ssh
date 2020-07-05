@@ -252,6 +252,8 @@ _gssh_log_error (const char* function_name, const char* msg, SCM args)
   _ssh_log (SSH_LOG_NOLOG, function_name, "[GSSH ERROR] %s: %s",
             msg, c_str);
 
+  scm_remember_upto_here_1 (args);
+
   scm_dynwind_end ();
 }
 
