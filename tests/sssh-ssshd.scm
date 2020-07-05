@@ -50,7 +50,7 @@
    %topbuilddir "/examples/sssh.scm"
    " --identity-file=" %rsakey
    " --port=" (number->string *srv-port*)
-   " --known-hosts-file=" %knownhosts
+   " --known-hosts-file=''"
    " " (inet-ntop AF_INET *srv-address*)
    " '" *test-cmd* "'"))
 

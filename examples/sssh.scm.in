@@ -166,6 +166,7 @@ Options:
                                    #:log-verbosity (string->symbol ssh-debug))))
 
         (and known-hosts-file
+             (not (string-null? known-hosts-file))
              (session-set! session 'knownhosts known-hosts-file))
 
         (print-debug "3. connect! (ssh_connect_x)\n")
@@ -175,9 +176,10 @@ Options:
                       (userauth-get-list session))
 
         (print-debug "4. authenticate-server (ssh_is_server_known)\n")
-        (case (authenticate-server session)
-          ((ok)        (print-debug "   ok\n"))
-          ((not-known) (display "   The server is unknown.  Please check MD5.\n")))
+        (unless (string-null? known-hosts-file)
+          (case (authenticate-server session)
+            ((ok)        (print-debug "   ok\n"))
+            ((not-known) (display "   The server is unknown.  Please check MD5.\n"))))
 
         (let* ((pubkey (get-server-public-key session))
                (hash   (get-public-key-hash pubkey 'md5)))
