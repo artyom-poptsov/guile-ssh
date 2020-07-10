@@ -7,6 +7,23 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** API change: add 'nodelay' option for Guile-SSH sessions
+   Thanks to Lars-Dominik Braun.
+** Fix some random segfaults in the channel and session code
+** Add support for macOS
+   Now Guile-SSH can be installed on macOS through a Homebrew Tap:
+   https://github.com/aconchillo/homebrew-guile
+
+   Thanks to Aleix Conchillo Flaqué!
+** Disable libguile-ssh static library
+   This change is a part of poring Guile-SSH to macOS.
+** Don't use deprecated libssh procedures
+   Add additional checks that replace deprecated procedures with the new ones
+   when newer libssh library is present.
+** Changes in documentation
+   Fix Texinfo warnings.
+
 * Changes in version 0.12.0
 ** API change: Implement new version of the RREPL API
    As proposed by Ludovic Courtès, this Guile-SSH version includes an
