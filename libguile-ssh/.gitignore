@@ -7,4 +7,5 @@
 *.lo
 *.la
 
-
+config.h
+config.h.in
