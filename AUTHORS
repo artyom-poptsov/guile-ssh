@@ -68,3 +68,20 @@ See also files THANKS and ChangeLog.
   <https://aur.archlinux.org/packages/guile-ssh/>
 * Lars-Dominik Braun <ldb@leibniz-psychology.org>
   GSSAPI support.
+* Aleix Conchillo Flaqué <aconchillo@gmail.com>
+  Fixed Guile-SSH building on macOS. Also packaged the library for Homebrew
+  package manager.
+
+  In the root directory, changes to:
+    configure.ac
+
+  In subdirectory 'modules/ssh/', changes to:
+    Makefile.am
+
+  In subdirectory 'modules/ssh/dist/', changes to:
+    Makefile.am
+
+  In subdirectory 'tests', changes to:
+    Makefile.am
+    common.scm
+    sssh-ssshd.scm
