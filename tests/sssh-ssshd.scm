@@ -63,8 +63,12 @@
 (define ssshd-pid #f)
 
 (define (cleanup pid)
-  (and pid
-       (kill pid SIGTERM))
+  (when pid
+    (kill pid SIGTERM)
+    (catch #t
+      (lambda ()
+        (waitpid pid))
+      (const #t)))
   (and (file-exists? *srv-pid-file*)
        (delete-file *srv-pid-file*)))
 
@@ -106,8 +110,8 @@
            (result (let r ((res "")
                            (l   (read-line p)))
                      (and (not (eof-object? l))
-                          (if (string=? output l)
-                              res
+                          (if (string=? output res)
+                              #t
                               (r (string-append res l)
                                  (read-line p)))))))
       (cleanup pid)
