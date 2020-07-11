@@ -62,51 +62,56 @@
 
 (define ssshd-pid #f)
 
+(define (cleanup pid)
+  (and pid
+       (kill pid SIGTERM))
+  (and (file-exists? *srv-pid-file*)
+       (delete-file *srv-pid-file*)))
+
+(define (wait-pid-file max-tries pid-file)
+  (let loop ((exists?    #f)
+             (sleep-time 1)  ; s
+             (try        1))
+    (if exists?
+        (let* ((p   (open-input-file pid-file))
+               (pid (read-line p)))
+          (string->number pid))
+        (if (<= try max-tries)
+            (begin
+              (sleep sleep-time)
+              (loop (file-exists? pid-file)
+                    (1+ sleep-time)
+                    (1+ try)))
+            (begin
+              (format #t "Couldn't read a PID file ~a in ~a tries.~%"
+                      pid-file try)
+              #f)))))
+
 
 ;;; Tests
 
 (test-assert "ssshd, start"
-  (let ((*max-tries* 10))
+  (let ((max-tries 10))
     (system *ssshd-cmd*)
-    (let wait-pid-file ((exists?    #f)
-                        (sleep-time 1)  ;s
-                        (try        1))
-      (if exists?
-          (let* ((p   (open-input-file *srv-pid-file*))
-                 (pid (read-line p)))
-            (set! ssshd-pid (string->number pid)))
-          (if (<= try *max-tries*)
-              (begin
-                (sleep sleep-time)
-                (wait-pid-file (file-exists? *srv-pid-file*)
-                               (1+ sleep-time)
-                               (1+ try)))
-              (format #t "Couldn't read a PID file ~a in ~a tries.~%"
-                      *srv-pid-file* try))))
-    (sleep 1)
-    ssshd-pid))
+    (let ((pid (wait-pid-file max-tries *srv-pid-file*)))
+      (cleanup pid)
+      pid)))
 
 (test-assert "sssh, exec"
-  (let ((output (read-line (open-input-pipe *test-cmd*)))
-        (p      (open-input-pipe *sssh-cmd*))
-        (res    #f))
-    (let r ((l (read-line p)))
-      (if (not (eof-object? l))
-          (if (string=? output l)
-              (set! res #t)
-              (r (read-line p)))))
-
-    ;; Cleanup
-
-    (and ssshd-pid
-         (kill ssshd-pid SIGTERM))
-
-    (and (file-exists? *srv-pid-file*)
-         (delete-file *srv-pid-file*))
-
-    ;; Return the result
-
-    res))
+  (let ((max-tries 10))
+    (system *ssshd-cmd*)
+    (let* ((pid    (wait-pid-file max-tries *srv-pid-file*))
+           (output (read-line (open-input-pipe *test-cmd*)))
+           (p      (open-input-pipe *sssh-cmd*))
+           (result (let r ((res "")
+                           (l   (read-line p)))
+                     (and (not (eof-object? l))
+                          (if (string=? output l)
+                              res
+                              (r (string-append res l)
+                                 (read-line p)))))))
+      (cleanup pid)
+      result)))
 
 
 (test-end "sssh-ssshd")
