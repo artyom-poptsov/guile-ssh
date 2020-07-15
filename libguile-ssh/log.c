@@ -66,6 +66,11 @@ libssh_logging_callback (int        c_priority,
   SCM userdata = (SCM) c_userdata;
 
   scm_call_4 (logging_callback, priority, function, message, userdata);
+
+  scm_remember_upto_here_1 (priority);
+  scm_remember_upto_here_1 (function);
+  scm_remember_upto_here_1 (message);
+  scm_remember_upto_here_1 (userdata);
 }
 
 
