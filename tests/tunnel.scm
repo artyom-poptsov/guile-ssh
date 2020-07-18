@@ -164,10 +164,12 @@
                (tunnel      (make-tunnel session
                                          #:port local-port
                                          #:host remote-host)))
-          (call-with-ssh-forward tunnel
-                                 (lambda (channel)
-                                   (write-line %test-string channel)
-                                   (poll channel read-line)))))))))
+          (let ((result (call-with-ssh-forward tunnel
+                          (lambda (channel)
+                            (write-line %test-string channel)
+                            (poll channel read-line)))))
+            (disconnect! session)
+            result)))))))
 
 
 (test-assert-with-log "channel-{listen,cancel}-forward"
