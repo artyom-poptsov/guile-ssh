@@ -70,6 +70,8 @@ PKG_CHECK_MODULES([LIBSSH_0_8], [libssh >= 0.8.0],
                                 [AC_DEFINE(HAVE_LIBSSH_0_8, 1, [Use libssh 0.8])],
                                 [AC_DEFINE(HAVE_LIBSSH_0_8, 0, [Use libssh < 0.8])])
 
+AM_CONDITIONAL(HAVE_LIBSSH_0_8, $HAVE_LIBSSH_0_8)
+
 dnl NOTE that Ubuntu 18.04 LTS have "fake" libssh 0.8
 dnl (0.8.0~20170825.94fa1e38-1ubuntu0.6) that is actually 0.7, so we need to
 dnl check 0.8.1+ to make sure we have a valid libssh 0.8.
@@ -77,7 +79,6 @@ PKG_CHECK_MODULES([LIBSSH_0_8_1], [libssh >= 0.8.1],
                                   [AC_DEFINE(HAVE_LIBSSH_0_8_1, 1, [Use libssh 0.8.1])],
                                   [AC_DEFINE(HAVE_LIBSSH_0_8_1, 0, [Use libssh < 0.8.1])])
 
-AM_CONDITIONAL(HAVE_LIBSSH_0_8, $HAVE_LIBSSH_0_8)
 AM_CONDITIONAL(HAVE_LIBSSH_0_8_1, $HAVE_LIBSSH_0_8_1)
 
 PKG_CHECK_MODULES([LIBSSH_0_9], [libssh >= 0.9.0],
