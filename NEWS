@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.13.0 (2020-07-18)
 ** API change: 'call-with-ssh-forward' does not start a thread
    The procedure does not start a thread because multi-threading with libssh
    sometimes leads to random segfaults.
@@ -35,7 +35,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** Changes in documentation
    Fix Texinfo warnings.
 
-* Changes in version 0.12.0
+* Changes in version 0.12.0 (2020-01-05)
 ** API change: Implement new version of the RREPL API
    As proposed by Ludovic Courtès, this Guile-SSH version includes an
    implementation of a new stateless RREPL.
