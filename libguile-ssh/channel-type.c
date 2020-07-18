@@ -224,13 +224,26 @@ ptob_close (SCM channel)
   ptob_flush (channel);
 #endif
 
-  if (ch && ssh_channel_is_open (ch->ssh_channel))
+  if (ch)
     {
-      _gssh_log_debug ("ptob_close", "closing and freeing the channel...",
-                       channel);
-      ssh_channel_close (ch->ssh_channel);
-      ssh_channel_free (ch->ssh_channel);
-      _gssh_log_debug1 ("ptob_close", "closing and freeing the channel... done");
+      struct session_data *sd = _scm_to_session_data (ch->session);
+      if (sd && ssh_is_connected (sd->ssh_session))
+        {
+          if (ssh_channel_is_open (ch->ssh_channel))
+            {
+              _gssh_log_debug ("ptob_close", "closing and freeing the channel...",
+                               channel);
+              ssh_channel_close (ch->ssh_channel);
+              ssh_channel_free (ch->ssh_channel);
+              _gssh_log_debug1 ("ptob_close", "closing and freeing the channel... done");
+            }
+        }
+      else
+        {
+          _gssh_log_debug1 ("ptob_close",
+                            "the channel is already freed"
+                            " along with the parent session.");
+        }
     }
   else
     {
