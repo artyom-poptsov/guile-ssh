@@ -1,6 +1,6 @@
 /* channel-type.c -- SSH channel smob.
  *
- * Copyright (C) 2013, 2014, 2015, 2016, 2017 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  * Copyright (C) 2017 Ludovic Courtès <ludo@gnu.org>
  *
  * This file is part of Guile-SSH.
@@ -432,6 +432,7 @@ init_channel_type (void)
 #endif
 				    );
   scm_set_port_close (channel_tag, ptob_close);
+  scm_set_port_needs_close_on_gc (channel_tag, 1);
 
 #if USING_GUILE_BEFORE_2_2
   scm_set_port_flush (channel_tag, ptob_flush);
