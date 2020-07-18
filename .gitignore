@@ -31,3 +31,6 @@ GPATH
 GRTAGS
 GTAGS
 /doc/version.texi
+
+# Ignore distributions
+guile-ssh-*
