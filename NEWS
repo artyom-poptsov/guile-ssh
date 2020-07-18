@@ -8,6 +8,17 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
+** API change: 'call-with-ssh-forward' does not start a thread
+   The procedure does not start a thread because multi-threading with libssh
+   sometimes leads to random segfaults.
+
+   Now 'call-with-ssh-forward' calls the provided procedure with a channel as
+   an argument instead.
+
+   If you wish to have a socket that forwards all the data to the remote side
+   through an SSH channel, you should implement a separate process that
+   forwards the data. There is an example in the directory 'examples/rpc' that
+   shows how to implement such a forwarding.
 ** API change: add 'nodelay' option for Guile-SSH sessions
    Thanks to Lars-Dominik Braun.
 ** Fix some random segfaults in the channel and session code

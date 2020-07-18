@@ -266,29 +266,17 @@ procedure that always returns #f is used instead."
         (close sock))))
 
 (define (call-with-ssh-forward tunnel proc)
-  "Call a procedure PROC as (proc sock) where SOCK is a socket that forwards
-all the received data to a remote side through a TUNNEL, and vice versa.
-Return the result the PROC call."
-  (let ((sock   (socket PF_INET SOCK_STREAM 0))
-        (thread (call-with-new-thread
-                 (lambda ()
-                   (start-forward tunnel)))))
-
-    (while #t
-      (catch #t
-        (lambda ()
-          (connect sock AF_INET (inet-pton AF_INET (tunnel-bind-address tunnel))
-                   (tunnel-port tunnel))
-          (break))
-        (lambda args
-          (sleep 1))))
-
+  "Call a procedure PROC as (proc channel) where CHANNEL is a channel that
+forwards all the received data to a remote side through a TUNNEL, and vice
+versa. Return the result the PROC call."
+  (let ((channel (tunnel-open-forward-channel tunnel)))
     (dynamic-wind
       (const #f)
       (lambda ()
-        (proc sock))
+        (proc channel))
       (lambda ()
-        (close-port sock)
-        (cancel-thread thread)))))
+        (channel-cancel-forward (channel-get-session channel)
+                                (tunnel-host tunnel)
+                                (tunnel-host-port tunnel))))))
 
 ;;; tunnel.scm ends here.

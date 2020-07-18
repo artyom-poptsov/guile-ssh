@@ -165,9 +165,9 @@
                                          #:port local-port
                                          #:host remote-host)))
           (call-with-ssh-forward tunnel
-                                 (lambda (sock)
-                                   (write-line %test-string sock)
-                                   (poll sock read-line)))))))))
+                                 (lambda (channel)
+                                   (write-line %test-string channel)
+                                   (poll channel read-line)))))))))
 
 
 (test-assert-with-log "channel-{listen,cancel}-forward"

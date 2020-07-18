@@ -69,10 +69,12 @@ Options:
   "Entry point of the program."
   (let* ((options-spec '((user          (single-char #\u) (value #t))
                          (port          (single-char #\p) (value #t))
+                         (local-port    (single-char #\l) (value #t))
                          (help          (single-char #\h) (value #f))))
          (options      (getopt-long args options-spec))
          (user         (option-ref options 'user      (getenv "USER")))
          (port         (option-ref options 'port      "22"))
+         (local-port   (option-ref options 'local-port "12345"))
          (help-needed? (option-ref options 'help      #f))
          (args         (option-ref options '()        #f)))
 
@@ -81,25 +83,39 @@ Options:
              (null? args))
         (print-help-and-exit))
 
-    ;; Make a new SSH session, connect it and authenticate the user.
-    (let* ((host    (car args))
-           (session (make-session #:user user
-                                  #:host host
-                                  #:port (string->number port)
-                                  #:log-verbosity 'nolog)))
-      (connect! session)
-      (userauth-agent! session)
-      ;; Make a new SSH tunnel.
-      (let ((tunnel  (make-tunnel session
-                                  #:port 12345
-                                  ;; Guile-RPC server listens on localhost.
-                                  #:host "127.0.0.1"
-                                  ;; Guile-RPC server port.
-                                  #:host-port 6666)))
-        ;; Make an RPC call using the SSH tunnel.
-        (call-with-ssh-forward tunnel
-          (lambda (socket)
-            (display (invoke-split-number 3.14 #x7777 socket))
-            (newline)))))))
+    (let ((pid (primitive-fork)))
+      (if (zero? pid)
+          ;; Make a new SSH session, connect it and authenticate the user.
+          (let* ((host    (car args))
+                 (session (make-session #:user user
+                                        #:host host
+                                        #:port (string->number port)
+                                        #:log-verbosity 'nolog)))
+            (connect! session)
+            (userauth-agent! session)
+            ;; Make a new SSH tunnel.
+            (let ((tunnel  (make-tunnel session
+                                        #:port (string->number local-port)
+                                        ;; Guile-RPC server listens on localhost.
+                                        #:host "127.0.0.1"
+                                        ;; Guile-RPC server port.
+                                        #:host-port 6666)))
+              (start-forward tunnel)))
+          (let ((sock (socket PF_INET SOCK_STREAM 0)))
+            (dynamic-wind
+              (const #t)
+              (lambda ()
+                (sleep 1)
+                (connect sock AF_INET (inet-pton AF_INET "127.0.0.1")
+                         (string->number local-port))
+
+                ;; Make an RPC call using the SSH tunnel.
+
+                (display (invoke-split-number 3.14 #x7777 sock))
+                (newline))
+              (lambda ()
+                (close sock)
+                (kill pid SIGTERM)
+                (waitpid pid))))))))
 
 ;;; client.scm ends here.

@@ -71,25 +71,55 @@ ports and forwards data.
 @end deffn
 
 @deffn {Scheme Procedure} call-with-ssh-forward tunnel proc
-Open a new @var{tunnel} and start port forwarding.  @var{proc} is called with
-a socket as an argument.  All I/O on the socket will be forwarded to the
-remote host and port of a @var{tunnel}.  Return the result the @var{proc}
+Open a new @var{tunnel} and start port forwarding. @var{proc} is called with
+an open channel as an argument. All I/O on the channel will be forwarded to
+the remote host and port of a @var{tunnel}. Return the result the @var{proc}
 call.
 
 As a practical example, let's say you want to use
-@url{https://www.gnu.org/software/guile-rpc/, Guile-RPC} over SSH.  Here's how
-you can implement an RPC call using @code{call-with-ssh-forward}:
+@url{https://www.gnu.org/software/guile-rpc/, Guile-RPC} over SSH. Here's how
+you can implement a using @code{call-with-ssh-forward}:
 
 @lisp
-(let ((t (make-tunnel session
-                      #:port      12345
-                      ;; Suppose a Guile-RPC server listens on
-                      ;; 127.0.0.1:23456 on the remote host:
-                      #:host      "127.0.0.1"
-                      #:host-port 23456)))
-  (call-with-ssh-forward t
-    (lambda (socket)
-      (RPC-PROGRAM-proc some-data #x123 socket))))
+(let ((pid (primitive-fork)))
+  (if (zero? pid)
+      ;; Make a new SSH session, connect it and authenticate the user.
+      (let* ((host    "example.org")
+             (user    "alice")
+             (session (make-session #:user user
+                                    #:host host
+                                    #:port 22
+                                    #:log-verbosity 'nolog)))
+        (connect! session)
+        (userauth-agent! session)
+        ;; Make a new SSH tunnel.
+        (let ((tunnel (make-tunnel session
+                                   #:port 12345
+                                   ;; Guile-RPC server listens on 127.0.0.1
+                                   ;; on the remote host.
+                                   #:host "127.0.0.1"
+                                   ;; Guile-RPC server port.
+                                   #:host-port 6666)))
+          ;; Start the forwarder loop.
+          (start-forward tunnel)))
+      ;; Parent process.
+      (let ((sock (socket PF_INET SOCK_STREAM 0)))
+      (dynamic-wind
+        (const #t)
+        (lambda ()
+          (sleep 1)
+          ;; Connect to the port that is listened to by the spawned process.
+          (connect sock AF_INET
+            (inet-pton AF_INET "127.0.0.1")
+            12345)
+
+          ;; Make an RPC call using the SSH tunnel.
+          (display (invoke-split-number 3.14 #x7777 sock))
+          (newline))
+        (lambda ()
+          (close sock)
+          (kill pid SIGTERM)
+          (waitpid pid))))))
 @end lisp
 
 The full example of an RPC client that uses a SSH tunnel is in
