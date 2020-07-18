@@ -225,7 +225,7 @@ when no data is available."
     "Make a connection for a reverse TUNNEL.  The return value is
 unspecified."
     (connect sock AF_INET
-             (inet-aton (tunnel-host tunnel))
+             (inet-pton AF_INET (tunnel-host tunnel))
              (tunnel-host-port tunnel)))
 
   (let ((timeout (tunnel-timeout tunnel)))
