@@ -271,6 +271,7 @@ SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
   struct channel_data *cd = _scm_to_channel_data (channel);
   char *c_remote_host = NULL;
   char *c_source_host = NULL;
+  struct session_data *sd = NULL;
   int res;
 
   SCM_ASSERT (scm_is_string (remote_host), remote_host, SCM_ARG2, FUNC_NAME);
@@ -279,7 +280,14 @@ SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
   SCM_ASSERT (scm_is_number (local_port),  local_port,  SCM_ARG5, FUNC_NAME);
 
   if (! cd)
-      guile_ssh_error1 (FUNC_NAME, "Channel is freed: ", channel);
+    guile_ssh_error1 (FUNC_NAME, "Channel is freed: ", channel);
+
+  sd = _scm_to_session_data (cd->session);
+  if (! sd)
+    guile_ssh_error1 (FUNC_NAME, "Session is freed: ", cd->session);
+
+  if (! ssh_is_connected (sd->ssh_session))
+    guile_ssh_error1 (FUNC_NAME, "Session is disconnected: ", channel);
 
   scm_dynwind_begin (0);
 
