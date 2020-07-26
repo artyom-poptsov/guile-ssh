@@ -133,7 +133,7 @@ exit 1;
 
 (define* (fallback-pkill session pattern #:key (full? #f)
                          (signal 'SIGTERM))
-  "Guile-SSH implementation of 'pkill' that uses pure bash, '/proc' filsystem
+  "Guile-SSH implementation of 'pkill' that uses pure bash, '/proc' filesystem
 and Guile itself to kill a process.  Note that this procedure won't work if
 Guile is missing on a target machine.
 
