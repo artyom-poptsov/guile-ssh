@@ -1,6 +1,6 @@
 ;;; shell.scm -- Remote shell.
 
-;; Copyright (C) 2016, 2017 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2016, 2017, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -48,8 +48,15 @@
   #:use-module (ssh channel)
   #:use-module (ssh popen)
   #:use-module (ssh log)
-  #:export (rexec which pgrep pkill fallback-pgrep command-available?
-                  fallback-pkill guile-version loadavg))
+  #:export (rexec
+            which
+            pgrep
+            pkill
+            command-available?
+            guile-version
+            loadavg
+            fallback-pkill
+            fallback-pgrep))
 
 
 ;;;
