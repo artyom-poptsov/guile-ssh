@@ -311,6 +311,7 @@ Allocate a new SSH channel.\
   struct session_data *session_data = _scm_to_session_data (arg1);
   ssh_channel ch;
 
+  GSSH_VALIDATE_CONNECTED_SESSION (session_data, arg1, SCM_ARG1);
   SCM_ASSERT (scm_is_integer (flags), flags, SCM_ARG2, FUNC_NAME);
 
   ch = ssh_channel_new (session_data->ssh_session);
