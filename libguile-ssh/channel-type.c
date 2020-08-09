@@ -244,6 +244,7 @@ ptob_close (SCM channel)
                             "the channel is already freed"
                             " along with the parent session.");
         }
+      scm_gc_unprotect_object (ch->session);
     }
   else
     {
@@ -378,6 +379,8 @@ _scm_from_channel_data (ssh_channel ch, SCM session, long flags)
   channel_data->ssh_channel = ch;
   channel_data->is_stderr = 0;  /* Reading from stderr disabled by default */
   channel_data->session = session;
+
+  scm_gc_protect_object (channel_data->session);
 
 #if USING_GUILE_BEFORE_2_2
   {
