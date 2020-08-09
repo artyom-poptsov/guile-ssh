@@ -75,4 +75,6 @@ extern struct channel_data *_scm_to_channel_data (SCM x);
 extern SCM _scm_from_channel_data (ssh_channel ch, SCM session,
                                    long flags);
 
+int _gssh_channel_parent_session_connected_p (struct channel_data* cd);
+
 #endif /* ifndef __CHANNEL_TYPE_H__ */

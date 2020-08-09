@@ -178,6 +178,9 @@ write_to_channel_port (SCM channel, SCM src, size_t start, size_t count)
   char *data = (char *) SCM_BYTEVECTOR_CONTENTS (src) + start;
   struct channel_data *channel_data = _scm_to_channel_data (channel);
 
+  if (! _gssh_channel_parent_session_connected_p (channel_data))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
+
   int res = ssh_channel_write (channel_data->ssh_channel, data, count);
   if (res == SSH_ERROR)
     {
@@ -261,8 +264,6 @@ ptob_close (SCM channel)
 #endif
 }
 
-
-
 /* Print the CHANNEL object to port PORT. */
 static int
 print_channel (SCM channel, SCM port, scm_print_state *pstate)
@@ -284,16 +285,24 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
     }
   else
     {
-      scm_print_port_mode (channel, port);
-      scm_puts ("channel ", port);
-      if (SCM_OPPORTP (channel))
+      struct session_data *sd = _scm_to_session_data (ch->session);
+      if (! _gssh_channel_parent_session_connected_p (ch))
         {
-          int is_open = ssh_channel_is_open (ch->ssh_channel);
-          scm_puts (is_open ? "(open) " : "(closed) ", port);
+          scm_puts ("unknown channel (freed) ", port);
         }
       else
         {
-          scm_puts ("(closed) ", port);
+          scm_print_port_mode (channel, port);
+          scm_puts ("channel ", port);
+          if (SCM_OPPORTP (channel))
+            {
+              int is_open = ssh_channel_is_open (ch->ssh_channel);
+              scm_puts (is_open ? "(open) " : "(closed) ", port);
+            }
+          else
+            {
+              scm_puts ("(closed) ", port);
+            }
         }
     }
   scm_display (_scm_object_hex_address (channel), port);
@@ -432,6 +441,16 @@ _scm_to_channel_data (SCM x)
 #endif
 
   return (struct channel_data *) SCM_STREAM (x);
+}
+
+/**
+ * Predicate. Return 1 if the parent session is connected, 0 otherwise.
+ */
+int
+_gssh_channel_parent_session_connected_p (struct channel_data* cd)
+{
+  struct session_data *sd = _scm_to_session_data (cd->session);
+  return (sd && ssh_is_connected (sd->ssh_session));
 }
 
 

@@ -49,6 +49,10 @@ Return value is undefined.\
   struct channel_data *data = _scm_to_channel_data (channel);
   int res;
   GSSH_VALIDATE_CHANNEL_DATA (data, channel, FUNC_NAME);
+
+  if (! _gssh_channel_parent_session_connected_p (data))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
+
   res = ssh_channel_open_session (data->ssh_channel);
   _gssh_log_debug_format(FUNC_NAME, channel, "result: %d", res);
   if (res != SSH_OK)
@@ -77,6 +81,9 @@ Run a shell command CMD without an interactive shell.\
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (scm_is_string (cmd), cmd, SCM_ARG2, FUNC_NAME);
+
+  if (! _gssh_channel_parent_session_connected_p (data))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
   c_cmd = scm_to_locale_string (cmd);
   res = ssh_channel_request_exec (data->ssh_channel, c_cmd);
@@ -109,6 +116,10 @@ returned (yet). \
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
 
   cd = _scm_to_channel_data (channel);
+
+  if (! _gssh_channel_parent_session_connected_p (cd))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
+
   res = ssh_channel_get_exit_status (cd->ssh_channel);
   _gssh_log_debug_format(FUNC_NAME, channel, "result: %d", res);
   if (res == SSH_ERROR) {
@@ -137,6 +148,9 @@ Return value is undefined.\
   SCM_ASSERT (scm_is_unsigned_integer (exit_status, 0, UINT32_MAX), exit_status,
               SCM_ARG2, FUNC_NAME);
 
+  if (! _gssh_channel_parent_session_connected_p (cd))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
+
   res = ssh_channel_request_send_exit_status (cd->ssh_channel,
                                               scm_to_uint32 (exit_status));
   _gssh_log_debug_format(FUNC_NAME, scm_list_2 (channel, exit_status),
@@ -164,6 +178,9 @@ Return value is undefined.\
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
 
+  if (! _gssh_channel_parent_session_connected_p (data))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
+
   res = ssh_channel_request_pty (data->ssh_channel);
   _gssh_log_debug_format(FUNC_NAME, channel, "result: %d", res);
   if (res != SSH_OK)
@@ -188,6 +205,9 @@ Return value is undefined.\
   int res;
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
+
+  if (! _gssh_channel_parent_session_connected_p (data))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
   res = ssh_channel_request_shell (data->ssh_channel);
   _gssh_log_debug_format(FUNC_NAME, channel, "result: %d", res);
@@ -219,6 +239,9 @@ Return value is undefined.\
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (scm_is_string (name), name, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (scm_is_string (value), value, SCM_ARG3, FUNC_NAME);
+
+  if (! _gssh_channel_parent_session_connected_p (data))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
   c_name  = scm_to_locale_string (name);
   c_value = scm_to_locale_string (value);
@@ -281,6 +304,9 @@ SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
 
   if (! cd)
     guile_ssh_error1 (FUNC_NAME, "Channel is freed: ", channel);
+
+  if (! _gssh_channel_parent_session_connected_p (cd))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
   sd = _scm_to_session_data (cd->session);
   if (! sd)
@@ -433,6 +459,9 @@ eturn value is undefined.\
   SCM_ASSERT (scm_is_unsigned_integer (row, 0, UINT32_MAX), row,
               SCM_ARG2, FUNC_NAME);
 
+  if (! _gssh_channel_parent_session_connected_p (data))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
+
   ssh_channel_change_pty_size (data->ssh_channel,
                                scm_to_uint32 (col),
                                scm_to_uint32 (row));
@@ -455,6 +484,9 @@ Return value is undefined.\
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (scm_is_symbol (stream_name), stream_name, SCM_ARG2, FUNC_NAME);
+
+  if (! _gssh_channel_parent_session_connected_p (cd))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
   if (scm_is_eq (stream_name, scm_from_locale_symbol ("stdout")))
     {
@@ -487,6 +519,9 @@ Return one of the following symbols: \"stdout\", \"stderr\".\
   struct channel_data *cd = _scm_to_channel_data (channel);
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
+
+  if (! _gssh_channel_parent_session_connected_p (cd))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
   if (cd->is_stderr == 0)
     return scm_from_locale_symbol ("stdout");
@@ -537,6 +572,9 @@ SCM_GSSH_DEFINE (gssh_channel_send_eof, "%channel-send-eof",
   int rc;
 
   GSSH_VALIDATE_CHANNEL_DATA (cd, channel, FUNC_NAME);
+
+  if (! _gssh_channel_parent_session_connected_p (cd))
+    guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
   pt_bits = SCM_CELL_TYPE (channel);
   if ((pt_bits & SCM_WRTNG) == 0)
