@@ -285,7 +285,6 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
     }
   else
     {
-      struct session_data *sd = _scm_to_session_data (ch->session);
       if (! _gssh_channel_parent_session_connected_p (ch))
         {
           scm_puts ("unknown channel (freed) ", port);
