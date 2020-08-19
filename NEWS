@@ -7,6 +7,17 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Changes in version 0.13.1 (2020-08-19)
+** Fix segfaults on GC'ing
+   The library would always fail with segmentation fault when the GC tried to
+   free Guile-SSH session when Guile-SSH channels related to this sessions
+   were in use.
+
+   Now live channels prevent the keep Guile-SSH session from freeing.
+** Channels procedures now check if the parent session is alive
+    Channels procedures now check if the parent session is alive and
+    connected.  If this is not the case, an guile-ssh-error is issued.
+
 * Changes in version 0.13.0 (2020-07-18)
 ** API change: 'call-with-ssh-forward' does not start a thread
    The procedure does not start a thread because multi-threading with libssh
