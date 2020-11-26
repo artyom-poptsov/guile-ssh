@@ -406,8 +406,7 @@ SCM_GSSH_DEFINE (guile_ssh_channel_accept_forward,
                                           &port);
   if (c_channel)
     {
-      channel = _scm_from_channel_data (c_channel, session,
-                                        SCM_RDNG | SCM_WRTNG);
+      channel = ssh_channel_to_scm (c_channel, session, SCM_RDNG | SCM_WRTNG);
       SCM_SET_CELL_TYPE (channel, SCM_CELL_TYPE (channel) | SCM_OPN);
     }
 

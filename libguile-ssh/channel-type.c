@@ -328,7 +328,7 @@ Allocate a new SSH channel.\
   if (! ch)
     return SCM_BOOL_F;
 
-  return _scm_from_channel_data (ch, arg1, scm_to_long (flags));
+  return ssh_channel_to_scm (ch, arg1, scm_to_long (flags));
 }
 #undef FUNC_NAME
 
@@ -375,7 +375,7 @@ equalp_channel (SCM x1, SCM x2)
    - FLAGS variable has only SCM_RDNG and SCM_WRTNG bits set.
    */
 SCM
-_scm_from_channel_data (ssh_channel ch, SCM session, long flags)
+ssh_channel_to_scm (ssh_channel ch, SCM session, long flags)
 {
   SCM ptob;
   struct channel_data *channel_data;
