@@ -37,9 +37,8 @@
 
 
 /* Allocate a new SSH channel. */
-SCM_DEFINE (guile_ssh_make_channel, "%make-channel", 2, 0, 0,
-            (SCM arg1, SCM flags),
-            "\
+SCM_DEFINE_N (guile_ssh_make_channel, "%make-channel", 2, (SCM arg1, SCM flags),
+              "\
 Allocate a new SSH channel.\
 ")
 #define FUNC_NAME s_guile_ssh_make_channel
@@ -59,9 +58,8 @@ Allocate a new SSH channel.\
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_is_channel_p, "channel?", 1, 0, 0,
-            (SCM x),
-            "\
+SCM_DEFINE_1 (guile_ssh_is_channel_p, "channel?", (SCM x),
+              "\
 Return #t if X is a SSH channel, #f otherwise.\
 ")
 {
@@ -92,8 +90,8 @@ equalp_channel (SCM x1, SCM x2)
 
 /* Procedures */
 
-SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
-            (SCM channel),
+SCM_DEFINE_1 (guile_ssh_channel_open_session, "channel-open-session",
+              (SCM channel),
             "\
 Open a new session and mark the channel CHANNEL as opened port.\n\
 Return value is undefined.\
@@ -122,8 +120,8 @@ Return value is undefined.\
 #undef FUNC_NAME
 
 /* Run a shell command CMD without an interactive shell. */
-SCM_DEFINE (guile_ssh_channel_request_exec, "channel-request-exec", 2, 0, 0,
-            (SCM channel, SCM cmd),
+SCM_DEFINE_N (guile_ssh_channel_request_exec, "channel-request-exec", 2,
+              (SCM channel, SCM cmd),
             "\
 Run a shell command CMD without an interactive shell.\
 ")
@@ -154,10 +152,9 @@ Run a shell command CMD without an interactive shell.\
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_get_exit_status,
-            "channel-get-exit-status", 1, 0, 0,
-            (SCM channel),
-            "\
+SCM_DEFINE_1 (guile_ssh_channel_get_exit_status, "channel-get-exit-status",
+              (SCM channel),
+              "\
 Get the exit status of the channel (error code from the executed \
 instruction).  Return the exist status, or #f if no exit status has been \
 returned (yet). \
@@ -185,10 +182,10 @@ returned (yet). \
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_request_send_exit_status,
-            "channel-request-send-exit-status", 2, 0, 0,
-            (SCM channel, SCM exit_status),
-            "\
+SCM_DEFINE_N (guile_ssh_channel_request_send_exit_status,
+              "channel-request-send-exit-status", 2,
+              (SCM channel, SCM exit_status),
+              "\
 Send the exit status to the remote process (as described in RFC 4254, section\n\
 6.10).\n\
 Return value is undefined.\
@@ -219,9 +216,9 @@ Return value is undefined.\
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_request_pty, "channel-request-pty", 1, 0, 0,
-            (SCM channel),
-            "\
+SCM_DEFINE_1 (guile_ssh_channel_request_pty, "channel-request-pty",
+              (SCM channel),
+              "\
 Request a PTY (pseudo terminal).\n\
 Return value is undefined.\
 ")
@@ -247,9 +244,9 @@ Return value is undefined.\
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_request_shell, "channel-request-shell", 1, 0, 0,
-            (SCM channel),
-            "\
+SCM_DEFINE_1 (guile_ssh_channel_request_shell, "channel-request-shell",
+              (SCM channel),
+              "\
 Request a shell.\n\
 Return value is undefined.\
 ")
@@ -277,9 +274,9 @@ Return value is undefined.\
 
 /* Set an environment variable NAME to value VALUE
    Return value is undefined. */
-SCM_DEFINE (guile_ssh_channel_request_env, "channel-request-env", 3, 0, 0,
-            (SCM channel, SCM name, SCM value),
-            "\
+SCM_DEFINE_N (guile_ssh_channel_request_env, "channel-request-env", 3,
+              (SCM channel, SCM name, SCM value),
+              "\
 Set an environment variable NAME to value VALUE.\n\
 Return value is undefined.\
 ")
@@ -339,10 +336,10 @@ _ssh_result_to_symbol (int res)
 }
 #undef FUNC_NAME
 
-SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
-                 "%channel-open-forward", 5,
-                 (SCM channel, SCM remote_host, SCM remote_port,
-                  SCM source_host, SCM local_port))
+SCM_DEFINE_N (guile_ssh_channel_open_forward, "%channel-open-forward", 5,
+              (SCM channel, SCM remote_host, SCM remote_port,
+               SCM source_host, SCM local_port),
+              "")
 #define FUNC_NAME s_guile_ssh_channel_open_forward
 {
   gssh_channel_t *cd = gssh_channel_from_scm (channel);
@@ -403,9 +400,9 @@ SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
 }
 #undef FUNC_NAME
 
-SCM_GSSH_DEFINE (guile_ssh_channel_listen_forward,
-                 "%channel-listen-forward", 3,
-                 (SCM session, SCM address, SCM port))
+SCM_DEFINE_N (guile_ssh_channel_listen_forward, "%channel-listen-forward", 3,
+              (SCM session, SCM address, SCM port),
+              "")
 #define FUNC_NAME s_guile_ssh_channel_listen_forward
 {
   struct session_data *sd = _scm_to_session_data (session);
@@ -443,9 +440,9 @@ SCM_GSSH_DEFINE (guile_ssh_channel_listen_forward,
 }
 #undef FUNC_NAME
 
-SCM_GSSH_DEFINE (guile_ssh_channel_accept_forward,
-                 "%channel-accept-forward", 2,
-                 (SCM session, SCM timeout))
+SCM_DEFINE_N (guile_ssh_channel_accept_forward, "%channel-accept-forward", 2,
+              (SCM session, SCM timeout),
+              "")
 #define FUNC_NAME s_guile_ssh_channel_accept_forward
 {
   struct session_data *sd = _scm_to_session_data (session);
@@ -469,9 +466,9 @@ SCM_GSSH_DEFINE (guile_ssh_channel_accept_forward,
 #undef FUNC_NAME
 
 /* FIXME: Should it be defined in some other module? */
-SCM_GSSH_DEFINE (guile_ssh_channel_cancel_forward,
-                 "channel-cancel-forward", 3,
-                 (SCM session, SCM address, SCM port))
+SCM_DEFINE_N (guile_ssh_channel_cancel_forward, "channel-cancel-forward", 3,
+              (SCM session, SCM address, SCM port),
+              "")
 #define FUNC_NAME s_guile_ssh_channel_cancel_forward
 {
   struct session_data *sd = _scm_to_session_data (session);
@@ -495,10 +492,9 @@ SCM_GSSH_DEFINE (guile_ssh_channel_cancel_forward,
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_set_pty_size_x,
-            "channel-set-pty-size!", 3, 0, 0,
-            (SCM channel, SCM col, SCM row),
-            "\
+SCM_DEFINE_N (guile_ssh_channel_set_pty_size_x, "channel-set-pty-size!", 3,
+              (SCM channel, SCM col, SCM row),
+              "\
 Change size of the PTY to columns COL and rows ROW.\n\
 eturn value is undefined.\
 ")
@@ -523,10 +519,9 @@ eturn value is undefined.\
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_set_stream_x,
-            "channel-set-stream!", 2, 0, 0,
-            (SCM channel, SCM stream_name),
-            "\
+SCM_DEFINE_N (guile_ssh_channel_set_stream_x, "channel-set-stream!", 2,
+              (SCM channel, SCM stream_name),
+              "\
 Set stream STREAM_NAME for channel CHANNEL.  STREAM_NAME must be one of the \n\
 following symbols: \"stdout\" (default), \"stderr\".\n\
 Return value is undefined.\
@@ -560,10 +555,8 @@ Return value is undefined.\
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_get_stream,
-            "channel-get-stream", 1, 0, 0,
-            (SCM channel),
-            "\
+SCM_DEFINE_1 (guile_ssh_channel_get_stream, "channel-get-stream", (SCM channel),
+              "\
 Get current stream name from CHANNEL.  Throw `guile-ssh-error' on error.\n\
 Return one of the following symbols: \"stdout\", \"stderr\".\
 ")
@@ -588,10 +581,9 @@ Return one of the following symbols: \"stdout\", \"stderr\".\
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_get_session,
-            "channel-get-session", 1, 0, 0,
-            (SCM channel),
-            "\
+SCM_DEFINE_1 (guile_ssh_channel_get_session, "channel-get-session",
+              (SCM channel),
+              "\
 Get the session to which belongs the CHANNEL.  Throw `guile-ssh-error' on an \n\
 error.  Return the session.\
 ")
@@ -606,9 +598,8 @@ error.  Return the session.\
 
 /* Predicates */
 
-SCM_DEFINE (guile_ssh_channel_is_open_p, "channel-open?", 1, 0, 0,
-            (SCM channel),
-            "Return #t if channel CHANNEL is open, #f otherwise.")
+SCM_DEFINE_1 (guile_ssh_channel_is_open_p, "channel-open?", (SCM channel),
+              "Return #t if channel CHANNEL is open, #f otherwise.")
 {
   gssh_channel_t *data = gssh_channel_from_scm (channel);
   if (data && ssh_channel_is_open (data->ssh_channel))
@@ -616,8 +607,8 @@ SCM_DEFINE (guile_ssh_channel_is_open_p, "channel-open?", 1, 0, 0,
   return SCM_BOOL_F;
 }
 
-SCM_GSSH_DEFINE (gssh_channel_send_eof, "%channel-send-eof",
-                 1, (SCM channel))
+SCM_DEFINE_1 (gssh_channel_send_eof, "%channel-send-eof", (SCM channel),
+              "")
 #define FUNC_NAME s_gssh_channel_send_eof
 {
   gssh_channel_t *cd = gssh_channel_from_scm (channel);
@@ -646,9 +637,8 @@ SCM_GSSH_DEFINE (gssh_channel_send_eof, "%channel-send-eof",
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_channel_is_eof_p, "channel-eof?", 1, 0, 0,
-            (SCM channel),
-            "\
+SCM_DEFINE_1 (guile_ssh_channel_is_eof_p, "channel-eof?", (SCM channel),
+              "\
 Return #t if remote has set EOF, #f otherwise.\n\
 Throw `guile-ssh-error' if the channel has been closed and freed.\
 ")
