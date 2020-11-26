@@ -79,7 +79,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 #define FUNC_NAME s_guile_ssh_userauth_public_key_x
 {
   struct session_data *session_data = _scm_to_session_data (session_smob);
-  gssh_key_t *private_key_data = _scm_to_key_data (private_key_smob);
+  gssh_key_t *private_key_data = gssh_key_from_scm (private_key_smob);
 
   /* See "On the username" commentary above. */
   char *username = NULL;
@@ -133,7 +133,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 #define FUNC_NAME s_guile_ssh_userauth_public_key_try
 {
   struct session_data *sd = _scm_to_session_data (session);
-  gssh_key_t *kd = _scm_to_key_data (public_key);
+  gssh_key_t *kd = gssh_key_from_scm (public_key);
   char *username = NULL;        /* See "On the username" commentary above */
   int res;
 

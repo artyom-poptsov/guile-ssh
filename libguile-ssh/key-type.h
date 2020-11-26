@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2013-2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  * 
@@ -50,7 +50,7 @@ extern void init_key_type (void);
 
 /* Helper procedures */
 extern SCM _scm_from_ssh_key (ssh_key key, SCM x);
-extern gssh_key_t* _scm_to_key_data (SCM x);
+extern gssh_key_t* gssh_key_from_scm (SCM x);
 extern int _private_key_p (gssh_key_t *key);
 extern int _public_key_p (gssh_key_t *key);
 
