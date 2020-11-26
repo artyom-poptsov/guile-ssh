@@ -71,7 +71,7 @@ extern void init_channel_type (void);
 
 
 /* Helper procedures */
-extern struct channel_data *_scm_to_channel_data (SCM x);
+extern struct channel_data *channel_data_from_scm (SCM x);
 extern SCM ssh_channel_to_scm (ssh_channel ch, SCM session, long flags);
 
 int _gssh_channel_parent_session_connected_p (struct channel_data* cd);
