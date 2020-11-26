@@ -24,7 +24,7 @@
 
 
 /* Smob data. */
-struct channel_data {
+struct gssh_channel {
   /* Reference to the parent session.  We need to keep the reference
      to prevent the session from premature freeing by the GC. */
   SCM session;
@@ -32,6 +32,8 @@ struct channel_data {
   ssh_channel ssh_channel;
   uint8_t is_stderr;
 };
+
+typedef struct gssh_channel gssh_channel_t;
 
 /* Make sure that the channel data is valid.  Throw `guile-ssh-error' if the
    channel SCM has been closed and freed. */
@@ -71,9 +73,9 @@ extern void init_channel_type (void);
 
 
 /* Helper procedures */
-extern struct channel_data *channel_data_from_scm (SCM x);
+extern gssh_channel_t *channel_data_from_scm (SCM x);
 extern SCM ssh_channel_to_scm (ssh_channel ch, SCM session, long flags);
 
-int _gssh_channel_parent_session_connected_p (struct channel_data* cd);
+int _gssh_channel_parent_session_connected_p (gssh_channel_t* cd);
 
 #endif /* ifndef __CHANNEL_TYPE_H__ */

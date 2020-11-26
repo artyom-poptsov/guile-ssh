@@ -46,7 +46,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_open_session
 {
-  struct channel_data *data = channel_data_from_scm (channel);
+  gssh_channel_t *data = channel_data_from_scm (channel);
   int res;
   GSSH_VALIDATE_CHANNEL_DATA (data, channel, FUNC_NAME);
 
@@ -75,7 +75,7 @@ Run a shell command CMD without an interactive shell.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_request_exec
 {
-  struct channel_data *data = channel_data_from_scm (channel);
+  gssh_channel_t *data = channel_data_from_scm (channel);
   int res;
   char *c_cmd;                  /* Command to execute. */
 
@@ -110,7 +110,7 @@ returned (yet). \
 ")
 #define FUNC_NAME s_guile_ssh_channel_get_exit_status
 {
-  struct channel_data *cd = NULL;
+  gssh_channel_t *cd = NULL;
   int res;
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
@@ -141,7 +141,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_request_send_exit_status
 {
-  struct channel_data *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = channel_data_from_scm (channel);
   int res;
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
@@ -173,7 +173,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_request_pty
 {
-  struct channel_data *data = channel_data_from_scm (channel);
+  gssh_channel_t *data = channel_data_from_scm (channel);
   int res;
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
@@ -201,7 +201,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_request_shell
 {
-  struct channel_data *data = channel_data_from_scm (channel);
+  gssh_channel_t *data = channel_data_from_scm (channel);
   int res;
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
@@ -231,7 +231,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_request_env
 {
-  struct channel_data *data = channel_data_from_scm (channel);
+  gssh_channel_t *data = channel_data_from_scm (channel);
   char *c_name;
   char *c_value;
   int res;
@@ -291,7 +291,7 @@ SCM_GSSH_DEFINE (guile_ssh_channel_open_forward,
                   SCM source_host, SCM local_port))
 #define FUNC_NAME s_guile_ssh_channel_open_forward
 {
-  struct channel_data *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = channel_data_from_scm (channel);
   char *c_remote_host = NULL;
   char *c_source_host = NULL;
   struct session_data *sd = NULL;
@@ -450,7 +450,7 @@ eturn value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_set_pty_size_x
 {
-  struct channel_data *data = channel_data_from_scm (channel);
+  gssh_channel_t *data = channel_data_from_scm (channel);
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (scm_is_unsigned_integer (col, 0, UINT32_MAX), col,
@@ -479,7 +479,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_set_stream_x
 {
-  struct channel_data *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = channel_data_from_scm (channel);
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (scm_is_symbol (stream_name), stream_name, SCM_ARG2, FUNC_NAME);
@@ -515,7 +515,7 @@ Return one of the following symbols: \"stdout\", \"stderr\".\
 ")
 #define FUNC_NAME s_guile_ssh_channel_get_stream
 {
-  struct channel_data *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = channel_data_from_scm (channel);
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
 
@@ -543,7 +543,7 @@ error.  Return the session.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_get_session
 {
-  struct channel_data *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = channel_data_from_scm (channel);
   GSSH_VALIDATE_CHANNEL_DATA (cd, channel, FUNC_NAME);
   return cd->session;
 }
@@ -556,7 +556,7 @@ SCM_DEFINE (guile_ssh_channel_is_open_p, "channel-open?", 1, 0, 0,
             (SCM channel),
             "Return #t if channel CHANNEL is open, #f otherwise.")
 {
-  struct channel_data *data = channel_data_from_scm (channel);
+  gssh_channel_t *data = channel_data_from_scm (channel);
   if (data && ssh_channel_is_open (data->ssh_channel))
     return SCM_BOOL_T;
   return SCM_BOOL_F;
@@ -566,7 +566,7 @@ SCM_GSSH_DEFINE (gssh_channel_send_eof, "%channel-send-eof",
                  1, (SCM channel))
 #define FUNC_NAME s_gssh_channel_send_eof
 {
-  struct channel_data *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = channel_data_from_scm (channel);
   scm_t_bits pt_bits;
   int rc;
 
@@ -600,7 +600,7 @@ Throw `guile-ssh-error' if the channel has been closed and freed.\
 ")
 #define FUNC_NAME s_guile_ssh_channel_is_eof_p
 {
-  struct channel_data *data = channel_data_from_scm (channel);
+  gssh_channel_t *data = channel_data_from_scm (channel);
   GSSH_VALIDATE_CHANNEL_DATA (data, channel, FUNC_NAME);
   return scm_from_bool (ssh_channel_is_eof (data->ssh_channel));
 }
