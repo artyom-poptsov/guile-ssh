@@ -64,4 +64,19 @@ _scm_object_hex_address (SCM obj)
   return scm_number_to_string (scm_object_address (obj), scm_from_uint (16U));
 }
 
+
+
+void
+set_smob_callbacks(scm_t_bits tag,
+                   gc_mark_callback_t   mark_cb,
+                   gc_free_callback_t   free_cb,
+                   gc_equalp_callback_t equalp_cb,
+                   gc_print_callback_t  print_cb)
+{
+    scm_set_smob_mark(tag, mark_cb);
+    scm_set_smob_free(tag, free_cb);
+    scm_set_smob_print(tag, print_cb);
+    scm_set_smob_equalp(tag, equalp_cb);
+}
+
 /* common.c ends here. */

@@ -47,6 +47,19 @@ _scm_to_ssh_const (const struct symbol_mapping *types, SCM value);
 extern SCM
 _scm_object_hex_address (SCM obj);
 
+
+/* GC callbacks. */
+typedef SCM    (*gc_mark_callback_t  )(SCM obj);
+typedef size_t (*gc_free_callback_t  )(SCM obj);
+typedef SCM    (*gc_equalp_callback_t)(SCM x1, SCM x2);
+typedef int    (*gc_print_callback_t )(SCM obj, SCM port, scm_print_state* ps);
+
+void set_smob_callbacks(scm_t_bits tag,
+                        gc_mark_callback_t   mark_cb,
+                        gc_free_callback_t   free_cb,
+                        gc_equalp_callback_t equalp_cb,
+                        gc_print_callback_t  print_cb);
+
 #endif  /* ifndef __COMMON_H__ */
 
 /* common.h ends here. */

@@ -60,7 +60,7 @@ static const struct symbol_mapping key_types[] = {
 
 /* Smob marking */
 static SCM
-mark_key_smob (SCM key_smob)
+_mark (SCM key_smob)
 {
   struct key_data *kd = _scm_to_key_data (key_smob);
   return kd->parent;
@@ -68,7 +68,7 @@ mark_key_smob (SCM key_smob)
 
 /* Free the smob. */
 static size_t
-free_key_smob (SCM arg1)
+_free (SCM arg1)
 {
   struct key_data *data = (struct key_data *) SCM_SMOB_DATA (arg1);
 
@@ -83,8 +83,22 @@ free_key_smob (SCM arg1)
   return 0;
 }
 
+static SCM
+_equalp (SCM x1, SCM x2)
+{
+    struct key_data *key1 = _scm_to_key_data (x1);
+    struct key_data *key2 = _scm_to_key_data (x2);
+
+    if ((! key1) || (! key2))
+        return SCM_BOOL_F;
+    else if (key1 != key2)
+        return SCM_BOOL_F;
+    else
+        return SCM_BOOL_T;
+}
+
 static int
-print_key (SCM smob, SCM port, scm_print_state *pstate)
+_print (SCM smob, SCM port, scm_print_state *pstate)
 {
   struct key_data *key_data = _scm_to_key_data (smob);
   SCM type = guile_ssh_key_get_type (smob);
@@ -195,20 +209,6 @@ Return #t if X is a SSH private-key, #f otherwise.\
                         && _private_key_p (_scm_to_key_data (x)));
 }
 
-static SCM
-equalp_key (SCM x1, SCM x2)
-{
-  struct key_data *key1 = _scm_to_key_data (x1);
-  struct key_data *key2 = _scm_to_key_data (x2);
-
-  if ((! key1) || (! key2))
-    return SCM_BOOL_F;
-  else if (key1 != key2)
-    return SCM_BOOL_F;
-  else
-    return SCM_BOOL_T;
-}
-
 
 /* Helper procedures */
 
@@ -253,10 +253,7 @@ void
 init_key_type (void)
 {
   key_tag = scm_make_smob_type ("key", sizeof (struct key_data));
-  scm_set_smob_mark (key_tag, mark_key_smob);
-  scm_set_smob_free (key_tag, free_key_smob);
-  scm_set_smob_print (key_tag, print_key);
-  scm_set_smob_equalp (key_tag, equalp_key);
+  set_smob_callbacks (key_tag, _mark, _free, _equalp, _print);
 
 #include "key-type.x"
 }
