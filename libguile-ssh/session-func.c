@@ -675,13 +675,13 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
 #define FUNC_NAME s_guile_ssh_get_server_public_key
 {
   struct session_data *sd = _scm_to_session_data (session);
-  struct key_data *kd;
+  gssh_key_t *kd;
   int res;
   SCM key_smob;
 
   GSSH_VALIDATE_CONNECTED_SESSION (sd, session, SCM_ARG1);
 
-  kd = (struct key_data *) scm_gc_malloc (sizeof (struct key_data), "ssh key");
+  kd = (gssh_key_t *) scm_gc_malloc (sizeof (gssh_key_t), "ssh key");
   /* TODO: Check `kd' for NULL. */
 
 #if HAVE_LIBSSH_0_8

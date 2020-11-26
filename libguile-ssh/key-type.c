@@ -62,7 +62,7 @@ static const struct symbol_mapping key_types[] = {
 static SCM
 _mark (SCM key_smob)
 {
-  struct key_data *kd = _scm_to_key_data (key_smob);
+  gssh_key_t *kd = _scm_to_key_data (key_smob);
   return kd->parent;
 }
 
@@ -70,7 +70,7 @@ _mark (SCM key_smob)
 static size_t
 _free (SCM arg1)
 {
-  struct key_data *data = (struct key_data *) SCM_SMOB_DATA (arg1);
+  gssh_key_t *data = (gssh_key_t *) SCM_SMOB_DATA (arg1);
 
   if (scm_is_false (data->parent))
     {
@@ -86,8 +86,8 @@ _free (SCM arg1)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-    struct key_data *key1 = _scm_to_key_data (x1);
-    struct key_data *key2 = _scm_to_key_data (x2);
+    gssh_key_t *key1 = _scm_to_key_data (x1);
+    gssh_key_t *key2 = _scm_to_key_data (x2);
 
     if ((! key1) || (! key2))
         return SCM_BOOL_F;
@@ -100,7 +100,7 @@ _equalp (SCM x1, SCM x2)
 static int
 _print (SCM smob, SCM port, scm_print_state *pstate)
 {
-  struct key_data *key_data = _scm_to_key_data (smob);
+  gssh_key_t *key_data = _scm_to_key_data (smob);
   SCM type = guile_ssh_key_get_type (smob);
 
   scm_puts ("#<key ", port);
@@ -141,7 +141,7 @@ Get a symbol that represents the type of the SSH key KEY.\n\
 Possible types are: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown\
 ")
 {
-  struct key_data *data = _scm_to_key_data (key);
+  gssh_key_t *data = _scm_to_key_data (key);
   enum ssh_keytypes_e type = ssh_key_type (data->ssh_key);
   return _ssh_key_type_to_scm (type);
 }
@@ -215,9 +215,9 @@ Return #t if X is a SSH private-key, #f otherwise.\
 SCM
 _scm_from_ssh_key (ssh_key key, SCM parent)
 {
-  struct key_data *key_data;
+  gssh_key_t *key_data;
   SCM key_smob;
-  key_data = (struct key_data *) scm_gc_malloc (sizeof (struct key_data),
+  key_data = (gssh_key_t *) scm_gc_malloc (sizeof (gssh_key_t),
                                                 "ssh key");
   key_data->ssh_key = key;
   key_data->parent = parent;
@@ -226,23 +226,23 @@ _scm_from_ssh_key (ssh_key key, SCM parent)
 }
 
 /* Convert X to a SSH key */
-struct key_data *
+gssh_key_t *
 _scm_to_key_data (SCM x)
 {
   scm_assert_smob_type (key_tag, x);
-  return (struct key_data *) SCM_SMOB_DATA (x);
+  return (gssh_key_t *) SCM_SMOB_DATA (x);
 }
 
 /* Check that KEY is a SSH private key. */
 int
-_private_key_p (struct key_data *key)
+_private_key_p (gssh_key_t *key)
 {
   return ssh_key_is_private (key->ssh_key);
 }
 
 /* Check that KEY is a SSH public key */
 int
-_public_key_p (struct key_data *key)
+_public_key_p (gssh_key_t *key)
 {
   return ssh_key_is_public (key->ssh_key);
 }
@@ -252,7 +252,7 @@ _public_key_p (struct key_data *key)
 void
 init_key_type (void)
 {
-  key_tag = scm_make_smob_type ("key", sizeof (struct key_data));
+  key_tag = scm_make_smob_type ("key", sizeof (gssh_key_t));
   set_smob_callbacks (key_tag, _mark, _free, _equalp, _print);
 
 #include "key-type.x"

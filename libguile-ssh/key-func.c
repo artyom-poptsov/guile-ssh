@@ -35,7 +35,7 @@ Convert SSH public key to a scheme string.\
 ")
 #define FUNC_NAME s_guile_ssh_public_key_to_string
 {
-  struct key_data *key_data = _scm_to_key_data (key);
+  gssh_key_t *key_data = _scm_to_key_data (key);
   char *key_str;
 
   SCM_ASSERT (_public_key_p (key_data), key, SCM_ARG1, FUNC_NAME);
@@ -144,7 +144,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_private_key_to_file
 {
-  struct key_data *kd = _scm_to_key_data (key);
+  gssh_key_t *kd = _scm_to_key_data (key);
   char *c_file_name = NULL;
   int res;
 
@@ -181,7 +181,7 @@ Get public key from a private key KEY.\
 ")
 #define FUNC_NAME s_guile_ssh_public_key_from_private_key
 {
-  struct key_data *private_key_data = _scm_to_key_data (key);
+  gssh_key_t *private_key_data = _scm_to_key_data (key);
   ssh_key ssh_public_key = NULL;
   int res;
 
@@ -253,7 +253,7 @@ Return a bytevector on success, #f on error.\
 ")
 #define FUNC_NAME s_guile_ssh_get_public_key_hash
 {
-  struct key_data *kd = _scm_to_key_data (key);
+  gssh_key_t *kd = _scm_to_key_data (key);
   unsigned char *hash = NULL;
   size_t hash_len;
   int res;

@@ -1,6 +1,6 @@
 /* auth.c -- User authentication procedures.
  *
- * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -79,7 +79,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 #define FUNC_NAME s_guile_ssh_userauth_public_key_x
 {
   struct session_data *session_data = _scm_to_session_data (session_smob);
-  struct key_data *private_key_data = _scm_to_key_data (private_key_smob);
+  gssh_key_t *private_key_data = _scm_to_key_data (private_key_smob);
 
   /* See "On the username" commentary above. */
   char *username = NULL;
@@ -133,7 +133,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 #define FUNC_NAME s_guile_ssh_userauth_public_key_try
 {
   struct session_data *sd = _scm_to_session_data (session);
-  struct key_data *kd = _scm_to_key_data (public_key);
+  gssh_key_t *kd = _scm_to_key_data (public_key);
   char *username = NULL;        /* See "On the username" commentary above */
   int res;
 
