@@ -33,15 +33,15 @@ scm_t_bits message_tag;         /* Smob tag. */
 
 /* GC callbacks. */
 
-SCM
-mark_message (SCM message)
+static SCM
+_mark (SCM message)
 {
   struct message_data *md = _scm_to_message_data (message);
   return md->session;
 }
 
-size_t
-free_message (SCM message)
+static size_t
+_free (SCM message)
 {
   struct message_data *md = (struct message_data *) SCM_SMOB_DATA (message);
   ssh_message_free (md->message);
@@ -52,7 +52,7 @@ free_message (SCM message)
 /* Printing procedure. */
 
 static int
-print_message (SCM smob,  SCM port, scm_print_state *pstate)
+_print (SCM smob,  SCM port, scm_print_state *pstate)
 {
   SCM msg_type = guile_ssh_message_get_type (smob);
   scm_puts ("#<message ", port);
@@ -63,22 +63,23 @@ print_message (SCM smob,  SCM port, scm_print_state *pstate)
   return 1;
 }
 
+SCM
+_equalp (SCM x1, SCM x2)
+{
+    struct message_data *msg1 = _scm_to_message_data (x1);
+    struct message_data *msg2 = _scm_to_message_data (x2);
+
+    if ((! msg1) || (! msg2))
+        return SCM_BOOL_F;
+    else if (msg1 != msg2)
+        return SCM_BOOL_F;
+    else
+        return SCM_BOOL_T;
+}
+
+
 
 /* Predicates. */
-
-SCM
-equalp_message (SCM x1, SCM x2)
-{
-  struct message_data *msg1 = _scm_to_message_data (x1);
-  struct message_data *msg2 = _scm_to_message_data (x2);
-
-  if ((! msg1) || (! msg2))
-    return SCM_BOOL_F;
-  else if (msg1 != msg2)
-    return SCM_BOOL_F;
-  else
-    return SCM_BOOL_T;
-}
 
 SCM_DEFINE (guile_ssh_is_message_p,
             "message?", 1, 0, 0,
@@ -122,10 +123,7 @@ void
 init_message_type (void)
 {
   message_tag = scm_make_smob_type ("message", sizeof (struct message_data));
-  scm_set_smob_mark (message_tag, mark_message);
-  scm_set_smob_free (message_tag, free_message);
-  scm_set_smob_print (message_tag, print_message);
-  scm_set_smob_equalp (message_tag, equalp_message);
+  set_smob_callbacks (message_tag, _mark, _free, _equalp, _print);
 
 #include "message-type.x"
 }

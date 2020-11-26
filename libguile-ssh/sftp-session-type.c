@@ -35,14 +35,14 @@ scm_t_bits sftp_session_tag;    /* Smob tag. */
 /* GC callbacks. */
 
 static SCM
-mark_sftp_session (SCM sftp_session)
+_mark (SCM sftp_session)
 {
   struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
   return sftp_sd->session;
 }
 
 static size_t
-free_sftp_session (SCM sftp_session)
+_free (SCM sftp_session)
 {
   struct sftp_session_data *sftp_sd
     = (struct sftp_session_data *) SCM_SMOB_DATA (sftp_session);
@@ -51,10 +51,23 @@ free_sftp_session (SCM sftp_session)
   return 0;
 }
 
-
+static SCM
+_equalp (SCM x1, SCM x2)
+{
+    struct sftp_session_data *sftp_sd1 = _scm_to_sftp_session_data (x1);
+    struct sftp_session_data *sftp_sd2 = _scm_to_sftp_session_data (x2);
+
+    if ((! sftp_sd1) || (! sftp_sd2))
+        return SCM_BOOL_F;
+    else if (sftp_sd1 != sftp_sd2)
+        return SCM_BOOL_F;
+    else
+        return SCM_BOOL_T;
+}
+
 /* Printing procedure. */
 static int
-print_sftp_session (SCM sftp_session, SCM port, scm_print_state *pstate)
+_print (SCM sftp_session, SCM port, scm_print_state *pstate)
 {
   scm_puts ("#<sftp-session ", port);
   scm_display (_scm_object_hex_address (sftp_session), port);
@@ -63,20 +76,6 @@ print_sftp_session (SCM sftp_session, SCM port, scm_print_state *pstate)
 }
 
 
-static SCM
-equalp_sftp_session (SCM x1, SCM x2)
-{
-  struct sftp_session_data *sftp_sd1 = _scm_to_sftp_session_data (x1);
-  struct sftp_session_data *sftp_sd2 = _scm_to_sftp_session_data (x2);
-
-  if ((! sftp_sd1) || (! sftp_sd2))
-    return SCM_BOOL_F;
-  else if (sftp_sd1 != sftp_sd2)
-    return SCM_BOOL_F;
-  else
-    return SCM_BOOL_T;
-}
-
 SCM_GSSH_DEFINE (gssh_sftp_session_p, "%gssh-sftp-session?", 1, (SCM x))
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (sftp_session_tag, x));
@@ -124,10 +123,7 @@ init_sftp_session_type (void)
 {
   sftp_session_tag = scm_make_smob_type ("sftp session",
                                          sizeof (struct sftp_session_data));
-  scm_set_smob_mark (sftp_session_tag, mark_sftp_session);
-  scm_set_smob_free (sftp_session_tag, free_sftp_session);
-  scm_set_smob_print (sftp_session_tag, print_sftp_session);
-  scm_set_smob_equalp (sftp_session_tag, equalp_sftp_session);
+  set_smob_callbacks (sftp_session_tag, _mark, _free, _equalp, _print);
 
 #include "sftp-session-type.x"
 }

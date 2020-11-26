@@ -32,16 +32,16 @@
 
 scm_t_bits session_tag;	/* Smob tag. */
 
-SCM
-mark_session (SCM session_smob)
+static SCM
+_mark (SCM session_smob)
 {
   struct session_data *sd = _scm_to_session_data (session_smob);
   return sd->callbacks;
 }
 
 /* Handle GC'ing of the session smob. */
-size_t
-free_session (SCM session)
+static size_t
+_free (SCM session)
 {
   struct session_data *sd = (struct session_data *) SCM_SMOB_DATA (session);
 
@@ -53,32 +53,22 @@ free_session (SCM session)
   return 0;
 }
 
-/* Create a new session. */
-SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
-            (),
-            "\
-Create a new session.\
-")
+static SCM
+_equalp (SCM x1, SCM x2)
 {
-  SCM smob;
+    struct session_data *session1 = _scm_to_session_data (x1);
+    struct session_data *session2 = _scm_to_session_data (x2);
 
-  struct session_data *session_data
-    = (struct session_data *) scm_gc_malloc (sizeof (struct session_data),
-                                             "session");
-
-  session_data->ssh_session = ssh_new ();
-  if (session_data->ssh_session == NULL)
-    return SCM_BOOL_F;
-
-  session_data->callbacks = SCM_BOOL_F;
-
-  SCM_NEWSMOB (smob, session_tag, session_data);
-
-  return smob;
+    if ((! session1) || (! session2))
+        return SCM_BOOL_F;
+    else if (session1 != session2)
+        return SCM_BOOL_F;
+    else
+        return SCM_BOOL_T;
 }
 
 static int
-print_session (SCM session, SCM port, scm_print_state *pstate)
+_print (SCM session, SCM port, scm_print_state *pstate)
 {
   struct session_data *sd = _scm_to_session_data (session);
   char *user = NULL;
@@ -117,6 +107,31 @@ print_session (SCM session, SCM port, scm_print_state *pstate)
 }
 
 
+/* Create a new session. */
+SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
+            (),
+            "\
+Create a new session.\
+")
+{
+  SCM smob;
+
+  struct session_data *session_data
+    = (struct session_data *) scm_gc_malloc (sizeof (struct session_data),
+                                             "session");
+
+  session_data->ssh_session = ssh_new ();
+  if (session_data->ssh_session == NULL)
+    return SCM_BOOL_F;
+
+  session_data->callbacks = SCM_BOOL_F;
+
+  SCM_NEWSMOB (smob, session_tag, session_data);
+
+  return smob;
+}
+
+
 /* Predicates */
 SCM_DEFINE (guile_ssh_is_session_p, "session?", 1, 0, 0,
             (SCM x),
@@ -125,20 +140,6 @@ Return #t if X is a SSH session, #f otherwise.\
 ")
 {
   return scm_from_bool (SCM_SMOB_PREDICATE (session_tag, x));
-}
-
-SCM
-equalp_session (SCM x1, SCM x2)
-{
-  struct session_data *session1 = _scm_to_session_data (x1);
-  struct session_data *session2 = _scm_to_session_data (x2);
-
-  if ((! session1) || (! session2))
-    return SCM_BOOL_F;
-  else if (session1 != session2)
-    return SCM_BOOL_F;
-  else
-    return SCM_BOOL_T;
 }
 
 
@@ -159,10 +160,7 @@ init_session_type (void)
 {
   session_tag = scm_make_smob_type ("session",
                                     sizeof (struct session_data));
-  scm_set_smob_mark (session_tag, mark_session);
-  scm_set_smob_free (session_tag, free_session);
-  scm_set_smob_print (session_tag, print_session);
-  scm_set_smob_equalp (session_tag, equalp_session);
+  set_smob_callbacks (session_tag, _mark, _free, _equalp, _print);
 
 #include "session-type.x"
 }
