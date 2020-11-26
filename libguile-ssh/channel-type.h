@@ -1,4 +1,4 @@
-/* Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2013-2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
@@ -21,6 +21,12 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+
+#if USING_GUILE_BEFORE_2_2
+extern scm_t_bits channel_tag;
+#else
+extern scm_t_port_type *channel_tag;
+#endif
 
 
 /* Smob data. */

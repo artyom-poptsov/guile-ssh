@@ -36,6 +36,60 @@
 #endif
 
 
+/* Allocate a new SSH channel. */
+SCM_DEFINE (guile_ssh_make_channel, "%make-channel", 2, 0, 0,
+            (SCM arg1, SCM flags),
+            "\
+Allocate a new SSH channel.\
+")
+#define FUNC_NAME s_guile_ssh_make_channel
+{
+    struct session_data *session_data = _scm_to_session_data (arg1);
+    ssh_channel ch;
+
+    GSSH_VALIDATE_CONNECTED_SESSION (session_data, arg1, SCM_ARG1);
+    SCM_ASSERT (scm_is_integer (flags), flags, SCM_ARG2, FUNC_NAME);
+
+    ch = ssh_channel_new (session_data->ssh_session);
+
+    if (! ch)
+        return SCM_BOOL_F;
+
+    return ssh_channel_to_scm (ch, arg1, scm_to_long (flags));
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_is_channel_p, "channel?", 1, 0, 0,
+            (SCM x),
+            "\
+Return #t if X is a SSH channel, #f otherwise.\
+")
+{
+#if USING_GUILE_BEFORE_2_2
+    return scm_from_bool (SCM_SMOB_PREDICATE (channel_tag, x));
+#else
+    return scm_from_bool (SCM_PORTP (x)
+                          && SCM_PORT_TYPE (x) == channel_tag);
+#endif
+}
+
+#if USING_GUILE_BEFORE_2_2
+SCM
+equalp_channel (SCM x1, SCM x2)
+{
+    gssh_channel_t *channel1 = gssh_channel_from_scm (x1);
+    gssh_channel_t *channel2 = gssh_channel_from_scm (x2);
+
+    if ((! channel1) || (! channel2))
+        return SCM_BOOL_F;
+    else if (channel1 != channel2)
+        return SCM_BOOL_F;
+    else
+        return SCM_BOOL_T;
+}
+#endif
+
+
 /* Procedures */
 
 SCM_DEFINE (guile_ssh_channel_open_session, "channel-open-session", 1, 0, 0,
