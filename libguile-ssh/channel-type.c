@@ -56,7 +56,7 @@ static int
 ptob_fill_input (SCM channel)
 #define FUNC_NAME "ptob_fill_input"
 {
-  gssh_channel_t *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = gssh_channel_from_scm (channel);
   scm_port *pt = SCM_PTAB_ENTRY (channel);
   int res;
 
@@ -98,7 +98,7 @@ static void
 ptob_write (SCM channel, const void *data, size_t sz)
 #define FUNC_NAME "ptob_write"
 {
-  gssh_channel_t *channel_data = channel_data_from_scm (channel);
+  gssh_channel_t *channel_data = gssh_channel_from_scm (channel);
   int res = ssh_channel_write (channel_data->ssh_channel, data, sz);
   if (res == SSH_ERROR)
     {
@@ -119,7 +119,7 @@ ptob_flush (SCM channel)
 #define FUNC_NAME "ptob_flush"
 {
   scm_port *pt = SCM_PTAB_ENTRY (channel);
-  gssh_channel_t *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = gssh_channel_from_scm (channel);
   size_t wrsize = pt->write_pos - pt->write_buf;
 
   if (wrsize)
@@ -143,7 +143,7 @@ read_from_channel_port (SCM channel, SCM dst, size_t start, size_t count)
 #define FUNC_NAME "read_from_channel_port"
 {
   char *data = (char *) SCM_BYTEVECTOR_CONTENTS (dst) + start;
-  gssh_channel_t *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = gssh_channel_from_scm (channel);
   int res;
 
   if (! ssh_channel_is_open (cd->ssh_channel))
@@ -176,7 +176,7 @@ write_to_channel_port (SCM channel, SCM src, size_t start, size_t count)
 #define FUNC_NAME "write_to_channel_port"
 {
   char *data = (char *) SCM_BYTEVECTOR_CONTENTS (src) + start;
-  gssh_channel_t *channel_data = channel_data_from_scm (channel);
+  gssh_channel_t *channel_data = gssh_channel_from_scm (channel);
 
   if (! _gssh_channel_parent_session_connected_p (channel_data))
     guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
@@ -201,7 +201,7 @@ static int
 ptob_input_waiting (SCM channel)
 #define FUNC_NAME "ptob_input_waiting"
 {
-  gssh_channel_t *cd = channel_data_from_scm (channel);
+  gssh_channel_t *cd = gssh_channel_from_scm (channel);
   int res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
 
   if (res == SSH_ERROR)
@@ -219,7 +219,7 @@ static void
 #endif
 ptob_close (SCM channel)
 {
-  gssh_channel_t *ch = channel_data_from_scm (channel);
+  gssh_channel_t *ch = gssh_channel_from_scm (channel);
 
 #if USING_GUILE_BEFORE_2_2
   scm_port *pt = SCM_PTAB_ENTRY (channel);
@@ -272,9 +272,9 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
 
 #if USING_GUILE_BEFORE_2_2
   if (SCM_PTAB_ENTRY (channel))
-    ch = channel_data_from_scm (channel);
+    ch = gssh_channel_from_scm (channel);
 #else
-  ch = channel_data_from_scm (channel);
+  ch = gssh_channel_from_scm (channel);
 #endif
 
   scm_puts ("#<", port);
@@ -353,8 +353,8 @@ Return #t if X is a SSH channel, #f otherwise.\
 SCM
 equalp_channel (SCM x1, SCM x2)
 {
-  gssh_channel_t *channel1 = channel_data_from_scm (x1);
-  gssh_channel_t *channel2 = channel_data_from_scm (x2);
+  gssh_channel_t *channel1 = gssh_channel_from_scm (x1);
+  gssh_channel_t *channel2 = gssh_channel_from_scm (x2);
 
   if ((! channel1) || (! channel2))
     return SCM_BOOL_F;
@@ -428,7 +428,7 @@ ssh_channel_to_scm (ssh_channel ch, SCM session, long flags)
 /* Convert X to a SSH channel.  Return the channel data or NULL if the channel
    has been freed. */
 gssh_channel_t *
-channel_data_from_scm (SCM x)
+gssh_channel_from_scm (SCM x)
 {
   /* In Guile 2.0 ports and SMOBs were all alike; that is no longer the case
      in 2.2.  */
