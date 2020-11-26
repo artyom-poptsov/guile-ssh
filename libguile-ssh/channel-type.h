@@ -22,11 +22,10 @@
 #include <libguile.h>
 #include <libssh/libssh.h>
 
-#if USING_GUILE_BEFORE_2_2
-extern scm_t_bits channel_tag;
-#else
-extern scm_t_port_type *channel_tag;
-#endif
+#include "common.h"
+
+
+extern gssh_port_t channel_tag;
 
 
 /* Smob data. */

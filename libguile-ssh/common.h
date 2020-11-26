@@ -33,6 +33,15 @@
   SCM_DEFINE (c_name, scheme_name, req, 0, 0, arglist, "")
 
 
+/* The Guile-SSH port type.  Guile 2.2 introduced a new port API, so we have a
+   separate implementation for these newer versions. */
+#if USING_GUILE_BEFORE_2_2
+typedef scm_t_bits       gssh_port_t;
+#else
+typedef scm_t_port_type* gssh_port_t;
+#endif
+
+
 struct symbol_mapping {
   char* symbol;
   int   value;

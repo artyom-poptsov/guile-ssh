@@ -30,13 +30,7 @@
 #include "sftp-file-type.h"
 
 
-/* The SFTP file port type.  Guile 2.2 introduced a new port API, so we have a
-   separate implementation for these newer versions.  */
-#if USING_GUILE_BEFORE_2_2
-static scm_t_bits sftp_file_tag;       /* Smob tag. */
-#else
-static scm_t_port_type *sftp_file_tag;
-#endif
+gssh_port_t sftp_file_tag;       /* Smob tag. */
 
 
 enum {

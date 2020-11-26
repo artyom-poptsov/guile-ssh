@@ -31,14 +31,7 @@
 #include "common.h"
 #include "log.h"
 
-
-/* The channel port type.  Guile 2.2 introduced a new port API, so we have a
-   separate implementation for these newer versions.  */
-#if USING_GUILE_BEFORE_2_2
-scm_t_bits channel_tag;
-#else
-scm_t_port_type *channel_tag;
-#endif
+gssh_port_t channel_tag;
 
 enum {
   DEFAULT_PORT_R_BUFSZ = 256,      /* Default read buffer size */
