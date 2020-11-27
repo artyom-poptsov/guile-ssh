@@ -31,6 +31,9 @@
 #include "common.h"
 #include "log.h"
 
+static const char* GSSH_CHANNEL_TYPE_NAME = "channel";
+
+
 gssh_port_t channel_tag;
 
 enum {
@@ -319,7 +322,8 @@ ssh_channel_to_scm (ssh_channel ch, SCM session, long flags)
 
   assert ((flags & ~(SCM_RDNG | SCM_WRTNG)) == 0);
 
-  channel_data = scm_gc_malloc (sizeof (gssh_channel_t), "channel");
+  channel_data = scm_gc_malloc (sizeof (gssh_channel_t),
+                                GSSH_CHANNEL_TYPE_NAME);
 
   channel_data->ssh_channel = ch;
   channel_data->is_stderr = 0;  /* Reading from stderr disabled by default */
@@ -394,7 +398,7 @@ _gssh_channel_parent_session_connected_p (gssh_channel_t* cd)
 void
 init_channel_type (void)
 {
-  channel_tag = scm_make_port_type ("channel",
+  channel_tag = scm_make_port_type ((char*) GSSH_CHANNEL_TYPE_NAME,
 #if USING_GUILE_BEFORE_2_2
                                     &ptob_fill_input,
                                     &ptob_write
