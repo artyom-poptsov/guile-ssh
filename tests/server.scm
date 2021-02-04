@@ -157,9 +157,11 @@
     (server-listen server)
     #t))
 
+(define exit-status (test-runner-fail-count (test-runner-current)))
+
 (test-end "server")
 
-(exit (= (test-runner-fail-count (test-runner-current)) 0))
+(exit (= 0 exit-status))
 
 ;;; server.scm ends here.
 

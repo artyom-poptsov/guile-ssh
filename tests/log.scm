@@ -64,8 +64,11 @@
   (get-log-verbosity))
 
 
+(define exit-status (test-runner-fail-count (test-runner-current)))
+
 (test-end "log")
 
-(exit (= (test-runner-fail-count (test-runner-current)) 0))
+(exit (= 0 exit-status))
+
 
 ;;; log.scm ends here
