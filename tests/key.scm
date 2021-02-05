@@ -170,9 +170,10 @@
                    (eq? (get-key-type key) 'ecdsa-p256)))))))
 
 ;;;
+(define exit-status (test-runner-fail-count (test-runner-current)))
 
 (test-end "key")
 
-(exit (= (test-runner-fail-count (test-runner-current)) 0))
+(exit (= 0 exit-status))
 
 ;;; key.scm ends here.

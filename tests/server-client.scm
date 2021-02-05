@@ -148,8 +148,10 @@
          (equal? x session))))))
 
 
+(define exit-status (test-runner-fail-count (test-runner-current)))
+
 (test-end "server-client")
 
-(exit (= (test-runner-fail-count (test-runner-current)) 0))
+(exit (= 0 exit-status))
 
 ;;; server-client.scm ends here.

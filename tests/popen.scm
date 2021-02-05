@@ -129,8 +129,10 @@
           (format-log/scm 'nolog "open-remote-output-pipe"  "channel: ~A" channel)
           (output-only? channel)))))))
 
+(define exit-status (test-runner-fail-count (test-runner-current)))
+
 (test-end "popen")
 
-(exit (= (test-runner-fail-count (test-runner-current)) 0))
+(exit (= 0 exit-status))
 
 ;;; popen.scm ends here.

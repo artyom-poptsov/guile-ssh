@@ -191,8 +191,10 @@
                   (= pnum portnum)))
            (eq? (channel-cancel-forward session "localhost" portnum) 'ok))))))))
 
+(define exit-status (test-runner-fail-count (test-runner-current)))
+
 (test-end "tunnel")
 
-(exit (= (test-runner-fail-count (test-runner-current)) 0))
+(exit (= 0 exit-status))
 
 ;;; tunnel.scm ends here.

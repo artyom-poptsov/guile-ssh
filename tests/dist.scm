@@ -269,8 +269,10 @@ $4 = #<session #<undefined>@#<undefined>:22 (disconnected) 453fff>"
 ;;;
 
 
+(define exit-status (test-runner-fail-count (test-runner-current)))
+
 (test-end "dist")
 
-(exit (= (test-runner-fail-count (test-runner-current)) 0))
+(exit (= 0 exit-status))
 
 ;;; dist.scm ends here.
