@@ -275,7 +275,7 @@ Options:
            ((> pid 0)
             (exit))
            (#t
-            (display "Could not fork the processs\n")
+            (display "Could not fork the processs\n" (current-error-port))
             (exit 1)))))
 
     (let ((server (make-server #:bindport      bindport
@@ -305,7 +305,7 @@ Options:
                        (lambda ()
                          (server-accept server))
                        (lambda (key . args)
-                         (format #t "~a: ~a~%" key args)
+                         (format (current-error-port) "~a: ~a~%" key args)
                          #f))))
 
         (if (not session)
