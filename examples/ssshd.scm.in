@@ -285,8 +285,13 @@ Options:
                                #:banner        "Scheme Secure Shell Daemon"))
           (channel #f))
 
-    ;; Start listen to incoming connections.
-    (server-listen server)
+      (catch 'guile-ssh-error
+        (lambda ()
+          ;; Start listen to incoming connections.
+          (server-listen server))
+        (lambda (key . args)
+          (format (current-error-port) "~a: ~a~%" key args)
+          (exit 1)))
 
     ;; Write the PID to a file.
     (let ((p (open-output-file pid-file)))
