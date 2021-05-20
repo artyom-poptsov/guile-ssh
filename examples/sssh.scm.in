@@ -176,7 +176,8 @@ Options:
                       (userauth-get-list session))
 
         (print-debug "4. authenticate-server (ssh_is_server_known)\n")
-        (unless (string-null? known-hosts-file)
+        (when (and known-hosts-file
+                   (not (string-null? known-hosts-file)))
           (case (authenticate-server session)
             ((ok)        (print-debug "   ok\n"))
             ((not-known) (display "   The server is unknown.  Please check MD5.\n"))))
