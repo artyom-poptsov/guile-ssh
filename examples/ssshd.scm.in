@@ -5,7 +5,7 @@
 
 ;;; ssshd.scm -- Scheme Secure Shell Daemon.
 
-;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -225,6 +225,10 @@ Options:
                                 listen to the socket.
                                 Default: " *default-pid-file* "
   --port=<number>, -p <number>  Port number
+  --ssh-debug=<log-verbosity>   Set the log verbosity (default: \"nolog\")
+                                Allowed values:
+                                  \"nolog\", \"rare\", \"protocol\", \"packet\",
+                                  \"functions\"
   --help, -h                    Print this message and exit.
 "))
   (exit))
