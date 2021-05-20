@@ -225,10 +225,9 @@ Options:
                                 listen to the socket.
                                 Default: " *default-pid-file* "
   --port=<number>, -p <number>  Port number
-  --ssh-debug=<log-verbosity>   Set the log verbosity (default: \"nolog\")
+  --ssh-debug=<log-verbosity>   Set the log verbosity (default: nolog)
                                 Allowed values:
-                                  \"nolog\", \"rare\", \"protocol\", \"packet\",
-                                  \"functions\"
+                                  nolog, rare, protocol, packet, functions
   --help, -h                    Print this message and exit.
 "))
   (exit))
