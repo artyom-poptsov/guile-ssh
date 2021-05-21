@@ -96,6 +96,12 @@ List of allowed keywords:
 @item nodelay
 @item port
 @item proxycommand
+@item public-key-accepted-types
+Preferred public key algorithms to be used for authentication (comma-separated
+list as a string). Example:
+``ssh-rsa,rsa-sha2-256,ssh-dss,ecdh-sha2-nistp256''
+
+This option available only in libssh 0.8.3 or later versions.
 @item ssh-dir
 @item ssh1
 @item ssh2

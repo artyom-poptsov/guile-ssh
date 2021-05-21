@@ -74,7 +74,8 @@
                        knownhosts timeout timeout-usec ssh1 ssh2 log-verbosity
                        ciphers-c-s ciphers-s-c compression-c-s compression-s-c
                        proxycommand stricthostkeycheck compression
-                       compression-level nodelay callbacks config)
+                       compression-level nodelay callbacks config
+                       public-key-accepted-types)
   "Make a new SSH session with specified configuration.\n
 Return a new SSH session."
   (let ((session (%make-session)))

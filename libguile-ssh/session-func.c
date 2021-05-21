@@ -71,9 +71,21 @@ static struct symbol_mapping session_options[] = {
   { "stricthostkeycheck", SSH_OPTIONS_STRICTHOSTKEYCHECK },
   { "compression",        SSH_OPTIONS_COMPRESSION        },
   { "compression-level",  SSH_OPTIONS_COMPRESSION_LEVEL  },
+
 #if HAVE_LIBSSH_0_8_1
   { "nodelay",            SSH_OPTIONS_NODELAY            },
 #endif
+
+#if HAVE_LIBSSH_0_8_3
+  /* Preferred public key algorithms to be used for authentication
+     (comma-separated list as a string). Example:
+     "ssh-rsa,rsa-sha2-256,ssh-dss,ecdh-sha2-nistp256"
+
+     This option was added to the libssh in
+     4521ab73b6858efa0083ac96a1775719b1f649ae */
+  { "public-key-accepted-types", SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES },
+#endif
+
   { "callbacks",          GSSH_OPTIONS_CALLBACKS         },
   { NULL,                 -1 }
 };
@@ -354,6 +366,9 @@ set_option (SCM scm_session, struct session_data* sd, int type, SCM value)
     case SSH_OPTIONS_COMPRESSION_C_S:
     case SSH_OPTIONS_COMPRESSION_S_C:
     case SSH_OPTIONS_PROXYCOMMAND:
+#if HAVE_LIBSSH_0_8_3
+    case SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES:
+#endif
       return set_string_opt (session, type, value);
 
     case SSH_OPTIONS_LOG_VERBOSITY:
@@ -379,6 +394,15 @@ set_option (SCM scm_session, struct session_data* sd, int type, SCM value)
 
     case GSSH_OPTIONS_CALLBACKS:
       return set_callbacks (scm_session, sd, value);
+
+#if ! HAVE_LIBSSH_0_8_3
+    case SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES:
+        guile_ssh_error1 ("session-set!",
+                          "Option 'public-key-accepted-types' is not available"
+                          " in the current version of libssh (%s)",
+                          ssh_version (0));
+        break;
+#endif
 
     default:
       guile_ssh_error1 ("session-set!",
