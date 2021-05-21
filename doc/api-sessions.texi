@@ -78,6 +78,33 @@ Example:
   ...)
 @end lisp
 
+List of allowed keywords:
+@table @samp
+@item add-identity
+@item callbacks
+@item ciphers-c-s
+@item ciphers-s-c
+@item compression
+@item compression-c-s
+@item compression-level
+@item compression-s-c
+@item config
+@item host
+@item identity
+@item knownhosts
+@item log-verbosity
+@item nodelay
+@item port
+@item proxycommand
+@item ssh-dir
+@item ssh1
+@item ssh2
+@item stricthostkeycheck
+@item timeout
+@item timeout-usec
+@item user
+@end table
+
 @end deffn
 
 @deffn {Scheme Procedure} blocking-flush! session timeout
