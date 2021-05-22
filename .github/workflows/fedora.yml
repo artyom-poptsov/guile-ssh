@@ -1,0 +1,22 @@
+name: GNU Guile 3.0 (on Fedora GNU/Linux)
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Required Packages
+    strategy:
+      matrix:
+        distro:
+          - 'avvp/fedora-guile:latest'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Test building on ${{ matrix.distro }}
+        run: |
+          docker run --rm -v $PWD:/guile-ssh -w /guile-ssh ${{ matrix.distro }} /bin/sh -c 'autoreconf -vif && ./configure && make check'
