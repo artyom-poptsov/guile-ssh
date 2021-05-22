@@ -48,7 +48,7 @@
 (define *sssh-cmd*
   (string-append
    %topbuilddir "/examples/sssh.scm"
-   " --identity-file=" %rsakey
+   " --identity-file=" %ecdsakey
    " --port=" (number->string *srv-port*)
    " --known-hosts-file=''"
    " " (inet-ntop AF_INET *srv-address*)
