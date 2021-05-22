@@ -7,6 +7,12 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Fix snarfing errors on Fedora GNU/Linux
+   Guile-SSH would fail to find 'guile-snarf' script on Fedora GNU/Linux when
+   GNU Guile 2.2 installed because the snarfer installed as 'guile-snarf2.2'.
+   Now the problem is fixed.
+
 * Changes in version 0.13.1 (2020-08-19)
 ** Fix segfaults on GC'ing
    The library would always fail with segmentation fault when the GC tried to
