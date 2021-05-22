@@ -1,6 +1,6 @@
 # -*- makefile -*-
 
-GUILE_SNARF = `which guile-snarf`
+GUILE_SNARF = $(shell whereis guile-snarf | cut -d' ' -f2)
 
 AM_V_SNARF = $(AM_V_SNARF_$(V))
 AM_V_SNARF_ = $(AM_V_SNARF_$(AM_DEFAULT_VERBOSITY))
