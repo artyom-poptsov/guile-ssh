@@ -46,6 +46,8 @@
   (string-append (getenv "HOME") "/.ssh/id_rsa"))
 (define *default-log-verbosity* "nolog")
 
+(define %accepted-key-types "ssh-rsa,rsa-sha2-256,ssh-dss,ecdh-sha2-nistp256")
+
 (define debug? #f)
 
 
@@ -163,6 +165,7 @@ Options:
                                    #:host host
                                    #:port port
                                    #:identity identity-file
+                                   #:public-key-accepted-types %accepted-key-types
                                    #:log-verbosity (string->symbol ssh-debug))))
 
         (and known-hosts-file
