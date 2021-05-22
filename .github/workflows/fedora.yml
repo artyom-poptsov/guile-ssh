@@ -1,4 +1,4 @@
-name: GNU Guile 3.0 (on Fedora GNU/Linux)
+name: GNU Guile 2.0 (on Fedora GNU/Linux)
 
 on:
   push:
