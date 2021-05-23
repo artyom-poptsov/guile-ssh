@@ -278,14 +278,14 @@ Get a message.\
 {
   SCM smob;
   struct session_data *session_data = _scm_to_session_data (session);
-  struct message_data *message_data
-    = (struct message_data *) scm_gc_malloc (sizeof (struct message_data),
-                                             "message");
+  gssh_message_t* message_data
+    = (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
+                                        "message");
 
   message_data->message = ssh_message_get (session_data->ssh_session);
   if (! message_data->message)
     {
-      scm_gc_free (message_data, sizeof (struct message_data), "message");
+      scm_gc_free (message_data, sizeof (gssh_message_t), "message");
       return SCM_BOOL_F;
     }
 

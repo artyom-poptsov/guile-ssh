@@ -26,7 +26,7 @@ extern scm_t_bits message_tag;
 
 
 /* Smob data. */
-struct message_data {
+struct gssh_message {
   /* Reference to the parent session.  We need to keep the reference
      to prevent the session from premature freeing by the GC. */
   SCM session;
@@ -34,12 +34,14 @@ struct message_data {
   ssh_message message;
 };
 
+typedef struct gssh_message gssh_message_t;
+
 extern void init_message_type (void);
 
 
 /* Helper procedures. */
 extern SCM _scm_from_ssh_message (const ssh_message message, SCM session);
-extern struct message_data *_scm_to_message_data (SCM x);
+extern gssh_message_t* _scm_to_message_data (SCM x);
 
 #endif  /* ifndef __MESSAGE_TYPE_H__ */
 

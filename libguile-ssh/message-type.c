@@ -36,14 +36,14 @@ scm_t_bits message_tag;         /* Smob tag. */
 static SCM
 _mark (SCM message)
 {
-  struct message_data *md = _scm_to_message_data (message);
+  gssh_message_t* md = _scm_to_message_data (message);
   return md->session;
 }
 
 static size_t
 _free (SCM message)
 {
-  struct message_data *md = (struct message_data *) SCM_SMOB_DATA (message);
+  gssh_message_t* md = (gssh_message_t *) SCM_SMOB_DATA (message);
   ssh_message_free (md->message);
   return 0;
 }
@@ -66,8 +66,8 @@ _print (SCM smob,  SCM port, scm_print_state *pstate)
 SCM
 _equalp (SCM x1, SCM x2)
 {
-    struct message_data *msg1 = _scm_to_message_data (x1);
-    struct message_data *msg2 = _scm_to_message_data (x2);
+    gssh_message_t* msg1 = _scm_to_message_data (x1);
+    gssh_message_t* msg2 = _scm_to_message_data (x2);
 
     if ((! msg1) || (! msg2))
         return SCM_BOOL_F;
@@ -98,8 +98,8 @@ SCM
 _scm_from_ssh_message (const ssh_message message, SCM session)
 {
   SCM smob;
-  struct message_data *message_data
-    = (struct message_data *) scm_gc_malloc (sizeof (struct message_data),
+  gssh_message_t* message_data
+    = (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
                                              "message");
 
   message_data->message = message;
@@ -110,11 +110,11 @@ _scm_from_ssh_message (const ssh_message message, SCM session)
 }
 
 /* Convert X to a SSH message. */
-struct message_data *
+gssh_message_t *
 _scm_to_message_data (SCM x)
 {
   scm_assert_smob_type (message_tag, x);
-  return (struct message_data *) SCM_SMOB_DATA (x);
+  return (gssh_message_t *) SCM_SMOB_DATA (x);
 }
 
 
@@ -122,7 +122,7 @@ _scm_to_message_data (SCM x)
 void
 init_message_type (void)
 {
-  message_tag = scm_make_smob_type ("message", sizeof (struct message_data));
+  message_tag = scm_make_smob_type ("message", sizeof (gssh_message_t));
   set_smob_callbacks (message_tag, _mark, _free, _equalp, _print);
 
 #include "message-type.x"
