@@ -30,6 +30,10 @@
 #include "error.h"
 #include "common.h"
 
+
+static const char* GSSH_SESSION_TYPE_NAME = "session";
+
+
 scm_t_bits session_tag;	/* Smob tag. */
 
 static SCM
@@ -118,7 +122,7 @@ Create a new session.\
 
   gssh_session_t *session_data
     = (gssh_session_t *) scm_gc_malloc (sizeof (gssh_session_t),
-                                        "session");
+                                        GSSH_SESSION_TYPE_NAME);
 
   session_data->ssh_session = ssh_new ();
   if (session_data->ssh_session == NULL)
@@ -158,7 +162,7 @@ gssh_session_from_scm (SCM x)
 void
 init_session_type (void)
 {
-  session_tag = scm_make_smob_type ("session",
+  session_tag = scm_make_smob_type (GSSH_SESSION_TYPE_NAME,
                                     sizeof (gssh_session_t));
   set_smob_callbacks (session_tag, _mark, _free, _equalp, _print);
 
