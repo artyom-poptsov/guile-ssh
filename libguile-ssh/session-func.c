@@ -105,7 +105,7 @@ Return on of the following symbols: 'ok, 'error, 'again.\
 ")
 #define FUNC_NAME s_guile_ssh_blocking_flush
 {
-  struct session_data *data = _scm_to_session_data (session_smob);
+  gssh_session_t *data = _scm_to_session_data (session_smob);
 
   int c_timeout;                /* Timeout */
   int res;                      /* Result of a function call. */
@@ -243,7 +243,7 @@ callback_set_p (SCM callbacks, const char* name)
 
 /* Get an element NAME of the callbacks alist from a session data SD. */
 static inline SCM
-callbacks_ref (const struct session_data *sd, const char* name)
+callbacks_ref (const gssh_session_t *sd, const char* name)
 {
   return scm_assoc_ref (sd->callbacks, scm_from_locale_symbol (name));
 }
@@ -256,7 +256,7 @@ libssh_global_request_callback (ssh_session session, ssh_message message,
                                 void *userdata)
 {
   SCM scm_session = (SCM) userdata;
-  struct session_data *sd = _scm_to_session_data (scm_session);
+  gssh_session_t *sd = _scm_to_session_data (scm_session);
 
   SCM scm_callback = callbacks_ref (sd, "global-request-callback");
   SCM scm_userdata = callbacks_ref (sd, "user-data");
@@ -272,7 +272,7 @@ static void
 libssh_connect_status_callback (void *userdata, float status)
 {
   SCM scm_session = (SCM) userdata;
-  struct session_data *sd = _scm_to_session_data (scm_session);
+  gssh_session_t *sd = _scm_to_session_data (scm_session);
 
   SCM scm_callback = callbacks_ref (sd, "connect-status-callback");
   SCM scm_userdata = callbacks_ref (sd, "user-data");
@@ -290,7 +290,7 @@ scm_is_procedure (SCM x)
 
 /* Validate callback NAME.  Throw 'guile-ssh-error' exception on an error. */
 static void
-validate_callback (SCM session, const struct session_data *sd, const char* name)
+validate_callback (SCM session, const gssh_session_t *sd, const char* name)
 {
   if (! scm_is_procedure (callbacks_ref (sd, name)))
     {
@@ -309,7 +309,7 @@ validate_callback (SCM session, const struct session_data *sd, const char* name)
 
    Return SSH_OK if callbacks were set succesfully, SSH_ERROR otherwise. */
 static int
-set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
+set_callbacks (SCM session, gssh_session_t *sd, SCM callbacks)
 {
   struct ssh_callbacks_struct *cb
     = (struct ssh_callbacks_struct *)
@@ -345,7 +345,7 @@ set_callbacks (SCM session, struct session_data *sd, SCM callbacks)
 
 /* Set an SSH session option. */
 static int
-set_option (SCM scm_session, struct session_data* sd, int type, SCM value)
+set_option (SCM scm_session, gssh_session_t* sd, int type, SCM value)
 {
   ssh_session session = sd->ssh_session;
 
@@ -422,7 +422,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_session_set
 {
-  struct session_data* data = _scm_to_session_data (session);
+  gssh_session_t* data = _scm_to_session_data (session);
   const struct symbol_mapping *opt;	/* Session option */
   int res;                              /* Result of a function call */
 
@@ -468,7 +468,7 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
 ")
 #define FUNC_NAME s_guile_ssh_session_get
 {
-  struct session_data*sd     = _scm_to_session_data (session);
+  gssh_session_t*sd     = _scm_to_session_data (session);
   const struct symbol_mapping *opt = NULL;
   SCM value = SCM_UNDEFINED;                    /*Value of the option */
   int res = SSH_OK;
@@ -516,7 +516,7 @@ SCM_GSSH_DEFINE (gssh_session_parse_config, "%gssh-session-parse-config!", 2,
                  (SCM session, SCM file_name))
 #define FUNC_NAME s_gssh_session_parse_config
 {
-  struct session_data *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = _scm_to_session_data (session);
   int res;
   char* c_file_name = NULL;
 
@@ -567,7 +567,7 @@ Return one of the following symbols: 'ok, 'again, 'error\
 ")
 #define FUNC_NAME s_guile_ssh_connect_x
 {
-  struct session_data* data = _scm_to_session_data (session);
+  gssh_session_t* data = _scm_to_session_data (session);
   int res = ssh_connect (data->ssh_session);
   switch (res)
     {
@@ -594,7 +594,7 @@ Disconnect from a session (client or server).\n\
 Return value is undefined.\
 ")
 {
-  struct session_data* session_data = _scm_to_session_data (arg1);
+  gssh_session_t* session_data = _scm_to_session_data (arg1);
   ssh_disconnect (session_data->ssh_session);
   return SCM_UNDEFINED;
 }
@@ -607,7 +607,7 @@ Return 1 for SSH1, 2 for SSH2 or #f on error.\
 ")
 #define FUNC_NAME s_guile_ssh_get_protocol_version
 {
-  struct session_data* data = _scm_to_session_data (arg1);
+  gssh_session_t* data = _scm_to_session_data (arg1);
   SCM ret;
   int version;
 
@@ -630,7 +630,7 @@ SCM_DEFINE (guile_ssh_get_error, "get-error", 1, 0, 1,
 Retrieve the error text message from the last error.\
 ")
 {
-  struct session_data* data = _scm_to_session_data (arg1);
+  gssh_session_t* data = _scm_to_session_data (arg1);
   SCM error = scm_from_locale_string (ssh_get_error (data->ssh_session));
   return error;
 }
@@ -652,7 +652,7 @@ Return one of the following symbols: 'ok, 'known-changed, 'found-other,\n\
 ")
 #define FUNC_NAME s_guile_ssh_authenticate_server
 {
-  struct session_data* data = _scm_to_session_data (session);
+  gssh_session_t* data = _scm_to_session_data (session);
   int res;
 
   GSSH_VALIDATE_CONNECTED_SESSION (data, session, SCM_ARG1);
@@ -698,7 +698,7 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
 ")
 #define FUNC_NAME s_guile_ssh_get_server_public_key
 {
-  struct session_data *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = _scm_to_session_data (session);
   gssh_key_t *kd;
   int res;
   SCM key_smob;
@@ -731,7 +731,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_write_known_host
 {
-  struct session_data *session_data = _scm_to_session_data (session);
+  gssh_session_t *session_data = _scm_to_session_data (session);
   int res;
 
   GSSH_VALIDATE_CONNECTED_SESSION (session_data, session, SCM_ARG1);
@@ -759,7 +759,7 @@ Check if we are connected.\n\
 Return #f if we are connected to a server, #f if we aren't.\
 ")
 {
-  struct session_data* data = _scm_to_session_data (arg1);
+  gssh_session_t* data = _scm_to_session_data (arg1);
   int res = ssh_is_connected (data->ssh_session);
   return scm_from_bool (res);
 }

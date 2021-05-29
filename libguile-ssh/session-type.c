@@ -35,7 +35,7 @@ scm_t_bits session_tag;	/* Smob tag. */
 static SCM
 _mark (SCM session_smob)
 {
-  struct session_data *sd = _scm_to_session_data (session_smob);
+  gssh_session_t *sd = _scm_to_session_data (session_smob);
   return sd->callbacks;
 }
 
@@ -43,7 +43,7 @@ _mark (SCM session_smob)
 static size_t
 _free (SCM session)
 {
-  struct session_data *sd = (struct session_data *) SCM_SMOB_DATA (session);
+  gssh_session_t *sd = (gssh_session_t *) SCM_SMOB_DATA (session);
 
   ssh_disconnect (sd->ssh_session);
   ssh_free (sd->ssh_session);
@@ -56,21 +56,21 @@ _free (SCM session)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-    struct session_data *session1 = _scm_to_session_data (x1);
-    struct session_data *session2 = _scm_to_session_data (x2);
+  gssh_session_t *session1 = _scm_to_session_data (x1);
+  gssh_session_t *session2 = _scm_to_session_data (x2);
 
-    if ((! session1) || (! session2))
-        return SCM_BOOL_F;
-    else if (session1 != session2)
-        return SCM_BOOL_F;
-    else
-        return SCM_BOOL_T;
+  if ((! session1) || (! session2))
+    return SCM_BOOL_F;
+  else if (session1 != session2)
+    return SCM_BOOL_F;
+  else
+    return SCM_BOOL_T;
 }
 
 static int
 _print (SCM session, SCM port, scm_print_state *pstate)
 {
-  struct session_data *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = _scm_to_session_data (session);
   char *user = NULL;
   char *host = NULL;
   unsigned int ssh_port;
@@ -96,7 +96,7 @@ _print (SCM session, SCM port, scm_print_state *pstate)
   scm_display ((res == SSH_OK) ? scm_from_int (ssh_port) : SCM_UNDEFINED, port);
 
   scm_puts (ssh_is_connected (sd->ssh_session) ? " (connected) "
-                                               : " (disconnected) ",
+            : " (disconnected) ",
             port);
 
   scm_display (_scm_object_hex_address (session), port);
@@ -116,9 +116,9 @@ Create a new session.\
 {
   SCM smob;
 
-  struct session_data *session_data
-    = (struct session_data *) scm_gc_malloc (sizeof (struct session_data),
-                                             "session");
+  gssh_session_t *session_data
+    = (gssh_session_t *) scm_gc_malloc (sizeof (gssh_session_t),
+                                        "session");
 
   session_data->ssh_session = ssh_new ();
   if (session_data->ssh_session == NULL)
@@ -146,11 +146,11 @@ Return #t if X is a SSH session, #f otherwise.\
 /* Helper procedures  */
 
 /* Convert SCM object to a SSH session */
-struct session_data*
+gssh_session_t*
 _scm_to_session_data (SCM x)
 {
   scm_assert_smob_type (session_tag, x);
-  return (struct session_data *) SCM_SMOB_DATA (x);
+  return (gssh_session_t *) SCM_SMOB_DATA (x);
 }
 
 
@@ -159,7 +159,7 @@ void
 init_session_type (void)
 {
   session_tag = scm_make_smob_type ("session",
-                                    sizeof (struct session_data));
+                                    sizeof (gssh_session_t));
   set_smob_callbacks (session_tag, _mark, _free, _equalp, _print);
 
 #include "session-type.x"

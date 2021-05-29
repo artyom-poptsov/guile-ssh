@@ -78,7 +78,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_x
 {
-  struct session_data *session_data = _scm_to_session_data (session_smob);
+  gssh_session_t *session_data = _scm_to_session_data (session_smob);
   gssh_key_t *private_key_data = gssh_key_from_scm (private_key_smob);
 
   /* See "On the username" commentary above. */
@@ -111,7 +111,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_auto_x
 {
-  struct session_data *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = _scm_to_session_data (session);
   char *username = NULL; /* See "On the username" commentary above. */
   char *passphrase = NULL;
 
@@ -132,7 +132,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_try
 {
-  struct session_data *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = _scm_to_session_data (session);
   gssh_key_t *kd = gssh_key_from_scm (public_key);
   char *username = NULL;        /* See "On the username" commentary above */
   int res;
@@ -157,7 +157,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_agent_x
 {
-  struct session_data *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = _scm_to_session_data (session);
 
   char *username = NULL; /* See "On the username" commentary above. */
   int res;
@@ -179,7 +179,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_password_x
 {
-  struct session_data* session_data = _scm_to_session_data (session);
+  gssh_session_t* session_data = _scm_to_session_data (session);
 
   /* See "On the username" commentary above. */
   char *username = NULL;
@@ -215,7 +215,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_gssapi_x
 {
-  struct session_data *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = _scm_to_session_data (session);
 
   int res;
 
@@ -240,7 +240,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_none_x
 {
-  struct session_data *session_data = _scm_to_session_data (arg1);
+  gssh_session_t *session_data = _scm_to_session_data (arg1);
   int res;
 
   GSSH_VALIDATE_CONNECTED_SESSION (session_data, arg1, SCM_ARG1);
@@ -264,7 +264,7 @@ Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
 ")
 #define FUNC_NAME s_guile_ssh_userauth_get_list
 {
-  struct session_data *session_data = _scm_to_session_data (session);
+  gssh_session_t *session_data = _scm_to_session_data (session);
   SCM auth_list = SCM_EOL;
   int res;
 

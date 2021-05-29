@@ -234,7 +234,7 @@ Throw `guile-ssh-error' on error.  Return a new SSH session.\
 {
   gssh_server_t *server_data   = gssh_server_from_scm (server);
   SCM session = guile_ssh_make_session ();
-  struct session_data *session_data = _scm_to_session_data (session);
+  gssh_session_t *session_data = _scm_to_session_data (session);
   int res = ssh_bind_accept (server_data->bind, session_data->ssh_session);
 
   _gssh_log_debug_format(FUNC_NAME, server, "result: %d", res);
@@ -256,7 +256,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_server_handle_key_exchange
 {
-  struct session_data *session_data = _scm_to_session_data (session);
+  gssh_session_t *session_data = _scm_to_session_data (session);
   int res = ssh_handle_key_exchange (session_data->ssh_session);
 
   _gssh_log_debug_format(FUNC_NAME, session, "result: %d", res);
@@ -277,7 +277,7 @@ Get a message.\
 ")
 {
   SCM smob;
-  struct session_data *session_data = _scm_to_session_data (session);
+  gssh_session_t *session_data = _scm_to_session_data (session);
   gssh_message_t* message_data
     = (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
                                         "message");

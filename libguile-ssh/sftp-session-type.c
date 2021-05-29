@@ -86,7 +86,7 @@ SCM_GSSH_DEFINE (gssh_make_sftp_session, "%gssh-make-sftp-session", 1,
                  (SCM session))
 #define FUNC_NAME s_gssh_make_sftp_session
 {
-  struct session_data *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = _scm_to_session_data (session);
   sftp_session sftp_session = sftp_new (sd->ssh_session);
 
   if (! sftp_session)

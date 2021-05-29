@@ -26,10 +26,12 @@
 extern scm_t_bits session_tag;
 
 
-struct session_data {
+struct gssh_session {
   ssh_session ssh_session;
   SCM callbacks;
 };
+
+typedef struct gssh_session gssh_session_t;
 
 /* Make sure that the session pointed by session data structure pointer SD is
    connected. */
@@ -47,6 +49,6 @@ extern void init_session_type (void);
 
 
 /* Helper procedures */
-extern struct session_data*_scm_to_session_data (SCM x);
+extern gssh_session_t* _scm_to_session_data (SCM x);
 
 #endif  /* ifndef __SESSION_TYPE_H__ */
