@@ -28,6 +28,9 @@
 #include "server-type.h"
 #include "server-func.h"
 
+static const char* GSSH_SERVER_TYPE_NAME = "server";
+
+
 scm_t_bits server_tag;          /* Smob tag. */
 
 
@@ -100,7 +103,7 @@ gssh_server_t*
 make_gssh_server ()
 {
   return (gssh_server_t *) scm_gc_malloc (sizeof (gssh_server_t),
-                                          "server");
+                                          GSSH_SERVER_TYPE_NAME);
 }
 
 
@@ -144,7 +147,8 @@ gssh_server_from_scm (SCM x)
 void
 init_server_type (void)
 {
-  server_tag = scm_make_smob_type ("server", sizeof (gssh_server_t));
+  server_tag = scm_make_smob_type (GSSH_SERVER_TYPE_NAME,
+                                   sizeof (gssh_server_t));
   set_smob_callbacks (server_tag, _mark, _free, _equalp, _print);
 
 #include "server-type.x"
