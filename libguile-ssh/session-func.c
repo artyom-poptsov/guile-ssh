@@ -33,12 +33,6 @@
 #include "message-type.h"
 #include "log.h"
 
-/* SSH option mapping. */
-struct option {
-  char* symbol;
-  int   type;
-};
-
 /* Guile SSH specific options that are aimed to unificate the way of session
    configuration. */
 enum gssh_session_options {
