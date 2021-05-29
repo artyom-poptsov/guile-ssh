@@ -43,7 +43,7 @@ Allocate a new SSH channel.\
 ")
 #define FUNC_NAME s_guile_ssh_make_channel
 {
-    gssh_session_t *session_data = _scm_to_session_data (arg1);
+    gssh_session_t *session_data = gssh_session_from_scm (arg1);
     ssh_channel ch;
 
     GSSH_VALIDATE_CONNECTED_SESSION (session_data, arg1, SCM_ARG1);
@@ -359,7 +359,7 @@ SCM_DEFINE_N (guile_ssh_channel_open_forward, "%channel-open-forward", 5,
   if (! _gssh_channel_parent_session_connected_p (cd))
     guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
-  sd = _scm_to_session_data (cd->session);
+  sd = gssh_session_from_scm (cd->session);
   if (! sd)
     guile_ssh_error1 (FUNC_NAME, "Session is freed: ", cd->session);
 
@@ -405,7 +405,7 @@ SCM_DEFINE_N (guile_ssh_channel_listen_forward, "%channel-listen-forward", 3,
               "")
 #define FUNC_NAME s_guile_ssh_channel_listen_forward
 {
-  gssh_session_t *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = gssh_session_from_scm (session);
   char *c_address = NULL;
   int bound_port;
   int res;
@@ -445,7 +445,7 @@ SCM_DEFINE_N (guile_ssh_channel_accept_forward, "%channel-accept-forward", 2,
               "")
 #define FUNC_NAME s_guile_ssh_channel_accept_forward
 {
-  gssh_session_t *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = gssh_session_from_scm (session);
   ssh_channel c_channel = NULL;
   SCM channel = SCM_BOOL_F;
   int port;
@@ -471,7 +471,7 @@ SCM_DEFINE_N (guile_ssh_channel_cancel_forward, "channel-cancel-forward", 3,
               "")
 #define FUNC_NAME s_guile_ssh_channel_cancel_forward
 {
-  gssh_session_t *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = gssh_session_from_scm (session);
   char *c_address = NULL;
   int res;
 

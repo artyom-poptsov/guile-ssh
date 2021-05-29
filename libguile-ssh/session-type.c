@@ -35,7 +35,7 @@ scm_t_bits session_tag;	/* Smob tag. */
 static SCM
 _mark (SCM session_smob)
 {
-  gssh_session_t *sd = _scm_to_session_data (session_smob);
+  gssh_session_t *sd = gssh_session_from_scm (session_smob);
   return sd->callbacks;
 }
 
@@ -56,8 +56,8 @@ _free (SCM session)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-  gssh_session_t *session1 = _scm_to_session_data (x1);
-  gssh_session_t *session2 = _scm_to_session_data (x2);
+  gssh_session_t *session1 = gssh_session_from_scm (x1);
+  gssh_session_t *session2 = gssh_session_from_scm (x2);
 
   if ((! session1) || (! session2))
     return SCM_BOOL_F;
@@ -70,7 +70,7 @@ _equalp (SCM x1, SCM x2)
 static int
 _print (SCM session, SCM port, scm_print_state *pstate)
 {
-  gssh_session_t *sd = _scm_to_session_data (session);
+  gssh_session_t *sd = gssh_session_from_scm (session);
   char *user = NULL;
   char *host = NULL;
   unsigned int ssh_port;
@@ -147,7 +147,7 @@ Return #t if X is a SSH session, #f otherwise.\
 
 /* Convert SCM object to a SSH session */
 gssh_session_t*
-_scm_to_session_data (SCM x)
+gssh_session_from_scm (SCM x)
 {
   scm_assert_smob_type (session_tag, x);
   return (gssh_session_t *) SCM_SMOB_DATA (x);

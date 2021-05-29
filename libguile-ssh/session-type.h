@@ -49,6 +49,6 @@ extern void init_session_type (void);
 
 
 /* Helper procedures */
-extern gssh_session_t* _scm_to_session_data (SCM x);
+extern gssh_session_t* gssh_session_from_scm (SCM x);
 
 #endif  /* ifndef __SESSION_TYPE_H__ */

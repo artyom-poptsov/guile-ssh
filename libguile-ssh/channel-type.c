@@ -225,7 +225,7 @@ ptob_close (SCM channel)
 
   if (ch)
     {
-      gssh_session_t *sd = _scm_to_session_data (ch->session);
+      gssh_session_t *sd = gssh_session_from_scm (ch->session);
       if (sd && ssh_is_connected (sd->ssh_session))
         {
           if (ssh_channel_is_open (ch->ssh_channel))
@@ -389,7 +389,7 @@ gssh_channel_from_scm (SCM x)
 int
 _gssh_channel_parent_session_connected_p (gssh_channel_t* cd)
 {
-  gssh_session_t *sd = _scm_to_session_data (cd->session);
+  gssh_session_t *sd = gssh_session_from_scm (cd->session);
   return (sd && ssh_is_connected (sd->ssh_session));
 }
 
