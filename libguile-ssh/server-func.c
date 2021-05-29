@@ -155,7 +155,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_server_set_x
 {
-  gssh_server_t *server_data = _scm_to_server_data (server);
+  gssh_server_t *server_data = gssh_server_from_scm (server);
   const struct symbol_mapping *opt;		  /* Server option */
   int res;
 
@@ -193,7 +193,7 @@ not set.  Throw `guile-ssh-error' on error.\
 ")
 #define FUNC_NAME s_guile_ssh_server_get
 {
-  const gssh_server_t *sd     = _scm_to_server_data (server);
+  const gssh_server_t *sd     = gssh_server_from_scm (server);
   const struct symbol_mapping *opt = _scm_to_ssh_const (server_options, option);
 
   if (! opt)
@@ -212,7 +212,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_server_listen
 {
-  gssh_server_t *server_data = _scm_to_server_data (server);
+  gssh_server_t *server_data = gssh_server_from_scm (server);
   int res = ssh_bind_listen (server_data->bind);
 
   _gssh_log_debug_format(FUNC_NAME, server, "result: %d", res);
@@ -232,7 +232,7 @@ Throw `guile-ssh-error' on error.  Return a new SSH session.\
 ")
 #define FUNC_NAME s_guile_ssh_server_accept
 {
-  gssh_server_t *server_data   = _scm_to_server_data (server);
+  gssh_server_t *server_data   = gssh_server_from_scm (server);
   SCM session = guile_ssh_make_session ();
   struct session_data *session_data = _scm_to_session_data (session);
   int res = ssh_bind_accept (server_data->bind, session_data->ssh_session);

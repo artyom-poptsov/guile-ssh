@@ -36,7 +36,7 @@ scm_t_bits server_tag;          /* Smob tag. */
 static SCM
 _mark (SCM server)
 {
-  gssh_server_t *sd = _scm_to_server_data (server);
+  gssh_server_t *sd = gssh_server_from_scm (server);
   return sd->options;
 }
 
@@ -51,8 +51,8 @@ _free (SCM server)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-    gssh_server_t *server1 = _scm_to_server_data (x1);
-    gssh_server_t *server2 = _scm_to_server_data (x2);
+    gssh_server_t *server1 = gssh_server_from_scm (x1);
+    gssh_server_t *server2 = gssh_server_from_scm (x2);
 
     if ((! server1) || (! server2))
         return SCM_BOOL_F;
@@ -65,7 +65,7 @@ _equalp (SCM x1, SCM x2)
 static int
 _print (SCM server, SCM port, scm_print_state *pstate)
 {
-    gssh_server_t *sd = _scm_to_server_data (server);
+    gssh_server_t *sd = gssh_server_from_scm (server);
     SCM bindaddr = scm_assoc_ref (sd->options,
                                   _ssh_const_to_scm (server_options,
                                                      SSH_BIND_OPTIONS_BINDADDR));
@@ -133,7 +133,7 @@ SCM_DEFINE (guile_ssh_is_server_p, "server?", 1, 0, 0,
 
 /* Convert X to a SSH server. */
 gssh_server_t *
-_scm_to_server_data (SCM x)
+gssh_server_from_scm (SCM x)
 {
   scm_assert_smob_type (server_tag, x);
   return (gssh_server_t *) SCM_SMOB_DATA (x);

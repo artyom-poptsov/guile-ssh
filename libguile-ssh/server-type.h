@@ -40,7 +40,7 @@ extern void init_server_type (void);
 
 
 /* Helper procedures. */
-extern gssh_server_t *_scm_to_server_data (SCM x);
+extern gssh_server_t* gssh_server_from_scm (SCM x);
 
 #endif  /* ifndef __SERVER_TYPE_H__ */
 
