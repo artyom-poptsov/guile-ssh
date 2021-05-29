@@ -33,6 +33,8 @@ struct gssh_server {
 
 typedef struct gssh_server gssh_server_t;
 
+extern gssh_server_t* make_gssh_server ();
+
 extern SCM guile_ssh_is_server_p (SCM arg1);
 extern void init_server_type (void);
 

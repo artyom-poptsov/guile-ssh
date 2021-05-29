@@ -96,6 +96,13 @@ _print (SCM server, SCM port, scm_print_state *pstate)
     return 1;
 }
 
+gssh_server_t*
+make_gssh_server ()
+{
+  return (gssh_server_t *) scm_gc_malloc (sizeof (gssh_server_t),
+                                          "server");
+}
+
 
 /* Smob specific procedures. */
 
@@ -104,9 +111,7 @@ SCM_DEFINE (guile_ssh_make_server, "%make-server", 0, 0, 0,
             "Make a new SSH server.")
 {
   SCM smob;
-  gssh_server_t *server_data
-    = (gssh_server_t *) scm_gc_malloc (sizeof (gssh_server_t),
-                                       "server");
+  gssh_server_t *server_data = make_gssh_server ();
   server_data->bind = ssh_bind_new ();
   server_data->options = SCM_EOL;
   SCM_NEWSMOB (smob, server_tag, server_data);
