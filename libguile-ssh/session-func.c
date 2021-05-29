@@ -110,6 +110,10 @@ Return on of the following symbols: 'ok, 'error, 'again.\
   c_timeout = scm_to_int (timeout);
 
   res = ssh_blocking_flush (data->ssh_session, c_timeout);
+  _gssh_log_debug_format (FUNC_NAME,
+                          scm_list_2 (session_smob, timeout),
+                          "result: %d",
+                          res);
   switch (res)
     {
     case SSH_OK:
@@ -122,6 +126,10 @@ Return on of the following symbols: 'ok, 'error, 'again.\
       return scm_from_locale_symbol ("error");
 
     default:                    /* Must not happen. */
+      _gssh_log_error_format (FUNC_NAME,
+                              scm_list_2 (session_smob, timeout),
+                              "Unknown result: %d",
+                              res);
       assert (0);
       return SCM_BOOL_F;
     }
@@ -563,6 +571,7 @@ Return one of the following symbols: 'ok, 'again, 'error\
 {
   gssh_session_t* data = gssh_session_from_scm (session);
   int res = ssh_connect (data->ssh_session);
+  _gssh_log_debug_format (FUNC_NAME, session, "result: %d", res);
   switch (res)
     {
     case SSH_OK:
@@ -657,6 +666,8 @@ Return one of the following symbols: 'ok, 'known-changed, 'found-other,\n\
   res = ssh_is_server_known (data->ssh_session);
 #endif
 
+  _gssh_log_debug_format (FUNC_NAME, session, "result: %d", res);
+
   switch (res)
     {
     case SSH_SERVER_KNOWN_OK:
@@ -708,6 +719,8 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
   res = ssh_get_publickey (sd->ssh_session, &kd->ssh_key);
 #endif
 
+  _gssh_log_debug_format (FUNC_NAME, session, "result: %d", res);
+
   if (res != SSH_OK)
     guile_ssh_error1 (FUNC_NAME, "Unable to get the server key", session);
 
@@ -736,6 +749,8 @@ Return value is undefined.\
   res = ssh_write_knownhost (session_data->ssh_session);
 #endif
 
+  _gssh_log_debug_format (FUNC_NAME, session, "result: %d", res);
+
   if (res != SSH_OK)
     guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
 
@@ -752,11 +767,14 @@ SCM_DEFINE (guile_ssh_is_connected_p, "connected?", 1, 0, 0,
 Check if we are connected.\n\
 Return #f if we are connected to a server, #f if we aren't.\
 ")
+#define FUNC_NAME s_guile_ssh_is_connected_p
 {
   gssh_session_t* data = gssh_session_from_scm (arg1);
   int res = ssh_is_connected (data->ssh_session);
+  _gssh_log_debug_format (FUNC_NAME, arg1, "result: %d", res);
   return scm_from_bool (res);
 }
+#undef FUNC_NAME
 
 
 /* Initialize session related functions. */
