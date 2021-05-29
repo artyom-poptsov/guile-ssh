@@ -26,17 +26,19 @@ extern scm_t_bits server_tag;
 
 
 /* Smob data. */
-struct server_data {
+struct gssh_server {
   ssh_bind bind;
   SCM options;
 };
+
+typedef struct gssh_server gssh_server_t;
 
 extern SCM guile_ssh_is_server_p (SCM arg1);
 extern void init_server_type (void);
 
 
 /* Helper procedures. */
-extern struct server_data *_scm_to_server_data (SCM x);
+extern gssh_server_t *_scm_to_server_data (SCM x);
 
 #endif  /* ifndef __SERVER_TYPE_H__ */
 

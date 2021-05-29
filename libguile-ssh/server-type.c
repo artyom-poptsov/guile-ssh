@@ -36,14 +36,14 @@ scm_t_bits server_tag;          /* Smob tag. */
 static SCM
 _mark (SCM server)
 {
-  struct server_data *sd = _scm_to_server_data (server);
+  gssh_server_t *sd = _scm_to_server_data (server);
   return sd->options;
 }
 
 static size_t
 _free (SCM server)
 {
-  struct server_data *sd = (struct server_data *) SCM_SMOB_DATA (server);
+  gssh_server_t *sd = (gssh_server_t *) SCM_SMOB_DATA (server);
   ssh_bind_free (sd->bind);
   return 0;
 }
@@ -51,8 +51,8 @@ _free (SCM server)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-    struct server_data *server1 = _scm_to_server_data (x1);
-    struct server_data *server2 = _scm_to_server_data (x2);
+    gssh_server_t *server1 = _scm_to_server_data (x1);
+    gssh_server_t *server2 = _scm_to_server_data (x2);
 
     if ((! server1) || (! server2))
         return SCM_BOOL_F;
@@ -65,7 +65,7 @@ _equalp (SCM x1, SCM x2)
 static int
 _print (SCM server, SCM port, scm_print_state *pstate)
 {
-    struct server_data *sd = _scm_to_server_data (server);
+    gssh_server_t *sd = _scm_to_server_data (server);
     SCM bindaddr = scm_assoc_ref (sd->options,
                                   _ssh_const_to_scm (server_options,
                                                      SSH_BIND_OPTIONS_BINDADDR));
@@ -104,9 +104,9 @@ SCM_DEFINE (guile_ssh_make_server, "%make-server", 0, 0, 0,
             "Make a new SSH server.")
 {
   SCM smob;
-  struct server_data *server_data
-    = (struct server_data *) scm_gc_malloc (sizeof (struct server_data),
-                                            "server");
+  gssh_server_t *server_data
+    = (gssh_server_t *) scm_gc_malloc (sizeof (gssh_server_t),
+                                       "server");
   server_data->bind = ssh_bind_new ();
   server_data->options = SCM_EOL;
   SCM_NEWSMOB (smob, server_tag, server_data);
@@ -127,11 +127,11 @@ SCM_DEFINE (guile_ssh_is_server_p, "server?", 1, 0, 0,
 /* Helper procedures. */
 
 /* Convert X to a SSH server. */
-struct server_data *
+gssh_server_t *
 _scm_to_server_data (SCM x)
 {
   scm_assert_smob_type (server_tag, x);
-  return (struct server_data *) SCM_SMOB_DATA (x);
+  return (gssh_server_t *) SCM_SMOB_DATA (x);
 }
 
 
@@ -139,7 +139,7 @@ _scm_to_server_data (SCM x)
 void
 init_server_type (void)
 {
-  server_tag = scm_make_smob_type ("server", sizeof (struct server_data));
+  server_tag = scm_make_smob_type ("server", sizeof (gssh_server_t));
   set_smob_callbacks (server_tag, _mark, _free, _equalp, _print);
 
 #include "server-type.x"
