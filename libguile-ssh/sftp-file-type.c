@@ -319,7 +319,7 @@ SCM_GSSH_DEFINE (gssh_sftp_open, "%gssh-sftp-open", 4,
     }
 
   scm_dynwind_end ();
-  return _scm_from_sftp_file (file, path, sftp_session);
+  return make_gssh_sftp_file (file, path, sftp_session);
 }
 #undef FUNC_NAME
 
@@ -354,7 +354,7 @@ _scm_to_sftp_file_data (SCM x)
 /* Convert SFTP file FD to a SCM object; set SFTP_SESSION as a parent of the
    object. */
 SCM
-_scm_from_sftp_file (const sftp_file file, const SCM name, SCM sftp_session)
+make_gssh_sftp_file (const sftp_file file, const SCM name, SCM sftp_session)
 {
   SCM ptob;
   gssh_sftp_file_t *fd = scm_gc_malloc (sizeof (gssh_sftp_file_t),
