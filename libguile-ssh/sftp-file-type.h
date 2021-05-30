@@ -26,12 +26,14 @@
 
 
 /* Smob data. */
-struct sftp_file_data {
+struct gssh_sftp_file {
   /* Reference to the parent SFTP session. */
   SCM sftp_session;
 
   sftp_file file;
 };
+
+typedef struct gssh_sftp_file gssh_sftp_file_t;
 
 
 extern SCM gssh_sftp_open (SCM sftp_session, SCM path, SCM access_type,
@@ -42,7 +44,7 @@ extern SCM gssh_sftp_file_p (SCM x);
 extern void init_sftp_file_type (void);
 
 
-extern struct sftp_file_data * _scm_to_sftp_file_data (SCM x);
+extern gssh_sftp_file_t* _scm_to_sftp_file_data (SCM x);
 extern SCM _scm_from_sftp_file (const sftp_file file,
                                 const SCM name,
                                 SCM sftp_session);
