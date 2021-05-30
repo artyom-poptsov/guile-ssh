@@ -49,7 +49,7 @@ static int
 ptob_fill_input (SCM file)
 #define FUNC_NAME "ptob_fill_input"
 {
-  gssh_sftp_file_t *fd = _scm_to_sftp_file_data (file);
+  gssh_sftp_file_t *fd = gssh_sftp_file_from_scm (file);
   scm_port *pt = SCM_PTAB_ENTRY (file);
   ssize_t res;
 
@@ -70,7 +70,7 @@ static void
 ptob_write (SCM file, const void* data, size_t sz)
 #define FUNC_NAME "ptob_write"
 {
-  gssh_sftp_file_t *fd = _scm_to_sftp_file_data (file);
+  gssh_sftp_file_t *fd = gssh_sftp_file_from_scm (file);
   ssize_t nwritten = sftp_write (fd->file, data, sz);
   if (nwritten != sz)
     guile_ssh_error1 (FUNC_NAME, "Error writing the file", file);
@@ -84,7 +84,7 @@ read_from_sftp_file_port (SCM file, SCM dst, size_t start, size_t count)
 #define FUNC_NAME "read_from_sftp_file_port"
 {
   char *data = (char *) SCM_BYTEVECTOR_CONTENTS (dst) + start;
-  gssh_sftp_file_t *fd = _scm_to_sftp_file_data (file);
+  gssh_sftp_file_t *fd = gssh_sftp_file_from_scm (file);
   ssize_t res;
 
   res = sftp_read (fd->file, data, count);
@@ -100,7 +100,7 @@ write_to_sftp_file_port (SCM file, SCM src, size_t start, size_t count)
 #define FUNC_NAME "write_to_sftp_file_port"
 {
   char *data = (char *) SCM_BYTEVECTOR_CONTENTS (src) + start;
-  gssh_sftp_file_t *fd = _scm_to_sftp_file_data (file);
+  gssh_sftp_file_t *fd = gssh_sftp_file_from_scm (file);
   ssize_t nwritten = sftp_write (fd->file, data, count);
 
   if (nwritten < 0)
@@ -116,7 +116,7 @@ static int
 ptob_input_waiting (SCM file)
 #define FUNC_NAME "ptob_input_waiting"
 {
-  gssh_sftp_file_t *fd = _scm_to_sftp_file_data (file);
+  gssh_sftp_file_t *fd = gssh_sftp_file_from_scm (file);
   sftp_attributes attr = sftp_fstat (fd->file);
   uint64_t pos = sftp_tell64 (fd->file);
   return attr->size - pos;
@@ -127,8 +127,8 @@ ptob_input_waiting (SCM file)
 static SCM
 equalp_sftp_file (SCM x1, SCM x2)
 {
-  gssh_sftp_file_t *fd1 = _scm_to_sftp_file_data (x1);
-  gssh_sftp_file_t *fd2 = _scm_to_sftp_file_data (x2);
+  gssh_sftp_file_t *fd1 = gssh_sftp_file_from_scm (x1);
+  gssh_sftp_file_t *fd2 = gssh_sftp_file_from_scm (x2);
 
   if ((! fd1) || (! fd2))
     return SCM_BOOL_F;
@@ -142,7 +142,7 @@ equalp_sftp_file (SCM x1, SCM x2)
 static int
 print_sftp_file (SCM sftp_file, SCM port, scm_print_state *pstate)
 {
-  gssh_sftp_file_t *fd = _scm_to_sftp_file_data (sftp_file);
+  gssh_sftp_file_t *fd = gssh_sftp_file_from_scm (sftp_file);
   ssh_session session = fd->file->sftp->session;
   char *user = NULL;
   char *host = NULL;
@@ -205,7 +205,7 @@ static void
 #endif
 ptob_close (SCM sftp_file)
 {
-  gssh_sftp_file_t *fd = _scm_to_sftp_file_data (sftp_file);
+  gssh_sftp_file_t *fd = gssh_sftp_file_from_scm (sftp_file);
 
 #if USING_GUILE_BEFORE_2_2
   scm_port *pt = SCM_PTAB_ENTRY (sftp_file);
@@ -233,7 +233,7 @@ static scm_t_off
 ptob_seek (SCM port, scm_t_off offset, int whence)
 #define FUNC_NAME "ptob_seek"
 {
-  gssh_sftp_file_t *fd = _scm_to_sftp_file_data (port);
+  gssh_sftp_file_t *fd = gssh_sftp_file_from_scm (port);
   scm_t_off target;
 
   /* In Guile 2.2, PORT is flushed before this function is called; in 2.0 that
@@ -339,7 +339,7 @@ SCM_GSSH_DEFINE (gssh_sftp_file_p, "%gssh-sftp-file?", 1, (SCM x))
 
 /* Convert SCM object X to a SFTP file data object. */
 gssh_sftp_file_t *
-_scm_to_sftp_file_data (SCM x)
+gssh_sftp_file_from_scm (SCM x)
 {
 #if USING_GUILE_BEFORE_2_2
   scm_assert_smob_type (sftp_file_tag, x);

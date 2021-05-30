@@ -44,7 +44,7 @@ extern SCM gssh_sftp_file_p (SCM x);
 extern void init_sftp_file_type (void);
 
 
-extern gssh_sftp_file_t* _scm_to_sftp_file_data (SCM x);
+extern gssh_sftp_file_t* gssh_sftp_file_from_scm (SCM x);
 extern SCM make_gssh_sftp_file (const sftp_file file,
                                 const SCM name,
                                 SCM sftp_session);
