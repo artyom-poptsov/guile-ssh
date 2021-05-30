@@ -30,6 +30,9 @@
 #include "sftp-file-type.h"
 
 
+static const char* GSSH_SFTP_FILE_TYPE_NAME = "sftp-file";
+
+
 gssh_port_t sftp_file_tag;       /* Smob tag. */
 
 
@@ -358,7 +361,7 @@ make_gssh_sftp_file (const sftp_file file, const SCM name, SCM sftp_session)
 {
   SCM ptob;
   gssh_sftp_file_t *fd = scm_gc_malloc (sizeof (gssh_sftp_file_t),
-                                        "sftp file");
+                                        GSSH_SFTP_FILE_TYPE_NAME);
   fd->sftp_session = sftp_session;
   fd->file         = file;
 
@@ -399,7 +402,7 @@ make_gssh_sftp_file (const sftp_file file, const SCM name, SCM sftp_session)
 void
 init_sftp_file_type (void)
 {
-  sftp_file_tag = scm_make_port_type ("sftp-file",
+  sftp_file_tag = scm_make_port_type ((char*) GSSH_SFTP_FILE_TYPE_NAME,
 #if USING_GUILE_BEFORE_2_2
                                       &ptob_fill_input,
                                       &ptob_write
