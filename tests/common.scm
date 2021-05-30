@@ -51,6 +51,7 @@
             test-assert-with-log
             test-error-with-log
             test-error-with-log/=
+            test-error-with-log/match
             test-equal-with-log
             start-session-loop
             make-session-for-test
@@ -139,6 +140,29 @@
                                                         "expected '~a', got '~a' (args: ~a)")
                                                        error key args)
                                        #f)))))
+
+(define-syntax-rule (test-error-with-log/match name error expected-message expr)
+  (test-error-with-log/handler
+   name
+   expr
+   (lambda (key . args)
+     (if (equal? key error)
+         (let* ((message (cadr args))
+                (result  (string-match expected-message message)))
+           (unless result
+             (format-log/scm 'nolog name
+                             (string-append
+                              "Messages do not match: "
+                              "expected \"~a\", got \"~a\"")
+                             result expected-message))
+           result)
+         (begin
+           (format-log/scm 'nolog name
+                           (string-append
+                            "Errors do not match: "
+                            "expected '~a', got '~a' (args: ~a)")
+                           error key args)
+           #f)))))
 
 ;; Ensure that the specific ERROR is raised during the test.
 (define-syntax test-error-with-log

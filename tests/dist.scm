@@ -182,10 +182,14 @@ Unbound variable: e"
                    "socket:9:7: In procedure module-lookup: Unbound variable: e"))
    rrepl-get-result))
 
-(test-error-with-log/= "rrepl-get-result, unknown # object error"
-  'node-repl-error "Reader error: scm_lreadr: #<unknown port>:1:3: \
-Unknown # object: (#\\<): scheme@(guile-user)> \
-$4 = #<session #<undefined>@#<undefined>:22 (disconnected) 453fff>"
+;; Here we have to use regexps to match the error message because of
+;; differences between Guile 3.0.7 and older versions.
+;;
+;; See <https://github.com/artyom-poptsov/guile-ssh/issues/28>
+(test-error-with-log/match "rrepl-get-result, unknown # object error"
+  'node-repl-error "Reader error: .+: #<unknown port>:1:3: \
+Unknown # object: \\(.+\\): scheme@\\(guile-user\\)> \
+\\$4 = #<session #<undefined>@#<undefined>:22 \\(disconnected\\) 453fff>"
   (call-with-input-string
    (string-append  "scheme@(guile-user)> $4 = "
                    "#<session #<undefined>@#<undefined>:22 (disconnected) 453fff>")
