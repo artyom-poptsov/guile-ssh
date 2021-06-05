@@ -53,7 +53,7 @@ Return newly generated private key.  Throw `guile-ssh-error' on error.\
 #define FUNC_NAME s_guile_ssh_make_keypair
 {
   ssh_key key = NULL;
-  const struct symbol_mapping *c_type = _scm_to_ssh_key_type (type);
+  const gssh_symbol_t *c_type = _scm_to_ssh_key_type (type);
   int c_length;
   int res;
 
@@ -138,7 +138,7 @@ Throw `guile-ssh-error' on error.\
 #define FUNC_NAME s_guile_ssh_string_to_public_key
 {
   char *c_base64_str = NULL;
-  const struct symbol_mapping *key_type = NULL;
+  const gssh_symbol_t *key_type = NULL;
   ssh_key ssh_public_key = NULL;
   int res;
 
@@ -319,7 +319,7 @@ Read public key from a file FILENAME.  Return a SSH key.\
 }
 #undef FUNC_NAME
 
-static struct symbol_mapping hash_types[] = {
+static gssh_symbol_t hash_types[] = {
   { "sha1", SSH_PUBLICKEY_HASH_SHA1 },
   { "md5",  SSH_PUBLICKEY_HASH_MD5  },
   { NULL,   -1                      }
@@ -339,7 +339,7 @@ Return a bytevector on success, #f on error.\
   size_t hash_len;
   int res;
   SCM ret;
-  const struct symbol_mapping *hash_type = NULL;
+  const gssh_symbol_t *hash_type = NULL;
 
   SCM_ASSERT (scm_is_symbol (type), type, SCM_ARG2, FUNC_NAME);
 

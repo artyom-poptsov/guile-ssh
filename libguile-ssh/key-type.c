@@ -38,7 +38,7 @@
 
 scm_t_bits key_tag; /* Smob tag. */
 
-static const struct symbol_mapping key_types[] = {
+static const gssh_symbol_t key_types[] = {
   { "dss",     SSH_KEYTYPE_DSS     },
   { "rsa",     SSH_KEYTYPE_RSA     },
   { "rsa1",    SSH_KEYTYPE_RSA1    },
@@ -123,7 +123,7 @@ _ssh_key_type_to_scm (int type)
   return _ssh_const_to_scm (key_types, type);
 }
 
-const struct symbol_mapping *
+const gssh_symbol_t *
 _scm_to_ssh_key_type (SCM type)
 {
   return _scm_to_ssh_const (key_types, type);

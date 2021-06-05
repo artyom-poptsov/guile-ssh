@@ -33,7 +33,7 @@
 #include "common.h"
 
 /* Log verbosity levels used by libssh sessions and servers. */
-struct symbol_mapping log_verbosity[] = {
+gssh_symbol_t log_verbosity[] = {
   /* 0, No logging at all */
   { "nolog",              SSH_LOG_NOLOG     },
   /* 1, Only rare and noteworthy events */
@@ -189,7 +189,7 @@ undefined. \
 ")
 #define FUNC_NAME s_guile_ssh_write_log
 {
-  const struct symbol_mapping *c_priority;
+  const gssh_symbol_t *c_priority;
   char *c_function_name;
   char *c_message;
 
@@ -219,7 +219,7 @@ error.  Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_set_log_verbosity_x
 {
-  const struct symbol_mapping *opt = _scm_to_ssh_const (log_verbosity, verbosity);
+  const gssh_symbol_t *opt = _scm_to_ssh_const (log_verbosity, verbosity);
   int res;
 
   if (! opt)

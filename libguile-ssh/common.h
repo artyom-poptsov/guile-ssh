@@ -67,11 +67,13 @@ struct symbol_mapping {
   int   value;
 };
 
-extern SCM
-_ssh_const_to_scm (const struct symbol_mapping *types, int value);
+typedef struct symbol_mapping gssh_symbol_t;
 
-extern const struct symbol_mapping *
-_scm_to_ssh_const (const struct symbol_mapping *types, SCM value);
+extern SCM
+_ssh_const_to_scm (const gssh_symbol_t *types, int value);
+
+extern const gssh_symbol_t *
+_scm_to_ssh_const (const gssh_symbol_t *types, SCM value);
 
 extern SCM
 _scm_object_hex_address (SCM obj);

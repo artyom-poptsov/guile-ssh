@@ -22,7 +22,7 @@
 #include <libguile.h>
 #include <common.h>
 
-extern struct symbol_mapping server_options[];
+extern gssh_symbol_t server_options[];
 
 extern SCM guile_ssh_server_set_x (SCM arg1, SCM arg2, SCM arg3);
 extern SCM guile_ssh_server_accept (SCM arg1);

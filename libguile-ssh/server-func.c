@@ -40,7 +40,7 @@ enum gssh_server_options {
 
 
 /* SSH server options mapping to Guile symbols. */
-struct symbol_mapping server_options[] = {
+gssh_symbol_t server_options[] = {
   { "bindaddr",           SSH_BIND_OPTIONS_BINDADDR       },
   { "bindport",           SSH_BIND_OPTIONS_BINDPORT       },
   { "hostkey",            SSH_BIND_OPTIONS_HOSTKEY        },
@@ -108,9 +108,9 @@ set_blocking_mode (ssh_bind bind, SCM value)
 /* Convert Scheme symbol to libssh constant and set the corresponding
    option to the value of the constant. */
 static inline int
-set_sym_opt (ssh_bind bind, int type, struct symbol_mapping *sm, SCM value)
+set_sym_opt (ssh_bind bind, int type, gssh_symbol_t *sm, SCM value)
 {
-  const struct symbol_mapping *opt = _scm_to_ssh_const (sm, value);
+  const gssh_symbol_t *opt = _scm_to_ssh_const (sm, value);
   if (! opt)
     guile_ssh_error1 ("server-set!", "Wrong value", value);
   return ssh_bind_options_set (bind, type, &opt->value);
@@ -156,7 +156,7 @@ Return value is undefined.\
 #define FUNC_NAME s_guile_ssh_server_set_x
 {
   gssh_server_t *server_data = gssh_server_from_scm (server);
-  const struct symbol_mapping *opt;		  /* Server option */
+  const gssh_symbol_t *opt;		  /* Server option */
   int res;
 
   SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
@@ -194,7 +194,7 @@ not set.  Throw `guile-ssh-error' on error.\
 #define FUNC_NAME s_guile_ssh_server_get
 {
   const gssh_server_t *sd     = gssh_server_from_scm (server);
-  const struct symbol_mapping *opt = _scm_to_ssh_const (server_options, option);
+  const gssh_symbol_t *opt = _scm_to_ssh_const (server_options, option);
 
   if (! opt)
     guile_ssh_error1 (FUNC_NAME, "No such option", option);

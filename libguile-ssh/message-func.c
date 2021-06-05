@@ -181,7 +181,7 @@ SCM_DEFINE (gssh_message_global_request_reply_success,
 
 
 
-static struct symbol_mapping req_types[] = {
+static gssh_symbol_t req_types[] = {
   { "request-auth",         SSH_REQUEST_AUTH         },
   { "request-channel-open", SSH_REQUEST_CHANNEL_OPEN },
   { "request-channel",      SSH_REQUEST_CHANNEL      },
@@ -190,7 +190,7 @@ static struct symbol_mapping req_types[] = {
   { NULL,           -1                               }
 };
 
-static struct symbol_mapping req_auth_subtypes[] = {
+static gssh_symbol_t req_auth_subtypes[] = {
   { "auth-method-unknown",     SSH_AUTH_METHOD_UNKNOWN     },
   { "auth-method-none",        SSH_AUTH_METHOD_NONE        },
   { "auth-method-password",    SSH_AUTH_METHOD_PASSWORD    },
@@ -200,7 +200,7 @@ static struct symbol_mapping req_auth_subtypes[] = {
   { NULL,                      -1                          }
 };
 
-static struct symbol_mapping req_channel_subtypes[] = {
+static gssh_symbol_t req_channel_subtypes[] = {
   { "channel-request-unknown",       SSH_CHANNEL_REQUEST_UNKNOWN       },
   { "channel-request-pty",           SSH_CHANNEL_REQUEST_PTY           },
   { "channel-request-exec",          SSH_CHANNEL_REQUEST_EXEC          },
@@ -211,7 +211,7 @@ static struct symbol_mapping req_channel_subtypes[] = {
   { NULL,                            -1                                }
 };
 
-static struct symbol_mapping req_channel_open_subtypes[] = {
+static gssh_symbol_t req_channel_open_subtypes[] = {
   { "channel-unknown",         SSH_CHANNEL_UNKNOWN         },
   { "channel-session",         SSH_CHANNEL_SESSION         },
   { "channel-direct-tcpip",    SSH_CHANNEL_DIRECT_TCPIP    },
@@ -220,14 +220,14 @@ static struct symbol_mapping req_channel_open_subtypes[] = {
   { NULL,                      -1                          }
 };
 
-static struct symbol_mapping req_global_subtypes[] = {
+static gssh_symbol_t req_global_subtypes[] = {
   { "global-request-unknown",              SSH_GLOBAL_REQUEST_UNKNOWN              },
   { "global-request-tcpip-forward",        SSH_GLOBAL_REQUEST_TCPIP_FORWARD        },
   { "global-request-cancel-tcpip-forward", SSH_GLOBAL_REQUEST_CANCEL_TCPIP_FORWARD },
   { NULL,                                  -1                                      }
 };
 
-static struct symbol_mapping pubkey_state_type[] = {
+static gssh_symbol_t pubkey_state_type[] = {
   { "error", SSH_PUBLICKEY_STATE_ERROR },
   { "none",  SSH_PUBLICKEY_STATE_NONE  },
   { "valid", SSH_PUBLICKEY_STATE_VALID },

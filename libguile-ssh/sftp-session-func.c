@@ -250,7 +250,7 @@ SCM_GSSH_DEFINE (gssh_sftp_unlink, "%gssh-sftp-unlink", 2,
 
 
 /* Possible SFTP return codes. */
-static struct symbol_mapping sftp_return_codes[] = {
+static gssh_symbol_t sftp_return_codes[] = {
   { "fx-ok",                 SSH_FX_OK                  },
   { "fx-eof",                SSH_FX_EOF                 },
   { "fx-no-such-file",       SSH_FX_NO_SUCH_FILE        },

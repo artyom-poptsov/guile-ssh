@@ -21,7 +21,7 @@
 
 #include "common.h"
 
-extern struct symbol_mapping log_verbosity[];
+extern gssh_symbol_t log_verbosity[];
 
 extern void _gssh_log_error (const char* function_name, const char* msg,
                              SCM args);

@@ -43,7 +43,7 @@ enum gssh_session_options {
 
 /* SSH options mapping to Guile symbols. */
 
-static struct symbol_mapping session_options[] = {
+static gssh_symbol_t session_options[] = {
   { "host",               SSH_OPTIONS_HOST               },
   { "port",               SSH_OPTIONS_PORT               },
   { "fd",                 SSH_OPTIONS_FD                 },
@@ -224,9 +224,9 @@ set_port_opt (ssh_session session, int type, SCM value)
 /* Convert Scheme symbol to libssh constant and set the corresponding
    option to the value of the constant. */
 static inline int
-set_sym_opt (ssh_session session, int type, struct symbol_mapping *sm, SCM value)
+set_sym_opt (ssh_session session, int type, gssh_symbol_t *sm, SCM value)
 {
-  const struct symbol_mapping *opt = _scm_to_ssh_const (sm, value);
+  const gssh_symbol_t *opt = _scm_to_ssh_const (sm, value);
   if (! opt)
     guile_ssh_error1 ("session-set!", "Wrong value", value);
   return ssh_options_set (session, type, &opt->value);
@@ -425,7 +425,7 @@ Return value is undefined.\
 #define FUNC_NAME s_guile_ssh_session_set
 {
   gssh_session_t* data = gssh_session_from_scm (session);
-  const struct symbol_mapping *opt;	/* Session option */
+  const gssh_symbol_t *opt;	/* Session option */
   int res;                              /* Result of a function call */
 
   SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
@@ -453,7 +453,7 @@ Return value is undefined.\
 
 
 /* Options whose values can be requested through `session-get' */
-static struct symbol_mapping session_options_getable[] = {
+static gssh_symbol_t session_options_getable[] = {
   { "host",         SSH_OPTIONS_HOST         },
   { "port",         SSH_OPTIONS_PORT         },
   { "user",         SSH_OPTIONS_USER         },
@@ -470,8 +470,8 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
 ")
 #define FUNC_NAME s_guile_ssh_session_get
 {
-  gssh_session_t*sd     = gssh_session_from_scm (session);
-  const struct symbol_mapping *opt = NULL;
+  gssh_session_t* sd       = gssh_session_from_scm (session);
+  const gssh_symbol_t *opt = NULL;
   SCM value = SCM_UNDEFINED;                    /*Value of the option */
   int res = SSH_OK;
 
