@@ -55,6 +55,6 @@ extern int _private_key_p (gssh_key_t *key);
 extern int _public_key_p (gssh_key_t *key);
 
 extern SCM _ssh_key_type_to_scm (int arg1);
-extern const struct symbol_mapping *_scm_to_ssh_key_type (SCM arg1);
+extern const gssh_symbol_t *_scm_to_ssh_key_type (SCM arg1);
 
 #endif	/* ifndef __KEY_TYPE_H__ */
