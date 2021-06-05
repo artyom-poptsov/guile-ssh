@@ -62,12 +62,12 @@ typedef scm_t_port_type* gssh_port_t;
 #endif
 
 
-struct symbol_mapping {
+struct gssh_symbol {
   char* symbol;
   int   value;
 };
 
-typedef struct symbol_mapping gssh_symbol_t;
+typedef struct gssh_symbol gssh_symbol_t;
 
 extern SCM
 _ssh_const_to_scm (const gssh_symbol_t *types, int value);
