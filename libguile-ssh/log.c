@@ -29,6 +29,7 @@
 #include <stdio.h>              /* DEBUG */
 #include <unistd.h>             /* DEBUG */
 
+#include "log.h"
 #include "error.h"
 #include "common.h"
 
@@ -289,6 +290,7 @@ _gssh_log_warning (const char* function_name, const char* msg, SCM args)
   scm_dynwind_end ();
 }
 
+#ifdef DEBUG
 void
 _gssh_log_debug (const char* function_name, const char* msg, SCM args)
 {
@@ -310,7 +312,6 @@ _gssh_log_debug1 (const char* function_name, const char* msg)
   _ssh_log (SSH_LOG_FUNCTIONS, function_name, "[GSSH DEBUG] %s", msg);
 }
 
-#ifdef DEBUG
 void
 _gssh_log_debug_format(const char* function_name, SCM args, const char* fmt, ...)
 {
