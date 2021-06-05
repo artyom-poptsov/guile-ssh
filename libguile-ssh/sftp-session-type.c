@@ -92,7 +92,7 @@ SCM_GSSH_DEFINE (gssh_make_sftp_session, "%gssh-make-sftp-session", 1,
   if (! sftp_session)
     guile_ssh_error1 (FUNC_NAME, "Could not create a SFTP session", session);
 
-  return _scm_from_sftp_session (sftp_session, session);
+  return make_gssh_sftp_session (sftp_session, session);
 }
 #undef FUNC_NAME
 
@@ -105,12 +105,11 @@ _scm_to_sftp_session_data (SCM x)
 }
 
 SCM
-_scm_from_sftp_session (sftp_session sftp_session, SCM session)
+make_gssh_sftp_session (sftp_session sftp_session, SCM session)
 {
   SCM smob;
   gssh_sftp_session_t *sftp_sd
-    = (gssh_sftp_session_t *) scm_gc_malloc (sizeof
-                                             (gssh_sftp_session_t),
+    = (gssh_sftp_session_t *) scm_gc_malloc (sizeof (gssh_sftp_session_t),
                                              "sftp session");
   sftp_sd->sftp_session = sftp_session;
   sftp_sd->session      = session;

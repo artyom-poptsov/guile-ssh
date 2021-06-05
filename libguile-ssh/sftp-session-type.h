@@ -48,7 +48,7 @@ extern void init_sftp_session_type (void);
 /* Internal procedures */
 
 extern gssh_sftp_session_t* _scm_to_sftp_session_data (SCM x);
-extern SCM _scm_from_sftp_session (sftp_session sftp_session, SCM session);
+extern SCM make_gssh_sftp_session (sftp_session sftp_session, SCM session);
 
 #endif  /* ifndef __SFTP_SESSION_TYPE_H__ */
 
