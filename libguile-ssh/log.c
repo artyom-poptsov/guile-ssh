@@ -197,7 +197,7 @@ undefined. \
   SCM_ASSERT (scm_string_p (function_name), function_name, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (scm_string_p (message),       message,       SCM_ARG3, FUNC_NAME);
 
-  c_priority = _scm_to_ssh_const (log_verbosity, priority);
+  c_priority = gssh_symbol_from_scm (log_verbosity, priority);
   if (! c_priority)
     guile_ssh_error1 (FUNC_NAME, "Wrong priority level", priority);
 
@@ -219,7 +219,7 @@ error.  Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_set_log_verbosity_x
 {
-  const gssh_symbol_t *opt = _scm_to_ssh_const (log_verbosity, verbosity);
+  const gssh_symbol_t *opt = gssh_symbol_from_scm (log_verbosity, verbosity);
   int res;
 
   if (! opt)
@@ -240,7 +240,7 @@ SCM_DEFINE (guile_ssh_get_log_verbosity,
 Get global log verbosity value.\
 ")
 {
-  return _ssh_const_to_scm (log_verbosity, ssh_get_log_level ());
+  return gssh_symbol_to_scm (log_verbosity, ssh_get_log_level ());
 }
 
 

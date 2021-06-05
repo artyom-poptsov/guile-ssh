@@ -120,13 +120,13 @@ _print (SCM smob, SCM port, scm_print_state *pstate)
 SCM
 _ssh_key_type_to_scm (int type)
 {
-  return _ssh_const_to_scm (key_types, type);
+  return gssh_symbol_to_scm (key_types, type);
 }
 
 const gssh_symbol_t *
 _scm_to_ssh_key_type (SCM type)
 {
-  return _scm_to_ssh_const (key_types, type);
+  return gssh_symbol_from_scm (key_types, type);
 }
 
 

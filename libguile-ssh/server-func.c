@@ -110,7 +110,7 @@ set_blocking_mode (ssh_bind bind, SCM value)
 static inline int
 set_sym_opt (ssh_bind bind, int type, gssh_symbol_t *sm, SCM value)
 {
-  const gssh_symbol_t *opt = _scm_to_ssh_const (sm, value);
+  const gssh_symbol_t *opt = gssh_symbol_from_scm (sm, value);
   if (! opt)
     guile_ssh_error1 ("server-set!", "Wrong value", value);
   return ssh_bind_options_set (bind, type, &opt->value);
@@ -161,7 +161,7 @@ Return value is undefined.\
 
   SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
 
-  opt = _scm_to_ssh_const (server_options, option);
+  opt = gssh_symbol_from_scm (server_options, option);
 
   if (! opt)
     guile_ssh_error1 (FUNC_NAME, "No such option", option);
@@ -194,7 +194,7 @@ not set.  Throw `guile-ssh-error' on error.\
 #define FUNC_NAME s_guile_ssh_server_get
 {
   const gssh_server_t *sd     = gssh_server_from_scm (server);
-  const gssh_symbol_t *opt = _scm_to_ssh_const (server_options, option);
+  const gssh_symbol_t *opt = gssh_symbol_from_scm (server_options, option);
 
   if (! opt)
     guile_ssh_error1 (FUNC_NAME, "No such option", option);

@@ -280,7 +280,7 @@ SCM_GSSH_DEFINE (gssh_sftp_get_error, "%gssh-sftp-get-error", 1,
                         sftp_session);
     }
 
-  return _ssh_const_to_scm (sftp_return_codes, rc);
+  return gssh_symbol_to_scm (sftp_return_codes, rc);
 }
 #undef FUNC_NAME
 

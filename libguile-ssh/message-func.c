@@ -244,25 +244,25 @@ _ssh_message_type_to_scm (ssh_message msg)
 {
   int type     = ssh_message_type (msg);
   int subtype  = ssh_message_subtype (msg);
-  SCM scm_type = _ssh_const_to_scm (req_types, type);
+  SCM scm_type = gssh_symbol_to_scm (req_types, type);
   SCM scm_subtype;
 
   switch (type)
     {
     case SSH_REQUEST_AUTH:
-      scm_subtype = _ssh_const_to_scm (req_auth_subtypes, subtype);
+      scm_subtype = gssh_symbol_to_scm (req_auth_subtypes, subtype);
       return scm_list_2 (scm_type, scm_subtype);
 
     case SSH_REQUEST_CHANNEL_OPEN:
-      scm_subtype = _ssh_const_to_scm (req_channel_open_subtypes, subtype);
+      scm_subtype = gssh_symbol_to_scm (req_channel_open_subtypes, subtype);
       return scm_list_2 (scm_type, scm_subtype);
 
     case SSH_REQUEST_CHANNEL:
-      scm_subtype = _ssh_const_to_scm (req_channel_subtypes, subtype);
+      scm_subtype = gssh_symbol_to_scm (req_channel_subtypes, subtype);
       return scm_list_2 (scm_type, scm_subtype);
 
     case SSH_REQUEST_GLOBAL:
-      scm_subtype = _ssh_const_to_scm (req_global_subtypes, subtype);
+      scm_subtype = gssh_symbol_to_scm (req_global_subtypes, subtype);
       return scm_list_2 (scm_type, scm_subtype);
 
     case SSH_REQUEST_SERVICE:
@@ -311,7 +311,7 @@ get_auth_req (ssh_message msg, SCM scm_msg) /* FIXME: accept only SCM */
 
   SCM_SIMPLE_VECTOR_SET (result, 2, _scm_from_ssh_key (public_key, scm_msg));
 
-  pkey_state = _ssh_const_to_scm (pubkey_state_type,
+  pkey_state = gssh_symbol_to_scm (pubkey_state_type,
                                   (int) ssh_message_auth_publickey_state (msg));
   SCM_SIMPLE_VECTOR_SET (result, 3, pkey_state);
 
@@ -485,7 +485,7 @@ Get a request object from the message MSG\
 
     default:
       guile_ssh_error1 (FUNC_NAME, "Wrong message type",
-                        _ssh_const_to_scm (req_types, type));
+                        gssh_symbol_to_scm (req_types, type));
 
     }
 

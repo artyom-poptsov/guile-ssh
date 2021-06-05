@@ -70,10 +70,10 @@ struct gssh_symbol {
 typedef struct gssh_symbol gssh_symbol_t;
 
 extern SCM
-_ssh_const_to_scm (const gssh_symbol_t *types, int value);
+gssh_symbol_to_scm (const gssh_symbol_t *types, int value);
 
 extern const gssh_symbol_t *
-_scm_to_ssh_const (const gssh_symbol_t *types, SCM value);
+gssh_symbol_from_scm (const gssh_symbol_t *types, SCM value);
 
 extern SCM
 _scm_object_hex_address (SCM obj);

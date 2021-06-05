@@ -345,7 +345,7 @@ Return a bytevector on success, #f on error.\
 
   scm_dynwind_begin (0);
 
-  hash_type = _scm_to_ssh_const (hash_types, type);
+  hash_type = gssh_symbol_from_scm (hash_types, type);
   if (! hash_type)
     guile_ssh_error1 (FUNC_NAME, "Wrong type", type);
 

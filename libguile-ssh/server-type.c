@@ -70,10 +70,10 @@ _print (SCM server, SCM port, scm_print_state *pstate)
 {
     gssh_server_t *sd = gssh_server_from_scm (server);
     SCM bindaddr = scm_assoc_ref (sd->options,
-                                  _ssh_const_to_scm (server_options,
+                                  gssh_symbol_to_scm (server_options,
                                                      SSH_BIND_OPTIONS_BINDADDR));
     SCM bindport = scm_assoc_ref (sd->options,
-                                  _ssh_const_to_scm (server_options,
+                                  gssh_symbol_to_scm (server_options,
                                                      SSH_BIND_OPTIONS_BINDPORT));
     scm_puts ("#<server", port);
     if (scm_is_true (bindaddr))

@@ -226,7 +226,7 @@ set_port_opt (ssh_session session, int type, SCM value)
 static inline int
 set_sym_opt (ssh_session session, int type, gssh_symbol_t *sm, SCM value)
 {
-  const gssh_symbol_t *opt = _scm_to_ssh_const (sm, value);
+  const gssh_symbol_t *opt = gssh_symbol_from_scm (sm, value);
   if (! opt)
     guile_ssh_error1 ("session-set!", "Wrong value", value);
   return ssh_options_set (session, type, &opt->value);
@@ -430,7 +430,7 @@ Return value is undefined.\
 
   SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
 
-  opt = _scm_to_ssh_const (session_options, option);
+  opt = gssh_symbol_from_scm (session_options, option);
 
   if(! opt)
     guile_ssh_error1 (FUNC_NAME, "No such option", option);
@@ -477,7 +477,7 @@ Get value of the OPTION.  Throw `guile-ssh-error' on an error.\
 
   SCM_ASSERT (scm_is_symbol (option), option, SCM_ARG2, FUNC_NAME);
 
-  opt = _scm_to_ssh_const (session_options_getable, option);
+  opt = gssh_symbol_from_scm (session_options_getable, option);
   if (! opt)
     guile_ssh_error1 (FUNC_NAME, "Wrong option", option);
 
