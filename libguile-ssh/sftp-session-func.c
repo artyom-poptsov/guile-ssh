@@ -37,7 +37,7 @@
 SCM_GSSH_DEFINE (gssh_sftp_init, "%gssh-sftp-init", 1, (SCM sftp_session))
 #define FUNC_NAME s_gssh_sftp_init
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   if (sftp_init (sftp_sd->sftp_session))
     {
       guile_ssh_error1 (FUNC_NAME, "Could not initialize the SFTP session.",
@@ -51,7 +51,7 @@ SCM_GSSH_DEFINE (gssh_sftp_init, "%gssh-sftp-init", 1, (SCM sftp_session))
 SCM_GSSH_DEFINE (gssh_sftp_get_session, "%gssh-sftp-get-session", 1,
                  (SCM sftp_session))
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   return sftp_sd->session;
 }
 
@@ -60,7 +60,7 @@ SCM_GSSH_DEFINE (gssh_sftp_mkdir, "%gssh-sftp-mkdir", 3,
                  (SCM sftp_session, SCM dirname, SCM mode))
 #define FUNC_NAME s_gssh_sftp_mkdir
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   char *c_dirname;
 
   SCM_ASSERT (scm_is_string (dirname), dirname, SCM_ARG2, FUNC_NAME);
@@ -86,7 +86,7 @@ SCM_GSSH_DEFINE (gssh_sftp_rmdir, "%gssh-sftp-rmdir", 2,
                  (SCM sftp_session, SCM dirname))
 #define FUNC_NAME s_gssh_sftp_rmdir
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   char *c_dirname;
 
   SCM_ASSERT (scm_is_string (dirname), dirname, SCM_ARG2, FUNC_NAME);
@@ -112,7 +112,7 @@ SCM_GSSH_DEFINE (gssh_sftp_mv, "%gssh-sftp-mv", 3,
                  (SCM sftp_session, SCM source, SCM dest))
 #define FUNC_NAME s_gssh_sftp_mv
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   char *c_source;
   char *c_dest;
 
@@ -143,7 +143,7 @@ SCM_GSSH_DEFINE (gssh_sftp_chmod, "%gssh-sftp-chmod", 3,
                  (SCM sftp_session, SCM filename, SCM mode))
 #define FUNC_NAME s_gssh_sftp_chmod
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   char *c_filename;
 
   SCM_ASSERT (scm_is_string (filename), filename, SCM_ARG2, FUNC_NAME);
@@ -171,7 +171,7 @@ SCM_GSSH_DEFINE (gssh_sftp_symlink, "%gssh-sftp-symlink", 3,
                  (SCM sftp_session, SCM target, SCM dest))
 #define FUNC_NAME s_gssh_sftp_symlink
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   char *c_target;
   char *c_dest;
 
@@ -202,7 +202,7 @@ SCM_GSSH_DEFINE (gssh_sftp_readlink, "%gssh-sftp-readlink", 2,
                  (SCM sftp_session, SCM path))
 #define FUNC_NAME s_gssh_sftp_readlink
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   char *c_path;
   char *ret;
 
@@ -225,7 +225,7 @@ SCM_GSSH_DEFINE (gssh_sftp_unlink, "%gssh-sftp-unlink", 2,
                  (SCM sftp_session, SCM path))
 #define FUNC_NAME s_gssh_sftp_unlink
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   char *c_path;
   int ret;
 
@@ -272,7 +272,7 @@ SCM_GSSH_DEFINE (gssh_sftp_get_error, "%gssh-sftp-get-error", 1,
                  (SCM sftp_session))
 #define FUNC_NAME s_gssh_sftp_get_error
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   int rc = sftp_get_error (sftp_sd->sftp_session);
   if (rc < 0)
     {

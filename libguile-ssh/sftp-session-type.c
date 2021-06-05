@@ -37,7 +37,7 @@ scm_t_bits sftp_session_tag;    /* Smob tag. */
 static SCM
 _mark (SCM sftp_session)
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   return sftp_sd->session;
 }
 
@@ -54,8 +54,8 @@ _free (SCM sftp_session)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-  gssh_sftp_session_t *sftp_sd1 = _scm_to_sftp_session_data (x1);
-  gssh_sftp_session_t *sftp_sd2 = _scm_to_sftp_session_data (x2);
+  gssh_sftp_session_t *sftp_sd1 = gssh_sftp_session_from_scm (x1);
+  gssh_sftp_session_t *sftp_sd2 = gssh_sftp_session_from_scm (x2);
 
   if ((! sftp_sd1) || (! sftp_sd2))
     return SCM_BOOL_F;
@@ -98,7 +98,7 @@ SCM_GSSH_DEFINE (gssh_make_sftp_session, "%gssh-make-sftp-session", 1,
 
 
 gssh_sftp_session_t *
-_scm_to_sftp_session_data (SCM x)
+gssh_sftp_session_from_scm (SCM x)
 {
   scm_assert_smob_type (sftp_session_tag, x);
   return (gssh_sftp_session_t *) SCM_SMOB_DATA (x);
