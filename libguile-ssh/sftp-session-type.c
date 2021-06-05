@@ -1,6 +1,6 @@
 /* sftp-session-type.c -- SFTP session smob.
  *
- * Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2015-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
