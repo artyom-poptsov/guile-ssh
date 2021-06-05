@@ -37,15 +37,15 @@ scm_t_bits sftp_session_tag;    /* Smob tag. */
 static SCM
 _mark (SCM sftp_session)
 {
-  struct sftp_session_data *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
   return sftp_sd->session;
 }
 
 static size_t
 _free (SCM sftp_session)
 {
-  struct sftp_session_data *sftp_sd
-    = (struct sftp_session_data *) SCM_SMOB_DATA (sftp_session);
+  gssh_sftp_session_t *sftp_sd
+    = (gssh_sftp_session_t *) SCM_SMOB_DATA (sftp_session);
 
   sftp_free (sftp_sd->sftp_session);
   return 0;
@@ -54,15 +54,15 @@ _free (SCM sftp_session)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-    struct sftp_session_data *sftp_sd1 = _scm_to_sftp_session_data (x1);
-    struct sftp_session_data *sftp_sd2 = _scm_to_sftp_session_data (x2);
+  gssh_sftp_session_t *sftp_sd1 = _scm_to_sftp_session_data (x1);
+  gssh_sftp_session_t *sftp_sd2 = _scm_to_sftp_session_data (x2);
 
-    if ((! sftp_sd1) || (! sftp_sd2))
-        return SCM_BOOL_F;
-    else if (sftp_sd1 != sftp_sd2)
-        return SCM_BOOL_F;
-    else
-        return SCM_BOOL_T;
+  if ((! sftp_sd1) || (! sftp_sd2))
+    return SCM_BOOL_F;
+  else if (sftp_sd1 != sftp_sd2)
+    return SCM_BOOL_F;
+  else
+    return SCM_BOOL_T;
 }
 
 /* Printing procedure. */
@@ -97,21 +97,21 @@ SCM_GSSH_DEFINE (gssh_make_sftp_session, "%gssh-make-sftp-session", 1,
 #undef FUNC_NAME
 
 
-struct sftp_session_data *
+gssh_sftp_session_t *
 _scm_to_sftp_session_data (SCM x)
 {
   scm_assert_smob_type (sftp_session_tag, x);
-  return (struct sftp_session_data *) SCM_SMOB_DATA (x);
+  return (gssh_sftp_session_t *) SCM_SMOB_DATA (x);
 }
 
 SCM
 _scm_from_sftp_session (sftp_session sftp_session, SCM session)
 {
   SCM smob;
-  struct sftp_session_data *sftp_sd
-    = (struct sftp_session_data *) scm_gc_malloc (sizeof
-                                                  (struct sftp_session_data),
-                                                  "sftp session");
+  gssh_sftp_session_t *sftp_sd
+    = (gssh_sftp_session_t *) scm_gc_malloc (sizeof
+                                             (gssh_sftp_session_t),
+                                             "sftp session");
   sftp_sd->sftp_session = sftp_session;
   sftp_sd->session      = session;
   SCM_NEWSMOB (smob, sftp_session_tag, sftp_sd);
@@ -122,7 +122,7 @@ void
 init_sftp_session_type (void)
 {
   sftp_session_tag = scm_make_smob_type ("sftp session",
-                                         sizeof (struct sftp_session_data));
+                                         sizeof (gssh_sftp_session_t));
   set_smob_callbacks (sftp_session_tag, _mark, _free, _equalp, _print);
 
 #include "sftp-session-type.x"

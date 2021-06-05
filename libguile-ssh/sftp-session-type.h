@@ -28,13 +28,15 @@ extern scm_t_bits sftp_session_tag;
 
 
 /* Smob data. */
-struct sftp_session_data {
+struct gssh_sftp_session {
   /* Reference to the parent session.  We need to keep the reference
      to prevent the session from premature freeing by the GC. */
   SCM session;
 
   sftp_session sftp_session;
 };
+
+typedef struct gssh_sftp_session gssh_sftp_session_t;
 
 
 extern SCM gssh_sftp_session_p (SCM arg1);
@@ -45,7 +47,7 @@ extern void init_sftp_session_type (void);
 
 /* Internal procedures */
 
-extern struct sftp_session_data * _scm_to_sftp_session_data (SCM x);
+extern gssh_sftp_session_t* _scm_to_sftp_session_data (SCM x);
 extern SCM _scm_from_sftp_session (sftp_session sftp_session, SCM session);
 
 #endif  /* ifndef __SFTP_SESSION_TYPE_H__ */
