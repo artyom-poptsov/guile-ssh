@@ -119,6 +119,11 @@ SCM_DEFINE (guile_ssh_default_libssh_log_printer,
 
   scm_newline (scm_current_error_port ());
 
+  scm_remember_upto_here_1 (priority);
+  scm_remember_upto_here_1 (function_name);
+  scm_remember_upto_here_1 (message);
+  scm_remember_upto_here_1 (user_data);
+
   return SCM_UNDEFINED;
 }
 
