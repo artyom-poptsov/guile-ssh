@@ -247,7 +247,7 @@ ptob_close (SCM channel)
     }
   else
     {
-      _gssh_log_debug1 ("ptob_close", "the channel is already freeed.");
+      _gssh_log_debug1 ("ptob_close", "the channel is already freed.");
     }
 
   SCM_SETSTREAM (channel, NULL);
