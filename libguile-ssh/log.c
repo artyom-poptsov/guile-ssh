@@ -256,23 +256,57 @@ Get global log verbosity value.\
   return gssh_symbol_to_scm (log_verbosity, ssh_get_log_level ());
 }
 
+static void
+_gssh_log (const char* c_prefix,
+           int c_priority,
+           const char* c_function_name,
+           const char* msg,
+           SCM args)
+{
+  SCM prefix   = scm_from_locale_string (c_prefix);
+  SCM message  = scm_from_locale_string (msg);
+  SCM priority = scm_from_int (c_priority);
+  SCM function = scm_from_locale_string (c_function_name);
+
+  if (args != SCM_UNDEFINED)
+    {
+      SCM str_obj  = scm_object_to_string (args, SCM_UNDEFINED);
+      message  = scm_string_append (scm_list_n (prefix,
+                                                scm_from_locale_string (" "),
+                                                message,
+                                                scm_from_locale_string (": "),
+                                                str_obj,
+                                                SCM_UNDEFINED));
+    }
+  else
+    {
+      message  = scm_string_append (scm_list_n (prefix,
+                                                scm_from_locale_string (" "),
+                                                message,
+                                                SCM_UNDEFINED));
+    }
+
+  SCM userdata = guile_ssh_get_log_userdata ();
+
+  scm_call_4 (logging_callback,
+              priority,
+              function,
+              message,
+              userdata);
+
+  scm_remember_upto_here_1 (args);
+  scm_remember_upto_here_1 (prefix);
+  scm_remember_upto_here_1 (message);
+  scm_remember_upto_here_1 (function);
+  scm_remember_upto_here_1 (userdata);
+}
+
 
 /* Write an error MESSAGE along with ARGS to the libssh log. */
 void
 _gssh_log_error (const char* function_name, const char* msg, SCM args)
 {
-  char *c_str;
-  scm_dynwind_begin (0);
-
-  c_str = scm_to_locale_string (scm_object_to_string (args, SCM_UNDEFINED));
-  scm_dynwind_free (c_str);
-
-  _ssh_log (SSH_LOG_NOLOG, function_name, "[GSSH ERROR] %s: %s",
-            msg, c_str);
-
-  scm_remember_upto_here_1 (args);
-
-  scm_dynwind_end ();
+  _gssh_log ("[GSSH ERROR]", SSH_LOG_NOLOG, function_name, msg, args);
 }
 
 void
@@ -296,8 +330,7 @@ _gssh_log_warning (const char* function_name, const char* msg, SCM args)
   c_str = scm_to_locale_string (scm_object_to_string (args, SCM_UNDEFINED));
   scm_dynwind_free (c_str);
 
-  _ssh_log (SSH_LOG_WARNING, function_name, "[GSSH WARNING] %s: %s",
-            msg, c_str);
+  _gssh_log ("[GSSH WARNING]", SSH_LOG_WARNING, function_name, msg, c_str);
 
   scm_dynwind_end ();
 }
@@ -312,8 +345,7 @@ _gssh_log_debug (const char* function_name, const char* msg, SCM args)
   c_str = scm_to_locale_string (scm_object_to_string (args, SCM_UNDEFINED));
   scm_dynwind_free (c_str);
 
-  _ssh_log (SSH_LOG_FUNCTIONS, function_name, "[GSSH DEBUG] %s: %s",
-            msg, c_str);
+  _gssh_log ("[GSSH DEBUG]", SSH_LOG_FUNCTIONS, function_name, msg, c_str);
 
   scm_dynwind_end ();
 }
@@ -321,7 +353,8 @@ _gssh_log_debug (const char* function_name, const char* msg, SCM args)
 void
 _gssh_log_debug1 (const char* function_name, const char* msg)
 {
-  _ssh_log (SSH_LOG_FUNCTIONS, function_name, "[GSSH DEBUG] %s", msg);
+  _gssh_log ("[GSSH DEBUG]", SSH_LOG_FUNCTIONS, function_name, msg,
+             SCM_UNDEFINED);
 }
 
 void
