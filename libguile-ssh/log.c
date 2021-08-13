@@ -207,6 +207,11 @@ undefined. \
               message,
               userdata);
 
+  scm_remember_upto_here_1 (priority);
+  scm_remember_upto_here_1 (function_name);
+  scm_remember_upto_here_1 (message);
+  scm_remember_upto_here_1 (userdata);
+
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
