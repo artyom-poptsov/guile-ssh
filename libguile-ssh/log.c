@@ -195,29 +195,17 @@ undefined. \
 ")
 #define FUNC_NAME s_guile_ssh_write_log
 {
-  const gssh_symbol_t *c_priority;
-  char *c_function_name;
-  char *c_message;
-
-  scm_dynwind_begin (0);
-
   SCM_ASSERT (scm_symbol_p (priority),      priority,      SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (scm_string_p (function_name), function_name, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (scm_string_p (message),       message,       SCM_ARG3, FUNC_NAME);
 
-  c_priority = gssh_symbol_from_scm (log_verbosity, priority);
-  if (! c_priority)
-    guile_ssh_error1 (FUNC_NAME, "Wrong priority level", priority);
+  SCM userdata = guile_ssh_get_log_userdata ();
 
-  c_function_name = scm_to_locale_string (function_name);
-  scm_dynwind_free (c_function_name);
-
-  c_message       = scm_to_locale_string (message);
-  scm_dynwind_free (c_message);
-
-  _ssh_log (c_priority->value, c_function_name, "%s", c_message);
-
-  scm_dynwind_end ();
+  scm_call_4 (logging_callback,
+              priority,
+              function_name,
+              message,
+              userdata);
 
   return SCM_UNDEFINED;
 }
