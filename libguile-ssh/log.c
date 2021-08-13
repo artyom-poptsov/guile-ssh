@@ -255,10 +255,11 @@ _gssh_log (const char* c_prefix,
   SCM message  = scm_from_locale_string (msg);
   SCM priority = scm_from_int (c_priority);
   SCM function = scm_from_locale_string (c_function_name);
+  SCM str_obj  = SCM_BOOL_F;
 
   if (args != SCM_UNDEFINED)
     {
-      SCM str_obj  = scm_object_to_string (args, SCM_UNDEFINED);
+      str_obj  = scm_object_to_string (args, SCM_UNDEFINED);
       message  = scm_string_append (scm_list_n (prefix,
                                                 scm_from_locale_string (" "),
                                                 message,
@@ -282,6 +283,7 @@ _gssh_log (const char* c_prefix,
               message,
               userdata);
 
+  scm_remember_upto_here_1 (str_obj);
   scm_remember_upto_here_1 (args);
   scm_remember_upto_here_1 (prefix);
   scm_remember_upto_here_1 (message);
