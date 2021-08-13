@@ -54,6 +54,8 @@ static int is_logging_callback_set = 0;
 /* A Scheme log printer. */
 static SCM logging_callback = SCM_BOOL_F;
 
+static SCM userdata = SCM_BOOL_F;
+
 /* The libssh logging callback which calls Scheme callback procedure. */
 void
 libssh_logging_callback (int        c_priority,
@@ -64,7 +66,6 @@ libssh_logging_callback (int        c_priority,
   SCM priority = scm_from_int (c_priority);
   SCM function = scm_from_locale_string (c_function_name);
   SCM message  = scm_from_locale_string (c_message);
-  SCM userdata = (SCM) c_userdata;
 
   scm_call_4 (logging_callback, priority, function, message, userdata);
 
@@ -168,9 +169,7 @@ SCM_DEFINE (guile_ssh_set_log_useradata_x,
             "")
 #define FUNC_NAME s_guile_ssh_set_log_useradata_x
 {
-  int res = ssh_set_log_userdata (data);
-  if (res != SSH_OK)
-    guile_ssh_error1 (FUNC_NAME, "Could not set userdata", data);
+  userdata = data;
 
   return SCM_UNDEFINED;
 }
@@ -181,8 +180,7 @@ SCM_DEFINE (guile_ssh_get_log_userdata,
             (void),
             "")
 {
-  void *data = (void *) ssh_get_log_userdata ();
-  return data ? (SCM) data : SCM_BOOL_F;
+  return userdata;
 }
 
 
