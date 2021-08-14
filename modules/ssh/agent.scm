@@ -103,7 +103,7 @@
             (loop (readdir stream))))))
 
   (define (agent-socket->pid agent-socket)
-    (cdr (string-split agent-socket #\.)))
+    (cadr (string-split agent-socket #\.)))
 
   (let ((dir (opendir path))
         (uid (user->uid user)))
@@ -116,11 +116,14 @@
           (let ((file-name (string-append path "/" entry)))
             (if (and (regexp-exec %ssh-agent-dir-regexp entry)
                      (owned-by-user? file-name uid))
-                (let ((agent-socket (get-agent-socket-file file-name)))
+                (let* ((agent-socket (get-agent-socket-file file-name))
+                       (auth-sock    (string-append file-name "/" agent-socket))
+                       (agent-pid    (agent-socket->pid agent-socket)))
                   (loop (readdir dir)
-                        (cons `(,(string-append file-name "/" agent-socket)
-                                . ,(agent-socket->pid agent-socket))
-                              info)))
+                        (append info
+                                (list
+                                 (list (cons 'SSH_AUTH_SOCK auth-sock)
+                                       (cons 'SSH_AGENT_PID agent-pid))))))
                 (loop (readdir dir) info)))))))
 
 (define (ssh-agent-sock-get)
