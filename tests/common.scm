@@ -522,8 +522,6 @@ scheme@(guile-user)> ")
   "Execute each procedure from PROCS list in a separate process.  The last
 procedure from PROCS is executed in the main process; return the result of the
 main procedure."
-  (define (signal-handler args)
-    (primitive-exit 0))
   (format-log/scm 'nolog "multifork" "procs 1: ~a~%" procs)
   (let* ((len      (length procs))
          (mainproc (car (list-tail procs (- len 1))))
@@ -533,10 +531,8 @@ main procedure."
                             (if (zero? pid)
                                 (dynamic-wind
                                   (lambda ()
-                                    (test-runner-reset (test-runner-current))
-                                    (set! test-log-to-file #f)
-                                    (sigaction SIGTERM signal-handler)
-                                    (format-log/scm 'nolog "multifork"
+                                    (format-log/scm 'nolog
+                                                    "multifork"
                                                     "Running proc ...~%"))
                                   proc
                                   (lambda ()
@@ -550,7 +546,6 @@ main procedure."
                                   (format-log/scm 'nolog "multifork" "PID: ~a~%" pid)
                                   pid))))
                         procs)))
-    (format-log/scm 'nolog "multifork" "procs 2: ~a~%" procs)
     (format-log/scm 'nolog "multifork" "mainproc: ~a~%" mainproc)
     (format-log/scm 'nolog "multifork" "PIDs: ~a~%" pids)
     (dynamic-wind
