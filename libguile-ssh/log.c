@@ -193,14 +193,20 @@ undefined. \
 ")
 #define FUNC_NAME s_guile_ssh_write_log
 {
+  const gssh_symbol_t *c_priority;
+
   SCM_ASSERT (scm_symbol_p (priority),      priority,      SCM_ARG1, FUNC_NAME);
   SCM_ASSERT (scm_string_p (function_name), function_name, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT (scm_string_p (message),       message,       SCM_ARG3, FUNC_NAME);
 
   SCM userdata = guile_ssh_get_log_userdata ();
 
+  c_priority = gssh_symbol_from_scm (log_verbosity, priority);
+  if (! c_priority)
+    guile_ssh_error1 (FUNC_NAME, "Wrong priority level", priority);
+
   scm_call_4 (logging_callback,
-              priority,
+              scm_from_int (c_priority->value),
               function_name,
               message,
               userdata);
