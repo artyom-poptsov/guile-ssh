@@ -20,7 +20,6 @@
 
 (define (main args)
   ;; (log args)
-  (usleep 100)
   (let ((test-suite-name (list-ref args 1))
         (test-name       (list-ref args 2)))
     (unless (file-exists? test-suite-name)
@@ -38,5 +37,5 @@
       (server-listen s)
       (let ((p (open-output-file (string-append test-name ".run"))))
         (close p))
-      (log handler)
+      (usleep 100)
       (handler s))))
