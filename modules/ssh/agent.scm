@@ -39,17 +39,18 @@
 
 (define-module (ssh agent)
   #:use-module (ice-9 regex)
+  #:use-module (ice-9 rdelim)
+  #:use-module (ice-9 popen)
   #:export (ssh-agent-sock-get
             ssh-agent-sock-set!
-            ssh-agent-find-socks
             ssh-agent-start
-            openssh-agent-info
-            openssh-agent-setenv))
+            ssh-agent-info))
 
 
 
 (define %ssh-agent-sock-env   "SSH_AUTH_SOCK")
-(define %ssh-agent-dir-regexp "^ssh-[A-Za-z0-9]{12}")
+(define %ssh-agent-dir-regexp (make-regexp "^ssh-[A-Za-z0-9]{12}"))
+(define %ssh-agent-pid-file-regexp (make-regexp "agent.[0-9]+"))
 (define %ssh-auth-sock-regexp
   (make-regexp "SSH_AUTH_SOCK=(.*); export SSH_AUTH_SOCK;"))
 
@@ -72,7 +73,9 @@
                                       ssh-agent-pid-data)))
               (match:substring match 1)))))))
 
-(define* (openssh-agent-info #:optional (user (getenv "USER")))
+(define* (ssh-agent-info #:key
+                         (user (getenv "USER"))
+                         (path (or (getenv "TMPDIR") "/tmp")))
   "Get OpenSSH agent information for a given USER as a list."
 
   (define (owned-by-user? file-name uid)
@@ -81,36 +84,35 @@
   (define (user->uid user)
     (passwd:uid (getpwnam user)))
 
-  (define (readdir-3rd dir-name)
+  (define (get-agent-socket-file dir-name)
     (let ((stream (opendir dir-name)))
-      (readdir stream)
-      (readdir stream)
-      (let ((file (readdir stream)))
-        (closedir stream)
-        file)))
+      (let loop ((file-name (readdir stream)))
+        (if (regexp-exec %ssh-agent-pid-file-regexp file-name)
+            (begin
+              (closedir stream)
+              file-name)
+            (loop (readdir stream))))))
 
   (define (agent-socket->pid agent-socket)
     (cdr (string-split agent-socket #\.)))
 
-  (let ((dir (opendir "/tmp"))
+  (let ((dir (opendir path))
         (uid (user->uid user)))
     (let loop ((entry (readdir dir))
                (info  '()))
       (if (eof-object? entry)
-          info
-          (let ((file-name (string-append "/tmp/" entry)))
+          (begin
+            (closedir dir)
+            info)
+          (let ((file-name (string-append path "/" entry)))
             (if (and (regexp-exec %ssh-agent-dir-regexp entry)
                      (owned-by-user? file-name uid))
-                (let ((agent-socket (readdir-3rd file-name)))
+                (let ((agent-socket (get-agent-socket-file file-name)))
                   (loop (readdir dir)
                         (cons `(,(string-append file-name "/" agent-socket)
                                 . ,(agent-socket->pid agent-socket))
                               info)))
                 (loop (readdir dir) info)))))))
-
-(define (openssh-agent-setenv)
-  "Setup openssh agent environment variables for the current user."
-  (setenv "SSH_AUTH_SOCK" (caar (openssh-agent-info))))
 
 (define (ssh-agent-sock-get)
   "Get the 'SSH_AGENT_SOCK' environment variable value."
@@ -119,34 +121,5 @@
 (define (ssh-agent-sock-set! sock-file)
   "Set the value of 'SSH_AGENT_SOCK' environment variable."
   (setenv %ssh-agent-sock-env sock-file))
-
-(define* (ssh-agent-find-socks #:key
-                               (search-dir     (getenv "TMPDIR"))
-                               (subdir-pattern %ssh-agent-dir-regexp))
-  (define (current-user-uid? obj)
-    (let ((st (stat obj)))
-      (= (getuid) (stat:uid st))))
-
-  (define (append-sock path)
-    (string-append path
-                   "/"
-                   (let ((dir (opendir path)))
-                     (readdir dir)                    ; skip "."
-                     (readdir dir)                    ; skip ".."
-                     (readdir dir))))
-
-  (let* ((search-dir (or search-dir "/tmp"))
-         (dir        (opendir search-dir)))
-    (let loop ((result '())
-               (entry  (readdir dir)))
-      (if (eof-object? entry)
-          result
-          (if (string-match subdir-pattern entry)
-              (let ((path (string-append search-dir "/" entry)))
-                (loop (if (current-user-uid? path)
-                          (cons (append-sock path) result)
-                          result)
-                      (readdir dir)))
-              (loop result (readdir dir)))))))
 
 ;;; agent.scm ends here.
