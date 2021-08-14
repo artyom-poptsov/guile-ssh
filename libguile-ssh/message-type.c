@@ -66,7 +66,7 @@ _print (SCM smob,  SCM port, scm_print_state *pstate)
 SCM
 _equalp (SCM x1, SCM x2)
 {
-  return compare_objects(x1, x2, _scm_to_message_data);
+  return compare_objects(x1, x2, (converter_t) _scm_to_message_data);
 }
 
 

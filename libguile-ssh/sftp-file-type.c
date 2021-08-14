@@ -130,7 +130,7 @@ ptob_input_waiting (SCM file)
 static SCM
 equalp_sftp_file (SCM x1, SCM x2)
 {
-  return compare_objects(x1, x2, gssh_sftp_file_from_scm);
+  return compare_objects(x1, x2, (converter_t) gssh_sftp_file_from_scm);
 }
 #endif
 
