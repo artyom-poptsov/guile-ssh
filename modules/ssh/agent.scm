@@ -64,6 +64,11 @@
   (let ((p (open-input-pipe "ssh-agent -s")))
     (let ((ssh-auth-sock-data (read-line p))
           (ssh-agent-pid-data (read-line p)))
+
+      (when (or (eof-object? ssh-auth-sock-data)
+                (eof-object? ssh-agent-pid-data))
+        (error "Could not start a SSH agent"))
+
       `((SSH_AUTH_SOCK
          . ,(let ((match (regexp-exec %ssh-auth-sock-regexp
                                       ssh-auth-sock-data)))
