@@ -42,7 +42,7 @@
   #:export (ssh-agent-sock-get
             ssh-agent-sock-set!
             ssh-agent-find-socks
-            openssh-agent-start
+            ssh-agent-start
             openssh-agent-info
             openssh-agent-setenv))
 
@@ -58,7 +58,7 @@
 
 
 
-(define (openssh-agent-start)
+(define (ssh-agent-start)
   "Start an OpenSSH agent.  Return a list with SSH agent information."
   (let ((p (open-input-pipe "ssh-agent -s")))
     (let ((ssh-auth-sock-data (read-line p))
