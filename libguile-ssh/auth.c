@@ -117,9 +117,8 @@ SCM_DEFINE (guile_ssh_userauth_public_key_auto_x,
 SCM_DEFINE (guile_ssh_userauth_public_key_try,
             "userauth-public-key/try", 2, 0, 0,
             (SCM session, SCM public_key),
-            "\
-Throw `wrong-type-arg' if a disconnected SESSION is passed as an argument.\
-")
+            "Throw `wrong-type-arg' if a disconnected SESSION is passed\n"
+            "as an argument.")
 #define FUNC_NAME s_guile_ssh_userauth_public_key_try
 {
   gssh_session_t *sd = gssh_session_from_scm (session);
