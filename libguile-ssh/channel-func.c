@@ -75,15 +75,7 @@ Return #t if X is a SSH channel, #f otherwise.\
 SCM
 equalp_channel (SCM x1, SCM x2)
 {
-    gssh_channel_t *channel1 = gssh_channel_from_scm (x1);
-    gssh_channel_t *channel2 = gssh_channel_from_scm (x2);
-
-    if ((! channel1) || (! channel2))
-        return SCM_BOOL_F;
-    else if (channel1 != channel2)
-        return SCM_BOOL_F;
-    else
-        return SCM_BOOL_T;
+    return compare_objects(x1, x2, gssh_channel_from_scm);
 }
 #endif
 

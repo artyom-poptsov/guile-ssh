@@ -91,6 +91,10 @@ void set_smob_callbacks(scm_t_bits tag,
                         gc_equalp_callback_t equalp_cb,
                         gc_print_callback_t  print_cb);
 
+
+typedef void* (*converter_t)(SCM x);
+SCM compare_objects(SCM x1, SCM x2, converter_t converter);
+
 #endif  /* ifndef __COMMON_H__ */
 
 /* common.h ends here. */

@@ -79,4 +79,21 @@ set_smob_callbacks(scm_t_bits tag,
     scm_set_smob_equalp(tag, equalp_cb);
 }
 
+
+/** Procedure that converts an SCM object to an Guile-UDev structure
+ * pointer.
+ */
+SCM compare_objects(SCM x1, SCM x2, converter_t converter)
+{
+    void* d1 = converter(x1);
+    void* d2 = converter(x2);
+    if ((! d1) || (! d2)) {
+        return SCM_BOOL_F;
+    } else if (d1 != d2) {
+        return SCM_BOOL_F;
+    } else {
+        return SCM_BOOL_T;
+    }
+}
+
 /* common.c ends here. */
