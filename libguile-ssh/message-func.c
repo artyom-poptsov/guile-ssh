@@ -309,7 +309,7 @@ get_auth_req (ssh_message msg, SCM scm_msg) /* FIXME: accept only SCM */
   else
     SCM_SIMPLE_VECTOR_SET (result, 1, SCM_BOOL_F);
 
-  SCM_SIMPLE_VECTOR_SET (result, 2, _scm_from_ssh_key (public_key, scm_msg));
+  SCM_SIMPLE_VECTOR_SET (result, 2, gssh_key_to_scm(public_key, scm_msg));
 
   pkey_state = gssh_symbol_to_scm (pubkey_state_type,
                                   (int) ssh_message_auth_publickey_state (msg));

@@ -127,7 +127,7 @@ _scm_to_ssh_key_type (SCM type)
 /* Helper procedures */
 
 SCM
-_scm_from_ssh_key (ssh_key key, SCM parent)
+gssh_key_to_scm (ssh_key key, SCM parent)
 {
   gssh_key_t *key_data;
   SCM key_smob;
