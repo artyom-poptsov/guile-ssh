@@ -64,7 +64,6 @@
             start-server/dist-test
             start-server/exec
             run-client-test
-            run-client-test/separate-process
             run-server-test
             setup-test-suite-logging!
             format-log/scm
@@ -621,79 +620,6 @@ main procedure."
            (delete-file run-file))
 
          (client-proc))))))
-
-;; Run a client test in a separate process; only a PRED procedure is running
-;; in the main test process:
-;;
-;; test
-;;  |
-;;  o                                  Fork.
-;;  |_______________________________
-;;  o                               \  Fork.
-;;  |______________                  |
-;;  |              \                 |
-;;  |               |                |
-;;  |               |                |
-;;  |               |                |
-;;  |          CLIENT-PROC      SERVER-PROC
-;;  |               |                |
-;;  |               o                | Bind/listen a socket.
-;;  | "hello world" |                |
-;;  |<--------------|                |
-;;  o               |                | Check the result
-;;  |               |                | with a predicate PRED.
-;;
-;; XXX: This procedure contains operations that potentially can block it
-;; forever.
-;;
-(define (run-client-test/separate-process server-proc client-proc pred)
-  "Run a SERVER-PROC and CLIENT-PROC as separate processes.  Check the result
-returned by a CLIENT-PROC with a predicate PRED."
-  (let ((server (make-server-for-test))
-        (sock-path (tmpnam)))
-    (format-log/scm 'nolog
-                    "run-client-test/separate-process"
-                    "socket path: ~a" sock-path)
-    (multifork
-     ;; Server procedure
-     (lambda ()
-       (server-proc server))
-     ;; Client procedure
-     (lambda ()
-       (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
-         (bind sock AF_UNIX sock-path)
-         (listen sock 1)
-         (while #t
-           (let ((result (client-proc))
-                 (client (car (accept sock))))
-             (format-log/scm 'nolog
-                             "run-client-test/separate-process"
-                             "client: result: ~a" result)
-             (write-line result client)
-             (sleep 10)
-             (close client)))))
-     ;; Main procedure
-     (lambda (pids)
-       (let ((sock (socket PF_UNIX SOCK_STREAM 0)))
-
-         ;; XXX: This operation can potentially block the process forever.
-         (while (not (file-exists? sock-path)))
-
-         (format (test-runner-aux-value (test-runner-current))
-                 "    client: sock-path: ~a~%" sock-path)
-
-         (connect sock AF_UNIX sock-path)
-
-         ;; XXX: This too.
-         (poll sock
-               (lambda (sock)
-                 (let ((result (read-line sock)))
-                   (format-log/scm 'nolog
-                                   "run-client-test/separate-process"
-                                   "main: result: ~a" result)
-                   (close sock)
-                   (delete-file sock-path)
-                   (pred result)))))))))
 
 
 (define (run-server-test client-proc server-proc)
