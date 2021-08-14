@@ -69,6 +69,8 @@
                 (eof-object? ssh-agent-pid-data))
         (error "Could not start a SSH agent"))
 
+      (close p)
+
       `((SSH_AUTH_SOCK
          . ,(let ((match (regexp-exec %ssh-auth-sock-regexp
                                       ssh-auth-sock-data)))
