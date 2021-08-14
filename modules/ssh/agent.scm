@@ -71,14 +71,16 @@
 
       (close p)
 
-      `((SSH_AUTH_SOCK
-         . ,(let ((match (regexp-exec %ssh-auth-sock-regexp
-                                      ssh-auth-sock-data)))
-              (match:substring match 1)))
-        (SSH_AGENT_PID
-         . ,(let ((match (regexp-exec %ssh-agent-pid-regexp
-                                      ssh-agent-pid-data)))
-              (match:substring match 1)))))))
+      (let ((sockm (regexp-exec %ssh-auth-sock-regexp  ssh-auth-sock-data))
+            (pidm   (regexp-exec %ssh-agent-pid-regexp ssh-agent-pid-data)))
+
+        (unless (and sockm pidm)
+          (error "Could not parse SSH agent response"
+                 ssh-auth-sock-data
+                 ssh-agent-pid-data))
+
+      `((SSH_AUTH_SOCK . ,(match:substring sockm 1))
+        (SSH_AGENT_PID . ,(match:substring pidm 1)))))))
 
 (define* (ssh-agent-info #:key
                          (user (getenv "USER"))
