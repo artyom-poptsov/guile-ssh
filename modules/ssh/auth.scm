@@ -1,6 +1,6 @@
 ;;; auth.scm -- API for SSH user authentication.
 
-;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -32,6 +32,9 @@
 ;;   userauth-gssapi!
 ;;   userauth-none!
 ;;   userauth-get-list
+;;   openssh-agent-start
+;;   openssh-agent-info
+;;   openssh-agent-setenv
 
 
 ;;; Code:
