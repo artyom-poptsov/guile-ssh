@@ -288,7 +288,7 @@ SCM_GSSH_DEFINE (gssh_sftp_open, "%gssh-sftp-open", 4,
                  (SCM sftp_session, SCM path, SCM access_type, SCM mode))
 #define FUNC_NAME s_gssh_sftp_open
 {
-  gssh_sftp_session_t *sftp_sd = _scm_to_sftp_session_data (sftp_session);
+  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
   sftp_file file;
   char* c_path;
   int c_access_type;
