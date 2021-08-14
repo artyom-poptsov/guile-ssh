@@ -232,7 +232,6 @@ ptob_close (SCM channel)
             {
               _gssh_log_debug ("ptob_close", "closing and freeing the channel...",
                                channel);
-              ssh_channel_close (ch->ssh_channel);
               ssh_channel_free (ch->ssh_channel);
               _gssh_log_debug1 ("ptob_close", "closing and freeing the channel... done");
             }
