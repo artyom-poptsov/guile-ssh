@@ -42,7 +42,7 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
 * Requirements
 
  - [[https://www.gnu.org/software/guile/][GNU Guile]], version 2.0.12 or later (known to work with 2.0.12, 2.0.14,
-   2.2.4)
+   2.2.4, 3.0.1)
  - [[http://www.libssh.org/][libssh]], version 0.7.3 or later (older versions have [[https://www.libssh.org/2016/02/23/libssh-0-7-3-security-and-bugfix-release/][CVE-2016-0739]] -- don't
    use them, really.)
 
