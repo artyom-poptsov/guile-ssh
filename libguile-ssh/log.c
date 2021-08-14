@@ -323,15 +323,7 @@ _gssh_log_error_format (const char* function_name, SCM args, const char* fmt, ..
 void
 _gssh_log_warning (const char* function_name, const char* msg, SCM args)
 {
-  char *c_str;
-  scm_dynwind_begin (0);
-
-  c_str = scm_to_locale_string (scm_object_to_string (args, SCM_UNDEFINED));
-  scm_dynwind_free (c_str);
-
-  _gssh_log ("[GSSH WARNING]", SSH_LOG_WARNING, function_name, msg, c_str);
-
-  scm_dynwind_end ();
+  _gssh_log ("[GSSH WARNING]", SSH_LOG_WARNING, function_name, msg, args);
 }
 
 #ifdef DEBUG
@@ -339,14 +331,7 @@ void
 _gssh_log_debug (const char* function_name, const char* msg, SCM args)
 {
   char *c_str;
-  scm_dynwind_begin (0);
-
-  c_str = scm_to_locale_string (scm_object_to_string (args, SCM_UNDEFINED));
-  scm_dynwind_free (c_str);
-
-  _gssh_log ("[GSSH DEBUG]", SSH_LOG_FUNCTIONS, function_name, msg, c_str);
-
-  scm_dynwind_end ();
+  _gssh_log ("[GSSH DEBUG]", SSH_LOG_FUNCTIONS, function_name, msg, args);
 }
 
 void
