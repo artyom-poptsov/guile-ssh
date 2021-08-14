@@ -38,6 +38,8 @@
 
 scm_t_bits key_tag; /* Smob tag. */
 
+static const char* GSSH_KEY_TYPE_NAME = "key";
+
 static const gssh_symbol_t key_types[] = {
   { "dss",     SSH_KEYTYPE_DSS     },
   { "rsa",     SSH_KEYTYPE_RSA     },
@@ -130,7 +132,7 @@ _scm_from_ssh_key (ssh_key key, SCM parent)
   gssh_key_t *key_data;
   SCM key_smob;
   key_data = (gssh_key_t *) scm_gc_malloc (sizeof (gssh_key_t),
-                                                "ssh key");
+                                           GSSH_KEY_TYPE_NAME);
   key_data->ssh_key = key;
   key_data->parent = parent;
   SCM_NEWSMOB (key_smob, key_tag, key_data);
@@ -164,7 +166,7 @@ _public_key_p (gssh_key_t *key)
 void
 init_key_type (void)
 {
-  key_tag = scm_make_smob_type ("key", sizeof (gssh_key_t));
+  key_tag = scm_make_smob_type (GSSH_KEY_TYPE_NAME, sizeof (gssh_key_t));
   set_smob_callbacks (key_tag, _mark, _free, _equalp, _print);
 
 #include "key-type.x"
