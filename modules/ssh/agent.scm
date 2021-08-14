@@ -1,6 +1,6 @@
 ;;; agent.scm -- Interaction with SSH agents.
 
-;; Copyright (C) 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2020-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -26,10 +26,8 @@
 ;; The module provides the following procedures:
 ;;   ssh-agent-sock-get
 ;;   ssh-agent-sock-set!
-;;   ssh-agent-find-socks
-;;   openssh-agent-start
-;;   openssh-agent-info
-;;   openssh-agent-setenv
+;;   ssh-agent-start
+;;   ssh-agent-info
 ;;
 ;; See the Info documentation for detailed description of these exceptions and
 ;; aforementioned procedures.
