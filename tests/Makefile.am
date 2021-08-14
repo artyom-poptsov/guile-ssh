@@ -97,17 +97,24 @@ guilec_env  = 									\
 	--output=$@ $<
 
 ###
+LOG_DIRS = \
+	client-server				\
+	dist					\
+	popen					\
+	server-client				\
+	tunnel					\
+	shell
+
+clean-local:
+	-rm -rf $(LOG_DIRS)
 
 CLEANFILES = \
-	client-server/*.log			\
 	client-server-errors.log		\
 	client-server-libssh.log		\
-	dist/*.log				\
 	dist-errors.log				\
 	dist-libssh.log				\
 	key-errors.log				\
 	key-libssh.log				\
-	popen/*.log				\
 	popen-errors.log			\
 	popen-libssh.log			\
 	server-client/*.log			\
@@ -117,10 +124,8 @@ CLEANFILES = \
 	server-libssh.log			\
 	session-errors.log			\
 	session-libssh.log			\
-	tunnel/*.log				\
 	tunnel-errors.log			\
 	tunnel-libssh.log			\
-	shell/*.log				\
 	shell-errors.log			\
 	shell-libssh.log			\
 	sssh-ssshd.log				\
