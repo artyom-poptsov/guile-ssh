@@ -19,7 +19,7 @@
     (close f)))
 
 (define (main args)
-  ;; (log args)
+  (log args)
   (let ((test-suite-name (list-ref args 1))
         (test-name       (list-ref args 2)))
     (unless (file-exists? test-suite-name)
@@ -35,7 +35,11 @@
                        #:dsakey   %dsakey
                        #:log-verbosity 'functions)))
       (server-listen s)
-      (let ((p (open-output-file (string-append test-name ".run"))))
+      (let ((p (open-output-file (format #f
+                                         "~a/~a.run"
+                                         test-suite-name
+                                         test-name))))
+        (format p "~a~%" (getpid))
         (close p))
       (usleep 100)
       (handler s))))

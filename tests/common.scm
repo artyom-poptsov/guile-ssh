@@ -602,28 +602,27 @@ main procedure."
        (lambda (pids)
          (format-log/scm 'nolog "run-client-test"
                          "PIDs: ~a" pids)
-         (format-log/scm 'nolog "run-client-test"
-                         "***** group stack: ~a"
-                         (test-runner-group-stack
-                          (test-runner-current)))
          ;; Wait for synchronization.
-         (let ((run-file (string-append test-name ".run")))
-           (while (not (file-exists? run-file))
-             (usleep 10)
-                     (format-log/scm 'nolog "run-client-test"
-                                     "***** pid: ~a"
-                                     (car pids))
-             (let ((res (waitpid (car pids) WNOHANG)))
-                     (format-log/scm 'nolog "run-client-test"
-                                     "***** waitpid: ~a"
-                                     res)
-               (if (> (car res) 0)
-                   (begin
-                     (format-log/scm 'nolog "run-client-test"
-                                     "Child process finished: ~a"
-                                     (car pids))
-                     (exit 1)))))
-
+         (let ((run-file (format #f
+                                 "~a/~a.run"
+                                 test-suite-name
+                                 test-name)))
+           (let loop ((tries 100))
+             (if (zero? tries)
+                 (begin
+                   (format-log/scm 'nolog "run-client-test"
+                                   "Client process failed: ~a"
+                                   (car pids))
+                   (exit 1))
+                 (unless (and (file-exists? run-file)
+                              (let ((res (waitpid (car pids) WNOHANG)))
+                                (zero? (car res))))
+                   (format-log/scm 'nolog
+                                   "run-client-test"
+                                   "wait: ~a ..."
+                                   tries)
+                   (usleep (round (/ 1000000 tries)))
+                   (loop (- tries 1)))))
            (delete-file run-file))
 
          (client-proc))))))
