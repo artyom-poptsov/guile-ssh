@@ -60,15 +60,7 @@ _free (SCM session)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-  gssh_session_t *session1 = gssh_session_from_scm (x1);
-  gssh_session_t *session2 = gssh_session_from_scm (x2);
-
-  if ((! session1) || (! session2))
-    return SCM_BOOL_F;
-  else if (session1 != session2)
-    return SCM_BOOL_F;
-  else
-    return SCM_BOOL_T;
+  return compare_objects(x1, x2, gssh_session_from_scm);
 }
 
 static int

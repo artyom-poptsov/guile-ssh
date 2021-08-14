@@ -54,15 +54,7 @@ _free (SCM server)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-    gssh_server_t *server1 = gssh_server_from_scm (x1);
-    gssh_server_t *server2 = gssh_server_from_scm (x2);
-
-    if ((! server1) || (! server2))
-        return SCM_BOOL_F;
-    else if (server1 != server2)
-        return SCM_BOOL_F;
-    else
-        return SCM_BOOL_T;
+  return compare_objects(x1, x2, gssh_server_from_scm);
 }
 
 static int

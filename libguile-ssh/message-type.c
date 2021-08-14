@@ -66,17 +66,8 @@ _print (SCM smob,  SCM port, scm_print_state *pstate)
 SCM
 _equalp (SCM x1, SCM x2)
 {
-    gssh_message_t* msg1 = _scm_to_message_data (x1);
-    gssh_message_t* msg2 = _scm_to_message_data (x2);
-
-    if ((! msg1) || (! msg2))
-        return SCM_BOOL_F;
-    else if (msg1 != msg2)
-        return SCM_BOOL_F;
-    else
-        return SCM_BOOL_T;
+  return compare_objects(x1, x2, _scm_to_message_data);
 }
-
 
 
 /* Predicates. */

@@ -54,15 +54,7 @@ _free (SCM sftp_session)
 static SCM
 _equalp (SCM x1, SCM x2)
 {
-  gssh_sftp_session_t *sftp_sd1 = gssh_sftp_session_from_scm (x1);
-  gssh_sftp_session_t *sftp_sd2 = gssh_sftp_session_from_scm (x2);
-
-  if ((! sftp_sd1) || (! sftp_sd2))
-    return SCM_BOOL_F;
-  else if (sftp_sd1 != sftp_sd2)
-    return SCM_BOOL_F;
-  else
-    return SCM_BOOL_T;
+  return compare_objects(x1, x2, gssh_sftp_session_from_scm);
 }
 
 /* Printing procedure. */
