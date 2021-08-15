@@ -555,6 +555,7 @@ Return one of the following symbols: \"stdout\", \"stderr\".\
 #define FUNC_NAME s_guile_ssh_channel_get_stream
 {
   gssh_channel_t *cd = gssh_channel_from_scm (channel);
+  SCM result = SCM_UNDEFINED;
 
   GSSH_VALIDATE_OPEN_CHANNEL (channel, SCM_ARG1, FUNC_NAME);
 
@@ -562,14 +563,20 @@ Return one of the following symbols: \"stdout\", \"stderr\".\
     guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
   if (cd->is_stderr == 0)
-    return scm_from_locale_symbol ("stdout");
+    {
+      result = scm_from_locale_symbol ("stdout");
+    }
   if (cd->is_stderr == 1)
-    return scm_from_locale_symbol ("stderr");
+    {
+      result = scm_from_locale_symbol ("stderr");
+    }
+  else
+    {
+      guile_ssh_error1 (FUNC_NAME, "Wrong stream.",
+                        scm_from_int (cd->is_stderr));
+    }
 
-  guile_ssh_error1 (FUNC_NAME, "Wrong stream.",
-                    scm_from_int (cd->is_stderr));
-
-  return SCM_UNDEFINED;
+  return result;
 }
 #undef FUNC_NAME
 
