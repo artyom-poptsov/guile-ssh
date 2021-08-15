@@ -8,10 +8,59 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
+** API change: OpenSSH agent procedures are now in (ssh agent)
+   Move agent procedures to (ssh agent) module from (ssh auth).
+
+   The procedures are renamed and improved too. The current set of procedures
+   provided by (ssh agent) is as follows:
+   - ssh-agent-sock-get
+   - ssh-agent-sock-set!
+   - ssh-agent-start
+   - ssh-agent-info
+
+   The documentation is updated accordingly.
+
 ** Fix snarfing errors on Fedora GNU/Linux
    Guile-SSH would fail to find 'guile-snarf' script on Fedora GNU/Linux when
    GNU Guile 2.2 installed because the snarfer installed as 'guile-snarf2.2'.
    Now the problem is fixed.
+** Fix random segfaults due to libssh logging
+   The library would sometimes get segfaults due to libssh logging.
+
+   Guile-SSH used to pass Guile objects to a libssh logging procedure as a
+   opaque pointers, and some Guile objects didn't make it to the point when an
+   actual Scheme callback procedure called, GC'ted on the way. So when a
+   Scheme logging callback tried to use its parameters, the parameters was
+   freed already.
+
+   Now Guile-SSH bypasses libssh logging altogether, calling a Scheme logging
+   callback right away -- that provides more control over Scheme objects and
+   allows to keep them from GC'ing.
+
+** Fix test failures due to 'primitive-fork' calls
+   SRFI-64 doesn't really like tests that spawn new processes and try to do
+   stuff after 'primitive-fork' without calling 'execle' (or similar)
+   procedure: sometimes a test would fail even when all its test cases where
+   successful.
+
+   Now that should be fixed.
+
+** Fix the tests for Guile 3.0.7
+   There are differences in REPL welcome message between Guile 3.0.7 and older
+   versions.  Now this difference is handled properly.
+
+   Reported by Ludovic Courtès in
+   <https://github.com/artyom-poptsov/guile-ssh/issues/28>
+
+** Fix the tests for Guile 3.0.5
+   The test-runner object is now reset to #f when calling the 'test-end'
+   procedure. See the commit de5d1a7f99b8e952b115237ebc29633062f99bb9 in Guile
+   (srfi-64: Reset test-runner-current if done) which introduced this change.
+
+** The Guile-SSH building process now less verbose
+
+** Update documentation
+
 
 * Changes in version 0.13.1 (2020-08-19)
 ** Fix segfaults on GC'ing
