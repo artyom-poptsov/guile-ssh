@@ -1,6 +1,6 @@
 ;;; tunnel.scm -- SSH tunnels
 
-;; Copyright (C) 2015, 2016, 2017, 2018, 2019, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -55,22 +55,27 @@
 ;;; Tunnel type
 
 (define-record-type <tunnel>
-  (%make-tunnel session timeout bind-address port
-                host host-port reverse?)
+  (%make-tunnel session
+                timeout
+                bind-address
+                port
+                host
+                host-port
+                reverse?)
   tunnel?
-  (session      tunnel-session)          ; session
-  (timeout      tunnel-timeout)          ; number
-  (bind-address tunnel-bind-address)     ; string
-  (port         tunnel-port)             ; number
-  (host         tunnel-host)             ; string
-  (host-port    tunnel-host-port)        ; number
-  (reverse?     tunnel-reverse?))        ; boolean
+  (session      tunnel-session)          ; <session>
+  (timeout      tunnel-timeout)          ; <number>
+  (bind-address tunnel-bind-address)     ; <string>
+  (port         tunnel-port)             ; <number>
+  (host         tunnel-host)             ; <string>
+  (host-port    tunnel-host-port)        ; <number>
+  (reverse?     tunnel-reverse?))        ; <boolean>
 
 (set-record-type-printer!
  <tunnel>
  (lambda (tunnel port)
    "Print information about a TUNNEL to a PORT."
-   (let ((tunnel-address (number->string (object-address tunnel) 16)))
+   (let ((tunnel-address  (number->string (object-address tunnel) 16)))
      (if (tunnel-reverse? tunnel)
          (format port "#<tunnel ~a:~a <- ~a:~a ~a>"
                  (tunnel-host tunnel)
@@ -121,8 +126,11 @@ channel, or throw an error if a channel could not be opened."
 ;;; Procedures
 
 (define* (make-tunnel session
-                      #:key (bind-address "127.0.0.1") port
-                      host (host-port port)
+                      #:key
+                      (bind-address "127.0.0.1")
+                      port
+                      host
+                      (host-port port)
                       (timeout 1000)
                       (reverse? #f))
   "Make a new SSH tunnel using SESSION.  The procedure returns a new <tunnel>
@@ -149,9 +157,12 @@ procedures that operate on a <tunnel> object -- e.g.  'start-forward' or
   (let ((timeout (if (and timeout (> timeout 0))
                      timeout
                      1)))
-    (%make-tunnel session timeout
-                  bind-address port
-                  host host-port
+    (%make-tunnel session
+                  timeout
+                  bind-address
+                  port
+                  host
+                  host-port
                   reverse?)))
 
 
