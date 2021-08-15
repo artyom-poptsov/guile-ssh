@@ -27,6 +27,7 @@
 ;;   ssh-agent-sock-get
 ;;   ssh-agent-sock-set!
 ;;   ssh-agent-start
+;;   ssh-agent-stop
 ;;   ssh-agent-info
 ;;
 ;; See the Info documentation for detailed description of these exceptions and
@@ -42,6 +43,7 @@
   #:export (ssh-agent-sock-get
             ssh-agent-sock-set!
             ssh-agent-start
+            ssh-agent-stop
             ssh-agent-info))
 
 
@@ -80,6 +82,12 @@
       `((SSH_AUTH_SOCK . ,(match:substring sockm 1))
         (SSH_AGENT_PID . ,(match:substring pidm 1)))))))
 
+(define (ssh-agent-stop)
+  "Kill the current agent (given by the 'SSH_AGENT_PID' environment
+variable)."
+  (system "ssh-agent -k"))
+
+
 (define* (ssh-agent-info #:key
                          (user (getenv "USER"))
                          (path (or (getenv "TMPDIR") "/tmp")))

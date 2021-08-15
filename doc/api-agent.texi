@@ -9,7 +9,10 @@
 @cindex agent
 
 The @code{(ssh agent)} module provides procedures for interacting with SSH
-agent instances.
+authentication agent instances.
+
+@c -----------------------------------------------------------------------------
+@subsection Starting/stopping SSH agents
 
 @deffn {Scheme Procedure} ssh-agent-start
 Start an OpenSSH agent. Return a list with SSH agent information of the
@@ -21,6 +24,14 @@ following form:
 @end lisp
 
 @end deffn
+
+@deffn {Scheme Procedure} ssh-agent-stop
+Kill the current agent (given by the @code{SSH_AGENT_PID} environment
+variable).
+@end deffn
+
+@c -----------------------------------------------------------------------------
+@subsection Getting information about SSH agents
 
 @deffn {Scheme Procedure} ssh-agent-info @
                [#:user=(getenv "USER")] @
@@ -53,6 +64,9 @@ One might use the procedure to configure the environment in a REPL to use SSH
 @end lisp
 
 @end deffn
+
+@c -----------------------------------------------------------------------------
+@subsection Managing SSH agent environment variables
 
 @deffn {Scheme Procedure} ssh-agent-sock-get
 Get the @env{SSH__AGENT__SOCK} environment variable value.
