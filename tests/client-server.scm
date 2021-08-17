@@ -45,7 +45,6 @@
 (define topdir (getenv "abs_top_srcdir"))
 
 (define log    (test-runner-aux-value (test-runner-current)))
-(define *server-thread* #f)
 
 
 ;;; Helper procedures and macros
