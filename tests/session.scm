@@ -20,6 +20,7 @@
 (add-to-load-path (getenv "abs_top_srcdir"))
 
 (use-modules (srfi srfi-64)
+             (ice-9 regex)
              (ssh session)
              (ssh log)
              (ssh version)
@@ -53,6 +54,31 @@
         (x       "string"))
     (and (session? session)
          (not (session? x)))))
+
+
+
+(test-assert "display, undefined values"
+  (let* ((session (%make-session))
+         (output  (with-output-to-string
+                    (lambda ()
+                      (display session)))))
+    (if (string-match "#<session #<undefined>@#<undefined>:22 \\(disconnected\\) [0-9a-z]+>"
+                      output)
+        output
+        (error "Wrong output" output))))
+
+(test-assert "display, defined values"
+  (let* ((session (make-session #:host "example.org"
+                                #:user "alice"))
+         (output  (with-output-to-string
+                    (lambda ()
+                      (display session)))))
+    (if (string-match "#<session alice@example.org:22 \\(disconnected\\) [0-9a-z]+>"
+                      output)
+        output
+        (error "Wrong output" output))))
+
+
 
 (test-assert "comparison of sessions"
   (let ((s1 (%make-session))
