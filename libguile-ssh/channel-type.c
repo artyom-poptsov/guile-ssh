@@ -23,6 +23,7 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include <libssh/callbacks.h>
 #include <assert.h>
 
 #include "session-type.h"
@@ -226,7 +227,13 @@ ptob_close (SCM channel)
   if (ch)
     {
       gssh_session_t *sd = gssh_session_from_scm (ch->session);
-      if (sd && ssh_is_connected (sd->ssh_session))
+      if (ch->is_remote_closed == 1)
+        {
+          _gssh_log_debug1 ("ptob_close",
+                            "the channel is already freed"
+                            " by the closing request from the remote side.");
+        }
+      else if (sd && ssh_is_connected (sd->ssh_session))
         {
           if (ssh_channel_is_open (ch->ssh_channel))
             {
@@ -242,6 +249,7 @@ ptob_close (SCM channel)
                             "the channel is already freed"
                             " along with the parent session.");
         }
+      free (ch->callbacks);
       scm_gc_unprotect_object (ch->session);
     }
   else
@@ -290,8 +298,18 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
           scm_puts ("channel ", port);
           if (SCM_OPPORTP (channel))
             {
-              int is_open = ssh_channel_is_open (ch->ssh_channel);
-              scm_puts (is_open ? "(open) " : "(closed) ", port);
+              if (ssh_channel_is_open (ch->ssh_channel))
+                {
+                  scm_puts ("(open) ", port);
+                }
+              else if (ch->is_remote_closed == 1)
+                {
+                  scm_puts ("(closed by the remote side) ", port);
+                }
+              else
+                {
+                  scm_puts ("(closed) ", port);
+                }
             }
           else
             {
@@ -302,6 +320,14 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
   scm_display (_scm_object_hex_address (channel), port);
   scm_puts (">", port);
   return 1;
+}
+
+static void
+channel_close_callback (ssh_session session, ssh_channel channel, void *userdata)
+{
+  SCM scm_channel = (SCM) userdata;
+  gssh_channel_t* cd = gssh_channel_from_scm (scm_channel);
+  cd->is_remote_closed = 1;
 }
 
 
@@ -327,6 +353,7 @@ ssh_channel_to_scm (ssh_channel ch, SCM session, long flags)
   channel_data->ssh_channel = ch;
   channel_data->is_stderr = 0;  /* Reading from stderr disabled by default */
   channel_data->session = session;
+  channel_data->is_remote_closed = 0;
 
   scm_gc_protect_object (channel_data->session);
 
@@ -361,6 +388,18 @@ ssh_channel_to_scm (ssh_channel ch, SCM session, long flags)
   ptob = scm_c_make_port (channel_tag, flags | SCM_BUF0,
 			  (scm_t_bits) channel_data);
 #endif
+
+  channel_data->callbacks
+    = calloc (1, sizeof (struct ssh_channel_callbacks_struct));
+
+  channel_data->callbacks->channel_close_function = channel_close_callback;
+  channel_data->callbacks->userdata               = (void *) ptob;
+  ssh_callbacks_init (channel_data->callbacks);
+
+  if (ssh_set_channel_callbacks (ch, channel_data->callbacks) != SSH_OK)
+    {
+      guile_ssh_error1(__func__, "Could not set channel callbacks", ptob);
+    }
 
   return ptob;
 }

@@ -21,6 +21,7 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include <libssh/callbacks.h>
 
 #include "common.h"
 
@@ -36,6 +37,12 @@ struct gssh_channel {
 
   ssh_channel ssh_channel;
   uint8_t is_stderr;
+
+  /* When a remote side is closed a channel this flag is set to 1. */
+  uint8_t is_remote_closed;
+
+  /* libssh channel callbacks. */
+  struct ssh_channel_callbacks_struct* callbacks;
 };
 
 typedef struct gssh_channel gssh_channel_t;
