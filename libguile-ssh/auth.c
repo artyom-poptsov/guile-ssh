@@ -43,9 +43,17 @@
    be set by `session-set!' call.  - avp */
 
 
-/* Convert SSH authentication result to a Scheme symbol
-
-   Return a symbol, or #f on error. */
+/**
+ * Convert SSH authentication result to a Scheme symbol
+ *
+ * Return a symbol.
+ *
+ * Throws:
+ * 'guile-ssh-error' on an error.
+ *
+ * Aseerts:
+ * - 'res' is a valid libssh authentication result.
+ */
 static SCM
 ssh_auth_result_to_symbol (const int res)
 {
@@ -72,6 +80,9 @@ ssh_auth_result_to_symbol (const int res)
                              "Unknown SSH result: %d",
                              res);
       assert (0);
+      guile_ssh_error1(__func__,
+                       "Unknown SSH result",
+                       scm_from_int (res));
       return SCM_BOOL_F;
     }
 }
