@@ -250,6 +250,7 @@ ptob_close (SCM channel)
                             " along with the parent session.");
         }
       free (ch->callbacks);
+      ch->callbacks = NULL;
       scm_gc_unprotect_object (ch->session);
     }
   else
