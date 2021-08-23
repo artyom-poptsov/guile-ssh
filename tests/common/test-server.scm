@@ -12,18 +12,23 @@
              (ssh log)
              (ssh server))
 
-(define (log message)
-  (let ((f (open-file "/tmp/b.txt" "a+")))
-    (display message f)
-    (newline f)
-    (close f)))
-
 (define (main args)
-  (log args)
   (let ((test-suite-name (list-ref args 1))
         (test-name       (list-ref args 2)))
+
+    (define (log message)
+      (let ((port (open-file (string-append test-suite-name "/log.txt") "a+")))
+        (format port
+                "~s: ~a~%"
+                (strftime "%Y-%m-%d %H:%M:%S" (localtime (current-time)))
+                message)
+        (close port)))
+
     (unless (file-exists? test-suite-name)
       (mkdir test-suite-name))
+
+    (log args)
+
     (set-log-userdata! test-name)
     (setup-test-suite-logging! (string-append test-suite-name "/" test-name))
     (let* ((port      (string->number (list-ref args 3)))
