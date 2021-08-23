@@ -143,7 +143,7 @@ read_from_channel_port (SCM channel, SCM dst, size_t start, size_t count)
   gssh_channel_t *cd = gssh_channel_from_scm (channel);
   int res;
 
-  if ((! ssh_channel_is_open (cd->ssh_channel)) || cd->is_remote_closed)
+  if (! ssh_channel_is_open (cd->ssh_channel))
     return 0;
 
   /* Update state of the underlying channel and check whether we have
