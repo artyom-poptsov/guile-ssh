@@ -76,7 +76,8 @@ libssh_logging_callback (int        c_priority,
 }
 
 
-#define TBUF_SZ 64
+#define TBUF_SZ     64
+#define DATE_BUF_SZ 128
 
 static int
 _get_current_timestring (char *buf, size_t len)
@@ -104,7 +105,7 @@ SCM_DEFINE (guile_ssh_default_libssh_log_printer,
             (SCM priority, SCM function_name, SCM message, SCM user_data),
             "")
 {
-  char date[TBUF_SZ] = {0};
+  char date[DATE_BUF_SZ] = {0};
   int rc = _get_current_timestring (date, sizeof(date));
 
   scm_puts ("[", scm_current_error_port ());
