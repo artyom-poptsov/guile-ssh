@@ -22,11 +22,13 @@
 
 #include <libguile.h>
 #include <libssh/libssh.h>
+#include <assert.h>
 
 #include "error.h"
 #include "session-type.h"
 #include "key-type.h"
 #include "key-func.h"
+#include "log.h"
 
 
 /* On the username:
@@ -64,7 +66,12 @@ ssh_auth_result_to_symbol (const int res)
     case SSH_AUTH_AGAIN:
       return scm_from_locale_symbol ("again");
 
-    default:
+    default:                    /* Must not happen. */
+      _gssh_log_error_format(__func__,
+                             SCM_BOOL_F,
+                             "Unknown SSH result: %d",
+                             res);
+      assert (0);
       return SCM_BOOL_F;
     }
 }
