@@ -409,7 +409,7 @@
      (call-with-connected-session
       (lambda (session)
         (authenticate-server session)
-        (let ((prvkey (private-key-from-file %rsakey)))
+        (let ((prvkey (private-key-from-file %ecdsakey)))
           (userauth-public-key! session prvkey)))))))
 
 
