@@ -150,7 +150,20 @@ read_from_channel_port (SCM channel, SCM dst, size_t start, size_t count)
      data to read or not. */
   res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
   if (res == SSH_ERROR)
-    guile_ssh_error1 (FUNC_NAME, "Error polling channel", channel);
+    {
+      if (cd->is_remote_closed
+          || (! _gssh_channel_parent_session_connected_p (cd)))
+        {
+          return 0;
+        }
+      else
+        {
+          guile_ssh_error1 (FUNC_NAME,
+                            "Error polling channel",
+                            channel);
+        }
+    }
+
   else if (res == SSH_EOF)
     return 0;
 
@@ -159,11 +172,24 @@ read_from_channel_port (SCM channel, SCM dst, size_t start, size_t count)
   res = ssh_channel_read (cd->ssh_channel, data, count, cd->is_stderr);
 
   if (res == SSH_AGAIN)
-    res = 0;
+    {
+      res = 0;
+    }
   else if (res == SSH_ERROR)
-    guile_ssh_error1 (FUNC_NAME, "Error reading from the channel", channel);
+    {
+      if (cd->is_remote_closed
+          || (! _gssh_channel_parent_session_connected_p (cd)))
+        {
+          res = (scm_t_wchar) 0;
+        }
+      else
+        {
+          guile_ssh_error1 (FUNC_NAME,
+                            "Error reading from the channel",
+                            channel);
+        }
+    }
 
-  assert (res >= 0);
   return res;
 }
 #undef FUNC_NAME
