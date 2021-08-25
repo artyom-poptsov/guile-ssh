@@ -713,6 +713,47 @@
                                     "res: ~a" res)
                     (equal? res vect))))))))))
 
+;; This test checks if the client side is able to handle unexpected close of
+;; the channel from the remote side.
+;;
+;; When a client tries to read from a channel that is abruptly closed by the
+;; remote side (e.g. when a remote side is crashed) the reading procedure must
+;; return EOF without issuing an error or a segmentation fault.
+(test-assert-with-log "data transferring, remote side abruptly closed"
+  (run-client-test
+
+   ;; server
+   (lambda (server)
+     (use-modules (rnrs bytevectors)
+                  (rnrs io ports))
+     (start-server/dt-test server
+                           (lambda (channel)
+                             (let ((v (get-bytevector-n channel 10)))
+                               (put-bytevector channel v)
+                               (kill (getpid) SIGKILL)))))
+
+   ;; client
+   (lambda ()
+     (call-with-connected-session/channel-test
+      (lambda (session)
+        (let* ((vect-size 10)
+               (channel   (make-channel/dt-test session))
+               (vect      (make-bytevector vect-size 42)))
+          (put-bytevector channel vect)
+          (let loop ((data   '())
+                     (result (get-bytevector-n channel (/ vect-size 2))))
+            (if (eof-object? result)
+                data
+                (catch #t
+                  (lambda ()
+                    (loop (cons result data)
+                          (get-bytevector-n channel (/ vect-size 2))))
+                  (lambda err
+                    (format (current-error-port)
+                            "    unexpected error: ~a~%"
+                            err)
+                    #f))))))))))
+
 
 ;;;
 ;;; Channels
