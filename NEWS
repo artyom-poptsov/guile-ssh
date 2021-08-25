@@ -36,7 +36,12 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
    Now Guile-SSH bypasses libssh logging altogether, calling a Scheme logging
    callback right away -- that provides more control over Scheme objects and
    allows to keep them from GC'ing.
+** Fix "random" errors and segfaults in channels
+   Guile-SSH would sometimes fail with segmentation faults and other errors
+   when a remote side is abruptly closed the connection and the client side
+   still tries to read data.
 
+   Now in that situation reading a Guile-SSH channel results in EOF.
 ** Fix test failures due to 'primitive-fork' calls
    SRFI-64 doesn't really like tests that spawn new processes and try to do
    stuff after 'primitive-fork' without calling 'execle' (or similar)
