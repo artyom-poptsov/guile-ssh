@@ -53,6 +53,11 @@ Open a session channel.  This procedure actually turn the
 @code{guile-ssh-error} on error.  Return value is undefined.
 @end deffn
 
+@deffn {Scheme Procedure} channel-open? channel
+Return @code{#t} if a @var{channel} is open, #f otherwise.  Note that this procedure
+also returns @code{#f} when the remote side is closed.
+@end deffn
+
 @deffn {Scheme Procedure} channel-request-exec channel command
 @cindex non-interactive SSH session
 @cindex command execution
