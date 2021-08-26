@@ -103,17 +103,23 @@
 
 (test-assert "sssh, exec"
   (let ((max-tries 10))
+    (format (current-error-port) "test  command: ~A~%" *test-cmd*)
+    (format (current-error-port) "ssshd command: ~A~%" *ssshd-cmd*)
+    (format (current-error-port) "sssh  command: ~A~%" *sssh-cmd*)
     (system *ssshd-cmd*)
     (let* ((pid    (wait-pid-file max-tries *srv-pid-file*))
            (output (read-line (open-input-pipe *test-cmd*)))
            (p      (open-input-pipe *sssh-cmd*))
            (result (let r ((res "")
                            (l   (read-line p)))
+                     (format (current-error-port) "      line: ~a~%" l)
                      (and (not (eof-object? l))
                           (if (string=? output res)
                               #t
                               (r (string-append res l)
                                  (read-line p)))))))
+      (format (current-error-port) "output: ~a~%" output)
+      (format (current-error-port) "result: ~a~%" result)
       (cleanup pid)
       result)))
 
