@@ -328,8 +328,10 @@ disconnected when the PROC is finished."
         (begin
           (format-log/scm 'nolog "poll" "Polling ~a ... done in ~a tries" port n)
           (proc port))
-        (p (char-ready? port)
-           (+ n 1)))))
+        (if (not (port-closed? port))
+            (p (char-ready? port)
+               (+ n 1))
+            (error "Port is closed" port)))))
 
 
 ;;; Test Servers
