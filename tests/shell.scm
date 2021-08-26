@@ -89,7 +89,7 @@
       (lambda (session)
         (command-available? session "guile"))))))
 
-(test-assert-with-log "fallback-pgrep"
+(test-assert-with-log "pgrep, gulile"
   (run-client-test
    (lambda (server)
      (start-server/exec server (const #t)))
@@ -97,7 +97,7 @@
      (call-with-connected-session/shell
       (lambda (session)
         (receive (result exit-code)
-            (fallback-pgrep session "guile")
+            (pgrep session "guile" #:use-guile? #t)
           (and (zero? exit-code)
                result)))))))
 
