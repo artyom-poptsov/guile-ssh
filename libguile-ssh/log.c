@@ -206,6 +206,9 @@ undefined. \
   if (! c_priority)
     guile_ssh_error1 (FUNC_NAME, "Wrong priority level", priority);
 
+  if (c_priority->value > ssh_get_log_level ())
+      return SCM_UNDEFINED;
+
   scm_call_4 (logging_callback,
               scm_from_int (c_priority->value),
               function_name,
@@ -266,6 +269,9 @@ _gssh_log (const char* c_prefix,
   SCM priority = scm_from_int (c_priority);
   SCM function = scm_from_locale_string (c_function_name);
   SCM str_obj  = SCM_BOOL_F;
+
+  if (c_priority > ssh_get_log_level ())
+    return;
 
   if (args != SCM_UNDEFINED)
     {
