@@ -151,7 +151,7 @@
 (test-assert-with-log "server-listen"
   (let* ((topdir  (getenv "abs_top_srcdir"))
          (server  (make-server #:bindaddr "127.0.0.1"
-                               #:bindport 123456
+                               #:bindport (get-unused-port)
                                #:rsakey   %rsakey
                                #:log-verbosity 'nolog)))
     (server-listen server)
