@@ -201,6 +201,9 @@ write_to_channel_port (SCM channel, SCM src, size_t start, size_t count)
   char *data = (char *) SCM_BYTEVECTOR_CONTENTS (src) + start;
   gssh_channel_t *channel_data = gssh_channel_from_scm (channel);
 
+  if (channel_data->is_remote_closed)
+    return 0;
+
   if (! _gssh_channel_parent_session_connected_p (channel_data))
     guile_ssh_error1 (FUNC_NAME, "Parent session is not connected", channel);
 
@@ -211,7 +214,6 @@ write_to_channel_port (SCM channel, SCM src, size_t start, size_t count)
       guile_ssh_session_error1 (FUNC_NAME, session, channel);
     }
 
-  assert (res >= 0);
   return res;
 }
 #undef FUNC_NAME
