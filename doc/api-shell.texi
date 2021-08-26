@@ -61,11 +61,14 @@ code using GNU Guile on the remote side to kill processes.
 
 @deffn {Scheme Procedure} pkill session pattern @
                [#:full?=#f] @
-               [#:signal='SIGTERM] @
+               [#:signal=SIGTERM] @
                [#:use-guile?=#f]
-Send a @var{session} to a process which name matches to @var{pattern} on a
+
+Send a @var{signal} to a process which name matches to @var{pattern} on a
 remote machine represented by a @var{session}.  Return two values: a pkill
 result and a return code.
+
+The @var{signal} must be a numeric value as for Guile @code{kill} procedure.
 
 The procedure uses a @command{pkill} from procps package on the remote side
 when @var{use-guile?} is set to @code{#f} (this is by default.)
