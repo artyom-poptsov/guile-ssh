@@ -1,6 +1,6 @@
 ## Config file for GNU Automake.
 ##
-## Copyright (C) 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2014-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of Guile-SSH.
 ##
@@ -17,7 +17,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-include $(top_srcdir)/am/guilec
+include $(top_srcdir)/build-aux/am/guilec
 
 if !CROSS_COMPILING
 

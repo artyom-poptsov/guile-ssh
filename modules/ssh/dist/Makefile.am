@@ -15,7 +15,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-include $(top_srcdir)/am/guilec
+include $(top_srcdir)/build-aux/am/guilec
 
 SCM_SOURCES = \
 	node.scm	\
@@ -29,6 +29,7 @@ distdir = $(guilesitedir)/ssh/dist
 nobase_dist_dist_DATA = $(SCM_SOURCES)
 
 GOBJECTS = $(SCM_SOURCES:%.scm=%.go)
+$(GOBJECTS): $(lib_LTLIBRARIES)	# Build the library first
 
 ccachedir=$(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/site-ccache/ssh/dist
 nobase_dist_ccache_DATA = $(GOBJECTS)

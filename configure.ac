@@ -28,7 +28,7 @@ AC_INIT([Guile-SSH], [0.13.1], [poptsov.artyom@gmail.com],
 AC_COPYRIGHT(GUILE_SSH_CONFIGURE_COPYRIGHT)
 
 AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([build-aux/m4])
 AC_CONFIG_HEADER([libguile-ssh/config.h])
 
 AM_INIT_AUTOMAKE([color-tests])
@@ -118,7 +118,7 @@ if test "x$have_srfi64" != "xyes"; then
 fi
 
 LT_INIT()
-
+p
 if test "x$guilesitedir" = "x"; then
    guilesitedir="$datadir/guile/site/$GUILE_EFFECTIVE_VERSION"
 fi
@@ -131,7 +131,7 @@ GUILE_EFFECTIVE_VERSION=`$GUILE -c '(display (effective-version))'`
 AC_SUBST(GUILE_EFFECTIVE_VERSION)
 
 AC_CONFIG_FILES([Makefile libguile-ssh/Makefile examples/Makefile build-aux/Makefile])
-AC_CONFIG_FILES([m4/Makefile doc/Makefile tests/Makefile am/Makefile])
+AC_CONFIG_FILES([build-aux/m4/Makefile doc/Makefile tests/Makefile build-aux/am/Makefile])
 AC_CONFIG_FILES([modules/Makefile modules/ssh/Makefile modules/ssh/dist/Makefile])
 
 AM_CONDITIONAL([CROSS_COMPILING], [test "x$cross_compiling" = "xyes"])

@@ -17,9 +17,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4 --install
+ACLOCAL_AMFLAGS = -I build-aux/m4 --install
 
-SUBDIRS = am libguile-ssh examples build-aux m4 doc modules tests
+SUBDIRS = build-aux libguile-ssh examples doc modules tests
 
 EXTRA_DIST =					\
 	build-aux/config.rpath			\
