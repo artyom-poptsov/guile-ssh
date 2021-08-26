@@ -57,6 +57,12 @@ ptob_fill_input (SCM channel)
   scm_port *pt = SCM_PTAB_ENTRY (channel);
   int res;
 
+  if (cd->is_remote_closed
+      || (! _gssh_channel_parent_session_connected_p (cd)))
+    {
+      return EOF;
+    }
+
   if (! ssh_channel_is_open (cd->ssh_channel))
     return EOF;
 
