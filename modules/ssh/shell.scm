@@ -100,13 +100,13 @@ a check result and a return code."
                          ((eof-object? cmdline)
                           prev)
                          ((and ,full? (string=? ,pattern cmdline))
-                          (cons entry prev))
+                          (cons (string->number entry) prev))
                          ((string-match ,pattern cmdline)
-                          (cons entry prev))
+                          (cons (string->number entry) prev))
                          (else
                           prev)))
                       prev)))
-              '()
+              (quote ())
                procs)))))
 
 (define* (%guile-pkill session pattern
@@ -128,7 +128,7 @@ code."
      (make-node session)
      `(begin
         (for-each (lambda (pid) (kill pid ,signal))
-                  (quote ,(map string->number pids)))
+                  (quote ,pids))
         (quote ,pids)))))
 
 
@@ -151,9 +151,12 @@ code."
       (receive (result eval-number module-name lang-name)
           (%guile-pgrep session pattern #:full? full?)
         (values result 0))
-      (rexec session (format #f "pgrep ~a '~a'"
-                             (if full? "-f" "")
-                             pattern))))
+      (receive (result exit-code)
+          (rexec session (format #f
+                                 "pgrep ~a '~a'"
+                                 (if full? "-f" "")
+                                 pattern))
+        (values (map string->number result) exit-code))))
 
 (define* (pkill session pattern #:key
                 (full?      #f)
