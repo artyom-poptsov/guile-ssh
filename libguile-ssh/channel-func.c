@@ -601,8 +601,16 @@ SCM_DEFINE_1 (guile_ssh_channel_is_open_p, "channel-open?", (SCM channel),
               "Return #t if channel CHANNEL is open, #f otherwise.")
 {
   gssh_channel_t *data = gssh_channel_from_scm (channel);
-  if (data && ssh_channel_is_open (data->ssh_channel))
+
+  if (data == NULL)
+      return SCM_BOOL_F;
+
+  if (data->is_remote_closed)
+      return SCM_BOOL_F;
+
+  if (ssh_channel_is_open (data->ssh_channel))
     return SCM_BOOL_T;
+
   return SCM_BOOL_F;
 }
 
