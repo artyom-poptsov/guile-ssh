@@ -635,9 +635,7 @@ main procedure."
                                    "Client process failed: ~a"
                                    (car pids))
                    (exit 1))
-                 (unless (and (file-exists? run-file)
-                              (let ((res (waitpid (car pids) WNOHANG)))
-                                (zero? (car res))))
+                 (unless (file-exists? run-file)
                    (format-log/scm 'nolog
                                    "run-client-test"
                                    "wait: ~a ..."
