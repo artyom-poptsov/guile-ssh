@@ -226,7 +226,7 @@ Options:
                    (if (channel-open? channel)
                        (poll (char-ready? channel))
                        (format (current-error-port)
-                               "Channel is closed~%"
+                               "Channel is closed: ~a~%"
                                channel)))))
             (else =>
                   (lambda (status)
