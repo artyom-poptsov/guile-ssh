@@ -28,8 +28,6 @@
 ;;   which
 ;;   pgrep
 ;;   pkill
-;;   fallback-pgrep
-;;   fallback-pkill
 ;;   command-available?
 ;;   loadavg
 ;;
@@ -45,8 +43,11 @@
   #:use-module (ice-9 regex)
   #:use-module (ice-9 format)
   #:use-module (ice-9 receive)
+  #:use-module (ice-9 ftw)
+  #:use-module (srfi  srfi-1)
   #:use-module (ssh channel)
   #:use-module (ssh popen)
+  #:use-module (ssh dist node)
   #:use-module (ssh log)
   #:export (rexec
             which
@@ -54,12 +55,9 @@
             pkill
             command-available?
             guile-version
-            loadavg
-            fallback-pkill
-            fallback-pgrep))
+            loadavg))
 
 
-;;;
 
 (define (rexec session cmd)
   "Execute a command CMD on the remote side.  Return two values: list of
@@ -76,7 +74,6 @@ output lines returned by CMD and its exit code."
     (values result exit-status)))
 
 
-;;;
 
 (define (which session program-name)
   "Check if a PROGRAM-NAME is available on a remote side.  Return two values:
@@ -84,6 +81,58 @@ a check result and a return code."
   (rexec session (format #f "which '~a'" program-name)))
 
 
+(define* (%guile-pgrep session pattern #:key (full? #f))
+  (node-eval
+   (make-node session)
+   `(begin
+      (use-modules (ice-9 ftw)
+                   (ice-9 rdelim)
+                   (ice-9 format)
+                   (ice-9 regex)
+                   (srfi  srfi-1))
+      (let ((procs (scandir "/proc" (lambda (e) (string-match "^[0-9]+" e)))))
+        (fold (lambda (entry prev)
+                (let* ((cmdline-file (format #f "/proc/~a/status" entry))
+                       (cmdline-port (open-input-file cmdline-file)))
+                  (if cmdline-port
+                      (let ((cmdline (read-line cmdline-port)))
+                        (cond
+                         ((eof-object? cmdline)
+                          prev)
+                         ((and ,full? (string=? ,pattern cmdline))
+                          (cons entry prev))
+                         ((string-match ,pattern cmdline)
+                          (cons entry prev))
+                         (else
+                          prev)))
+                      prev)))
+              '()
+               procs)))))
+
+(define* (%guile-pkill session pattern
+                       #:key
+                       (full? #f)
+                       (signal SIGTERM))
+  "Guile-SSH implementation of 'pkill' that uses Guile on the remote side.
+Note that this procedure won't work if Guile is missing on a target machine.
+
+Send a SIGNAL to a process which name matches to PATTERN on a remote machine
+represented by a SESSION.  Return two values: a pkill result and a return
+code."
+  (let ((pids (%guile-pgrep session pattern #:full? full?)))
+    (format-log 'functions
+                 "[SCM] %guile-pkill"
+                 "pids: ~a"
+                 pids)
+    (node-eval
+     (make-node session)
+     `(begin
+        (for-each (lambda (pid) (kill pid ,signal))
+                  (quote ,(map string->number pids)))
+        (quote ,pids)))))
+
+
+
 ;; We should use short '-f' option for pgrep and pkill instead of the long
 ;; version of it ('--full') because the long version was added on september
 ;; 2011 (according to the commit log of procps-ng [1]) and some systems may
@@ -91,70 +140,38 @@ a check result and a return code."
 ;;
 ;; [1] https://gitlab.com/procps-ng/procps/commit/4581ac2240d3c2108c6a65ba2d19599195b512bc
 
-(define* (pgrep session pattern #:key (full? #f))
+(define* (pgrep session pattern
+                #:key
+                (full?      #f)
+                (use-guile? #f))
   "Check if a process with a PATTERN cmdline is available on a machine
 represented by a SESSION.  Return two values: a check result and a return
 code."
-  (rexec session (format #f "pgrep ~a '~a'"
-                         (if full? "-f" "")
-                         pattern)))
+  (if use-guile?
+      (receive (result eval-number module-name lang-name)
+          (%guile-pgrep session pattern #:full? full?)
+        (values result 0))
+      (rexec session (format #f "pgrep ~a '~a'"
+                             (if full? "-f" "")
+                             pattern))))
 
-(define* (pkill session pattern #:key (full? #f)
-                (signal 'SIGTERM))
+(define* (pkill session pattern #:key
+                (full?      #f)
+                (signal     SIGTERM)
+                (use-guile? #f))
   "Send a SIGNAL to a process which name matches to PATTERN on a remote
 machine represented by a SESSION.  Return two values: a pkill result and a
 return code."
-  (rexec session (format #f "pkill ~a --signal ~a '~a'"
-                         (if full? "-f" "")
-                         signal
-                         pattern)))
+  (if use-guile?
+      (receive (result eval-number module-name lang-name)
+          (%guile-pkill session pattern #:full? full? #:signal signal)
+        (values result 0))
+      (rexec session (format #f "pkill ~a --signal ~a '~a'"
+                             (if full? "-f" "")
+                             signal
+                             pattern))))
 
-(define* (fallback-pgrep session pattern #:key (full? #f))
-  "Guile-SSH implementation of 'pgrep' that uses pure bash and '/proc'
-filesystem.  Check if a process with a PATTERN cmdline is available on a NODE.
-Note that FULL? option is not used at the time (the procedure always perform
-full search.)  Return two values: a check result and a return code."
-  (define (make-command ptrn)
-    (format #f "\
-echo '
-for p in $(ls /proc); do
-  if [[ \"$p\" =~~ ^[0-9]+ ]]; then
-    name=$(cat \"/proc/$p/status\" 2>/dev/null | head -1);
-    if [[ \"$name\" =~~ Name:.*guile ]]; then
-      cmdline=$(cat \"/proc/$p/cmdline\");
-      if [[ \"$cmdline\" =~~ ~a ]]; then
-        echo $p
-        exit 0;
-      fi;
-    fi;
-  fi;
-done;
-exit 1;
-' | bash
-" ptrn))
-
-  (let ((ptrn (string-append (regexp-substitute/global #f " " pattern
-                                                       'pre "?" 'post)
-                             ".*")))
-    (rexec session (make-command ptrn))))
-
-(define* (fallback-pkill session pattern #:key (full? #f)
-                         (signal 'SIGTERM))
-  "Guile-SSH implementation of 'pkill' that uses pure bash, '/proc' filesystem
-and Guile itself to kill a process.  Note that this procedure won't work if
-Guile is missing on a target machine.
-
-Send a SIGNAL to a process which name matches to PATTERN on a remote machine
-represented by a SESSION.  Return two values: a pkill result and a return
-code."
-  (let-values (((pids exit-status) (fallback-pgrep session pattern)))
-    (format-log 'functions "[scm] fallback-pkill"
-                "pids: ~a (pgrep exit status: ~a)"
-                (car pids) exit-status)
-    (let ((cmd (format "guile -c '(kill ~a ~a)'" (car pids) signal)))
-      (format-log 'functions "[scm] fallback-pkill"
-                "going to use this kill command: ~a" cmd)
-      (rexec session cmd))))
+
 
 (define (command-available? session command)
   "check if COMMAND is available on a remote side."
