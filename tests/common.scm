@@ -401,7 +401,11 @@ scheme@(guile-user)> ")
         (message-reply-success message)
         (channel-request-send-exit-status *channel* 0)
         (write-line "pong" *channel*)
-        (channel-send-eof *channel*))
+        (catch #t
+          (lambda ()
+            (channel-send-eof *channel*))
+          (lambda args
+            (format-log/scm 'nolog "start-server/exec" "ERROR: ~a" args))))
        ((string=? command "uname") ; For exit status testing
         (body session message *channel*))
        ((string=? command "exit status") ; For exit status testing
@@ -410,7 +414,11 @@ scheme@(guile-user)> ")
        ((string-match "echo '.*" command) ; fallback commands
         (message-reply-success message)
         (channel-request-send-exit-status *channel* 0)
-        (channel-send-eof *channel*))
+        (catch #t
+          (lambda ()
+            (channel-send-eof *channel*))
+          (lambda args
+            (format-log/scm 'nolog "start-server/exec" "ERROR: ~a" args))))
        ((string=? command "cat /proc/loadavg")
         (message-reply-success message)
         (write-line "0.01 0.05 0.10 4/1927 242011" *channel*)
@@ -420,7 +428,11 @@ scheme@(guile-user)> ")
         (write-line %guile-version-string *channel*)
         (message-reply-success message)
         (channel-request-send-exit-status *channel* 0)
-        (channel-send-eof *channel*))
+        (catch #t
+          (lambda ()
+            (channel-send-eof *channel*))
+          (lambda args
+            (format-log/scm 'nolog "start-server/exec" "ERROR: ~a" args))))
        ((string=? command "guile -q")
         (message-reply-success message)
         (display %guile-version-string *channel*)
@@ -429,7 +441,11 @@ scheme@(guile-user)> ")
         (message-reply-success message)
         (write-line command *channel*)
         (channel-request-send-exit-status *channel* 0)
-        (channel-send-eof *channel*)))))
+        (catch #t
+          (lambda ()
+            (channel-send-eof *channel*))
+          (lambda args
+            (format-log/scm 'nolog "start-server/exec" "ERROR: ~a" args)))))))
 
   (define (state:handle-tcpip-forward message)
     (let* ((proc (lambda (session message user-data)
