@@ -58,6 +58,7 @@ Equvalent to @code{open-remote-pipe} and @code{open-remote-pipe*} respectively
 with mode @code{OPEN_WRITE}.
 @end deffn
 
+@c -----------------------------------------------------------------------------
 @subsection Examples
 
 @subsubsection Simple cases
@@ -92,6 +93,7 @@ on the local host and prints the result:
       (write-line (read-line channel)))))
 @end lisp
 
+@c -----------------------------------------------------------------------------
 @subsubsection Executing a command with a pseudo terminal
 
 Surely we aren't limited to one-line outputs; for example, we can watch
@@ -136,6 +138,7 @@ Or we can do the same, but this time with streams:
       (stream-for-each display rs))))
 @end lisp
 
+@c -----------------------------------------------------------------------------
 @subsubsection Controlling the pseudo terminal size
 
 To set the size of a pseudo terminal, one may use @code{channel-set-pty-size!}

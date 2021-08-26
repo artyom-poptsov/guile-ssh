@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2015, 2016 Artyom V. Poptsov
+@c Copyright (C) 2015-2021 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Distributed Forms
@@ -153,6 +153,7 @@ not.  For example:
 Start an interactive remote REPL (RREPL) session using @var{node}.
 @end deffn
 
+@c -----------------------------------------------------------------------------
 @subsection Low-level API
 
 @subsubsection Nodes
@@ -231,6 +232,7 @@ Read from @var{rrepl-channel} until REPL is observed.  Throw @code{node-error}
 on an error.
 @end deffn
 
+@c -----------------------------------------------------------------------------
 @subsubsection Jobs
 @tindex job
 

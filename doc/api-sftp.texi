@@ -11,6 +11,7 @@
 
 The @code{(ssh sftp)} module provides procedures for working with SFTP.
 
+@c -----------------------------------------------------------------------------
 @subsection SFTP session
 
 @deffn {Scheme Procedure} make-sftp-session ssh-session
@@ -102,6 +103,7 @@ Unlink (delete) a remote @var{filename} using @var{sftp-session}.  Throw
 @code{guile-ssh-error} on an error.  Return value is undefined.
 @end deffn
 
+@c -----------------------------------------------------------------------------
 @subsubsection Low-Level API
 
 @deffn {Scheme Procedure} %make-sftp-session ssh-session
@@ -118,6 +120,7 @@ Initialize a @var{sftp-session} with the server.  Throw @code{guile-ssh-error}
 exception on an error, return value is undefined.
 @end deffn
 
+@c -----------------------------------------------------------------------------
 @subsection SFTP file
 
 Remote files are represented as regular Guile ports that allow random access
@@ -132,6 +135,7 @@ port.  Throw @code{guile-ssh-error} on an error.
 Return @code{#t} if @var{x} is an SFTP file port, @code{#f} otherwise.
 @end deffn
 
+@c -----------------------------------------------------------------------------
 @subsection High-level operations on remote files
 
 @deffn {Scheme Procedure} call-with-remote-input-file sftp-session filename proc

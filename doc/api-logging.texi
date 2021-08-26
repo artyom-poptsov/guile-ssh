@@ -91,6 +91,9 @@ Lower level protocol infomations, packet level
 Function path
 @end table
 
+Note that the procedure uses the provided logging callback directly, bypassing
+the libssh logging facilities.
+
 @end deffn
 
 @deffn {Scheme Procedure} set-log-verbosity! verbosity

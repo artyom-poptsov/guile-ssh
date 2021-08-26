@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2014 Artyom V. Poptsov
+@c Copyright (C) 2014-2021 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Channels
@@ -11,6 +11,7 @@
 * Port Forwarding::
 @end menu
 
+@c -----------------------------------------------------------------------------
 @node Channel Management
 @subsection Channel Management
 
@@ -25,6 +26,12 @@ used with regular I/O procedures such as @code{display}, @code{write},
 @code{read-line} and friends (@pxref{Input and Output,,, guile, The
 GNU Guile Reference Manual}).  This section describes operations that
 are specific for the channels.
+
+When a channel is closed by the remote side, the local side detects it;
+reading from such channel gives an EOF object when all data is read.
+
+Note that when the parent session from which a channel is made is freed the
+channel is freed as well.
 
 @deffn {Scheme Procedure} channel? x
 Return @code{#t} if @var{x} is a Guile-SSH channel, @code{#f}
@@ -186,6 +193,7 @@ instruction).  The @var{channel} must be open.  Return the exist status, or
 @code{guile-ssh-error} on error.
 @end deffn
 
+@c -----------------------------------------------------------------------------
 @node Port Forwarding
 @subsection Port Forwarding
 

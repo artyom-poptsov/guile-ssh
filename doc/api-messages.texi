@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2014 Artyom V. Poptsov
+@c Copyright (C) 2014-2021 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Messages
@@ -17,6 +17,7 @@ Guile-SSH messages.
 * Parsing of Requests::
 @end menu
 
+@c -----------------------------------------------------------------------------
 @node Message Handling
 @subsection Messages Handling
 
@@ -162,6 +163,7 @@ Get the session from which the @var{message} was received.  Return the
 session.
 @end deffn
 
+@c -----------------------------------------------------------------------------
 @node Parsing of Requests
 @subsection Parsing of Requests
 

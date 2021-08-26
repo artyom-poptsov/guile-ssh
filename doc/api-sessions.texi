@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2014, 2015 Artyom V. Poptsov
+@c Copyright (C) 2014-2021 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Sessions
@@ -11,6 +11,7 @@
 * Callbacks::
 @end menu
 
+@c -----------------------------------------------------------------------------
 @node Session Management
 @subsection Session Management
 
@@ -379,6 +380,7 @@ Throw @code{wrong-type-arg} exception if a disconnected @var{session} is
 passed as an argument.
 @end deffn
 
+@c -----------------------------------------------------------------------------
 @node Callbacks
 @subsection Callbacks
 

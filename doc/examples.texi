@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2014 Artyom V. Poptsov
+@c Copyright (C) 2014-2021 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Examples
@@ -21,6 +21,7 @@ Echo client and server example.
 In addition, the following sections will provide an overview of programming
 with Guile-SSH.
 
+@c -----------------------------------------------------------------------------
 @section Client
 
 In this example we will connect to a server, open a channel and execute a
@@ -84,6 +85,7 @@ the server.
     (disconnect! session)))
 @end lisp
 
+@c -----------------------------------------------------------------------------
 @section Server
 
 In this example we will create a new server and start the server loop.
