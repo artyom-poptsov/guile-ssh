@@ -53,7 +53,6 @@
   #:use-module (ice-9 receive)
   #:export (sftp-session?
             make-sftp-session
-            sftp-init
             sftp-get-session
             sftp-get-error
             sftp-mkdir
