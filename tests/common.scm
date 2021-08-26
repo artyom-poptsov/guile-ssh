@@ -180,9 +180,14 @@
     ((_ name expr)
      (test-error-with-log/handler name expr (const #t)))))
 
-(define-syntax-rule (test-equal-with-log name expected expr)
-  (test-assert-with-log name
-    (equal? expr expected)))
+(define-syntax test-equal-with-log
+  (syntax-rules ()
+    ((_ name expected body ...)
+     (test-equal name
+       expected
+       (begin
+         (set-log-userdata! name)
+         body ...)))))
 
 
 (define (start-session-loop session body)
