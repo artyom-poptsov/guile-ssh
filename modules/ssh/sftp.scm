@@ -1,6 +1,6 @@
 ;;; sftp.scm -- Procedures for working with SFTP.
 
-;; Copyright (C) 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -25,7 +25,6 @@
 ;; The module exports:
 ;;   sftp-session?
 ;;   make-sftp-session
-;;   sftp-init
 ;;   sftp-get-session
 ;;   sftp-get-error
 ;;   sftp-mkdir
@@ -35,14 +34,17 @@
 ;;   sftp-readlink
 ;;   sftp-chmod
 ;;   sftp-unlink
-;;   %make-sftp-session
-;;   %sftp-init
 ;;   sftp-open
 ;;   sftp-file?
 ;;   call-with-remote-input-file
 ;;   call-with-remote-output-file
 ;;   with-input-from-remote-file
 ;;   with-output-to-remote-file
+;;
+;; These exported procedures are low-level ones and should not be used without
+;; a good reason:
+;;   %make-sftp-session
+;;   %sftp-init
 ;;
 ;; See the Info documentation for the detailed description of these
 ;; procedures.
