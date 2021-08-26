@@ -321,12 +321,15 @@ disconnected when the PROC is finished."
 
 (define (poll port proc)
   "Poll a PORT, call a PROC when data is available."
-  (format-log/scm 'nolog "poll" "Polling ...")
-  (let p ((ready? #f))
-  (format-log/scm 'nolog "poll" "ready? ~a ..." ready?)
+  (format-log/scm 'nolog "poll" "Polling ~a ..." port)
+  (let p ((ready? (char-ready? port))
+          (n      1))
     (if ready?
-        (proc port)
-        (p (char-ready? port)))))
+        (begin
+          (format-log/scm 'nolog "poll" "Polling ~a ... done in ~a tries" port n)
+          (proc port))
+        (p (char-ready? port)
+           (+ n 1)))))
 
 
 ;;; Test Servers
