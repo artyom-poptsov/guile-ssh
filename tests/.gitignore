@@ -2,3 +2,11 @@
 
 *.log
 *.trs
+
+# Temporary test sub-directories.
+client-server
+dist
+keys
+popen
+shell
+tunnel
