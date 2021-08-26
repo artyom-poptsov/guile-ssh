@@ -217,13 +217,17 @@ Options:
           (case (channel-get-exit-status channel)
             ((0)
              (print-debug "9. channel-poll (ssh_channel_poll)\n")
-             (let poll ((ready? #f))
+             (let poll ((ready? (char-ready? channel)))
                (if ready?
                    (begin
                      (print-debug "10. channel-read (ssh_channel_read)\n")
                      (display (read-all channel))
                      (newline))
-                   (poll (char-ready? channel)))))
+                   (if (channel-open? channel)
+                       (poll (char-ready? channel))
+                       (format (current-error-port)
+                               "Channel is closed"
+                               channel)))))
             (else =>
                   (lambda (status)
                     (format #t
