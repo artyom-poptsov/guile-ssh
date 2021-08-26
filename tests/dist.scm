@@ -250,7 +250,8 @@ Unknown # object: \\(.+\\): scheme@\\(guile-user\\)> \
 ;; The client uses distributed form 'with-ssh' to evaluate (+ 21 21).  The
 ;; server pretends to be a RREPL server and returns the evaluation "result",
 ;; 42.
-(test-assert-with-log "with-ssh"
+(test-equal-with-log "with-ssh"
+  42
   (run-client-test
    ;; server
    (lambda (server)
@@ -266,9 +267,8 @@ Unknown # object: \\(.+\\): scheme@\\(guile-user\\)> \
       (lambda (session)
         (format-log/scm 'nolog "client" "session: ~a" session)
         (let ((n (make-node session)))
-          (= (with-ssh n
-               (+ 21 21))
-             42)))))))
+          (with-ssh n
+            (+ 21 21))))))))
 
 ;;;
 
