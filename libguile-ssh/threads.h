@@ -19,9 +19,16 @@
 #ifndef __THREADS_H__
 #define __THREADS_H__
 
+#if ! HAVE_LIBSSH_0_8
+
 #define SSH_PTHREADS_DISABLED 0
 #define SSH_PTHREADS_ENABLED  1
-
 void init_pthreads (void);
+
+#else
+
+#define init_pthreads()
+
+#endif  /* if ! HAVE_LIBSSH_0_8 */
 
 #endif  /* ifndef __THREADS_H__ */
