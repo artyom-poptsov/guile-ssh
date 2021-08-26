@@ -344,7 +344,7 @@ disconnected when the PROC is finished."
       (lambda ()
         (server-listen server)
         (state:accept))
-      (lambda (key args)
+      (lambda (key . args)
         (format-log/scm 'nolog "start-server-loop"
                         "ERROR: ~a: ~a" key args)
         (state:init))))
