@@ -598,7 +598,8 @@ Return value is undefined.\
 ")
 {
   gssh_session_t* session_data = gssh_session_from_scm (arg1);
-  ssh_disconnect (session_data->ssh_session);
+  if (ssh_is_connected (session_data->ssh_session))
+      ssh_disconnect (session_data->ssh_session);
   return SCM_UNDEFINED;
 }
 
