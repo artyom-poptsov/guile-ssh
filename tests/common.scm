@@ -418,14 +418,6 @@ scheme@(guile-user)> ")
        ((string=? command "exit status") ; For exit status testing
         (message-reply-success message)
         (channel-request-send-exit-status *channel* 0))
-       ((string-match "echo '.*" command) ; fallback commands
-        (message-reply-success message)
-        (channel-request-send-exit-status *channel* 0)
-        (catch #t
-          (lambda ()
-            (channel-send-eof *channel*))
-          (lambda args
-            (format-log/scm 'nolog "start-server/exec" "ERROR: ~a" args))))
        ((string=? command "cat /proc/loadavg")
         (message-reply-success message)
         (write-line "0.01 0.05 0.10 4/1927 242011" *channel*)
@@ -440,6 +432,15 @@ scheme@(guile-user)> ")
             (channel-send-eof *channel*))
           (lambda args
             (format-log/scm 'nolog "start-server/exec" "ERROR: ~a" args))))
+
+       ;; "pgrep"
+       ((string-match "pgrep.*process-1.*" command)
+        (format-log/scm 'nolog "start-server/exec" "pgrep command: ~a" command)
+        (write-line 12345 *channel*)
+        (message-reply-success message)
+        (channel-request-send-exit-status *channel* 0)
+        (channel-send-eof *channel*))
+
        ((string=? command "guile -q")
         (message-reply-success message)
         (display %guile-version-string *channel*)

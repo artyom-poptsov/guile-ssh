@@ -75,10 +75,24 @@
      (call-with-connected-session/shell
       (lambda (session)
         (receive (result exit-code)
-            (pgrep session "guile --listen=37146" #:full? #t)
+            (pgrep session "process-1")
           (and (zero? exit-code)
-               (string=? "pgrep -f 'guile --listen=37146'"
-                         (car result)))))))))
+               (not (null? result))
+               (car result))))))))
+
+(test-equal-with-log "pgrep, guile"
+  '(12345)
+  (run-client-test
+   (lambda (server)
+     (start-server/exec server
+                        (lambda (session message channel)
+                          (write-line "$1 = (12345)\n" channel))))
+   (lambda ()
+     (call-with-connected-session/shell
+      (lambda (session)
+        (receive (result exit-code)
+            (pgrep session "process-2" #:use-guile? #t)
+          result))))))
 
 (test-assert-with-log "command-available?"
   (run-client-test
@@ -88,18 +102,6 @@
      (call-with-connected-session/shell
       (lambda (session)
         (command-available? session "guile"))))))
-
-(test-assert-with-log "pgrep, gulile"
-  (run-client-test
-   (lambda (server)
-     (start-server/exec server (const #t)))
-   (lambda ()
-     (call-with-connected-session/shell
-      (lambda (session)
-        (receive (result exit-code)
-            (pgrep session "guile" #:use-guile? #t)
-          (and (zero? exit-code)
-               result)))))))
 
 (test-assert-with-log "loadavg"
   (run-client-test
