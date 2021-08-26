@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Changes in version 0.14.0 (2021-08-25)
+* Unreleased
 ** API change: OpenSSH agent procedures are now in (ssh agent)
    Move agent procedures to (ssh agent) module from (ssh auth).
 
