@@ -65,8 +65,8 @@ code using GNU Guile on the remote side to kill processes.
                [#:use-guile?=#f]
 
 Send a @var{signal} to a process which name matches to @var{pattern} on a
-remote machine represented by a @var{session}.  Return two values: a pkill
-result and a return code.
+remote machine represented by a @var{session}. Return two values: a list of
+PIDs of killed processes and a return code.
 
 The @var{signal} must be a numeric value as for Guile @code{kill} procedure.
 
