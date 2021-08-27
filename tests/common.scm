@@ -303,18 +303,20 @@ disconnected when the PROC is finished."
         #t))))
 
 (define get-unused-port
-  (let ((port-num (+ 10000 (random 2345 (random-state-from-platform))))
-        (mtx      (make-mutex 'allow-external-unlock)))
+  (let ((port-num   (+ 10000 (random 2345 (random-state-from-platform))))
+        (mtx        (make-mutex 'allow-external-unlock))
+        (used-ports '()))
     (lambda ()
       "Get an unused port number."
       (lock-mutex mtx)
       (let loop ((num port-num))
-        (if (port-in-use? num)
+        (if (or (port-in-use? num)
+                (member num used-ports))
             (loop (1+ num))
             (begin
-              (format-log/scm 'nolog "get-unused-port"
-                              "port chosen: ~a" num)
-              (set! port-num num)
+              (format-log/scm 'nolog "get-unused-port" "port chosen: ~a" num)
+              (set! used-ports (cons num used-ports))
+              (set! port-num (+ num 1))
               (unlock-mutex mtx)
               num))))))
 
