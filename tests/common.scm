@@ -201,8 +201,8 @@
      (test-equal name
        expected
        (begin
-         (set-log-userdata! name)
          (setup-test-logging! name)
+         (set-log-userdata! name)
          body ...)))))
 
 
@@ -643,9 +643,9 @@ main procedure."
                          "PIDs: ~a" pids)
          ;; Wait for synchronization.
          (let ((run-file (format #f
-                                 "~a/~a.run"
+                                 "~a/~a-server.run"
                                  test-suite-name
-                                 test-name)))
+                                 (sanitize-string test-name))))
            (let loop ((tries 100))
              (if (zero? tries)
                  (begin
@@ -709,8 +709,10 @@ printer."
 
 (define (setup-test-suite-logging! test-name)
   "Setup error logging for a TEST-SUITE."
-  (let ((libssh-log-file (string-append test-name "-libssh.log"))
-        (errors-log-file (string-append test-name "-errors.log")))
+  (let ((libssh-log-file (string-append test-name "/0-libssh.log"))
+        (errors-log-file (string-append test-name "/0-errors.log")))
+    (unless (file-exists? test-name)
+      (mkdir test-name))
     (setup-libssh-logging! libssh-log-file)
     (setup-error-logging! errors-log-file)))
 

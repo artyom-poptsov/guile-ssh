@@ -13,17 +13,6 @@
              (ssh server))
 
 
-(define (sanitize-string string)
-  "Replace all problematic chars in a STRING with '-'"
-  (string-map (lambda (char)
-                (case char
-                  ((#\, #\space #\! #\/)
-                   #\-)
-                  (else
-                   char)))
-              string))
-
-
 (define (main args)
   (let ((test-suite-name (list-ref args 1))
         (test-name       (list-ref args 2)))
@@ -43,7 +32,7 @@
 
     (set-log-userdata! test-name)
     (setup-test-suite-logging! (format #f
-                                       "~a/server-~a"
+                                       "~a/~a-server"
                                        test-suite-name
                                        (sanitize-string test-name)))
     (let* ((port      (string->number (list-ref args 3)))
@@ -56,7 +45,7 @@
                        #:log-verbosity 'functions)))
       (server-listen s)
       (let ((p (open-output-file (format #f
-                                         "~a/~a.run"
+                                         "~a/~a-server.run"
                                          test-suite-name
                                          (sanitize-string test-name)))))
         (format p "~a~%" (getpid))
