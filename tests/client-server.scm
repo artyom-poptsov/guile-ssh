@@ -96,7 +96,6 @@
           (disconnect! session)
           version))))))
 
-#!
 (test-assert-with-log "authenticate-server, not-known"
   'not-known
   (run-client-test
@@ -788,7 +787,7 @@
 
 
 ;;;
-!#
+
 (define exit-status (test-runner-fail-count (test-runner-current)))
 
 (test-end "client-server")
