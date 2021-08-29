@@ -45,6 +45,7 @@
             %ecdsakey-pub
 
             ;; Procedures
+            sanitize-string
             get-unused-port
             set-port!
             test-begin-with-log
@@ -66,6 +67,7 @@
             run-client-test
             run-server-test
             setup-test-suite-logging!
+            setup-test-logging!
             format-log/scm
             poll))
 
@@ -97,12 +99,25 @@
 (define %config (format #f "~a/tests/config" %topdir))
 
 
+
+(define (sanitize-string string)
+  "Replace all problematic chars in a STRING with '-'"
+  (string-map (lambda (char)
+                (case char
+                  ((#\, #\space #\! #\/)
+                   #\-)
+                  (else
+                   char)))
+              string))
+
+
 ;; Pass the test case NAME as the userdata to the libssh log
 (define-syntax test-assert-with-log
   (syntax-rules ()
     ((_ name body ...)
      (test-assert name
        (begin
+         (setup-test-logging! name)
          (set-log-userdata! name)
          body ...)))))
 
@@ -187,6 +202,7 @@
        expected
        (begin
          (set-log-userdata! name)
+         (setup-test-logging! name)
          body ...)))))
 
 
@@ -695,6 +711,23 @@ printer."
   "Setup error logging for a TEST-SUITE."
   (let ((libssh-log-file (string-append test-name "-libssh.log"))
         (errors-log-file (string-append test-name "-errors.log")))
+    (setup-libssh-logging! libssh-log-file)
+    (setup-error-logging! errors-log-file)))
+
+(define (setup-test-logging! test-name)
+  (let* ((test-suite-name (car (test-runner-group-stack (test-runner-current))))
+         (libssh-log-file (format #f
+                                  "~a/~a-libssh.log"
+                                  test-suite-name
+                                  (sanitize-string test-name)))
+        (errors-log-file (format #f
+                                 "~a/~a-errors.log"
+                                 test-suite-name
+                                 (sanitize-string test-name))))
+
+    (unless (file-exists? test-suite-name)
+      (mkdir test-suite-name))
+
     (setup-libssh-logging! libssh-log-file)
     (setup-error-logging! errors-log-file)))
 

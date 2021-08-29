@@ -76,7 +76,10 @@
    (lambda ()
      (call-with-connected-session
       (lambda (session)
-        (connected? session))))))
+        (and (connected? session)
+             (begin
+               (disconnect! session)
+               (not (connected? session)))))))))
 
 (test-equal-with-log "get-protocol-version"
   2
@@ -89,8 +92,11 @@
    (lambda ()
      (call-with-connected-session
       (lambda (session)
-        (get-protocol-version session))))))
+        (let ((version (get-protocol-version session)))
+          (disconnect! session)
+          version))))))
 
+#!
 (test-assert-with-log "authenticate-server, not-known"
   'not-known
   (run-client-test
@@ -782,7 +788,7 @@
 
 
 ;;;
-
+!#
 (define exit-status (test-runner-fail-count (test-runner-current)))
 
 (test-end "client-server")
