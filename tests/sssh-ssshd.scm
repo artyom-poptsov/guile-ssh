@@ -94,14 +94,14 @@
 
 ;;; Tests
 
-(test-assert "ssshd, start"
+(test-assert-with-log "ssshd, start"
   (let ((max-tries 10))
     (system *ssshd-cmd*)
     (let ((pid (wait-pid-file max-tries *srv-pid-file*)))
       (cleanup pid)
       pid)))
 
-(test-assert "sssh, exec"
+(test-assert-with-log "sssh, exec"
   (let ((max-tries 10))
     (format (current-error-port) "test  command: ~A~%" *test-cmd*)
     (format (current-error-port) "ssshd command: ~A~%" *ssshd-cmd*)
