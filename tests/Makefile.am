@@ -98,39 +98,22 @@ guilec_env  = 									\
 
 ###
 LOG_DIRS = \
+	dist					\
+	key					\
 	client-server				\
 	dist					\
 	popen					\
+	session					\
 	server-client				\
 	tunnel					\
-	shell
+	server					\
+	shell					\
+	sssh-ssshd
 
 clean-local:
 	-rm -rf $(LOG_DIRS)
 
 CLEANFILES = \
-	client-server-errors.log		\
-	client-server-libssh.log		\
-	dist-errors.log				\
-	dist-libssh.log				\
-	key-errors.log				\
-	key-libssh.log				\
-	popen-errors.log			\
-	popen-libssh.log			\
-	server-client/*.log			\
-	server-client-errors.log		\
-	server-client-libssh.log		\
-	server-errors.log			\
-	server-libssh.log			\
-	session-errors.log			\
-	session-libssh.log			\
-	tunnel-errors.log			\
-	tunnel-libssh.log			\
-	shell-errors.log			\
-	shell-libssh.log			\
-	sssh-ssshd.log				\
-	sssh-ssshd-libssh.log			\
-	sssh-ssshd-errors.log			\
 	$(GOBJECTS)
 
 else CROSS_COMPILING
