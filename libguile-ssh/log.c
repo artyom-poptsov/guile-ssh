@@ -29,6 +29,10 @@
 #include <stdio.h>              /* DEBUG */
 #include <unistd.h>             /* DEBUG */
 
+#include <execinfo.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "log.h"
 #include "error.h"
 #include "common.h"
@@ -73,6 +77,54 @@ libssh_logging_callback (int        c_priority,
   scm_remember_upto_here_1 (function);
   scm_remember_upto_here_1 (message);
   scm_remember_upto_here_1 (userdata);
+}
+
+/**
+ * Log a backtrace, with a FUNCTION_NAME attached.
+ */
+void
+log_backtrace (const char* function_name)
+{
+  enum {
+        /* Maximum number of stack frames that can be obtained. */
+        STACK_BUF_SZ   = 20,
+        /* Maximum log message length. */
+        MESSAGE_BUF_SZ = 120
+  };
+  void *array[STACK_BUF_SZ];
+  char message[MESSAGE_BUF_SZ];
+  char **strings;
+  int32_t size, i;
+
+  size = backtrace (array, STACK_BUF_SZ);
+  strings = backtrace_symbols (array, size);
+  if (strings != NULL)
+    {
+      snprintf (message,
+                MESSAGE_BUF_SZ,
+                "Obtained %d stack frames:",
+                size);
+      libssh_logging_callback (SSH_LOG_NOLOG,
+                               function_name,
+                               message,
+                               NULL);
+      fflush (stderr);
+      for (i = 0; i < size; i++)
+        {
+          snprintf (message,
+                    MESSAGE_BUF_SZ,
+                    "#%-2d %s",
+                    i,
+                    strings[i]);
+          libssh_logging_callback (SSH_LOG_NOLOG,
+                                   function_name,
+                                   message,
+                                   NULL);
+          fflush (stderr);
+        }
+    }
+
+  free (strings);
 }
 
 

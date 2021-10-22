@@ -43,6 +43,8 @@ extern void _gssh_log_debug_format(const char* function_name, SCM args,
 #  define _gssh_log_debug_format(function_name, args, fmt, ...)
 #endif  /* ifdef DEBUG */
 
+void log_backtrace (const char* function_name);
+
 extern void init_log_func (void);
 
 #endif /* ifndef __LOG_H__ */
