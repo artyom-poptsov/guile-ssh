@@ -6,7 +6,9 @@ Guile-SSH is a library that provides access to the [[https://en.wikipedia.org/wi
 written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It is built upon the [[https://www.libssh.org/][libssh]] library.
 
 
-[[https://github.com/artyom-poptsov/guile-ssh/][https://github.com/artyom-poptsov/guile-ssh/workflows/GNU%20Guile%202.2/badge.svg]] [[https://github.com/artyom-poptsov/guile-ssh/][https://github.com/artyom-poptsov/guile-ssh/workflows/GNU%20Guile%203.0/badge.svg]] [[https://github.com/artyom-poptsov/guile-ssh/actions/workflows/fedora.yml/badge.svg]]
+[[https://github.com/artyom-poptsov/guile-ssh/actions/workflows/guile2.2.yml][https://github.com/artyom-poptsov/guile-ssh/actions/workflows/guile2.2.yml/badge.svg]]
+[[https://github.com/artyom-poptsov/guile-ssh/actions/workflows/guile3.0.yml][https://github.com/artyom-poptsov/guile-ssh/actions/workflows/guile3.0.yml/badge.svg]]
+[[https://github.com/artyom-poptsov/guile-ssh/actions/workflows/fedora.yml][https://github.com/artyom-poptsov/guile-ssh/actions/workflows/fedora.yml/badge.svg]]
 
 * Features
   - The API that is sufficient for building of standalone SSH clients and
