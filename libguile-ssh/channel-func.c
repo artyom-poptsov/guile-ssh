@@ -55,7 +55,7 @@ Allocate a new SSH channel.\
         return SCM_BOOL_F;
 
     SCM channel = ssh_channel_to_scm (ch, arg1, scm_to_long (flags));
-    gssh_session_add_channel_x (arg1, channel);
+    gssh_session_add_channel_x (session_data, channel);
 
     return channel;
 }
