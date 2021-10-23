@@ -1,4 +1,4 @@
-name: GNU Guile 3.0
+name: Ubuntu 20.04/Guile 3.0
 
 on:
   push:
