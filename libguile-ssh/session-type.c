@@ -39,20 +39,29 @@ scm_t_bits session_tag;	/* Smob tag. */
 static SCM
 _mark (SCM session_smob)
 {
-  gssh_session_t *sd = gssh_session_from_scm (session_smob);
-  return sd->callbacks;
+  if (! gssh_session_freed_p (session_smob))
+    {
+      gssh_session_t *sd = gssh_session_from_scm (session_smob);
+      scm_gc_mark (sd->channels);
+      return sd->callbacks;
+    }
+  else
+    {
+      return SCM_BOOL_F;
+    }
 }
 
 /* Handle GC'ing of the session smob. */
 static size_t
 _free (SCM session)
 {
-  gssh_session_t *sd = (gssh_session_t *) SCM_SMOB_DATA (session);
-
-  ssh_disconnect (sd->ssh_session);
-  ssh_free (sd->ssh_session);
-
-  SCM_SET_SMOB_DATA (session, NULL);
+  if (! gssh_session_freed_p (session))
+    {
+      gssh_session_t *sd = gssh_session_from_scm (session);
+      guile_ssh_disconnect (session);
+      ssh_free (sd->ssh_session);
+      SCM_SET_SMOB_DATA (session, NULL);
+    }
 
   return 0;
 }
@@ -66,15 +75,15 @@ _equalp (SCM x1, SCM x2)
 static int
 _print (SCM session, SCM port, scm_print_state *pstate)
 {
-  gssh_session_t *sd = gssh_session_from_scm (session);
   char *user = NULL;
   char *host = NULL;
   unsigned int ssh_port;
   int res;
 
   scm_puts ("#<session ", port);
-  if (sd)
+  if (! gssh_session_freed_p (session))
       {
+          gssh_session_t *sd = gssh_session_from_scm (session);
           res = ssh_options_get (sd->ssh_session, SSH_OPTIONS_USER, &user);
           scm_display ((res == SSH_OK)
                        ? scm_from_locale_string (user)
@@ -116,6 +125,34 @@ _print (SCM session, SCM port, scm_print_state *pstate)
 }
 
 
+/* Internal procedure.
+
+   Add a CHANNEL to the channel list of a SESSION. */
+void
+gssh_session_add_channel_x (gssh_session_t* session, SCM channel)
+{
+  session->channels = scm_cons (channel, session->channels);
+}
+
+/* Internal procedure. */
+void
+gssh_session_del_channel_x (gssh_session_t* session, SCM channel)
+{
+  session->channels = scm_delete (channel, session->channels);
+}
+
+/* Internal procedure. */
+void
+gssh_session_close_all_channels_x (gssh_session_t* session)
+{
+  int32_t length = scm_to_int (scm_length (session->channels));
+  for (int32_t idx = 0; idx < length; ++idx)
+    {
+      scm_close_port (scm_list_ref (session->channels, scm_from_int (idx)));
+    }
+}
+
+
 /* Create a new session. */
 SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
             (),
@@ -132,8 +169,8 @@ Create a new session.\
   session_data->ssh_session = ssh_new ();
   if (session_data->ssh_session == NULL)
     return SCM_BOOL_F;
-
   session_data->callbacks = SCM_BOOL_F;
+  session_data->channels  = SCM_EOL;
 
   SCM_NEWSMOB (smob, session_tag, session_data);
 
@@ -157,9 +194,30 @@ Return #t if X is a SSH session, #f otherwise.\
 /* Convert SCM object to a SSH session */
 gssh_session_t*
 gssh_session_from_scm (SCM x)
+#define FUNC_NAME "gssh_session_from_scm"
 {
-  scm_assert_smob_type (session_tag, x);
+  if (! SCM_SMOB_PREDICATE (session_tag, x)) {
+    /* Zero means a finalized smob. */
+    if (SCM_SMOBNUM(x) == 0) {
+      guile_ssh_error1 (FUNC_NAME, "Session is freed", x);
+    } else {
+      guile_ssh_error1 (FUNC_NAME,
+                        "Wrong argument type (expected a session)",
+                        x);
+    }
+  }
+
   return (gssh_session_t *) SCM_SMOB_DATA (x);
+}
+#undef FUNC_NAME
+
+/**
+ * Check if a SESSION is freed.
+ */
+int
+gssh_session_freed_p (SCM session)
+{
+  return SCM_SMOBNUM (session) == 0;
 }
 
 

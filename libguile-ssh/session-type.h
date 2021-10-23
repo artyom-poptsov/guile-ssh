@@ -29,6 +29,7 @@ extern scm_t_bits session_tag;
 struct gssh_session {
   ssh_session ssh_session;
   SCM callbacks;
+  SCM channels;
 };
 
 typedef struct gssh_session gssh_session_t;
@@ -45,10 +46,15 @@ typedef struct gssh_session gssh_session_t;
 extern SCM guile_ssh_make_session (void);
 extern SCM guile_ssh_is_session_p (SCM arg1);
 
+extern void gssh_session_add_channel_x (gssh_session_t* session, SCM channel);
+extern void gssh_session_del_channel_x (gssh_session_t* session, SCM channel);
+extern void gssh_session_close_all_channels_x (gssh_session_t* session);
+
 extern void init_session_type (void);
 
 
 /* Helper procedures */
 extern gssh_session_t* gssh_session_from_scm (SCM x);
+extern int gssh_session_freed_p (SCM session);
 
 #endif  /* ifndef __SESSION_TYPE_H__ */

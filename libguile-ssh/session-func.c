@@ -596,12 +596,27 @@ SCM_DEFINE (guile_ssh_disconnect, "disconnect!", 1, 0, 0,
 Disconnect from a session (client or server).\n\
 Return value is undefined.\
 ")
+#define FUNC_NAME s_guile_ssh_disconnect
 {
   gssh_session_t* session_data = gssh_session_from_scm (arg1);
+  char* session_string = NULL;
+
+  session_string
+    = scm_to_locale_string (scm_object_to_string(arg1, SCM_UNDEFINED));
+  _gssh_log_debug_format (FUNC_NAME, "Disconnecting session: %s ...",
+                          session_string);
   if (ssh_is_connected (session_data->ssh_session))
+    {
+      _gssh_log_debug_format (FUNC_NAME, "Closing channels: %s",
+                              session_string);
+      gssh_session_close_all_channels_x (session_data);
       ssh_disconnect (session_data->ssh_session);
+    }
+  _gssh_log_debug_format (FUNC_NAME, "Disconnecting session: %s ... done",
+                          session_string);
   return SCM_UNDEFINED;
 }
+#undef FUNC_NAME
 
 SCM_DEFINE (guile_ssh_get_protocol_version, "get-protocol-version", 1, 0, 0,
             (SCM arg1),
