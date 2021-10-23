@@ -261,6 +261,7 @@ ptob_close (SCM channel)
   if (ch)
     {
       gssh_session_t *sd = gssh_session_from_scm (ch->session);
+      gssh_session_del_channel_x (sd, channel);
       if (ch->is_remote_closed == 1)
         {
           _gssh_log_debug1 ("ptob_close",
