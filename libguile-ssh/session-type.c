@@ -196,17 +196,7 @@ gssh_session_t*
 gssh_session_from_scm (SCM x)
 #define FUNC_NAME "gssh_session_from_scm"
 {
-  if (! SCM_SMOB_PREDICATE (session_tag, x)) {
-    /* Zero means a finalized smob. */
-    if (SCM_SMOBNUM(x) == 0) {
-      guile_ssh_error1 (FUNC_NAME, "Session is freed", x);
-    } else {
-      guile_ssh_error1 (FUNC_NAME,
-                        "Wrong argument type (expected a session)",
-                        x);
-    }
-  }
-
+  scm_assert_smob_type (session_tag, x);
   return (gssh_session_t *) SCM_SMOB_DATA (x);
 }
 #undef FUNC_NAME
