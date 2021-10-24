@@ -629,21 +629,17 @@ Return value is undefined.\
 #define FUNC_NAME s_guile_ssh_disconnect
 {
   gssh_session_t* session_data = gssh_session_from_scm (arg1);
-  char* session_string = NULL;
 
-  session_string
-    = scm_to_locale_string (scm_object_to_string(arg1, SCM_UNDEFINED));
-  _gssh_log_debug_format (FUNC_NAME, "Disconnecting session: %s ...",
-                          session_string);
+  _gssh_log_debug (FUNC_NAME, "Disconnecting session ...",
+                   arg1);
   if (ssh_is_connected (session_data->ssh_session))
     {
-      _gssh_log_debug_format (FUNC_NAME, "Closing channels: %s",
-                              session_string);
+      _gssh_log_debug (FUNC_NAME, "Closing channels", arg1);
       gssh_session_close_all_channels_x (session_data);
       ssh_disconnect (session_data->ssh_session);
     }
-  _gssh_log_debug_format (FUNC_NAME, "Disconnecting session: %s ... done",
-                          session_string);
+  _gssh_log_debug (FUNC_NAME, "Disconnecting session ... done",
+                   arg1);
   return SCM_UNDEFINED;
 }
 #undef FUNC_NAME
