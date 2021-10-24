@@ -152,6 +152,18 @@ gssh_session_close_all_channels_x (gssh_session_t* session)
     }
 }
 
+/**
+ * Internal procedure.
+ *
+ * Create a Guile-SSH session object.
+ */
+gssh_session_t*
+make_gssh_session ()
+{
+  return (gssh_session_t *) scm_gc_malloc (sizeof (gssh_session_t),
+                                           GSSH_SESSION_TYPE_NAME);
+}
+
 
 /* Create a new session. */
 SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
@@ -161,10 +173,7 @@ Create a new session.\
 ")
 {
   SCM smob;
-
-  gssh_session_t *session_data
-    = (gssh_session_t *) scm_gc_malloc (sizeof (gssh_session_t),
-                                        GSSH_SESSION_TYPE_NAME);
+  gssh_session_t *session_data = make_gssh_session ();
 
   session_data->ssh_session = ssh_new ();
   if (session_data->ssh_session == NULL)
