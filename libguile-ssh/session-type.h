@@ -52,6 +52,7 @@ extern void init_session_type (void);
 
 
 /* Helper procedures */
+extern SCM gssh_session_to_scm (gssh_session_t* session);
 extern gssh_session_t* gssh_session_from_scm (SCM x);
 extern int gssh_session_freed_p (SCM session);
 

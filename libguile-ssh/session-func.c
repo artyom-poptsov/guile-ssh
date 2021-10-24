@@ -92,7 +92,6 @@ SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
 Create a new session.\
 ")
 {
-  SCM smob;
   gssh_session_t *session_data = make_gssh_session ();
 
   session_data->ssh_session = ssh_new ();
@@ -101,9 +100,7 @@ Create a new session.\
   session_data->callbacks = SCM_BOOL_F;
   session_data->channels  = SCM_EOL;
 
-  SCM_NEWSMOB (smob, session_tag, session_data);
-
-  return smob;
+  return gssh_session_to_scm (session_data);
 }
 
 

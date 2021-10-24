@@ -167,6 +167,14 @@ make_gssh_session ()
 
 /* Helper procedures  */
 
+SCM
+gssh_session_to_scm (gssh_session_t* session)
+{
+  SCM smob;
+  SCM_NEWSMOB (smob, session_tag, session);
+  return smob;
+}
+
 /* Convert SCM object to a SSH session */
 gssh_session_t*
 gssh_session_from_scm (SCM x)
