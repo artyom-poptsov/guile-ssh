@@ -82,40 +82,40 @@ _print (SCM session, SCM port, scm_print_state *pstate)
 
   scm_puts ("#<session ", port);
   if (! gssh_session_freed_p (session))
-      {
-          gssh_session_t *sd = gssh_session_from_scm (session);
-          res = ssh_options_get (sd->ssh_session, SSH_OPTIONS_USER, &user);
-          scm_display ((res == SSH_OK)
-                       ? scm_from_locale_string (user)
-                       : SCM_UNDEFINED,
-                       port);
-          ssh_string_free_char (user);
+    {
+      gssh_session_t *sd = gssh_session_from_scm (session);
+      res = ssh_options_get (sd->ssh_session, SSH_OPTIONS_USER, &user);
+      scm_display ((res == SSH_OK)
+                   ? scm_from_locale_string (user)
+                   : SCM_UNDEFINED,
+                   port);
+      ssh_string_free_char (user);
 
-          scm_putc ('@', port);
+      scm_putc ('@', port);
 
-          res = ssh_options_get (sd->ssh_session, SSH_OPTIONS_HOST, &host);
-          scm_display ((res == SSH_OK)
-                       ? scm_from_locale_string (host)
-                       : SCM_UNDEFINED,
-                       port);
-          ssh_string_free_char (host);
+      res = ssh_options_get (sd->ssh_session, SSH_OPTIONS_HOST, &host);
+      scm_display ((res == SSH_OK)
+                   ? scm_from_locale_string (host)
+                   : SCM_UNDEFINED,
+                   port);
+      ssh_string_free_char (host);
 
-          scm_putc (':', port);
+      scm_putc (':', port);
 
-          res = ssh_options_get_port (sd->ssh_session, &ssh_port);
-          scm_display ((res == SSH_OK)
-                       ? scm_from_int (ssh_port)
-                       : SCM_UNDEFINED,
-                       port);
+      res = ssh_options_get_port (sd->ssh_session, &ssh_port);
+      scm_display ((res == SSH_OK)
+                   ? scm_from_int (ssh_port)
+                   : SCM_UNDEFINED,
+                   port);
 
-          scm_puts (ssh_is_connected (sd->ssh_session) ? " (connected) "
-                    : " (disconnected) ",
-                    port);
-      }
+      scm_puts (ssh_is_connected (sd->ssh_session) ? " (connected) "
+                : " (disconnected) ",
+                port);
+    }
   else
-      {
-          scm_puts ("(freed) ", port);
-      }
+    {
+      scm_puts ("(freed) ", port);
+    }
 
   scm_display (_scm_object_hex_address (session), port);
 
