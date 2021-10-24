@@ -68,9 +68,18 @@ ptob_fill_input (SCM channel)
 
   /* Update state of the underlying channel and check whether we have
      data to read or not. */
-  res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
-  if (res == SSH_ERROR)
+  res = ssh_channel_poll_timeout (cd->ssh_channel, cd->timeout, cd->is_stderr);
+  switch (res) {
+  case SSH_ERROR:
     guile_ssh_error1 (FUNC_NAME, "Error polling channel", channel);
+  case SSH_EOF:
+    return EOF;
+  case 0:
+    log_backtrace (FUNC_NAME);
+    assert (0);
+    return EOF;                 /* Must not happen. */
+  }
+
   else if (res == SSH_EOF)
     return EOF;
 
@@ -390,6 +399,7 @@ ssh_channel_to_scm (ssh_channel ch, SCM session, long flags)
   channel_data->is_stderr = 0;  /* Reading from stderr disabled by default */
   channel_data->session = session;
   channel_data->is_remote_closed = 0;
+  channel_data->timeout = -1;   /* Infinite timeout. */
 
   scm_gc_protect_object (channel_data->session);
 

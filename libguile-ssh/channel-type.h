@@ -43,6 +43,10 @@ struct gssh_channel {
 
   /* libssh channel callbacks. */
   struct ssh_channel_callbacks_struct* callbacks;
+
+  /* libssh channel poll timeout.  This timeout passed to the poll(2)
+     procedure. */
+  int32_t timeout;
 };
 
 typedef struct gssh_channel gssh_channel_t;
