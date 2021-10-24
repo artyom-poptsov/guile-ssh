@@ -21,6 +21,8 @@
 
 #include <libguile.h>
 
+extern SCM guile_ssh_make_session (void);
+extern SCM guile_ssh_is_session_p (SCM arg1);
 extern SCM guile_ssh_blocking_flush (SCM arg1, SCM arg2);
 extern SCM guile_ssh_session_set (SCM arg1, SCM arg2, SCM arg3);
 extern SCM guile_ssh_session_get (SCM arg1, SCM arg2);

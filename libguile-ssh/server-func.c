@@ -26,6 +26,7 @@
 
 #include "common.h"
 #include "session-type.h"
+#include "session-func.h"
 #include "server-type.h"
 #include "message-type.h"
 #include "error.h"

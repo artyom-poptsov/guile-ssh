@@ -43,9 +43,6 @@ typedef struct gssh_session gssh_session_t;
   } while (0)
 
 
-extern SCM guile_ssh_make_session (void);
-extern SCM guile_ssh_is_session_p (SCM arg1);
-
 extern void gssh_session_add_channel_x (gssh_session_t* session, SCM channel);
 extern void gssh_session_del_channel_x (gssh_session_t* session, SCM channel);
 extern void gssh_session_close_all_channels_x (gssh_session_t* session);

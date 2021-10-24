@@ -84,6 +84,39 @@ static gssh_symbol_t session_options[] = {
   { NULL,                 -1 }
 };
 
+
+/* Create a new session. */
+SCM_DEFINE (guile_ssh_make_session, "%make-session", 0, 0, 0,
+            (),
+            "\
+Create a new session.\
+")
+{
+  SCM smob;
+  gssh_session_t *session_data = make_gssh_session ();
+
+  session_data->ssh_session = ssh_new ();
+  if (session_data->ssh_session == NULL)
+    return SCM_BOOL_F;
+  session_data->callbacks = SCM_BOOL_F;
+  session_data->channels  = SCM_EOL;
+
+  SCM_NEWSMOB (smob, session_tag, session_data);
+
+  return smob;
+}
+
+
+/* Predicates */
+SCM_DEFINE (guile_ssh_is_session_p, "session?", 1, 0, 0,
+            (SCM x),
+            "\
+Return #t if X is a SSH session, #f otherwise.\
+")
+{
+  return scm_from_bool (SCM_SMOB_PREDICATE (session_tag, x));
+}
+
 /* Blocking flush of the outgoing buffer.
 
    Return on of the following symbols: 'ok, 'error. 'again.
