@@ -49,6 +49,7 @@ extern void init_key_type (void);
 
 
 /* Helper procedures */
+extern gssh_key_t* make_gssh_key ();
 extern SCM gssh_key_to_scm (ssh_key key, SCM parent);
 extern gssh_key_t* gssh_key_from_scm (SCM x);
 extern int _private_key_p (gssh_key_t *key);

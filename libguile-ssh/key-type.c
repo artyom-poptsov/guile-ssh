@@ -126,13 +126,19 @@ _scm_to_ssh_key_type (SCM type)
 
 /* Helper procedures */
 
+gssh_key_t*
+make_gssh_key ()
+{
+    return (gssh_key_t *) scm_gc_malloc (sizeof (gssh_key_t),
+                                         GSSH_KEY_TYPE_NAME);
+}
+
 SCM
 gssh_key_to_scm (ssh_key key, SCM parent)
 {
   gssh_key_t *key_data;
   SCM key_smob;
-  key_data = (gssh_key_t *) scm_gc_malloc (sizeof (gssh_key_t),
-                                           GSSH_KEY_TYPE_NAME);
+  key_data = make_gssh_key ();
   key_data->ssh_key = key;
   key_data->parent = parent;
   SCM_NEWSMOB (key_smob, key_tag, key_data);

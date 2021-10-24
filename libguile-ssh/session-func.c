@@ -752,7 +752,7 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
 
   GSSH_VALIDATE_CONNECTED_SESSION (sd, session, SCM_ARG1);
 
-  kd = (gssh_key_t *) scm_gc_malloc (sizeof (gssh_key_t), "ssh key");
+  kd = make_gssh_key ();
   /* TODO: Check `kd' for NULL. */
 
 #if HAVE_LIBSSH_0_8
