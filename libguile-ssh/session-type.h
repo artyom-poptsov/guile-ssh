@@ -49,6 +49,7 @@ extern SCM guile_ssh_is_session_p (SCM arg1);
 extern void gssh_session_add_channel_x (gssh_session_t* session, SCM channel);
 extern void gssh_session_del_channel_x (gssh_session_t* session, SCM channel);
 extern void gssh_session_close_all_channels_x (gssh_session_t* session);
+extern gssh_session_t* make_gssh_session ();
 
 extern void init_session_type (void);
 
