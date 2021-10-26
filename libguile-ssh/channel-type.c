@@ -158,33 +158,21 @@ read_from_channel_port (SCM channel, SCM dst, size_t start, size_t count)
   gssh_channel_t *cd = gssh_channel_from_scm (channel);
   int res;
 
+  _gssh_log_debug_format (FUNC_NAME,
+                          channel,
+                          "Going to read %d bytes (timeout: %d)",
+                          count,
+                          cd->timeout);
+
   if (! ssh_channel_is_open (cd->ssh_channel))
     return 0;
 
-  /* Update state of the underlying channel and check whether we have
-     data to read or not. */
-  res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
-  if (res == SSH_ERROR)
-    {
-      if (cd->is_remote_closed
-          || (! _gssh_channel_parent_session_connected_p (cd)))
-        {
-          return 0;
-        }
-      else
-        {
-          guile_ssh_error1 (FUNC_NAME,
-                            "Error polling channel",
-                            channel);
-        }
-    }
-
-  else if (res == SSH_EOF)
-    return 0;
-
-  /* Note: `ssh_channel_read' sometimes returns 0 even if `ssh_channel_poll'
-     returns a positive value.  */
   res = ssh_channel_read (cd->ssh_channel, data, count, cd->is_stderr);
+
+  _gssh_log_debug_format (FUNC_NAME,
+                          channel,
+                          "read result: %d",
+                          res);
 
   if (res == SSH_AGAIN)
     {
@@ -243,6 +231,13 @@ ptob_input_waiting (SCM channel)
 {
   gssh_channel_t *cd = gssh_channel_from_scm (channel);
   int res = ssh_channel_poll (cd->ssh_channel, cd->is_stderr);
+
+  _gssh_log_debug_format (FUNC_NAME,
+                          channel,
+                          "poll result: %d%s",
+                          res,
+                          (res == SSH_ERROR) ? " (SSH_ERROR)"
+                          : (res == SSH_EOF) ? " (SSH_EOF)" : "");
 
   if (res == SSH_ERROR)
     guile_ssh_error1 (FUNC_NAME, "An error occurred.", channel);
