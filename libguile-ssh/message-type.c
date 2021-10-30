@@ -28,6 +28,8 @@
 #include "message-func.h"
 #include "common.h"
 
+static const char* GSSH_MESSAGE_TYPE_NAME = "message";
+
 scm_t_bits message_tag;         /* Smob tag. */
 
 
@@ -91,7 +93,7 @@ _scm_from_ssh_message (const ssh_message message, SCM session)
   SCM smob;
   gssh_message_t* message_data
     = (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
-                                             "message");
+                                        GSSH_MESSAGE_TYPE_NAME);
 
   message_data->message = message;
   message_data->session = session;
@@ -113,7 +115,8 @@ _scm_to_message_data (SCM x)
 void
 init_message_type (void)
 {
-  message_tag = scm_make_smob_type ("message", sizeof (gssh_message_t));
+  message_tag = scm_make_smob_type (GSSH_MESSAGE_TYPE_NAME,
+                                    sizeof (gssh_message_t));
   set_smob_callbacks (message_tag, _mark, _free, _equalp, _print);
 
 #include "message-type.x"
