@@ -1,6 +1,6 @@
 /* message-type.c -- SSH message smob.
  *
- * Copyright (C) 2013, 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
@@ -90,8 +90,8 @@ Return #t if X a SSH message, #f otherwise.\
 gssh_message_t*
 make_gssh_message ()
 {
-    return (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
-                                             GSSH_MESSAGE_TYPE_NAME);
+  return (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
+                                           GSSH_MESSAGE_TYPE_NAME);
 }
 
 SCM
