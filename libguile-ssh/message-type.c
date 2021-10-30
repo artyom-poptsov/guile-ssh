@@ -87,13 +87,18 @@ Return #t if X a SSH message, #f otherwise.\
 
 /* Helper procedures. */
 
+gssh_message_t*
+make_gssh_message ()
+{
+    return (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
+                                             GSSH_MESSAGE_TYPE_NAME);
+}
+
 SCM
 _scm_from_ssh_message (const ssh_message message, SCM session)
 {
   SCM smob;
-  gssh_message_t* message_data
-    = (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
-                                        GSSH_MESSAGE_TYPE_NAME);
+  gssh_message_t* message_data = make_gssh_message ();
 
   message_data->message = message;
   message_data->session = session;

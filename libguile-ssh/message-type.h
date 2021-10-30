@@ -40,6 +40,7 @@ extern void init_message_type (void);
 
 
 /* Helper procedures. */
+extern gssh_message_t* make_gssh_message ();
 extern SCM _scm_from_ssh_message (const ssh_message message, SCM session);
 extern gssh_message_t* _scm_to_message_data (SCM x);
 
