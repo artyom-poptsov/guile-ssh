@@ -277,23 +277,13 @@ SCM_DEFINE (guile_ssh_server_message_get,
 Get a message.\
 ")
 {
-  SCM smob;
   gssh_session_t *session_data = gssh_session_from_scm (session);
-  gssh_message_t* message_data
-    = (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
-                                        "message");
+  ssh_message message = ssh_message_get (session_data->ssh_session);
 
-  message_data->message = ssh_message_get (session_data->ssh_session);
-  if (! message_data->message)
-    {
-      scm_gc_free (message_data, sizeof (gssh_message_t), "message");
-      return SCM_BOOL_F;
-    }
-
-  message_data->session = session;
-
-  SCM_NEWSMOB (smob, message_tag, message_data);
-  return smob;
+  if (message == NULL)
+    return SCM_BOOL_F;
+  else
+    return ssh_message_to_scm (message, session);
 }
 
 

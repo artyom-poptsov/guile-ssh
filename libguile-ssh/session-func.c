@@ -292,7 +292,7 @@ libssh_global_request_callback (ssh_session session, ssh_message message,
 
   SCM scm_callback = callbacks_ref (sd, "global-request-callback");
   SCM scm_userdata = callbacks_ref (sd, "user-data");
-  SCM scm_message = _scm_from_ssh_message (message, scm_session);
+  SCM scm_message = ssh_message_to_scm (message, scm_session);
 
   scm_call_3 (scm_callback, scm_session, scm_message, scm_userdata);
 }

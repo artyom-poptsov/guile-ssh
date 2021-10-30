@@ -1,4 +1,4 @@
-/* Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2013-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -40,8 +40,10 @@ extern void init_message_type (void);
 
 
 /* Helper procedures. */
-extern SCM _scm_from_ssh_message (const ssh_message message, SCM session);
-extern gssh_message_t* _scm_to_message_data (SCM x);
+extern gssh_message_t* make_gssh_message ();
+extern SCM ssh_message_to_scm (const ssh_message message, SCM session);
+extern SCM gssh_message_to_scm (const gssh_message_t* message);
+extern gssh_message_t* gssh_message_from_scm (SCM message);
 
 #endif  /* ifndef __MESSAGE_TYPE_H__ */
 

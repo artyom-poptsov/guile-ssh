@@ -1,6 +1,6 @@
 /* message-type.c -- SSH message smob.
  *
- * Copyright (C) 2013, 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
@@ -28,6 +28,8 @@
 #include "message-func.h"
 #include "common.h"
 
+static const char* GSSH_MESSAGE_TYPE_NAME = "message";
+
 scm_t_bits message_tag;         /* Smob tag. */
 
 
@@ -36,7 +38,7 @@ scm_t_bits message_tag;         /* Smob tag. */
 static SCM
 _mark (SCM message)
 {
-  gssh_message_t* md = _scm_to_message_data (message);
+  gssh_message_t* md = gssh_message_from_scm (message);
   return md->session;
 }
 
@@ -66,7 +68,7 @@ _print (SCM smob,  SCM port, scm_print_state *pstate)
 SCM
 _equalp (SCM x1, SCM x2)
 {
-  return compare_objects(x1, x2, (converter_t) _scm_to_message_data);
+  return compare_objects(x1, x2, (converter_t) gssh_message_from_scm);
 }
 
 
@@ -85,24 +87,35 @@ Return #t if X a SSH message, #f otherwise.\
 
 /* Helper procedures. */
 
+gssh_message_t*
+make_gssh_message ()
+{
+  return (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
+                                           GSSH_MESSAGE_TYPE_NAME);
+}
+
 SCM
-_scm_from_ssh_message (const ssh_message message, SCM session)
+gssh_message_to_scm (const gssh_message_t* message)
 {
   SCM smob;
-  gssh_message_t* message_data
-    = (gssh_message_t *) scm_gc_malloc (sizeof (gssh_message_t),
-                                             "message");
+  SCM_NEWSMOB (smob, message_tag, message);
+  return smob;
+}
+
+SCM
+ssh_message_to_scm (const ssh_message message, SCM session)
+{
+  gssh_message_t* message_data = make_gssh_message ();
 
   message_data->message = message;
   message_data->session = session;
 
-  SCM_NEWSMOB (smob, message_tag, message_data);
-  return smob;
+  return gssh_message_to_scm (message_data);
 }
 
 /* Convert X to a SSH message. */
 gssh_message_t *
-_scm_to_message_data (SCM x)
+gssh_message_from_scm (SCM x)
 {
   scm_assert_smob_type (message_tag, x);
   return (gssh_message_t *) SCM_SMOB_DATA (x);
@@ -113,7 +126,8 @@ _scm_to_message_data (SCM x)
 void
 init_message_type (void)
 {
-  message_tag = scm_make_smob_type ("message", sizeof (gssh_message_t));
+  message_tag = scm_make_smob_type (GSSH_MESSAGE_TYPE_NAME,
+                                    sizeof (gssh_message_t));
   set_smob_callbacks (message_tag, _mark, _free, _equalp, _print);
 
 #include "message-type.x"

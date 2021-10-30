@@ -46,7 +46,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_message_reply_default
 {
-  gssh_message_t* msg_data = _scm_to_message_data (msg);
+  gssh_message_t* msg_data = gssh_message_from_scm (msg);
   int res = ssh_message_reply_default (msg_data->message);
   _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
   if (res != SSH_OK)
@@ -64,7 +64,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_message_service_reply_success
 {
-  gssh_message_t* msg_data = _scm_to_message_data (msg);
+  gssh_message_t* msg_data = gssh_message_from_scm (msg);
   int res = ssh_message_service_reply_success (msg_data->message);
   _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
   if (res != SSH_OK)
@@ -82,7 +82,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_message_auth_reply_success
 {
-  gssh_message_t* msg_data = _scm_to_message_data (msg);
+  gssh_message_t* msg_data = gssh_message_from_scm (msg);
   int c_partial_p = scm_to_bool (partial_p);
   int res = ssh_message_auth_reply_success (msg_data->message, c_partial_p);
   _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
@@ -104,7 +104,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_message_auth_reply_public_key_ok
 {
-  gssh_message_t* msg_data = _scm_to_message_data (msg);
+  gssh_message_t* msg_data = gssh_message_from_scm (msg);
   int res = ssh_message_auth_reply_pk_ok_simple (msg_data->message);
   _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
   if (res != SSH_OK)
@@ -122,7 +122,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_message_channel_request_reply_success
 {
-  gssh_message_t* msg_data = _scm_to_message_data (msg);
+  gssh_message_t* msg_data = gssh_message_from_scm (msg);
   int res = ssh_message_channel_request_reply_success (msg_data->message);
   _gssh_log_debug_format(FUNC_NAME, msg, "result: %d", res);
   if (res != SSH_OK)
@@ -139,7 +139,7 @@ Accept open-channel request.\n\
 Return a new SSH channel.\
 ")
 {
-  gssh_message_t* msg_data = _scm_to_message_data (msg);
+  gssh_message_t* msg_data = gssh_message_from_scm (msg);
   ssh_channel ch;
 
   ch = ssh_message_channel_request_open_reply_accept (msg_data->message);
@@ -159,7 +159,7 @@ SCM_DEFINE (gssh_message_global_request_reply_success,
             (SCM msg, SCM bound_port), "")
 #define FUNC_NAME s_gssh_message_global_request_reply_success
 {
-  gssh_message_t* md = _scm_to_message_data (msg);
+  gssh_message_t* md = gssh_message_from_scm (msg);
   int res;
 
   SCM_ASSERT (scm_is_unsigned_integer (bound_port, 0, UINT16_MAX), bound_port,
@@ -281,7 +281,7 @@ SCM_DEFINE (guile_ssh_message_get_type,
 Get type of the message MSG.\
 ")
 {
-  gssh_message_t* message_data = _scm_to_message_data (msg);
+  gssh_message_t* message_data = gssh_message_from_scm (msg);
   return _ssh_message_type_to_scm (message_data->message);
 }
 
@@ -436,7 +436,7 @@ Get a request object from the message MSG\
 ")
 #define FUNC_NAME s_guile_ssh_message_get_req
 {
-  gssh_message_t* message_data = _scm_to_message_data (msg);
+  gssh_message_t* message_data = gssh_message_from_scm (msg);
   ssh_message ssh_msg = message_data->message;
   int type = ssh_message_type (ssh_msg);
 
@@ -511,7 +511,7 @@ Return value is undefined.\
 ")
 #define FUNC_NAME s_guile_ssh_message_auth_set_methods_x
 {
-  gssh_message_t* message_data = _scm_to_message_data (msg);
+  gssh_message_t* message_data = gssh_message_from_scm (msg);
   int methods = 0;
   int res;
 
@@ -550,7 +550,7 @@ SCM_DEFINE (guile_ssh_message_get_session,
 Get the session from which the MESSAGE was received.  Return the session.\
 ")
 {
-  gssh_message_t* md = _scm_to_message_data (message);
+  gssh_message_t* md = gssh_message_from_scm (message);
   return md->session;
 }
 
