@@ -38,7 +38,7 @@ scm_t_bits message_tag;         /* Smob tag. */
 static SCM
 _mark (SCM message)
 {
-  gssh_message_t* md = _scm_to_message_data (message);
+  gssh_message_t* md = gssh_message_from_scm (message);
   return md->session;
 }
 
@@ -68,7 +68,7 @@ _print (SCM smob,  SCM port, scm_print_state *pstate)
 SCM
 _equalp (SCM x1, SCM x2)
 {
-  return compare_objects(x1, x2, (converter_t) _scm_to_message_data);
+  return compare_objects(x1, x2, (converter_t) gssh_message_from_scm);
 }
 
 
@@ -109,7 +109,7 @@ _scm_from_ssh_message (const ssh_message message, SCM session)
 
 /* Convert X to a SSH message. */
 gssh_message_t *
-_scm_to_message_data (SCM x)
+gssh_message_from_scm (SCM x)
 {
   scm_assert_smob_type (message_tag, x);
   return (gssh_message_t *) SCM_SMOB_DATA (x);
