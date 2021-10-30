@@ -95,16 +95,22 @@ make_gssh_message ()
 }
 
 SCM
-_scm_from_ssh_message (const ssh_message message, SCM session)
+gssh_message_to_scm (const gssh_message_t* message)
 {
   SCM smob;
+  SCM_NEWSMOB (smob, message_tag, message);
+  return smob;
+}
+
+SCM
+_scm_from_ssh_message (const ssh_message message, SCM session)
+{
   gssh_message_t* message_data = make_gssh_message ();
 
   message_data->message = message;
   message_data->session = session;
 
-  SCM_NEWSMOB (smob, message_tag, message_data);
-  return smob;
+  return gssh_message_to_scm (message_data);
 }
 
 /* Convert X to a SSH message. */
