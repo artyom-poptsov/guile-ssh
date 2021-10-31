@@ -78,7 +78,7 @@
 (define (format-debug fmt . args)
   "Format a debug message."
   (if debug?
-      (format #t fmt args)))
+      (apply format #t fmt args)))
 
 (define (read-all port)
   "Read all lines from the PORT."
