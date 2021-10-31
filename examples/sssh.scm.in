@@ -191,16 +191,17 @@ Options:
 
         (print-debug "5. userauth-autopubkey!\n")
         (let ((res (userauth-public-key/auto! session)))
-          (if (eqv? res 'error)
-              (handle-error session)))
+          (format-debug "    result: ~a~%\n" res)
+          (unless (equal? res 'success)
+            (handle-error session)))
 
         (print-debug "6. make-channel (ssh_channel_new)\n")
         (let ((channel (make-channel session)))
 
           (format-debug "   channel: ~a~%" channel)
 
-          (if (not channel)
-              (handle-error session))
+          (unless channel
+            (handle-error session))
 
           (print-debug "7. channel-open-session (ssh_channel_open_session)\n")
           (catch #t
