@@ -167,7 +167,11 @@ read_from_channel_port (SCM channel, SCM dst, size_t start, size_t count)
   if (! ssh_channel_is_open (cd->ssh_channel))
     return 0;
 
-  res = ssh_channel_read (cd->ssh_channel, data, count, cd->is_stderr);
+  res = ssh_channel_read_timeout (cd->ssh_channel,
+                                  data,
+                                  count,
+                                  cd->is_stderr,
+                                  cd->timeout);
 
   _gssh_log_debug_format (FUNC_NAME,
                           channel,
