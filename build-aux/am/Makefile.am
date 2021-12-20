@@ -19,7 +19,7 @@
 
 AUTOMAKE_OPTIONS = gnu
 
-am_frags = guilec
+am_frags = guilec guile.am
 
 EXTRA_DIST = $(am_frags)
 

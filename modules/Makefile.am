@@ -17,8 +17,4 @@
 
 SUBDIRS = ssh
 
-clean-go:
-	@cd ssh; make clean-go
-.PHONY: clean-go
-
 ## Makefile.am ends here.
