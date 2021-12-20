@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.14.0 (2021-12-20)
 ** API change: OpenSSH agent procedures are now in (ssh agent)
    Move agent procedures to (ssh agent) module from (ssh auth).
 
@@ -25,6 +25,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
    If you need to call SFTP init, you can use low-level '%sftp-init' procedure
    (although this is discouraged.)
+** Guile-SSH channels are now explicitly blocking by default
 ** Fix snarfing errors on Fedora GNU/Linux
    Guile-SSH would fail to find 'guile-snarf' script on Fedora GNU/Linux when
    GNU Guile 2.2 installed because the snarfer installed as 'guile-snarf2.2'.
@@ -70,7 +71,6 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ** The Guile-SSH building process now less verbose
 
 ** Update documentation
-
 
 * Changes in version 0.13.1 (2020-08-19)
 ** Fix segfaults on GC'ing
