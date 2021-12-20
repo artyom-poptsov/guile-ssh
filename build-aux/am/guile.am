@@ -1,0 +1,53 @@
+include $(top_srcdir)/build-aux/am/guilec
+
+if CROSS_COMPILING
+CROSS_COMPILING_VARIABLE = GUILE_SSH_CROSS_COMPILING=yes
+else
+CROSS_COMPILING_VARIABLE =
+endif
+
+GOBJECTS = $(SOURCES:%.scm=%.go)
+
+nobase_mod_DATA = $(SOURCES) $(NOCOMP_SOURCES)
+nobase_go_DATA = $(GOBJECTS)
+
+# Make sure source files are installed first, so that the mtime of
+# installed compiled files is greater than that of installed source
+# files.  See
+# <http://lists.gnu.org/archive/html/guile-devel/2010-07/msg00125.html>
+# for details.
+guile_install_go_files = install-nobase_goDATA
+$(guile_install_go_files): install-nobase_modDATA
+
+CLEANFILES = $(GOBJECTS)
+$(GOBJECTS): $(lib_LTLIBRARIES)	# Build the library first
+
+EXTRA_DIST = $(SOURCES) $(NOCOMP_SOURCES)
+GUILE_WARNINGS =		\
+	-Wunbound-variable 	\
+	-Warity-mismatch	\
+	-Wunused-variable 	\
+	-Wunused-toplevel	\
+	-Wformat
+
+# TODO: Move environment setup to a separate file.
+guilec_env  = 									\
+	GUILE_AUTO_COMPILE=0 							\
+	$(CROSS_COMPILING_VARIABLE)                                      	\
+	GUILE_SYSTEM_EXTENSIONS_PATH="$(abs_top_builddir)/libguile-ssh/.libs/:${GUILE_SYSTEM_EXTENSIONS_PATH}"	\
+	GUILE_LOAD_PATH="$(abs_top_srcdir)/modules"				\
+	GUILE_LOAD_COMPILED_PATH="$(builddir)/ssh:$$GUILE_LOAD_COMPILED_PATH"
+
+guilec_opts = 					\
+	--load-path=$(abs_srcdir)/modules	\
+	--load-path=$(abs_builddir)/modules	\
+	--target=$(host)			\
+	$(GUILE_WARNINGS)
+
+.scm.go:
+	$(AM_V_GUILEC)$(guilec_env) $(GUILEC) $(guilec_opts) \
+	--output=$@ $<
+
+clean-go:
+	-$(RM) $(GOBJECTS)
+.PHONY: clean-go
