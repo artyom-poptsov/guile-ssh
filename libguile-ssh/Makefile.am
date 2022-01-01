@@ -15,8 +15,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-include $(top_srcdir)/build-aux/am/snarf
-
 lib_LTLIBRARIES = libguile-ssh.la
 
 libguile_ssh_la_SOURCES = \
@@ -60,7 +58,7 @@ snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(GUILE_CFLAGS) \
 
 SUFFIXES = .x
 .c.x:
-	$(AM_V_SNARF) CPP="$(CPP)" $(GUILE_SNARF) -o $@ $< $(snarfcppopts)
+	$(AM_V_GEN)$(guile_snarf) -o $@ $< $(snarfcppopts)
 
 CLEANFILES = *.x
 

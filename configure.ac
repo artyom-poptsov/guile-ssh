@@ -106,6 +106,11 @@ GUILE_PROGS
 GUILE_FLAGS
 GUILE_SITE_DIR
 
+AC_PATH_PROG([guile_snarf], [guile-snarf], [not-found])
+if test "x$guile_snarf" = "xnot-found"; then
+   AC_MSG_ERROR([`guile-snarf' not found.  Please install Guile 2.x, 3.x or later.])
+fi
+
 if test "x$GUILD" = "x"; then
    GUILD=`which guild`
    AC_SUBST(GUILD)
