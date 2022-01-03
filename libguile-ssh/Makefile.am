@@ -1,4 +1,4 @@
-## Copyright (C) 2013, 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2013-2022 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of Guile-SSH.
 ##
@@ -18,27 +18,69 @@
 lib_LTLIBRARIES = libguile-ssh.la
 
 libguile_ssh_la_SOURCES = \
-	auth.c auth.h channel-func.c channel-func.h \
-	channel-type.c channel-type.h channel-main.c \
-	error.c error.h key-func.c key-func.h key-main.c \
-	key-type.c key-type.h session-func.c session-func.h \
-	session-type.c session-type.h session-main.c \
-	server-main.c server-func.c server-func.h server-type.c \
-	server-type.h message-type.c message-type.h message-func.c \
-	message-func.h message-main.c \
-	version.c threads.c threads.h \
-	common.c common.h	\
-	log.c log.h \
-	sftp-session-type.c sftp-session-type.h \
-	sftp-session-main.c	\
-	sftp-session-func.c sftp-session-func.h	\
-	sftp-file-type.c sftp-file-type.h sftp-file-main.c
+	auth.c \
+	auth.h \
+	channel-func.c \
+	channel-func.h \
+	channel-type.c \
+	channel-type.h \
+	channel-main.c \
+	error.c \
+	error.h \
+	key-func.c \
+	key-func.h \
+	key-main.c \
+	key-type.c \
+	key-type.h \
+	session-func.c \
+	session-func.h \
+	session-type.c \
+	session-type.h \
+	session-main.c \
+	server-main.c \
+	server-func.c \
+	server-func.h \
+	server-type.c \
+	server-type.h \
+	message-type.c \
+	message-type.h \
+	message-func.c \
+	message-func.h \
+	message-main.c \
+	version.c \
+	threads.c \
+	threads.h \
+	common.c \
+	common.h \
+	log.c \
+	log.h \
+	sftp-session-type.c \
+	sftp-session-type.h \
+	sftp-session-main.c \
+	sftp-session-func.c \
+	sftp-session-func.h \
+	sftp-file-type.c \
+	sftp-file-type.h \
+	sftp-file-main.c
 
-BUILT_SOURCES = auth.x channel-func.x channel-type.x error.x \
-	key-func.x key-type.x session-func.x session-type.x \
-	server-type.x server-func.x message-type.x message-func.x \
-	version.x log.x sftp-session-type.x sftp-session-func.x \
-	sftp-file-type.x
+BUILT_SOURCES = \
+	auth.x \
+	channel-func.x \
+	channel-type.x \
+	error.x \
+	key-func.x \
+	key-type.x \
+	log.x \
+	message-func.x \
+	message-type.x \
+	server-func.x \
+	server-type.x \
+	session-func.x \
+	session-type.x \
+	sftp-file-type.x \
+	sftp-session-func.x \
+	sftp-session-type.x \
+	version.x
 
 libguile_ssh_la_CPPFLAGS = $(CFLAGS) $(GUILE_CFLAGS)
 
@@ -47,8 +89,11 @@ if ! HAVE_LIBSSH_0_8
 SSH_LD_FLAGS += -lssh_threads
 endif
 
-libguile_ssh_la_LDFLAGS = -module -no-undefined $(SSH_LD_FLAGS)  \
-	-version-info $(LIBGUILE_SSH_INTERFACE) $(GUILE_LDFLAGS)
+libguile_ssh_la_LDFLAGS = \
+	-module \
+	-no-undefined $(SSH_LD_FLAGS) \
+	-version-info $(LIBGUILE_SSH_INTERFACE) \
+	$(GUILE_LDFLAGS)
 
 AM_CFLAGS = $(WARN_CFLAGS)
 AM_CPPFLAGS = -I$(top_srcdir)/libguile-ssh -I$(top_builddir)/libguile-ssh
