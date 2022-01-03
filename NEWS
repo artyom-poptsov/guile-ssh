@@ -7,6 +7,15 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Changes in version 0.15.0 (2022-01-03)
+** Bump library version to "14:0:0" according to libtool rules
+   In the 0.14.0 release of Guile-SSH the libtool library version wasn't
+   properly changed.  This could lead to compatibility problems.
+
+   Now the version is bumped to "14:0:0".
+** Remove requirement for 'whereis' command
+   Guile-SSH required 'whereis' from 'util-linux' package to find
+   'guile-snarf' command.  Now this dependency is removed.
 * Changes in version 0.14.0 (2021-12-20)
 ** API change: OpenSSH agent procedures are now in (ssh agent)
    Move agent procedures to (ssh agent) module from (ssh auth).

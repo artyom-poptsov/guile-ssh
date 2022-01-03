@@ -3,7 +3,7 @@ dnl   Process this file with autoconf to produce configure.
 dnl
 
 define(GUILE_SSH_CONFIGURE_COPYRIGHT, [[
-Copyright (C) 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+Copyright (C) 2013-2022 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 
 This file is part of Guile-SSH.
 
@@ -21,11 +21,14 @@ You should have received a copy of the GNU General Public License
 along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 ]])
 
-AC_INIT([Guile-SSH], [0.14.0], [poptsov.artyom@gmail.com],
+AC_INIT([Guile-SSH], [0.15.0], [poptsov.artyom@gmail.com],
                      [guile-ssh],
                      [https://github.com/artyom-poptsov/guile-ssh])
 
 AC_COPYRIGHT(GUILE_SSH_CONFIGURE_COPYRIGHT)
+
+LIBGUILE_SSH_INTERFACE="14:0:0"
+AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux/m4])
@@ -128,9 +131,6 @@ if test "x$guilesitedir" = "x"; then
    guilesitedir="$datadir/guile/site/$GUILE_EFFECTIVE_VERSION"
 fi
 AC_SUBST([guilesitedir])
-
-LIBGUILE_SSH_INTERFACE="13:1:0"
-AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 GUILE_EFFECTIVE_VERSION=`$GUILE -c '(display (effective-version))'`
 AC_SUBST(GUILE_EFFECTIVE_VERSION)
