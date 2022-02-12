@@ -370,7 +370,10 @@ static void
 channel_close_callback (ssh_session session, ssh_channel channel, void *userdata)
 {
   gssh_channel_t* cd = (gssh_channel_t*) userdata;
-  cd->is_remote_closed = 1;
+  if (cd)
+    {
+      cd->is_remote_closed = 1;
+    }
 }
 
 
