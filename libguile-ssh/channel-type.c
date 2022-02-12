@@ -369,8 +369,7 @@ print_channel (SCM channel, SCM port, scm_print_state *pstate)
 static void
 channel_close_callback (ssh_session session, ssh_channel channel, void *userdata)
 {
-  SCM scm_channel = (SCM) userdata;
-  gssh_channel_t* cd = gssh_channel_from_scm (scm_channel);
+  gssh_channel_t* cd = (gssh_channel_t*) userdata;
   cd->is_remote_closed = 1;
 }
 
@@ -438,7 +437,7 @@ ssh_channel_to_scm (ssh_channel ch, SCM session, long flags)
     = calloc (1, sizeof (struct ssh_channel_callbacks_struct));
 
   channel_data->callbacks->channel_close_function = channel_close_callback;
-  channel_data->callbacks->userdata               = (void *) ptob;
+  channel_data->callbacks->userdata               = (void *) channel_data;
   ssh_callbacks_init (channel_data->callbacks);
 
   if (ssh_set_channel_callbacks (ch, channel_data->callbacks) != SSH_OK)
