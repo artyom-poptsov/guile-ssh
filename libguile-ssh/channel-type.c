@@ -269,6 +269,7 @@ ptob_close (SCM channel)
   if (ch)
     {
       gssh_session_t *sd = gssh_session_from_scm (ch->session);
+      ssh_remove_channel_callbacks (ch->ssh_channel, ch->callbacks);
       gssh_session_del_channel_x (sd, channel);
       if (ch->is_remote_closed == 1)
         {
