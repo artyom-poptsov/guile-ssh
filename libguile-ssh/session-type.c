@@ -145,11 +145,10 @@ gssh_session_del_channel_x (gssh_session_t* session, SCM channel)
 void
 gssh_session_close_all_channels_x (gssh_session_t* session)
 {
-  int32_t length = scm_to_int (scm_length (session->channels));
-  for (int32_t idx = 0; idx < length; ++idx)
-    {
-      scm_close_port (scm_list_ref (session->channels, scm_from_int (idx)));
-    }
+  int32_t length;
+  while ((length = scm_to_int (scm_length (session->channels))) > 0) {
+    scm_close_port (scm_list_ref (session->channels, scm_from_int (0)));
+  }
 }
 
 /**
