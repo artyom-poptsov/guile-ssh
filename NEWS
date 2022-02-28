@@ -7,6 +7,30 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Changes in version 0.15.1 (2022-02-28)
+** Fix session garbage collecting errors
+   When a session is being destroyed by the Guile GC, the session garbage
+   collector procedures try to close all the session channels.  There was a
+   bug that lead to accessing elements that are over the border of a channels
+   list.
+
+   Now the bug should be fixed.
+
+   Reported by Ludovic Courtès <ludo@gnu.org> in an email, here:
+   <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=52975>
+** Fix segfaults that occur on session closing
+   When a remote side closing a channel Guile-SSH would fail as the libssh
+   callback that marks the Guile-SSH channel as closed tried to convert a
+   Guile channel object to the channel data and fails to do it.
+
+   Now the problem should be fixed.
+
+   Reported by Ludovic Courtès <ludo@gnu.org> in an email, here:
+   <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=52975>
+** Add GNU Guix package definition to the repository
+   Add =guix.scm= to the repository.  The file contains GNU Guix package
+   definition that allows to build Guile-SSH from Git.
+
 * Changes in version 0.15.0 (2022-01-03)
 ** Bump library version to "14:0:0" according to libtool rules
    In the 0.14.0 release of Guile-SSH the libtool library version wasn't
