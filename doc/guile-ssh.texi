@@ -254,26 +254,17 @@ Distributed Computing
 @chapter Acknowledgments
 
 The @url{http://www.libssh.org/, libssh} that is used by Guile-SSH is
-initially written by Aris Adamantiadis and being developed by the
-developer community.  See AUTHORS file that comes along with libssh
-distribution for full authors list.
+initially written by Aris Adamantiadis and being developed by the developer
+community.  See @file{AUTHORS} file that comes along with libssh distribution
+for full authors list.
 
-Thanks to the following people who contributed to Guile-SSH
-through bug reports or patches:
-
-@itemize @bullet
-@item Ludovic Courtès @email{ludo@@gnu.org}
-@item David Thompson @email{davet@@gnu.org}
-@item SaffronSnail @url{https://github.com/SaffronSnail}
-@item David Kastrup @email{dak@@gnu.org>}
-@item Mathieu Othacehe @email{m.othacehe@@gmail.com}
-@item Marius Bakke @email{mbakke@@fastmail.com}
-@item Ting-Wei Lan @email{lantw44@@gmail.com}
-@item Lars-Dominik Braun @email{ldb@@leibniz-psychology.org}
-@end itemize
-
+Also I'd like to thank all the people who contributed their precious time and
+skills to send bug reports and patches for Guile-SSH.  Please see @file{THANKS}
+file in the Guile-SSH repository for the full list of contributors.
 
 Thank you.
+
+- Artyom ``avp'' Poptsov
 
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License
