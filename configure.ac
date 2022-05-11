@@ -126,7 +126,7 @@ if test "x$have_srfi64" != "xyes"; then
 fi
 
 LT_INIT()
-p
+
 if test "x$guilesitedir" = "x"; then
    guilesitedir="$datadir/guile/site/$GUILE_EFFECTIVE_VERSION"
 fi
