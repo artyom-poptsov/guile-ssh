@@ -25,7 +25,8 @@
 /* Smob data. */
 struct gssh_sftp_dir {
     /* Reference to the parent SFTP session. */
-    SCM sftp_session;
+    SCM gssh_sftp_session;
+    SCM path;
 
     sftp_dir dir;
 };
