@@ -62,7 +62,8 @@ libguile_ssh_la_SOURCES = \
 	sftp-file-type.c \
 	sftp-file-type.h \
 	sftp-file-main.c \
-	sftp-dir-type.h
+	sftp-dir-type.h \
+	sftp-dir-type.c
 
 BUILT_SOURCES = \
 	auth.x \
