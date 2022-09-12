@@ -24,11 +24,11 @@
 
 /* Smob data. */
 struct gssh_sftp_dir {
-    /* Reference to the parent SFTP session. */
-    SCM gssh_sftp_session;
-    SCM path;
+  /* Reference to the parent SFTP session. */
+  SCM gssh_sftp_session;
+  SCM path;
 
-    sftp_dir dir;
+  sftp_dir dir;
 };
 
 typedef struct gssh_sftp_dir gssh_sftp_dir_t;
