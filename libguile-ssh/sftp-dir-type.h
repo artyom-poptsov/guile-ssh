@@ -33,6 +33,11 @@ struct gssh_sftp_dir {
 
 typedef struct gssh_sftp_dir gssh_sftp_dir_t;
 
+void init_sftp_dir_type (void);
+gssh_sftp_dir_t* make_gssh_sftp_dir ();
+SCM gssh_sftp_dir_to_scm (sftp_dir dir, SCM path, SCM sftp_session);
+gssh_sftp_dir_t* gssh_sftp_dir_from_scm (SCM x);
+
 #endif /* ifndef __SFTP_DIR_TYPE_H__ */
 
 /* sftp-dir-type.h ends here. */
