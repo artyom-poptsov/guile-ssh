@@ -24,10 +24,14 @@
 
 /* Smob data. */
 struct gssh_sftp_dir {
+
   /* Reference to the parent SFTP session. */
   SCM gssh_sftp_session;
+
+  /* Path to the directory on the remote host. */
   SCM path;
 
+  /* libssh directory (opaque object.) */
   sftp_dir dir;
 };
 
