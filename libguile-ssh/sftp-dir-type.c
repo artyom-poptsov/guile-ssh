@@ -86,6 +86,12 @@ SCM_GSSH_DEFINE (gssh_sftp_open_dir, "%gssh-sftp-open", 2,
 }
 #undef FUNC_NAME
 
-
+static SCM
+_mark (SCM sftp_dir)
+{
+  gssh_sftp_dir_t* data = gssh_sftp_dir_from_scm (sftp_dir);
+  scm_gc_mark (data->path);
+  return data->gssh_sftp_session;
+}
 
 /* sftp-dir-type.c ends here. */
