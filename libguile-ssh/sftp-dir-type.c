@@ -19,6 +19,7 @@
  */
 
 #include <config.h>
+#include <assert.h>
 
 #include <libguile.h>
 #include <libssh/libssh.h>
@@ -92,6 +93,15 @@ _mark (SCM sftp_dir)
   gssh_sftp_dir_t* data = gssh_sftp_dir_from_scm (sftp_dir);
   scm_gc_mark (data->path);
   return data->gssh_sftp_session;
+}
+
+static size_t
+_free (SCM sftp_dir)
+{
+  gssh_sftp_dir_t* data = gssh_sftp_dir_from_scm (sftp_dir);
+  int rc = sftp_closedir (data->dir);
+  assert (rc == SSH_NO_ERROR);
+  return 0;
 }
 
 /* sftp-dir-type.c ends here. */
