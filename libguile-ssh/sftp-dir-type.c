@@ -122,5 +122,18 @@ _print (SCM sftp_dir, SCM port, scm_print_state* pstate)
   return 1;
 }
 
+
+/* SMOB Initialization. */
+void
+init_sftp_dir_type (void)
+{
+  sftp_dir_tag = scm_make_smob_type (GSSH_SFTP_DIR_TYPE_NAME,
+                                     sizeof (gssh_sftp_dir_t));
+  set_smob_callbacks (sftp_dir_tag, _mark, _free, _equalp, _print);
+
+#include "sftp-dir-type.x"
+}
+
+
 
 /* sftp-dir-type.c ends here. */
