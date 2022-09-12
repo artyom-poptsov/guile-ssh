@@ -53,6 +53,13 @@ gssh_sftp_dir_to_scm (sftp_dir dir, SCM path, SCM sftp_session)
   return smob;
 }
 
+gssh_sftp_dir_t *
+gssh_sftp_dir_from_scm (SCM x)
+{
+  scm_assert_smob_type (sftp_dir_tag, x);
+  return (gssh_sftp_dir_t *) SCM_SMOB_DATA (x);
+}
+
 SCM_GSSH_DEFINE (gssh_sftp_open_dir, "%gssh-sftp-open", 2,
                  (SCM sftp_session, SCM path))
 #define FUNC_NAME s_gssh_sftp_open_dir
