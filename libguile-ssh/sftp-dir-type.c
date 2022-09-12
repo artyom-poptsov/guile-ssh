@@ -110,5 +110,17 @@ _equalp (SCM x1, SCM x2)
   return compare_objects(x1, x2, (converter_t) gssh_sftp_dir_from_scm);
 }
 
+static int
+_print (SCM sftp_dir, SCM port, scm_print_state* pstate)
+{
+  scm_puts ("#<sftp-dir ", port);
+
+  scm_display (_scm_object_hex_address (sftp_dir), port);
+
+  scm_putc ('>', port);
+
+  return 1;
+}
+
 
 /* sftp-dir-type.c ends here. */
