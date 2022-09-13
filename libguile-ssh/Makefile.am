@@ -84,6 +84,7 @@ BUILT_SOURCES = \
 	session-type.x \
 	sftp-file-type.x \
 	sftp-dir-type.x \
+	sftp-dir-func.x \
 	sftp-session-func.x \
 	sftp-session-type.x \
 	version.x
