@@ -153,6 +153,14 @@ SCM_GSSH_DEFINE (gssh_sftp_dir_read, "sftp-dir-read", 1,
 }
 #undef FUNC_NAME
 
+
+/* Initialize functions. */
+void
+init_sftp_dir_func (void)
+{
+#include "sftp-dir-func.x"
+}
+
 /*
   Local Variables:
   c-file-style: "gnu"
