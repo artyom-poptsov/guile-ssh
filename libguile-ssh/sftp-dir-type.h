@@ -21,6 +21,9 @@
 #ifndef __SFTP_DIR_TYPE_H__
 #define __SFTP_DIR_TYPE_H__
 
+#include <libguile.h>
+#include <libssh/sftp.h>
+
 
 /* Smob data. */
 struct gssh_sftp_dir {
