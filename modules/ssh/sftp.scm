@@ -36,6 +36,14 @@
 ;;   sftp-unlink
 ;;   sftp-open
 ;;   sftp-file?
+;;   sftp-dir?
+;;   sftp-dir-open
+;;   sftp-dir-open-stream
+;;   sftp-dir-path
+;;   sftp-dir-session
+;;   sftp-dir-close
+;;   sftp-dir-eof?
+;;   sftp-dir-read
 ;;   call-with-remote-input-file
 ;;   call-with-remote-output-file
 ;;   with-input-from-remote-file
