@@ -75,6 +75,7 @@
             sftp-file?
 
             ;; Directories
+            sftp-dir?
             sftp-dir-open
             sftp-dir-open-stream
             sftp-dir-path

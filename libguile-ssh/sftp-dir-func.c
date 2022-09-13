@@ -35,6 +35,13 @@
 #include "sftp-dir-type.h"
 
 
+
+SCM_GSSH_DEFINE (gssh_sftp_dir_p, "sftp-dir?", 1, (SCM x))
+{
+  return scm_from_bool (SCM_SMOB_PREDICATE (sftp_dir_tag, x));
+}
+
+
 SCM_GSSH_DEFINE (gssh_sftp_dir_path, "sftp-dir-path", 1,
                  (SCM sftp_dir))
 #define FUNC_NAME s_gssh_sftp_dir_path

@@ -40,6 +40,8 @@ struct gssh_sftp_dir {
 
 typedef struct gssh_sftp_dir gssh_sftp_dir_t;
 
+extern scm_t_bits sftp_dir_tag;
+
 extern SCM gssh_sftp_attr_name;
 extern SCM gssh_sftp_attr_longname;
 extern SCM gssh_sftp_attr_flags;
