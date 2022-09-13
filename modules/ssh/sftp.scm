@@ -258,7 +258,7 @@ behavior is implementation dependent."
 
 (define (sftp-dir-open-stream sftp-session directory)
   "Open an SFTP directory.  Return a ICE-9 stream of directory attributes."
-  (let ((dir (sftp-dir-open directory)))
+  (let ((dir (sftp-dir-open sftp-session directory)))
     (make-stream (lambda (state)
                    (if (sftp-dir-eof? dir)
                        #f
