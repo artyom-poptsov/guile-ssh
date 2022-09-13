@@ -136,6 +136,32 @@ Return @code{#t} if @var{x} is an SFTP file port, @code{#f} otherwise.
 @end deffn
 
 @c -----------------------------------------------------------------------------
+@subsection SFTP Directory
+
+@deffn {Scheme Procedure} sftp-dir-open sftp-session path
+Open a remote directory with the specified @var{path} using
+@var{sftp-session}. Return an SFTP directory as opaque object.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-open-stream sftp-session path
+Open a remote directory with the specified @var{path} using
+@var{sftp-session}. Return an ice-9 stream of SFTP file attributes.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-close sftp-directory
+Close an @var{sftp-directory}.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-eof? sftp-directory
+CHeck if an @var{sftp-directory} pointed to an EOF object.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-read sftp-directory
+Read an @var{sftp-directory}. Return an alist with the next directory
+attributes.
+@end deffn
+
+@c -----------------------------------------------------------------------------
 @subsection High-level operations on remote files
 
 @deffn {Scheme Procedure} call-with-remote-input-file sftp-session filename proc
