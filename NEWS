@@ -7,6 +7,17 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Changes in version 0.16.0 (2022-09-13)
+** Fix Guile snarfer environment
+Fix a bug introduced in Guile-SSH 0.15.0 that breaks the cross-compilation.
+
+Reported by Ludovic Courtes <ludo@gnu.org> here:
+<https://github.com/artyom-poptsov/guile-ssh/issues/30>
+** New API: SFTP Directory
+Guile-SSH now allows directory traversal by means of the new procedures in the
+(ssh sftp) module.
+** Update the documentation.
+
 * Changes in version 0.15.1 (2022-02-28)
 ** Fix session garbage collecting errors
    When a session is being destroyed by the Guile GC, the session garbage
