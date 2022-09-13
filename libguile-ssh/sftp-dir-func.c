@@ -88,6 +88,71 @@ SCM_GSSH_DEFINE (gssh_sftp_dir_eof_p, "sftp-dir-eof?", 1,
 }
 #undef FUNC_NAME
 
+
+/* This macro constructs an SCM pair from an SFTP attribute symbol and a C
+   integer value. */
+#define CONS_INT_ATTR(name, value) \
+  scm_cons (gssh_sftp_attr_ ## name, scm_from_int (value))
+
+/* This macro constructs an SCM pair from an SFTP atribute symbol and a C
+   string SFTP attribute. */
+#define CONS_STR_ATTR(name, value)                                      \
+  scm_cons (gssh_sftp_attr_ ## name, scm_from_locale_string (value))
+
+/* This macro constructs an SCM pair from an SFTP attribute symbol and a SSH
+   string value. */
+#define CONS_SST_ATTR(name, value)  \
+  scm_cons (gssh_sftp_attr_ ## name,                                    \
+            scm_from_locale_string (ssh_string_to_char (value)))
+
+static SCM
+scm_from_sftp_dir_attributes (sftp_attributes attrs)
+{
+  return scm_list_n (CONS_STR_ATTR (name,                attrs->name),
+                     CONS_STR_ATTR (longname,            attrs->longname),
+                     CONS_INT_ATTR (flags,               attrs->flags),
+                     CONS_INT_ATTR (type,                attrs->type),
+                     CONS_INT_ATTR (size,                attrs->size),
+                     CONS_INT_ATTR (uid,                 attrs->uid),
+                     CONS_INT_ATTR (gid,                 attrs->gid),
+                     CONS_STR_ATTR (owner,               attrs->owner),
+                     CONS_STR_ATTR (group,               attrs->group),
+                     CONS_INT_ATTR (permissions,         attrs->permissions),
+                     CONS_INT_ATTR (atime64,             attrs->atime64),
+                     CONS_INT_ATTR (atime,               attrs->atime),
+                     CONS_INT_ATTR (atime_nseconds,      attrs->atime_nseconds),
+                     CONS_INT_ATTR (createtime,          attrs->createtime),
+                     CONS_INT_ATTR (createtime_nseconds, attrs->createtime_nseconds),
+                     CONS_INT_ATTR (mtime64,             attrs->mtime64),
+                     CONS_INT_ATTR (mtime,               attrs->mtime),
+                     CONS_INT_ATTR (mtime_nseconds,      attrs->mtime_nseconds),
+                     CONS_SST_ATTR (acl,                 attrs->acl),
+                     CONS_INT_ATTR (extended_count,      attrs->extended_count),
+                     CONS_SST_ATTR (extended_type,       attrs->extended_type),
+                     CONS_SST_ATTR (extended_data,       attrs->extended_data),
+                     SCM_UNDEFINED);
+}
+
+#undef CONS_INT_ATTR
+#undef CONS_STR_ATTR
+#undef CONS_SST_ATTR
+
+SCM_GSSH_DEFINE (gssh_sftp_dir_read, "sftp-dir-read", 1,
+                 (SCM sftp_dir))
+#define FUNC_NAME s_gssh_sftp_dir_read
+{
+  gssh_sftp_dir_t* dir = gssh_sftp_dir_from_scm (sftp_dir);
+  gssh_sftp_session_t* session = gssh_sftp_session_from_scm (dir->gssh_sftp_session);
+  sftp_attributes attrs = sftp_readdir (session->sftp_session, dir->dir);
+  if (attrs == NULL)
+    {
+      return SCM_BOOL_F;
+    }
+
+  return scm_from_sftp_dir_attributes (attrs);
+}
+#undef FUNC_NAME
+
 /*
   Local Variables:
   c-file-style: "gnu"
