@@ -1,6 +1,6 @@
 ;;; sftp.scm -- Procedures for working with SFTP.
 
-;; Copyright (C) 2015-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015-2022 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -72,6 +72,12 @@
             ;; File ports
             sftp-open
             sftp-file?
+
+            ;; Directories
+            sftp-dir-open
+            sftp-dir-close
+            sftp-dir-eof?
+            sftp-dir-read
 
             ;; High-level operations on remote files
             call-with-remote-input-file
