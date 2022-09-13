@@ -61,32 +61,6 @@ gssh_sftp_dir_from_scm (SCM x)
   return (gssh_sftp_dir_t *) SCM_SMOB_DATA (x);
 }
 
-SCM_GSSH_DEFINE (gssh_sftp_open_dir, "%gssh-sftp-open", 2,
-                 (SCM sftp_session, SCM path))
-#define FUNC_NAME s_gssh_sftp_open_dir
-{
-  gssh_sftp_session_t *sftp_sd = gssh_sftp_session_from_scm (sftp_session);
-  sftp_dir dir;
-  char* c_path;
-
-  scm_dynwind_begin (0);
-
-  c_path = scm_to_locale_string (path);
-  scm_dynwind_free (c_path);
-
-  dir = sftp_opendir (sftp_sd->sftp_session, c_path);
-  if (dir == NULL)
-    {
-      guile_ssh_error1 (FUNC_NAME, "Could not open a directory",
-                        scm_list_2 (sftp_session, path));
-    }
-
-  scm_dynwind_end ();
-
-  return gssh_sftp_dir_to_scm (dir, path, sftp_session);
-}
-#undef FUNC_NAME
-
 static SCM
 _mark (SCM sftp_dir)
 {
