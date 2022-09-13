@@ -97,13 +97,16 @@ SCM_GSSH_DEFINE (gssh_sftp_dir_eof_p, "sftp-dir-eof?", 1,
 /* This macro constructs an SCM pair from an SFTP atribute symbol and a C
    string SFTP attribute. */
 #define CONS_STR_ATTR(name, value)                                      \
-  scm_cons (gssh_sftp_attr_ ## name, scm_from_locale_string (value))
+  scm_cons (gssh_sftp_attr_ ## name,                                    \
+            value ? scm_from_locale_string (value) : SCM_BOOL_F)
 
 /* This macro constructs an SCM pair from an SFTP attribute symbol and a SSH
    string value. */
 #define CONS_SST_ATTR(name, value)  \
   scm_cons (gssh_sftp_attr_ ## name,                                    \
-            scm_from_locale_string (ssh_string_to_char (value)))
+            value                                                       \
+            ? scm_from_locale_string (ssh_string_to_char (value))       \
+            : SCM_BOOL_F)
 
 static SCM
 scm_from_sftp_dir_attributes (sftp_attributes attrs)
