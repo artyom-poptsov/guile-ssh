@@ -44,6 +44,15 @@ SCM_GSSH_DEFINE (gssh_sftp_dir_path, "sftp-dir-path", 1,
 }
 #undef FUNC_NAME
 
+SCM_GSSH_DEFINE (gssh_sftp_dir_session, "sftp-dir-session", 1,
+                 (SCM sftp_dir))
+#define FUNC_NAME s_gssh_sftp_dir_path
+{
+  gssh_sftp_dir_t* dir = gssh_sftp_dir_from_scm (sftp_dir);
+  return dir->gssh_sftp_session;
+}
+#undef FUNC_NAME
+
 
 SCM_GSSH_DEFINE (gssh_sftp_dir_open, "sftp-dir-open", 2,
                  (SCM sftp_session, SCM path))
