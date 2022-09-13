@@ -78,6 +78,16 @@ SCM_GSSH_DEFINE (gssh_sftp_closedir, "sftp-closedir", 1,
 }
 #undef FUNC_NAME
 
+SCM_GSSH_DEFINE (gssh_sftp_dir_eof_p, "sftp-dir-eof?", 1,
+                 (SCM sftp_dir))
+#define FUNC_NAME s_gssh_sftp_closedir
+{
+  gssh_sftp_dir_t* dir = gssh_sftp_dir_from_scm (sftp_dir);
+  int rc = sftp_dir_eof (dir->dir);
+  return scm_from_bool (rc);
+}
+#undef FUNC_NAME
+
 /*
   Local Variables:
   c-file-style: "gnu"
