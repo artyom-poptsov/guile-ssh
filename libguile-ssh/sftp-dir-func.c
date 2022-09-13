@@ -61,6 +61,23 @@ SCM_GSSH_DEFINE (gssh_sftp_opendir, "sftp-opendir", 2,
 }
 #undef FUNC_NAME
 
+SCM_GSSH_DEFINE (gssh_sftp_closedir, "sftp-closedir", 1,
+                 (SCM sftp_dir))
+#define FUNC_NAME s_gssh_sftp_closedir
+{
+  gssh_sftp_dir_t* dir = gssh_sftp_dir_from_scm (sftp_dir);
+  int rc = sftp_closedir (dir->dir);
+  if (rc == SSH_ERROR)
+    {
+      guile_ssh_error1 (FUNC_NAME,
+                        "Could not close an SFTP directory",
+                        sftp_dir);
+    }
+
+  return SCM_UNDEFINED;
+}
+#undef FUNC_NAME
+
 /*
   Local Variables:
   c-file-style: "gnu"
