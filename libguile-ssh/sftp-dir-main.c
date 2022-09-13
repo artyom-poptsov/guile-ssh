@@ -22,11 +22,13 @@
 
 #include "threads.h"
 #include "sftp-dir-type.h"
+#include "sftp-dir-func.h"
 
 void
 init_sftp_dir (void)
 {
     init_sftp_dir_type ();
+    init_sftp_dir_func ();
     init_pthreads ();
 }
 
