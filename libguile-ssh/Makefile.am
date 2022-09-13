@@ -110,7 +110,7 @@ snarfcppopts = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(GUILE_CFLAGS) \
 
 SUFFIXES = .x
 .c.x:
-	$(AM_V_GEN)$(guile_snarf) -o $@ $< $(snarfcppopts)
+	$(AM_V_GEN)CPP="$(CPP)" $(guile_snarf) -o $@ $< $(snarfcppopts)
 
 CLEANFILES = *.x
 
