@@ -63,7 +63,7 @@ SCM_GSSH_DEFINE (gssh_sftp_opendir, "sftp-opendir", 2,
 
 SCM_GSSH_DEFINE (gssh_sftp_dir_close, "sftp-dir-close", 1,
                  (SCM sftp_dir))
-#define FUNC_NAME s_gssh_sftp_closedir
+#define FUNC_NAME s_gssh_sftp_dir_close
 {
   gssh_sftp_dir_t* dir = gssh_sftp_dir_from_scm (sftp_dir);
   int rc = sftp_closedir (dir->dir);
