@@ -25,8 +25,8 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
     to a remote REPL from Scheme using =with-ssh= procedure and evaluate some
     expressions.  No special server needed on the remote side, just an SSH
     daemon and GNU Guile installed!
-  - SFTP client API allows you to read and write remote files over the SSH
-    protocol right from the Scheme code.
+  - SFTP client API allows you to read and write remote files, or do directory
+    traversal over the SSH protocol right from the Scheme code.
   - Remote popen API that allows you to make either input, output or
     bidirectional pipes to remote processes.
   - Detailed documentation in Texinfo format with examples included, even more
