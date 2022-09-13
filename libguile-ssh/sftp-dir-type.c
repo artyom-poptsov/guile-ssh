@@ -33,6 +33,33 @@
 static const char* GSSH_SFTP_DIR_TYPE_NAME = "sftp-dir";
 
 
+/* Guile-SSH SFTP directory attribute names.
+   <https://api.libssh.org/stable/structsftp__attributes__struct.html> */
+
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_name,                "name");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_longname,            "longname");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_flags,               "flags");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_type,                "type");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_size,                "size");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_uid,                 "uid");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_gid,                 "gid");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_owner,               "owner");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_group,               "group");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_permissions,         "permissions");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_atime64,             "atime64");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_atime,               "atime");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_atime_nseconds,      "atime-nseconds");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_createtime,          "createtime");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_createtime_nseconds, "createtime-nseconds");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_mtime64,             "mtime64");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_mtime,               "mtime");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_mtime_nseconds,      "mtime-nseconds");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_acl,                 "acl");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_extended_count,      "extended-count");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_extended_type,       "extended-type");
+SCM_GLOBAL_SYMBOL (gssh_sftp_attr_extended_data,       "extended-data");
+
+
 scm_t_bits sftp_dir_tag;       /* Smob tag. */
 
 gssh_sftp_dir_t*

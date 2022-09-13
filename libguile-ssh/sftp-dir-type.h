@@ -40,6 +40,31 @@ struct gssh_sftp_dir {
 
 typedef struct gssh_sftp_dir gssh_sftp_dir_t;
 
+extern SCM gssh_sftp_attr_name;
+extern SCM gssh_sftp_attr_longname;
+extern SCM gssh_sftp_attr_flags;
+extern SCM gssh_sftp_attr_type;
+extern SCM gssh_sftp_attr_size;
+extern SCM gssh_sftp_attr_uid;
+extern SCM gssh_sftp_attr_gid;
+extern SCM gssh_sftp_attr_owner;
+extern SCM gssh_sftp_attr_group;
+extern SCM gssh_sftp_attr_permissions;
+extern SCM gssh_sftp_attr_atime64;
+extern SCM gssh_sftp_attr_atime;
+extern SCM gssh_sftp_attr_atime_nseconds;
+extern SCM gssh_sftp_attr_createtime;
+extern SCM gssh_sftp_attr_createtime_nseconds;
+extern SCM gssh_sftp_attr_mtime64;
+extern SCM gssh_sftp_attr_mtime;
+extern SCM gssh_sftp_attr_mtime_nseconds;
+extern SCM gssh_sftp_attr_acl;
+extern SCM gssh_sftp_attr_extended_count;
+extern SCM gssh_sftp_attr_extended_type;
+extern SCM gssh_sftp_attr_extended_data;
+
+
+
 void init_sftp_dir_type (void);
 gssh_sftp_dir_t* make_gssh_sftp_dir ();
 SCM gssh_sftp_dir_to_scm (sftp_dir dir, SCM path, SCM sftp_session);
