@@ -35,6 +35,16 @@
 #include "sftp-dir-type.h"
 
 
+SCM_GSSH_DEFINE (gssh_sftp_dir_path, "sftp-dir-path", 1,
+                 (SCM sftp_dir))
+#define FUNC_NAME s_gssh_sftp_dir_path
+{
+  gssh_sftp_dir_t* dir = gssh_sftp_dir_from_scm (sftp_dir);
+  return dir->path;
+}
+#undef FUNC_NAME
+
+
 SCM_GSSH_DEFINE (gssh_sftp_dir_open, "sftp-dir-open", 2,
                  (SCM sftp_session, SCM path))
 #define FUNC_NAME s_gssh_sftp_dir_open

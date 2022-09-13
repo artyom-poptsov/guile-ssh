@@ -77,6 +77,7 @@
             ;; Directories
             sftp-dir-open
             sftp-dir-open-stream
+            sftp-dir-path
             sftp-dir-close
             sftp-dir-eof?
             sftp-dir-read
