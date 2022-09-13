@@ -61,7 +61,12 @@ libguile_ssh_la_SOURCES = \
 	sftp-session-func.h \
 	sftp-file-type.c \
 	sftp-file-type.h \
-	sftp-file-main.c
+	sftp-file-main.c \
+	sftp-dir-type.h \
+	sftp-dir-type.c \
+	sftp-dir-func.c \
+	sftp-dir-func.h \
+	sftp-dir-main.c
 
 BUILT_SOURCES = \
 	auth.x \
@@ -78,6 +83,8 @@ BUILT_SOURCES = \
 	session-func.x \
 	session-type.x \
 	sftp-file-type.x \
+	sftp-dir-type.x \
+	sftp-dir-func.x \
 	sftp-session-func.x \
 	sftp-session-type.x \
 	version.x

@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2015 Artyom V. Poptsov
+@c Copyright (C) 2015-2022 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node SFTP
@@ -9,10 +9,11 @@
 @cindex SFTP
 @cindex file transfer
 
-The @code{(ssh sftp)} module provides procedures for working with SFTP.
+The @code{(ssh sftp)} module provides procedures for working with @abbr{SFTP,
+Secure File Transfer Protocol}.
 
 @c -----------------------------------------------------------------------------
-@subsection SFTP session
+@subsection SFTP Session
 
 @deffn {Scheme Procedure} make-sftp-session ssh-session
 Make a new SFTP session using a @var{ssh-session}, initialize the session with
@@ -121,7 +122,7 @@ exception on an error, return value is undefined.
 @end deffn
 
 @c -----------------------------------------------------------------------------
-@subsection SFTP file
+@subsection SFTP File
 
 Remote files are represented as regular Guile ports that allow random access
 (@pxref{Input and Output,,, guile, The GNU Guile Reference Manual}.)
@@ -133,6 +134,69 @@ port.  Throw @code{guile-ssh-error} on an error.
 
 @deffn {Scheme Procedure} sftp-file? x
 Return @code{#t} if @var{x} is an SFTP file port, @code{#f} otherwise.
+@end deffn
+
+@c -----------------------------------------------------------------------------
+@subsection SFTP Directory
+@cindex directory traversal
+
+Those procedures allow to read directory contents on the remote side.
+
+@deffn {Scheme Procedure} sftp-dir? x
+Check if an @var{x} is an SFTP directory instance. Return @code{#t} if it is,
+@code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-open sftp-session path
+Open a remote directory with the specified @var{path} using
+@var{sftp-session}. Return an SFTP directory as opaque object.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-open-stream sftp-session path
+Open a remote directory with the specified @var{path} using
+@var{sftp-session}. Return an ice-9 stream of SFTP file attributes.
+
+Usage example:
+
+@lisp
+(use-modules (ice-9 streams)
+             (ice-9 pretty-print)
+             (ssh session)
+             (ssh auth)
+             (ssh sftp))
+
+(define (main args)
+  (let ((session (make-session #:host "example.org"
+                               #:user "avp")))
+    (connect! session)
+    (userauth-agent! session)
+    (let* ((sftp-session (make-sftp-session session))
+           (stream       (sftp-dir-open-stream sftp-session "/tmp/")))
+      (stream-for-each (lambda (attrs)
+                         (pretty-print attrs))
+                       stream))))
+@end lisp
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-path sftp-directory
+Get the path associated with an @var{sftp-directory}.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-session sftp-directory
+Get the parent SFTP session for an @var{sftp-directory}.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-close sftp-directory
+Close an @var{sftp-directory}.  Return value is undefined.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-eof? sftp-directory
+CHeck if an @var{sftp-directory} pointed to an EOF object.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-read sftp-directory
+Read an @var{sftp-directory}. Return an alist with the next directory
+attributes.
 @end deffn
 
 @c -----------------------------------------------------------------------------

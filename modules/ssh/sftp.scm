@@ -1,6 +1,6 @@
 ;;; sftp.scm -- Procedures for working with SFTP.
 
-;; Copyright (C) 2015-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015-2022 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -53,6 +53,7 @@
 
 (define-module (ssh sftp)
   #:use-module (ice-9 receive)
+  #:use-module (ice-9 streams)
   #:export (sftp-session?
             make-sftp-session
             sftp-get-session
@@ -72,6 +73,16 @@
             ;; File ports
             sftp-open
             sftp-file?
+
+            ;; Directories
+            sftp-dir?
+            sftp-dir-open
+            sftp-dir-open-stream
+            sftp-dir-path
+            sftp-dir-session
+            sftp-dir-close
+            sftp-dir-eof?
+            sftp-dir-read
 
             ;; High-level operations on remote files
             call-with-remote-input-file
@@ -248,12 +259,22 @@ behavior is implementation dependent."
   (call-with-remote-output-file sftp-session filename
     (lambda (p) (with-output-to-port p thunk))))
 
+(define (sftp-dir-open-stream sftp-session directory)
+  "Open an SFTP directory.  Return a ICE-9 stream of directory attributes."
+  (let ((dir (sftp-dir-open sftp-session directory)))
+    (make-stream (lambda (state)
+                   (if (sftp-dir-eof? dir)
+                       #f
+                       (cons state (sftp-dir-read dir))))
+                 (sftp-dir-read dir))))
+
 
 ;;; Load libraries.
 
 (unless (getenv "GUILE_SSH_CROSS_COMPILING")
   (load-extension "libguile-ssh" "init_sftp_session")
-  (load-extension "libguile-ssh" "init_sftp_file"))
+  (load-extension "libguile-ssh" "init_sftp_file")
+  (load-extension "libguile-ssh" "init_sftp_dir"))
 
 ;;; sftp-session.scm ends here.
 
