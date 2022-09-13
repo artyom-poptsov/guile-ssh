@@ -138,6 +138,8 @@ Return @code{#t} if @var{x} is an SFTP file port, @code{#f} otherwise.
 @c -----------------------------------------------------------------------------
 @subsection SFTP Directory
 
+Those procedures allow to read directory contents on the remote side.
+
 @deffn {Scheme Procedure} sftp-dir-open sftp-session path
 Open a remote directory with the specified @var{path} using
 @var{sftp-session}. Return an SFTP directory as opaque object.
@@ -146,6 +148,14 @@ Open a remote directory with the specified @var{path} using
 @deffn {Scheme Procedure} sftp-dir-open-stream sftp-session path
 Open a remote directory with the specified @var{path} using
 @var{sftp-session}. Return an ice-9 stream of SFTP file attributes.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-path sftp-directory
+Get the path associated with an @var{sftp-directory}.
+@end deffn
+
+@deffn {Scheme Procedure} sftp-dir-session sftp-directory
+Get the parent SFTP session for an @var{sftp-directory}.
 @end deffn
 
 @deffn {Scheme Procedure} sftp-dir-close sftp-directory
