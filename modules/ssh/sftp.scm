@@ -53,6 +53,7 @@
 
 (define-module (ssh sftp)
   #:use-module (ice-9 receive)
+  #:use-module (ice-9 streams)
   #:export (sftp-session?
             make-sftp-session
             sftp-get-session
@@ -75,6 +76,7 @@
 
             ;; Directories
             sftp-dir-open
+            sftp-dir-open-stream
             sftp-dir-close
             sftp-dir-eof?
             sftp-dir-read
@@ -253,6 +255,15 @@ procedure is used to escape from the continuation of these procedures, their
 behavior is implementation dependent."
   (call-with-remote-output-file sftp-session filename
     (lambda (p) (with-output-to-port p thunk))))
+
+(define (sftp-dir-open-stream sftp-session directory)
+  "Open an SFTP directory.  Return a ICE-9 stream of directory attributes."
+  (let ((dir (sftp-dir-open directory)))
+    (make-stream (lambda (state)
+                   (if (sftp-dir-eof? dir)
+                       #f
+                       (cons state (sftp-dir-read dir))))
+                 (sftp-dir-read dir))))
 
 
 ;;; Load libraries.
