@@ -1,6 +1,6 @@
 ;;; key.scm -- Testing of Guile-SSH keys
 
-;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014-2022 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -33,77 +33,126 @@
   (or (not %openssl?)
       test))
 
+(define-syntax-rule (unless-openssl expr)
+  (or %openssl?
+      expr))
+
 (test-begin-with-log "key")
 
-(test-assert-with-log "private-key-from-file"
-  (and (private-key-from-file %rsakey)
-       (private-key-from-file %dsakey)
-       (when-openssl
-        (private-key-from-file %ecdsakey))))
+(test-assert-with-log "public-key-from-file: RSA"
+  (public-key-from-file %rsakey-pub))
 
-(test-assert-with-log "public-key-from-file"
-  (and (public-key-from-file %rsakey-pub)
-       (public-key-from-file %dsakey-pub)
-       (when-openssl
-        (public-key-from-file %ecdsakey-pub))))
+(test-assert-with-log "public-key-from-file: DSA"
+  (public-key-from-file %dsakey-pub))
 
-(define *rsa-key*       (private-key-from-file %rsakey))
-(define *dsa-key*       (private-key-from-file %dsakey))
-(define *ecdsa-key*     (when-openssl
-                         (private-key-from-file %ecdsakey)))
+(unless-openssl
+ (test-skip "public-key-from-file: ECDSA"))
+(test-assert-with-log "public-key-from-file: ECDSA"
+  (public-key-from-file %ecdsakey-pub))
+
+(test-assert "private-key-from-file: RSA"
+  (private-key-from-file %rsakey))
+
+(test-assert "private-key-from-file: DSA"
+  (private-key-from-file %dsakey))
+
+(unless-openssl
+ (test-skip "private-key-from-file: ECDSA"))
+(test-assert "private-key-from-file: ECDSA"
+  (private-key-from-file %ecdsakey))
+
+;; (define *rsa-key*       (private-key-from-file %rsakey))
+;; (define *dsa-key*       (private-key-from-file %dsakey))
+;; (define *ecdsa-key*     (when-openssl
+;;                          (private-key-from-file %ecdsakey)))
 (define *rsa-pub-key*   (public-key-from-file %rsakey-pub))
 (define *dsa-pub-key*   (public-key-from-file %dsakey-pub))
 (define *ecdsa-pub-key* (when-openssl
                          (public-key-from-file %ecdsakey-pub)))
 
-(test-assert "key?"
-  (and (not (key? "not a key"))
-       (key? *rsa-key*)
-       (key? *dsa-key*)
-       (when-openssl
-        (key? *ecdsa-key*))
-       (key? *rsa-pub-key*)
-       (key? *dsa-pub-key*)
-       (when-openssl
-        (key? *ecdsa-pub-key*))))
+(test-equal "key?: not a key"
+  #f
+  (key? "not a key"))
 
-(test-assert "private-key?"
-  (and (private-key? *rsa-key*)
-       (not (private-key? *rsa-pub-key*))
-       (not (private-key? "not a key"))))
+(test-assert "key?: RSA"
+  (key? (private-key-from-file %rsakey)))
 
-(test-assert-with-log "public-key?"
-  (and (public-key? *rsa-pub-key*)
+(test-assert "key?: DSA"
+  (key? (private-key-from-file %dsakey)))
 
-       ;; XXX: Currently a SSH key that has been read from a file
-       ;; has both public and private flags.
-       (public-key? *rsa-key*)
+(unless-openssl
+ (test-skip "key?: ECDSA"))
+(test-assert "key?: ECDSA"
+  (key? (private-key-from-file %ecdsakey)))
 
-       (not (public-key? "not a key"))))
+(test-assert "key?: RSA (public)"
+  (key? *rsa-pub-key*))
 
-(test-assert-with-log "private-key->public-key"
-  (and (private-key->public-key *rsa-key*)
-       (private-key->public-key *dsa-key*)
-       (when-openssl
-        (private-key->public-key *ecdsa-key*))))
+(test-assert "key?: DSA (public)"
+  (key? *dsa-pub-key*))
 
-(test-assert-with-log "get-key-type"
-  (and (eq? 'rsa   (get-key-type *rsa-key*))
-       (eq? 'dss   (get-key-type *dsa-key*)) ;))
-       (when-openssl
-        (or (eq? 'ecdsa-p256 (get-key-type *ecdsa-key*))
-            ;; For libssh versions prior to 0.9
-            (eq? 'ecdsa (get-key-type *ecdsa-key*))))))
+(unless-openssl
+ (test-skip "key?: ECDSA (public)"))
+(test-assert "key?: ECDSA (public)"
+  (key? *ecdsa-pub-key*))
+
+(test-assert "private-key?: RSA"
+  (private-key? (private-key-from-file %rsakey)))
+
+(test-equal "private-key?: RSA (public)"
+  #f
+  (private-key? *rsa-pub-key*))
+
+(test-equal "private-key?: not a key"
+  #f
+  (private-key? "not a key"))
+
+(test-assert "public-key?: RSA (public)"
+  (public-key? *rsa-pub-key*))
+
+(test-assert "public-key?: RSA"
+  (public-key? (private-key-from-file %rsakey)))
+
+(test-equal "public-key?: not a key"
+  #f
+  (public-key? "not a key"))
+
+(test-assert-with-log "private-key->public-key: RSA"
+  (private-key->public-key (private-key-from-file %rsakey)))
+
+(test-assert-with-log "private-key->public-key: DSA"
+  (private-key->public-key (private-key-from-file %dsakey)))
+
+(unless-openssl
+ (test-skip "private-key->public-key: ECDSA"))
+(test-assert-with-log "private-key->public-key: ECDSA"
+  (private-key->public-key (private-key-from-file %ecdsakey)))
 
 
+(test-assert-with-log "get-key-type: RSA"
+  (equal? (eq? 'rsa (get-key-type (private-key-from-file %rsakey)))))
+
+(test-assert-with-log "get-key-type: DSA"
+  (equal? (eq? 'rsa (get-key-type (private-key-from-file %dsakey)))))
+
+(unless-openssl
+ (test-skip "get-key-type: ECDSA"))
+(test-assert-with-log "get-key-type: ECDSA"
+  (let ((key (private-key-from-file %ecdsakey)))
+    (or (eq? 'ecdsa-p256 (get-key-type key))
+        ;; For libssh versions prior to 0.9
+        (eq? 'ecdsa (get-key-type key)))))
+
+
+(unless-openssl
+ (test-skip "private-key-to-file"))
 (test-assert-with-log "private-key-to-file"
-  (when-openssl
-   (let ((file-name "./tmp-rsa-key"))
-     (private-key-to-file *rsa-key* file-name)
-     (let ((key (private-key-from-file file-name)))
-       (delete-file file-name)
-       (and (key? key)
-            (private-key? key))))))
+  (let ((file-name "./tmp-rsa-key"))
+    (private-key-to-file (private-key-from-file %rsakey) file-name)
+    (let ((key (private-key-from-file file-name)))
+      (delete-file file-name)
+      (and (key? key)
+           (private-key? key)))))
 
 
 ;;; Converting between strings and keys
