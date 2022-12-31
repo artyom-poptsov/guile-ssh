@@ -7,6 +7,26 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Changes in version 0.16.1 (2022-12-31)
+** Disable the tests that require DSA algorithm by default
+When DSA support is disabled in libssh (which is the default state since
+libssh 0.10) all DSA-related Guile-SSH procedures will fail.  Now Guile-SSH
+disables by default all the tests that are require the DSA algorithm support
+by default.
+
+Although those changes do not affect the Guile-SSH API directly, users should
+be aware that DSA support will be removed altogether in the next major libssh
+release.
+
+Reported by Vagrant Cascadian, here:
+<https://github.com/artyom-poptsov/guile-ssh/issues/34>
+** Add '--enable-dsa' Autoconf option
+'configure.ac' now has '--enable-dsa' option that allows to enable DSA public
+key algorithm support in Guile-SSH.
+** (ssh version): 'dsa-support?': New procedure
+** guix.scm: Use libssh 0.10.0
+The development GNU Guix environment now uses libssh 0.10.0.
+
 * Changes in version 0.16.0 (2022-09-13)
 ** Fix Guile snarfer environment
 Fix a bug introduced in Guile-SSH 0.15.0 that breaks the cross-compilation.
