@@ -1,6 +1,6 @@
 /* version.c -- Get information about versions.
  *
- * Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2022 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
