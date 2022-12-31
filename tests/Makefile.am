@@ -23,6 +23,7 @@ if !CROSS_COMPILING
 
 SCM_TESTS = \
 	log.scm \
+	version.scm \
 	server.scm \
 	session.scm \
 	client-server.scm \
