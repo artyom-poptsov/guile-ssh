@@ -22,6 +22,7 @@
 (use-modules (srfi srfi-64)
              (ssh server)
              (ssh version)
+             (ssh key)
              ;; Helper procedures
              (tests common))
 
@@ -53,16 +54,21 @@
          (options `((bindaddr      "127.0.0.1")
                     (bindport      22)
                     ,(if (>= %libssh-minor-version 7)
-                         (list 'hostkey %rsakey %dsakey)
+                         (if (dsa-support?)
+                             (list 'hostkey %rsakey %dsakey)
+                             (list 'hostkey %rsakey))
                          '(hostkey "ssh-rsa" "ssh-dss"))
                     (rsakey        ,%rsakey)
                     (dsakey        ,%dsakey)
                     (banner        "string")
                     (log-verbosity nolog rare protocol packet functions)
                     (blocking-mode #f #t)))
+         (options (if (dsa-support?)
+                      options
+                      (delete `(dsakey ,%dsakey) options)))
          (log (test-runner-aux-value (test-runner-current)))
          (res #t))
-
+    (format (current-error-port) "~a, options: ~a~%" (dsa-support?) options)
     (for-each
      (lambda (opt)
        (for-each

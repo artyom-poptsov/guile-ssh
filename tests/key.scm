@@ -37,11 +37,17 @@
   (or %openssl?
       expr))
 
+(define-syntax-rule (unless-dsa-supported expr)
+  (unless (dsa-support?)
+    expr))
+
 (test-begin-with-log "key")
 
 (test-assert-with-log "public-key-from-file: RSA"
   (public-key-from-file %rsakey-pub))
 
+(unless-dsa-supported
+ (test-skip "public-key-from-file: DSA"))
 (test-assert-with-log "public-key-from-file: DSA"
   (public-key-from-file %dsakey-pub))
 
@@ -53,6 +59,8 @@
 (test-assert "private-key-from-file: RSA"
   (private-key-from-file %rsakey))
 
+(unless-dsa-supported
+ (test-skip "private-key-from-file: DSA"))
 (test-assert "private-key-from-file: DSA"
   (private-key-from-file %dsakey))
 
@@ -61,10 +69,6 @@
 (test-assert "private-key-from-file: ECDSA"
   (private-key-from-file %ecdsakey))
 
-;; (define *rsa-key*       (private-key-from-file %rsakey))
-;; (define *dsa-key*       (private-key-from-file %dsakey))
-;; (define *ecdsa-key*     (when-openssl
-;;                          (private-key-from-file %ecdsakey)))
 (define *rsa-pub-key*   (public-key-from-file %rsakey-pub))
 (define *dsa-pub-key*   (public-key-from-file %dsakey-pub))
 (define *ecdsa-pub-key* (when-openssl
@@ -77,6 +81,8 @@
 (test-assert "key?: RSA"
   (key? (private-key-from-file %rsakey)))
 
+(unless-dsa-supported
+ (test-skip "key?: DSA"))
 (test-assert "key?: DSA"
   (key? (private-key-from-file %dsakey)))
 
@@ -88,6 +94,8 @@
 (test-assert "key?: RSA (public)"
   (key? *rsa-pub-key*))
 
+(unless-dsa-supported
+ (test-skip "key?: DSA (public)"))
 (test-assert "key?: DSA (public)"
   (key? *dsa-pub-key*))
 
@@ -120,6 +128,8 @@
 (test-assert-with-log "private-key->public-key: RSA"
   (private-key->public-key (private-key-from-file %rsakey)))
 
+(unless-dsa-supported
+ (test-skip "private-key->public-key: DSA"))
 (test-assert-with-log "private-key->public-key: DSA"
   (private-key->public-key (private-key-from-file %dsakey)))
 
@@ -132,6 +142,8 @@
 (test-assert-with-log "get-key-type: RSA"
   (equal? (eq? 'rsa (get-key-type (private-key-from-file %rsakey)))))
 
+(unless-dsa-supported
+ (test-skip "get-key-type: DSA"))
 (test-assert-with-log "get-key-type: DSA"
   (equal? (eq? 'rsa (get-key-type (private-key-from-file %dsakey)))))
 
@@ -169,6 +181,8 @@
   (public-key->string *rsa-pub-key*)
   %rsakey-pub-string)
 
+(unless-dsa-supported
+ (test-skip "public-key->string, DSA"))
 (test-equal "public-key->string, DSA"
   (public-key->string *dsa-pub-key*)
   %dsakey-pub-string)
@@ -183,6 +197,8 @@
   (public-key->string (string->public-key %rsakey-pub-string 'rsa))
   %rsakey-pub-string)
 
+(unless-dsa-supported
+ (test-skip "string->public-key, DSA"))
 (test-equal "string->public-key, DSA"
   (public-key->string (string->public-key %dsakey-pub-string 'dss))
   %dsakey-pub-string)
