@@ -1,6 +1,6 @@
 ;;; version.scm -- Get information about versions.
 
-;; Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013-2022 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -69,4 +69,4 @@ values are: 'openssl, 'gnutls"
     (and (not (null? (cddr version)))
          (string=? "zlib" (caddr version)))))
 
-;;; session.scm ends here
+;;; version.scm ends here
