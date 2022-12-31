@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2014 Artyom V. Poptsov
+@c Copyright (C) 2014-2022 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Version
@@ -34,6 +34,11 @@ values are: @code{'openssl}, @code{'gnutls}.
 
 @deffn {Scheme Procedure} zlib-support?
 Return @code{#t} if libssh was compiled wit zlib support, @code{#f} otherwise.
+@end deffn
+
+@deffn {Scheme Procedure} dsa-support?
+Return @code{#t} if Guile-SSH was compiled with DSA public key algorithm
+support, @code{#f} otherwise.
 @end deffn
 
 @deffn {Scheme Procedure} get-library-version
