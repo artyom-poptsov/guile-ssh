@@ -109,7 +109,8 @@ LOG_DIRS = \
 	tunnel					\
 	server					\
 	shell					\
-	sssh-ssshd
+	sssh-ssshd				\
+	version
 
 clean-local:
 	-rm -rf $(LOG_DIRS)
