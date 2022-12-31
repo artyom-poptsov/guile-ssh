@@ -47,6 +47,7 @@
             get-library-version
             get-crypto-library
             zlib-support?
+            dsa-support?
             ;; Low-level procedures
             %get-libssh-version))
 

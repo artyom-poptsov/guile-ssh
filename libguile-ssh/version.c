@@ -23,6 +23,8 @@
 #include <libguile.h>
 #include <libssh/libssh.h>
 
+#include "config.h"
+
 /* Get version of the libssh. */
 SCM_DEFINE (guile_ssh_get_libssh_version, "%get-libssh-version", 0, 0, 0,
             (),
@@ -41,6 +43,18 @@ SCM_DEFINE (guile_ssh_get_library_version, "get-library-version", 0, 0, 0,
 {
   return scm_from_locale_string (PACKAGE_VERSION);
 }
+
+
+SCM_DEFINE (gssh_dsa_supported_p, "dsa-support?", 0, 0, 0,
+            (),
+            "\
+Check if DSA keys are enabled.\
+")
+#define FUNC_NAME s_gssh_dsa_supported_p
+{
+    return scm_from_bool (ENABLE_DSA);
+}
+#undef FUNC_NAME
 
 
 void
