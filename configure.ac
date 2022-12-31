@@ -57,6 +57,19 @@ AC_ARG_WITH([guilesitedir],
              esac],
              [guilesitedir=""])
 
+AC_ARG_ENABLE([dsa],
+              [AS_HELP_STRING([--enable-dsa],
+                              [Enable DSA support.])])
+
+AS_IF([test "x$enable_dsa" = "xyes"],
+      [
+        AC_DEFINE(ENABLE_DSA, 1, [Enable DSA support.])
+      ],
+      [
+        AC_DEFINE(ENABLE_DSA, 0, [Disable DSA support.])
+      ])
+AM_CONDITIONAL(ENABLE_DSA, $ENABLE_DSA)
+
 # -------------------------------------------------------------------------------
 # Check for needed libraries
 # -------------------------------------------------------------------------------
@@ -160,3 +173,24 @@ if test "$guilesitedir" != "$GUILE_SITE"; then
    [Otherwise, you will have to adjust the `GUILE_LOAD_PATH' environment]
    [variable.])
 fi
+
+
+AS_IF(
+    [test "x$enable_dsa" = "xyes"],
+    [
+          AC_MSG_WARN(
+              []
+              [Guile-SSH is configured with DSA public key algorithm support.]
+              [Note that DSA support is disabled by default in libssh 0.10.]
+              [<https://salsa.debian.org/debian/libssh/-/blob/debian/CHANGELOG#L37>]
+              []
+              [If your version of libssh does not support DSA public key algorithm]
+              [it will lead to errors in Guile-SSH.]
+          )
+    ],
+    [
+          AC_MSG_NOTICE(
+              [Guile-SSH configured without DSA public key algorithm support.]
+          )
+    ]
+)
