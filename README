@@ -17,7 +17,8 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
   - Several authentication methods are supported, including password
     authentication, public key and SSH agent authentication methods.
   - Key management procedures: you can make key pairs, read keys from files,
-    get key hashes, get public keys from private keys etc.  DSS, RSA, RSA1 and
+    get key hashes, get public keys from private keys etc.  DSS (only when
+    =--enable-dsa= option is passed to the =configure= script), RSA, RSA1 and
     ECDSA (by means of OpenSSL) are supported.
   - Port forwarding procedures and high-level API for creating of SSH tunnels.
   - Distributed forms (=dist-map=, =distribute=, ...) that allow to spread the
