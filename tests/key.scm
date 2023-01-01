@@ -221,18 +221,25 @@
     #t))
 
 
-(test-assert-with-log "make-keypair"
-  (and (let ((key (make-keypair 'rsa 1024)))
-         (and (key? key)
-              (eq? (get-key-type key) 'rsa)))
-       (let ((key (make-keypair 'dss 1024)))
-         (and (key? key)
-              (eq? (get-key-type key) 'dss)))
-       (when-openssl
-        (let ((key (make-keypair 'ecdsa 256)))
-          (and (key? key)
-               (or (eq? (get-key-type key) 'ecdsa) ; libssh < 0.9
-                   (eq? (get-key-type key) 'ecdsa-p256)))))))
+(test-assert-with-log "make-keypair: RSA"
+  (let ((key (make-keypair 'rsa 1024)))
+    (and (key? key)
+         (eq? (get-key-type key) 'rsa))))
+
+(unless-dsa-supported
+ (test-skip "make-keypair: DSS"))
+(test-assert-with-log "make-keypair: DSS"
+  (let ((key (make-keypair 'dss 1024)))
+    (and (key? key)
+         (eq? (get-key-type key) 'dss))))
+
+(unless-openssl
+ (test-skip "make-keypair: ECDSA"))
+(test-assert-with-log "make-keypair: ECDSA"
+  (let ((key (make-keypair 'ecdsa 256)))
+    (and (key? key)
+         (or (eq? (get-key-type key) 'ecdsa) ; libssh < 0.9
+             (eq? (get-key-type key) 'ecdsa-p256)))))
 
 ;;;
 (define exit-status (test-runner-fail-count (test-runner-current)))
