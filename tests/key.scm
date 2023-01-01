@@ -203,12 +203,13 @@
   (public-key->string (string->public-key %dsakey-pub-string 'dss))
   %dsakey-pub-string)
 
-(when-openssl
- (test-equal "string->public-key, ECDSA"
-   (if (string=? (cadr (string-split (get-libssh-version) #\.)) "9")
-       (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa-p256))
-       (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa)))
-   %ecdsakey-pub-string))
+(unless-openssl
+ (test-skip "string->public-key, ECDSA"))
+(test-equal "string->public-key, ECDSA"
+  (if (string=? (cadr (string-split (get-libssh-version) #\.)) "9")
+      (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa-p256))
+      (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa)))
+  %ecdsakey-pub-string)
 
 (test-assert-with-log "string->public-key, RSA, gc test"
   (let ((max-keys 1000))
