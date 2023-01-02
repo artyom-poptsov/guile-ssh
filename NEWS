@@ -7,6 +7,15 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Changes in version 0.16.2 (2023-01-02)
+** Bugfix in test "string->public-key, ECDSA"
+The test used to explicitly compare libssh version with "9" so it would always
+fail on platforms with libssh 0.10.  Now the test does numerical comparison
+and uses "ecdsa-p256" on platforms that have libssh 0.9 or later version.
+
+Reported by Vagrant Cascadian, here:
+<https://github.com/artyom-poptsov/guile-ssh/issues/34>
+
 * Changes in version 0.16.1 (2022-12-31)
 ** Disable the tests that require DSA algorithm by default
 When DSA support is disabled in libssh (which is the default state since
