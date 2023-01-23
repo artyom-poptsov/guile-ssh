@@ -274,8 +274,9 @@ ptob_close (SCM channel)
       if (ch->is_remote_closed == 1)
         {
           _gssh_log_debug1 ("ptob_close",
-                            "the channel is already freed"
+                            "the channel is already closed"
                             " by the closing request from the remote side.");
+          ssh_channel_free (ch->ssh_channel);
         }
       else if (sd && ssh_is_connected (sd->ssh_session))
         {
