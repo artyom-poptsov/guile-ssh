@@ -274,9 +274,11 @@ ptob_close (SCM channel)
       if (ch->is_remote_closed == 1)
         {
           _gssh_log_debug1 ("ptob_close",
-                            "the channel is already closed"
+                            "the channel is closed"
                             " by the closing request from the remote side.");
+          _gssh_log_debug1 ("ptob_close", "Freeing the channel...")
           ssh_channel_free (ch->ssh_channel);
+          _gssh_log_debug1 ("ptob_close", "Freeing the local channel... done");
         }
       else if (sd && ssh_is_connected (sd->ssh_session))
         {
@@ -294,8 +296,10 @@ ptob_close (SCM channel)
                             "the channel is already freed"
                             " along with the parent session.");
         }
+      _gssh_log_debug1 ("ptob_close", "Freeing the channel callbacks...");
       free (ch->callbacks);
       ch->callbacks = NULL;
+      _gssh_log_debug1 ("ptob_close", "Freeing the channel callbacks... done");
       scm_gc_unprotect_object (ch->session);
     }
   else
@@ -306,8 +310,10 @@ ptob_close (SCM channel)
   SCM_SETSTREAM (channel, NULL);
 
 #if USING_GUILE_BEFORE_2_2
+  _gssh_log_debug1 ("ptob_close", "Freeing the channel buffers ...");
   scm_gc_free (pt->write_buf, pt->write_buf_size, "port write buffer");
   scm_gc_free (pt->read_buf,  pt->read_buf_size, "port read buffer");
+  _gssh_log_debug1 ("ptob_close", "Freeing the channel buffers ... done");
 
   return 0;
 #endif
