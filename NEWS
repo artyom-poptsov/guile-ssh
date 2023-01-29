@@ -7,7 +7,7 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Unreleased
+* Changes in version 0.16.3 (2023-01-29)
 ** Fix Guile-SSH/libssh channel leak
 Guile-SSH channel would always "leak" the libssh channels when the remote side
 issued the closing request.  Now this bug is fixed by freeing libssh channel

@@ -21,13 +21,13 @@ You should have received a copy of the GNU General Public License
 along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 ]])
 
-AC_INIT([Guile-SSH], [0.16.2], [poptsov.artyom@gmail.com],
+AC_INIT([Guile-SSH], [0.16.3], [poptsov.artyom@gmail.com],
                      [guile-ssh],
                      [https://github.com/artyom-poptsov/guile-ssh])
 
 AC_COPYRIGHT(GUILE_SSH_CONFIGURE_COPYRIGHT)
 
-LIBGUILE_SSH_INTERFACE="15:2:1"
+LIBGUILE_SSH_INTERFACE="15:3:1"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 AC_CONFIG_AUX_DIR([build-aux])
