@@ -7,6 +7,18 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** Fix Guile-SSH/libssh channel leak
+Guile-SSH channel would always "leak" the libssh channels when the remote side
+issued the closing request.  Now this bug is fixed by freeing libssh channel
+when the remote side is closed.
+
+Reported by Andrew Tropin <andrew@trop.in> in
+<https://debbugs.gnu.org/cgi/bugreport.cgi?bug=58290>
+
+The test for reproducing the problem was provided by Ludovic Courtès
+<ludo@gnu.org>.
+
 * Changes in version 0.16.2 (2023-01-02)
 ** Bugfix in test "string->public-key, ECDSA"
 The test used to explicitly compare libssh version with "9" so it would always
