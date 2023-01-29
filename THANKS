@@ -9,6 +9,7 @@ Thanks to the following people who contributed to Guile-SSH
 through bug reports or patches:
 
 * Aleix Conchillo Flaqué <aconchillo@gmail.com>
+* Andrew Tropin <andrew@trop.in>
 * David Kastrup <dak@gnu.org>
 * David Thompson <davet@gnu.org>
 * Ludovic Courtès <ludo@gnu.org>

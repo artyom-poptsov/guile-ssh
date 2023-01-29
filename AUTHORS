@@ -85,3 +85,5 @@ See also files THANKS and ChangeLog.
     Makefile.am
     common.scm
     sssh-ssshd.scm
+* Andrew Tropin <andrew@trop.in>
+  Bug reports.
