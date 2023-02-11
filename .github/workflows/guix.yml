@@ -27,7 +27,7 @@ jobs:
         uses: "actions/checkout@v3"
       - name: "Build project guile-ssh"
         run: |
-          guix build --file guix.scm guile-ssh
+          guix build --file=guix.scm guile-ssh
   aarch64-linux-gnu:
     name: "Guix build on latest commit for aarch64 system"
     runs-on: "ubuntu-latest"
@@ -43,7 +43,7 @@ jobs:
         uses: "actions/checkout@v3"
       - name: "Build project guile-ssh"
         run: |
-          guix build --file guix.scm guile-ssh
+          guix build --file=guix.scm guile-ssh
 
 # End of guix.yml
 ...
