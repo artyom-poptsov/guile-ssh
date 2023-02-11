@@ -17,7 +17,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Install Guix"
-        uses: "PromyLOPh/guix-install-action@v1"
+        run: |
+         sudo apt-get update && apt-get install guix
+         guix pull
       - name: "Ensure no locale warning"
         run: |
           test -z "$(guix --version 2>&1 >/dev/null)"
@@ -27,11 +29,13 @@ jobs:
         run: |
           guix build --file guix.scm guile-ssh
   aarch64-linux-gnu:
-    name: "Guix build on latest commit for x86_64 system"
+    name: "Guix build on latest commit for aarch64 system"
     runs-on: "ubuntu-latest"
     steps:
       - name: "Install Guix"
-        uses: "PromyLOPh/guix-install-action@v1"
+        run: |
+         sudo apt-get update && apt-get install guix
+         guix pull
       - name: "Ensure no locale warning"
         run: |
           test -z "$(guix --version 2>&1 >/dev/null)"
