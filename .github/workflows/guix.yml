@@ -1,0 +1,45 @@
+---
+# File : guix.yml
+
+name: Guix/Guile 3.0
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  x86_64-linux-gnu:
+    name: "Guix build on latest commit for x86_64 system"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Install Guix"
+        uses: "PromyLOPh/guix-install-action@v1"
+      - name: "Ensure no locale warning"
+        run: |
+          test -z "$(guix --version 2>&1 >/dev/null)"
+      - name: "Checkout repository"
+        uses: "actions/checkout@v3"
+      - name: "Build project guile-ssh"
+        run: |
+          guix build --file guix.scm guile-ssh
+  aarch64-linux-gnu:
+    name: "Guix build on latest commit for x86_64 system"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Install Guix"
+        uses: "PromyLOPh/guix-install-action@v1"
+      - name: "Ensure no locale warning"
+        run: |
+          test -z "$(guix --version 2>&1 >/dev/null)"
+      - name: "Checkout repository"
+        uses: "actions/checkout@v3"
+      - name: "Build project guile-ssh"
+        run: |
+          guix build --file guix.scm guile-ssh
+
+# End of guix.yml
+...
