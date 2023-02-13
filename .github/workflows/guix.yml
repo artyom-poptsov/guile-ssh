@@ -5,15 +5,14 @@ name: Guix/Guile 3.0
 
 on:
   push:
-  #   branches:
-  #     - master
-  # pull_request:
-  #   branches:
-  #     - master
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   x86_64-linux-gnu:
-    name: "Guix build on latest commit for x86_64 system"
     runs-on: "ubuntu-latest"
     steps:
       - name: "Guix cache"
@@ -35,7 +34,6 @@ jobs:
         run: |
           guix build --file=guix.scm guile-ssh
   aarch64-linux-gnu:
-    name: "Guix build on latest commit for aarch64 system"
     runs-on: "ubuntu-latest"
     steps:
       - name: "Guix cache"
