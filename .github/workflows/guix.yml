@@ -25,9 +25,7 @@ jobs:
           restore-keys: |
             guix-cache-
       - name: "Install Guix"
-        run: |
-         sudo apt-get update && sudo apt-get install guix
-         guix pull
+        uses: "PromyLOPh/guix-install-action@v1"
       - name: "Ensure no locale warning"
         run: |
           test -z "$(guix --version 2>&1 >/dev/null)"
@@ -49,9 +47,7 @@ jobs:
           restore-keys: |
             guix-cache-
       - name: "Install Guix"
-        run: |
-         sudo apt-get update && sudo apt-get install guix
-         guix pull
+        uses: "PromyLOPh/guix-install-action@v1"
       - name: "Ensure no locale warning"
         run: |
           test -z "$(guix --version 2>&1 >/dev/null)"
@@ -59,7 +55,7 @@ jobs:
         uses: "actions/checkout@v3"
       - name: "Build project guile-ssh"
         run: |
-          guix build --file=guix.scm guile-ssh
+          guix build --target=aarch64-linux-gnu --file=guix.scm guile-ssh
 
 # End of guix.yml
 ...
