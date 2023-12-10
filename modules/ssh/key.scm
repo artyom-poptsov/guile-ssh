@@ -66,6 +66,12 @@
                     (bytevector->u8-list bv))
                ":"))
 
+(define* (private-key-from-file path
+                                #:key
+                                (auth-callback #f)
+                                (user-data #f))
+  (%private-key-from-file path callback user-data))
+
 (unless (getenv "GUILE_SSH_CROSS_COMPILING")
   (load-extension "libguile-ssh" "init_key"))
 

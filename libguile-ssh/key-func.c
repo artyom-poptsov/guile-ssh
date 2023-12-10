@@ -1,6 +1,6 @@
 /* key-func.c -- SSH key manipulation functions.
  *
- * Copyright (C) 2013-2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -20,6 +20,7 @@
 
 #include <config.h>
 
+#include <string.h>             /* strncpy */
 #include <libguile.h>
 #include <libssh/libssh.h>
 
@@ -169,8 +170,56 @@ Throw `guile-ssh-error' on error.\
 }
 #undef FUNC_NAME
 
-SCM_DEFINE (guile_ssh_private_key_from_file, "private-key-from-file", 1, 0, 0,
-            (SCM filename),
+/* The callback procedure that meant to be called by libssh. */
+static int
+auth_callback (const char *prompt,
+               char *buf,
+               size_t len,
+               int echo,
+               int verify,
+               void *userdata)
+{
+    SCM scm_data = (SCM) userdata;
+
+    SCM scm_callback
+        = scm_assoc_ref (scm_data, scm_from_locale_string ("callback"));
+    SCM scm_userdata
+        = scm_assoc_ref (scm_data, scm_from_locale_string ("user-data"));
+
+    SCM scm_prompt   = scm_from_locale_string (prompt);
+    SCM scm_buf_len  = scm_from_int (len);
+    SCM scm_echo_p   = scm_from_bool (echo);
+    SCM scm_verify_p = scm_from_bool (verify);
+
+    SCM result = scm_call_5 (scm_callback,
+                             scm_prompt,
+                             scm_buf_len,
+                             scm_echo_p,
+                             scm_verify_p,
+                             scm_userdata);
+
+    if (scm_is_string (result))
+        {
+            char* pass = scm_to_locale_string (result);
+            strncpy (buf, pass, len);
+            free (pass);
+            return 0;
+        }
+    else if (scm_is_false (result))
+        {
+            return 0;
+        }
+    else
+        {
+            guile_ssh_error1 ("libssh_auth_callback",
+                              "Wrong type of the value returned by a callback",
+                              result);
+            return 0;
+        }
+}
+
+SCM_DEFINE (guile_ssh_private_key_from_file, "%private-key-from-file", 3, 0, 0,
+            (SCM filename, SCM callback, SCM user_data),
             "\
 Read private key from a file FILENAME.  If the the key isn encrypted the user\n\
 will be asked for passphrase to decrypt the key.\n\
@@ -193,11 +242,26 @@ Return a new SSH key of #f on error.\
   c_filename = scm_to_locale_string (filename);
   scm_dynwind_free (c_filename);
 
-  res = ssh_pki_import_privkey_file (c_filename,
-                                     passphrase,
-                                     NULL, /* auth_fn */
-                                     NULL, /* auth_data */
-                                     &ssh_key);
+  if (scm_is_false (callback))
+      {
+          res = ssh_pki_import_privkey_file (c_filename,
+                                             passphrase,
+                                             NULL, /* auth_fn */
+                                             NULL, /* auth_data */
+                                             &ssh_key);
+      }
+  else
+      {
+          SCM data = scm_list_2 (scm_cons (scm_from_locale_string ("callback"),
+                                           callback),
+                                 scm_cons (scm_from_locale_string ("user-data"),
+                                           user_data));
+          res = ssh_pki_import_privkey_file (c_filename,
+                                             passphrase,
+                                             auth_callback, /* auth_fn */
+                                             data, /* auth_data */
+                                             &ssh_key);
+      }
 
   if (res == SSH_EOF)
     {

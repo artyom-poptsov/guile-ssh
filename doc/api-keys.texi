@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2014 Artyom V. Poptsov
+@c Copyright (C) 2014-2023 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Keys
@@ -53,9 +53,22 @@ The @var{type} must be one of the following symbols: @code{dss},
 @code{rsa}, @code{rsa1}, @code{ecdsa}
 @end deffn
 
-@deffn {Scheme Procedure} private-key-from-file file
-Read private key from a @var{file}.  If the the key is encrypted the
-user will be asked for passphrase to decrypt the key.
+@deffn {Scheme Procedure} private-key-from-file @
+               file @
+               [#:auth-callback=#f] @
+               [#:user-data=#f]
+
+Read private key from a @var{file}.  If the the key is encrypted the user will
+be asked using @var{auth-callback} for passphrase to decrypt the key.  When
+@var{auth-callback} is called, @var{user-data} is passed to it as an argument.
+
+The procedure performs @var{auth-callback} call as follows:
+
+@lisp
+(auth-callback prompt maximum-password-length echo? verify? user-data)
+@end lisp
+
+Where @code{prompt} is a string that specifies the password prompt to use.
 
 Return a new Guile-SSH key of @code{#f} on error.
 @end deffn
