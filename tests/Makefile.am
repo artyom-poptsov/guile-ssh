@@ -70,8 +70,8 @@ EXTRA_DIST = \
 	keys/ecdsakey.pub	\
 	keys/rsakey		\
 	keys/rsakey.pub		\
-	encrypted-ecdsa-key	\
-	encrypted-ecdsa-key.pub	\
+	keys/encrypted-ecdsa-key	\
+	keys/encrypted-ecdsa-key.pub	\
 	config
 
 ### Compile modules
