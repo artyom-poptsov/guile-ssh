@@ -1,6 +1,6 @@
 ;;; key.scm -- SSH keys management.
 
-;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -70,7 +70,7 @@
                                 #:key
                                 (auth-callback #f)
                                 (user-data #f))
-  (%private-key-from-file path callback user-data))
+  (%private-key-from-file path auth-callback user-data))
 
 (unless (getenv "GUILE_SSH_CROSS_COMPILING")
   (load-extension "libguile-ssh" "init_key"))
