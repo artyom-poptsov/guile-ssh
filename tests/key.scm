@@ -242,6 +242,15 @@
          (or (eq? (get-key-type key) 'ecdsa) ; libssh < 0.9
              (eq? (get-key-type key) 'ecdsa-p256)))))
 
+
+
+(unless-openssl
+ (test-skip "encrypted key: ECDSA"))
+(test-assert-with-log "encrypted key: ECDSA"
+  (private-key-from-file %ecdsakey-encrypted
+                         #:auth-callback (lambda (prompt max-len echo? verify? userdata)
+                                           "123")))
+
 ;;;
 (define exit-status (test-runner-fail-count (test-runner-current)))
 
