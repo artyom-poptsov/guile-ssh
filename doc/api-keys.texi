@@ -71,6 +71,19 @@ The procedure performs @var{auth-callback} call as follows:
 Where @code{prompt} is a string that specifies the password prompt to use.
 
 Return a new Guile-SSH key of @code{#f} on error.
+
+Usage example:
+@lisp
+(use-modules (ssh key))
+
+(define (callback prompt max-len echo? verify? user-data)
+  (getpass (format #f "~a: " prompt)))
+
+(define key (private-key-from-file (string-append (getenv "HOME")
+                                                  "/.ssh/id_rsa")
+                                   #:auth-callback callback))
+@end lisp
+
 @end deffn
 
 @deffn {Scheme Procedure} private-key-to-file private-key file-name
