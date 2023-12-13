@@ -243,6 +243,19 @@
              (eq? (get-key-type key) 'ecdsa-p256)))))
 
 
+;;; Check reading encrypted keys.
+
+(test-assert-with-log "encrypted key: RSA"
+  (private-key-from-file %rsakey-encrypted
+                         #:auth-callback (lambda (prompt max-len echo? verify? userdata)
+                                           "123")))
+
+(unless-dsa-supported
+ (test-skip "encrypted key: DSS"))
+(test-assert-with-log "encrypted key: DSS"
+  (private-key-from-file %dsakey-encrypted
+                         #:auth-callback (lambda (prompt max-len echo? verify? userdata)
+                                           "123")))
 
 (unless-openssl
  (test-skip "encrypted key: ECDSA"))

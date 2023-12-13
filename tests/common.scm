@@ -44,6 +44,8 @@
             %ecdsakey
             %ecdsakey-pub
             %ecdsakey-encrypted
+            %rsakey-encrypted
+            %dsakey-encrypted
 
             ;; Procedures
             sanitize-string
@@ -89,6 +91,8 @@
 (define %ecdsakey-pub (format #f "~a/tests/keys/ecdsakey.pub" %topdir))
 
 (define %ecdsakey-encrypted (format #f "~a/tests/keys/encrypted-ecdsa-key" %topdir))
+(define %rsakey-encrypted   (format #f "~a/tests/keys/encrypted-rsa-key" %topdir))
+(define %dsakey-encrypted   (format #f "~a/tests/keys/encrypted-dsa-key" %topdir))
 
 
 (define (format-log/scm level proc-name message . args)
