@@ -1,4 +1,4 @@
-## Copyright (C) 2013-2022 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of Guile-SSH.
 ##
@@ -18,6 +18,8 @@
 lib_LTLIBRARIES = libguile-ssh.la
 
 libguile_ssh_la_SOURCES = \
+	callbacks.c \
+	callbacks.h \
 	auth.c \
 	auth.h \
 	channel-func.c \

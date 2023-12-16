@@ -1,6 +1,6 @@
 /* session-func.c -- Functions for working with SSH session.
  *
- * Copyright (C) 2013-2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -32,6 +32,7 @@
 #include "key-type.h"
 #include "message-type.h"
 #include "log.h"
+#include "callbacks.h"
 
 /* Guile SSH specific options that are aimed to unificate the way of session
    configuration. */
@@ -265,21 +266,6 @@ set_sym_opt (ssh_session session, int type, gssh_symbol_t *sm, SCM value)
 
 /* Callbacks. */
 
-/* Predicate.  Check if a callback NAME is present in CALLBACKS alist; return
-   1 if it is, 0 otherwise. */
-static inline int
-callback_set_p (SCM callbacks, const char* name)
-{
-  return scm_is_true (scm_assoc (scm_from_locale_symbol (name), callbacks));
-}
-
-/* Get an element NAME of the callbacks alist from a session data SD. */
-static inline SCM
-callbacks_ref (const gssh_session_t *sd, const char* name)
-{
-  return scm_assoc_ref (sd->callbacks, scm_from_locale_symbol (name));
-}
-
 /* The callback procedure that meant to be called by libssh; the procedure in
    turn calls a specified Scheme procedure.  USERDATA is a Guile-SSH
    session instance. */
@@ -290,8 +276,8 @@ libssh_global_request_callback (ssh_session session, ssh_message message,
   SCM scm_session = (SCM) userdata;
   gssh_session_t *sd = gssh_session_from_scm (scm_session);
 
-  SCM scm_callback = callbacks_ref (sd, "global-request-callback");
-  SCM scm_userdata = callbacks_ref (sd, "user-data");
+  SCM scm_callback = callback_ref (sd->callbacks, "global-request-callback");
+  SCM scm_userdata = callback_ref (sd->callbacks, "user-data");
   SCM scm_message = ssh_message_to_scm (message, scm_session);
 
   scm_call_3 (scm_callback, scm_session, scm_message, scm_userdata);
@@ -306,8 +292,8 @@ libssh_connect_status_callback (void *userdata, float status)
   SCM scm_session = (SCM) userdata;
   gssh_session_t *sd = gssh_session_from_scm (scm_session);
 
-  SCM scm_callback = callbacks_ref (sd, "connect-status-callback");
-  SCM scm_userdata = callbacks_ref (sd, "user-data");
+  SCM scm_callback = callback_ref (sd->callbacks, "connect-status-callback");
+  SCM scm_userdata = callback_ref (sd->callbacks, "user-data");
 
   scm_call_3 (scm_callback, scm_session, scm_from_double (status),
               scm_userdata);
@@ -324,7 +310,7 @@ scm_is_procedure (SCM x)
 static void
 validate_callback (SCM session, const gssh_session_t *sd, const char* name)
 {
-  if (! scm_is_procedure (callbacks_ref (sd, name)))
+  if (! scm_is_procedure (callback_ref (sd->callbacks, name)))
     {
       enum { BUFSZ = 70 };
       char msg[BUFSZ];
