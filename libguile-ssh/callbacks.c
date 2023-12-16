@@ -16,7 +16,18 @@
  * along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
 #include <libguile.h>
+
+#include "error.h"
+
+
+/* Predicate.  Return 1 if X is a Scheme procedure, 0 otherwise. */
+static inline int
+scm_is_procedure (SCM x)
+{
+    return scm_to_bool (scm_procedure_p (x));
+}
 
 
 /* Callbacks. */
@@ -35,5 +46,23 @@ callback_ref (SCM callbacks, const char* name)
 {
     return scm_assoc_ref (callbacks, scm_from_locale_symbol (name));
 }
+
+/* Validate callback NAME.  Throw 'guile-ssh-error' exception on an error. */
+void
+callback_validate (SCM parent, SCM callbacks, const char* name)
+{
+    if (! scm_is_procedure (callback_ref (callbacks, name)))
+        {
+            enum { BUFSZ = 70 };
+            char msg[BUFSZ];
+
+            snprintf (msg, BUFSZ, "'%s' must be a procedure", name);
+
+            guile_ssh_error1 ("callback_validate",
+                              msg,
+                              scm_list_2 (parent, callbacks));
+        }
+}
+
 
 /* callbacks.c ends here. */

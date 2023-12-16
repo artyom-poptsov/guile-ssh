@@ -22,6 +22,7 @@
 
 int callback_set_p (SCM callbacks, const char* name);
 SCM callback_ref (SCM callbacks, const char* name);
+void callback_validate (SCM parent, SCM callbacks, const char* name);
 
 #endif /* __CALLBACKS_H__ */
 
