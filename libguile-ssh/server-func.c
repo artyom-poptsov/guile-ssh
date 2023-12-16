@@ -1,6 +1,6 @@
 /* server-func.c -- Functions for working with SSH server.
  *
- * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
@@ -31,6 +31,8 @@
 #include "message-type.h"
 #include "error.h"
 #include "log.h"
+#include "key-type.h"
+#include "callbacks.h"
 
 /* Guile SSH specific options that are aimed to unificate the way of
    server configuration. */
@@ -224,9 +226,106 @@ Return value is undefined.\
 }
 #undef FUNC_NAME
 
+static int
+_server_auth_password_callback (ssh_session session,
+                                const char* user,
+                                const char* password,
+                                void* userdata)
+{
+  SCM scm_list = (SCM) userdata;
+  SCM scm_server = scm_list_ref (scm_list, scm_from_int (0));
+  SCM scm_session = scm_list_ref (scm_list, scm_from_int (1));
+  gssh_session_t *sd = gssh_session_from_scm (scm_session);
+
+  SCM scm_callback = callback_ref (sd->callbacks,
+                                   "server-auth-password-callback");
+  if (scm_procedure_p (scm_callback))
+    {
+      SCM scm_userdata = callback_userdata_ref (sd->callbacks);
+      SCM scm_user = scm_from_locale_string (user);
+      SCM scm_password = scm_from_locale_string (password);
+      SCM result = scm_call_5 (scm_callback,
+                               scm_server,
+                               scm_session,
+                               scm_user,
+                               scm_password,
+                               scm_userdata);
+      return scm_to_int (result);
+    }
+  else
+    {
+      return SSH_AUTH_DENIED;
+    }
+}
+
+static int
+_server_auth_none_callback (ssh_session session,
+                            const char* user,
+                            void* userdata)
+{
+  SCM scm_list = (SCM) userdata;
+  SCM scm_server = scm_list_ref (scm_list, scm_from_int (0));
+  SCM scm_session = scm_list_ref (scm_list, scm_from_int (1));
+  gssh_session_t *sd = gssh_session_from_scm (scm_session);
+
+  SCM scm_callback = callback_ref (sd->callbacks,
+                                   "server-auth-none-callback");
+  if (scm_procedure_p (scm_callback))
+    {
+      SCM scm_userdata = callback_userdata_ref (sd->callbacks);
+
+      SCM result = scm_call_4 (scm_callback,
+                               scm_server,
+                               scm_session,
+                               scm_from_locale_string (user),
+                               scm_userdata);
+
+      return scm_to_int (result);
+    }
+  else
+    {
+      return SSH_AUTH_DENIED;
+    }
+}
+
+static int
+_server_auth_pubkey_callback (ssh_session session,
+                              const char* user,
+                              ssh_key pubkey,
+                              char signature_state,
+                              void* userdata)
+{
+  SCM scm_list = (SCM) userdata;
+  SCM scm_server = scm_list_ref (scm_list, scm_from_int (0));
+  SCM scm_session = scm_list_ref (scm_list, scm_from_int (1));
+  gssh_session_t *sd = gssh_session_from_scm (scm_session);
+
+  SCM scm_callback = callback_ref (sd->callbacks,
+                                   "server-auth-pubkey-callback");
+
+  if (scm_procedure_p (scm_callback))
+    {
+      SCM scm_userdata = callback_userdata_ref (sd->callbacks);
+      SCM scm_user = scm_from_locale_string (user);
+      SCM scm_pubkey = gssh_key_to_scm (pubkey, session);
+      SCM result = scm_call_6 (scm_callback,
+                               scm_server,
+                               scm_session,
+                               scm_user,
+                               scm_pubkey,
+                               scm_from_int (signature_state),
+                               scm_userdata);
+      return scm_to_int (result);
+    }
+  else
+    {
+      return SSH_AUTH_DENIED;
+    }
+}
+
 
-SCM_DEFINE (guile_ssh_server_accept, "server-accept", 1, 0, 0,
-            (SCM server),
+SCM_DEFINE (guile_ssh_server_accept, "%server-accept", 2, 0, 0,
+            (SCM server, SCM callbacks),
             "\
 Accept an incoming ssh connection to the SERVER.\n\
 Throw `guile-ssh-error' on error.  Return a new SSH session.\
@@ -242,6 +341,59 @@ Throw `guile-ssh-error' on error.  Return a new SSH session.\
 
   if (res != SSH_OK)
     guile_ssh_session_error1 (FUNC_NAME, session_data->ssh_session, session);
+
+  if (! scm_is_false (callbacks))
+    {
+      SCM_ASSERT (scm_to_bool (scm_list_p (callbacks)),
+                  callbacks,
+                  SCM_ARG2,
+                  "server-accept");
+
+      session_data->callbacks = callbacks;
+
+      struct ssh_server_callbacks_struct *cb;
+
+      cb = (struct ssh_server_callbacks_struct *)
+        scm_gc_malloc (sizeof (struct ssh_server_callbacks_struct),
+                       "ssh-server-callbacks");
+
+      cb->userdata = scm_list_2 (server, session);
+
+      if (callback_set_p (callbacks, "server-auth-password-callback"))
+        {
+          callback_validate (session,
+                             callbacks,
+                             "server-auth-password-callback");
+          cb->auth_password_function = _server_auth_password_callback;
+        }
+
+      if (callback_set_p (callbacks, "server-auth-none-callback"))
+        {
+          callback_validate (session,
+                             callbacks,
+                             "server-auth-none-callback");
+          cb->auth_none_function = _server_auth_none_callback;
+        }
+
+      if (callback_set_p (callbacks, "server-auth-pubkey-callback"))
+        {
+          callback_validate (session,
+                             callbacks,
+                             "server-auth-pubkey-callback");
+          cb->auth_pubkey_function = _server_auth_pubkey_callback;
+        }
+
+      ssh_callbacks_init (cb);
+
+      res = ssh_set_server_callbacks (session_data->ssh_session, cb);
+
+      if (res != SSH_OK)
+        {
+          guile_ssh_error1 (FUNC_NAME,
+                            "Could not set server callbacks",
+                            server);
+        }
+    }
 
   return session;
 }
