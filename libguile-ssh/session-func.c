@@ -277,7 +277,7 @@ libssh_global_request_callback (ssh_session session, ssh_message message,
   gssh_session_t *sd = gssh_session_from_scm (scm_session);
 
   SCM scm_callback = callback_ref (sd->callbacks, "global-request-callback");
-  SCM scm_userdata = callback_ref (sd->callbacks, "user-data");
+  SCM scm_userdata = callback_userdata_ref (sd->callbacks);
   SCM scm_message = ssh_message_to_scm (message, scm_session);
 
   scm_call_3 (scm_callback, scm_session, scm_message, scm_userdata);
@@ -293,7 +293,7 @@ libssh_connect_status_callback (void *userdata, float status)
   gssh_session_t *sd = gssh_session_from_scm (scm_session);
 
   SCM scm_callback = callback_ref (sd->callbacks, "connect-status-callback");
-  SCM scm_userdata = callback_ref (sd->callbacks, "user-data");
+  SCM scm_userdata = callback_userdata_ref (sd->callbacks);
 
   scm_call_3 (scm_callback, scm_session, scm_from_double (status),
               scm_userdata);

@@ -21,6 +21,8 @@
 
 #include "error.h"
 
+const char* CALLBACK_USER_DATA_NAME = "user-data";
+
 
 /* Predicate.  Return 1 if X is a Scheme procedure, 0 otherwise. */
 static inline int
@@ -64,5 +66,10 @@ callback_validate (SCM parent, SCM callbacks, const char* name)
         }
 }
 
+SCM
+callback_userdata_ref (SCM callbacks)
+{
+  return callback_ref (callbacks, CALLBACK_USER_DATA_NAME);
+}
 
 /* callbacks.c ends here. */
