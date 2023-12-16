@@ -250,6 +250,11 @@
                          #:auth-callback (lambda (prompt max-len echo? verify? userdata)
                                            "123")))
 
+(test-error-with-log "encrypted key: RSA: access denied"
+  (private-key-from-file %rsakey-encrypted
+                         #:auth-callback (lambda (prompt max-len echo? verify? userdata)
+                                           #f)))
+
 (unless-dsa-supported
  (test-skip "encrypted key: DSS"))
 (test-assert-with-log "encrypted key: DSS"
