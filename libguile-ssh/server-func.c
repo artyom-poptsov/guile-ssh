@@ -39,6 +39,7 @@ const char* CALLBACK_SERVER_AUTH_PASSWORD = "server-auth-password-callback";
 const char* CALLBACK_SERVER_AUTH_NONE     = "server-auth-none-callback";
 const char* CALLBACK_SERVER_AUTH_PUBKEY   = "server-auth-pubkey-callback";
 const char* CALLBACK_SERVER_SERVICE_REQUEST = "server-service-request-callback";
+const char* CALLBACK_SERVER_CHANNEL_REQUEST = "channel-open-request-session-callback";
 
 
 /* Guile SSH specific options that are aimed to unificate the way of
@@ -360,6 +361,42 @@ _server_service_request_callback (ssh_session session,
     }
 }
 
+static ssh_channel
+_server_channel_request_callback (ssh_session session,
+                                  void* userdata)
+{
+  SCM scm_list = (SCM) userdata;
+  SCM scm_server = scm_list_ref (scm_list, scm_from_int (0));
+  SCM scm_session = scm_list_ref (scm_list, scm_from_int (1));
+  gssh_session_t *sd = gssh_session_from_scm (scm_session);
+
+  SCM scm_callback = callback_ref (sd->callbacks,
+                                   CALLBACK_SERVER_CHANNEL_REQUEST);
+
+  if (scm_procedure_p (scm_callback))
+    {
+      SCM scm_userdata = callback_userdata_ref (sd->callbacks);
+      SCM result = scm_call_3 (scm_callback,
+                               scm_server,
+                               scm_session,
+                               scm_userdata);
+      if (scm_is_false (result) || (! guile_ssh_is_channel_p (result)))
+        {
+          return NULL;
+        }
+      else
+        {
+          gssh_channel_t* channel = gssh_channel_from_scm (result);
+          return channel->ssh_channel;
+        }
+    }
+  else
+    {
+      return NULL;                /* Request should not be allowed. */
+    }
+}
+
+
 
 SCM_DEFINE (guile_ssh_server_accept, "%server-accept", 2, 0, 0,
             (SCM server, SCM callbacks),
@@ -427,6 +464,16 @@ Throw `guile-ssh-error' on error.  Return a new SSH session.\
                              CALLBACK_SERVER_SERVICE_REQUEST);
           cb->service_request_function = _server_service_request_callback;
         }
+
+      if (callback_set_p (callbacks, CALLBACK_SERVER_CHANNEL_REQUEST))
+        {
+          callback_validate (session,
+                             callbacks,
+                             CALLBACK_SERVER_CHANNEL_REQUEST);
+          cb->channel_open_request_session_function
+            = _server_channel_request_callback;
+        }
+
 
       ssh_callbacks_init (cb);
 
