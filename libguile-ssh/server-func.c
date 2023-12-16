@@ -313,7 +313,7 @@ _server_auth_pubkey_callback (ssh_session session,
     {
       SCM scm_userdata = callback_userdata_ref (sd->callbacks);
       SCM scm_user = scm_from_locale_string (user);
-      SCM scm_pubkey = gssh_key_to_scm (pubkey, session);
+      SCM scm_pubkey = gssh_key_to_scm (pubkey, scm_session);
       SCM result = scm_call_6 (scm_callback,
                                scm_server,
                                scm_session,
