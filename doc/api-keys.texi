@@ -61,6 +61,10 @@ The @var{type} must be one of the following symbols: @code{dss},
 Read private key from a @var{file}.  If the the key is encrypted the user will
 be asked using @var{auth-callback} for passphrase to decrypt the key.  When
 @var{auth-callback} is called, @var{user-data} is passed to it as an argument.
+If no @var{auth-callback} is provided then the procedure denies access to an
+encrypted key.
+
+Return a new Guile-SSH key or @code{#f} on error.
 
 The procedure performs @var{auth-callback} call as follows:
 
@@ -69,8 +73,8 @@ The procedure performs @var{auth-callback} call as follows:
 @end lisp
 
 Where @code{prompt} is a string that specifies the password prompt to use.
-
-Return a new Guile-SSH key of @code{#f} on error.
+The callback must return either a password as a string or @code{#f} if access
+must be denied.
 
 Usage example:
 @lisp
