@@ -70,6 +70,9 @@ Return a new SSH server."
     (server-set-if-specified! blocking-mode)
     server))
 
+(define* (server-accept server #:key (callbacks #f))
+  (%server-accept server callbacks))
+
 (unless (getenv "GUILE_SSH_CROSS_COMPILING")
   (load-extension "libguile-ssh" "init_server"))
 
