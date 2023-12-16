@@ -1,6 +1,6 @@
 /* key-type.c -- SSH key smobs.
  *
- * Copyright (C) 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
@@ -27,15 +27,7 @@
 #include "common.h"
 #include "error.h"
 
-/* BUG: Currently a SSH key that has been read from a file has both
-   public and private flags.  It means that we cannot distinguish
-   whether the key is private or public by means of
-   `ssh_key_is_private' and `ssh_key_is_public' procedures (they both
-   return true).
-
-   See `ssh_pki_import_privkey_file' and `pki_private_key_from_base64'
-   in libssh 0.6.3 for details. -avp */
-
+
 scm_t_bits key_tag; /* Smob tag. */
 
 static const char* GSSH_KEY_TYPE_NAME = "key";
@@ -133,6 +125,8 @@ make_gssh_key ()
                                          GSSH_KEY_TYPE_NAME);
 }
 
+/* Create a new key object from an libssh KEY, use PARENT as the key object
+   parent.  Return the new key object. */
 SCM
 gssh_key_to_scm (ssh_key key, SCM parent)
 {
@@ -145,7 +139,7 @@ gssh_key_to_scm (ssh_key key, SCM parent)
   return key_smob;
 }
 
-/* Convert X to a SSH key */
+/* Convert X to a SSH key.  Return a pointer to an gssh_key_t instance. */
 gssh_key_t *
 gssh_key_from_scm (SCM x)
 {
