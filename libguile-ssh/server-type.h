@@ -29,6 +29,7 @@ extern scm_t_bits server_tag;
 struct gssh_server {
   ssh_bind bind;
   SCM options;
+  SCM callbacks;
 };
 
 typedef struct gssh_server gssh_server_t;

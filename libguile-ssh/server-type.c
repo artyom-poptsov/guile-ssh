@@ -109,6 +109,7 @@ SCM_DEFINE (guile_ssh_make_server, "%make-server", 0, 0, 0,
   gssh_server_t *server_data = make_gssh_server ();
   server_data->bind = ssh_bind_new ();
   server_data->options = SCM_EOL;
+  server_data->callbacks = SCM_EOL;
   SCM_NEWSMOB (smob, server_tag, server_data);
   return smob;
 }

@@ -1,6 +1,6 @@
 /* server-func.c -- Functions for working with SSH server.
  *
- * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
@@ -31,12 +31,14 @@
 #include "message-type.h"
 #include "error.h"
 #include "log.h"
+#include "callbacks.h"
 
 /* Guile SSH specific options that are aimed to unificate the way of
    server configuration. */
 enum gssh_server_options {
   /* Should not intersect with options from SSH server API. */
-  GSSH_BIND_OPTIONS_BLOCKING_MODE = 100
+  GSSH_BIND_OPTIONS_BLOCKING_MODE = 100,
+  GSSH_BIND_OPTIONS_CALLBACKS
 };
 
 
@@ -50,6 +52,7 @@ gssh_symbol_t server_options[] = {
   { "banner",             SSH_BIND_OPTIONS_BANNER         },
   { "log-verbosity",      SSH_BIND_OPTIONS_LOG_VERBOSITY  },
   { "blocking-mode",      GSSH_BIND_OPTIONS_BLOCKING_MODE },
+  { "callbacks",          GSSH_BIND_OPTIONS_CALLBACKS     },
   { NULL,                 -1                              }
 };
 
@@ -117,8 +120,56 @@ set_sym_opt (ssh_bind bind, int type, gssh_symbol_t *sm, SCM value)
   return ssh_bind_options_set (bind, type, &opt->value);
 }
 
+static void
+libssh_bind_incoming_connection_callback (ssh_bind bind, void* user_data)
+{
+  SCM server = (SCM) user_data;
+  gssh_server_t* server_data = gssh_server_from_scm (server);
+  SCM scm_callback = callback_ref (server_data->callbacks,
+                                   "connect-status-callback");
+  SCM scm_user_data = callback_userdata_ref (server_data->callbacks);
+  printf("******************* aaaaaaaaaaaaaaaaa\n");
+  scm_call_2 (scm_callback, server, scm_user_data);
+}
+
+/* Set libssh callbacks for a SERVER.  The procedure expects CALLBACKS to be
+   an alist object.
+
+   Return SSH_OK if callbacks were set succesfully, SSH_ERROR otherwise. */
 static int
-set_option (ssh_bind bind, int type, SCM value)
+set_callbacks (SCM server, SCM callbacks)
+{
+  struct ssh_bind_callbacks_struct *cb
+    = (struct ssh_bind_callbacks_struct *)
+    scm_gc_malloc (sizeof (struct ssh_bind_callbacks_struct),
+                   "ssh-bind-callbacks");
+
+  gssh_server_t* server_data = gssh_server_from_scm (server);
+
+  SCM_ASSERT (scm_to_bool (scm_list_p (callbacks)),
+              callbacks,
+              SCM_ARG3,
+              "server-set!");
+
+  server_data->callbacks = callbacks;
+
+  if (callback_set_p (callbacks, "incoming-connection-callback"))
+    {
+      printf("******************* dfdf\n");
+      callback_validate (server, callbacks, "incoming-connection-callback");
+      cb->incoming_connection = libssh_bind_incoming_connection_callback;
+    }
+
+  ssh_callbacks_init (cb);
+  printf("******************* %ld\n", cb->size);
+
+  scm_remember_upto_here_2 (server, callbacks);
+
+  return ssh_bind_set_callbacks (server_data->bind, cb, server);
+}
+
+static int
+set_option (SCM server, ssh_bind bind, int type, SCM value)
 {
   switch (type)
     {
@@ -137,6 +188,9 @@ set_option (ssh_bind bind, int type, SCM value)
 
     case GSSH_BIND_OPTIONS_BLOCKING_MODE:
       return set_blocking_mode (bind, value);
+
+    case GSSH_BIND_OPTIONS_CALLBACKS:
+      return set_callbacks (server, value);
 
     default:
       guile_ssh_error1 ("server-set!",
@@ -167,7 +221,7 @@ Return value is undefined.\
   if (! opt)
     guile_ssh_error1 (FUNC_NAME, "No such option", option);
 
-  res = set_option (server_data->bind, opt->value, value);
+  res = set_option (server, server_data->bind, opt->value, value);
 
   _gssh_log_debug_format(FUNC_NAME, scm_list_3 (server, option, value),
                          "result: %d", res);

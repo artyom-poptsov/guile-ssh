@@ -281,6 +281,10 @@ Options:
     (let ((server (make-server #:bindport      bindport
                                #:rsakey        rsakey
                                #:dsakey        dsakey
+                               #:blocking-mode #f
+                               #:callbacks     `((incoming-connection-callback . ,(lambda (server data)
+                                                                                      (format (current-error-port) "~a: ~a~%" server data)))
+                                                 (user-data . "hello"))
                                #:log-verbosity (string->symbol ssh-debug)
                                #:banner        "Scheme Secure Shell Daemon"))
           (channel #f))

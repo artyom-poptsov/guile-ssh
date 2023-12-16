@@ -56,7 +56,8 @@
   `(if ,option (server-set! server (quote ,option) ,option)))
 
 (define* (make-server #:key bindaddr bindport hostkey dsakey rsakey banner
-                      log-verbosity blocking-mode)
+                      log-verbosity blocking-mode
+                      callbacks)
   "Make a new SSH server with the specified configuration.\n
 Return a new SSH server."
   (let ((server (%make-server)))
@@ -68,6 +69,7 @@ Return a new SSH server."
     (server-set-if-specified! banner)
     (server-set-if-specified! log-verbosity)
     (server-set-if-specified! blocking-mode)
+    (server-set-if-specified! callbacks)
     server))
 
 (unless (getenv "GUILE_SSH_CROSS_COMPILING")
