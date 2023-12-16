@@ -34,6 +34,12 @@
 #include "key-type.h"
 #include "callbacks.h"
 
+
+const char* CALLBACK_SERVER_AUTH_PASSWORD = "server-auth-password-callback";
+const char* CALLBACK_SERVER_AUTH_NONE     = "server-auth-none-callback";
+const char* CALLBACK_SERVER_AUTH_PUBKEY   = "server-auth-pubkey-callback";
+
+
 /* Guile SSH specific options that are aimed to unificate the way of
    server configuration. */
 enum gssh_server_options {
@@ -359,27 +365,27 @@ Throw `guile-ssh-error' on error.  Return a new SSH session.\
 
       cb->userdata = scm_list_2 (server, session);
 
-      if (callback_set_p (callbacks, "server-auth-password-callback"))
+      if (callback_set_p (callbacks, CALLBACK_SERVER_AUTH_PASSWORD))
         {
           callback_validate (session,
                              callbacks,
-                             "server-auth-password-callback");
+                             CALLBACK_SERVER_AUTH_PASSWORD);
           cb->auth_password_function = _server_auth_password_callback;
         }
 
-      if (callback_set_p (callbacks, "server-auth-none-callback"))
+      if (callback_set_p (callbacks, CALLBACK_SERVER_AUTH_NONE))
         {
           callback_validate (session,
                              callbacks,
-                             "server-auth-none-callback");
+                             CALLBACK_SERVER_AUTH_NONE);
           cb->auth_none_function = _server_auth_none_callback;
         }
 
-      if (callback_set_p (callbacks, "server-auth-pubkey-callback"))
+      if (callback_set_p (callbacks, CALLBACK_SERVER_AUTH_PUBKEY))
         {
           callback_validate (session,
                              callbacks,
-                             "server-auth-pubkey-callback");
+                            CALLBACK_SERVER_AUTH_PUBKEY);
           cb->auth_pubkey_function = _server_auth_pubkey_callback;
         }
 
