@@ -19,6 +19,8 @@
 #ifndef __GUILE_SSH_ERROR_H__
 #define __GUILE_SSH_ERROR_H__
 
+#include <libssh/libssh.h>
+
 #define GUILE_SSH_ERROR "guile-ssh-error"
 
 extern void guile_ssh_error (const char *proc, const char *msg,
