@@ -87,3 +87,7 @@ See also files THANKS and ChangeLog.
     sssh-ssshd.scm
 * Andrew Tropin <andrew@trop.in>
   Bug reports.
+* Sharlatan Hellseher <sharlatanus@gmail.com>
+  GNU Guix workflows for GitHub CI.
+* Maxim Cournoyer <maxim.cournoyer@gmail.com>
+  Fixes for typos in the Texinfo documentation.
