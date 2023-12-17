@@ -7,6 +7,29 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Changes in version 0.16.4 (2023-12-17)
+** =private-key-from-file= now allows to read encrypted keys
+The procedure =private-key-from-file= from =(ssh key)= now has optional
+=#:auth-callback= and =#:user-data= keys that allow to specify a callback
+procedure to read the password for an encrypted key, and optionally pass to
+the callback procedure some user data.
+
+The Texinfo documentation for =private-key-from-file= is updated with an usage
+example.
+
+New tests were added for the new functionality.
+** Add GNU Guix workflows for GitHub CI
+Now Guile-SSH has GNU Guix workflows for GitHub CI.
+
+Platforms:
+- x86_64-linux-gnu
+- aarch64-linux-gnu
+
+Thanks to Sharlatan Hellseher <sharlatanus@gmail.com>
+** Fix typos in the documentation
+Some typos in =doc/api-popen.texi= are fixed, thanks to
+Maxim Cournoyer <maxim.cournoyer@gmail.com>
+
 * Changes in version 0.16.3 (2023-01-29)
 ** Fix Guile-SSH/libssh channel leak
 Guile-SSH channel would always "leak" the libssh channels when the remote side
