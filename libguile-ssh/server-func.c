@@ -39,7 +39,7 @@ const char* CALLBACK_SERVER_AUTH_PASSWORD = "server-auth-password-callback";
 const char* CALLBACK_SERVER_AUTH_NONE     = "server-auth-none-callback";
 const char* CALLBACK_SERVER_AUTH_PUBKEY   = "server-auth-pubkey-callback";
 const char* CALLBACK_SERVER_SERVICE_REQUEST = "server-service-request-callback";
-const char* CALLBACK_SERVER_CHANNEL_REQUEST = "channel-open-request-session-callback";
+const char* CALLBACK_SERVER_CHANNEL_REQUEST = "server-channel-request-callback";
 
 
 /* Guile SSH specific options that are aimed to unificate the way of
