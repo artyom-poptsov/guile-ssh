@@ -787,6 +787,54 @@
 
 
 ;;;
+;;; Callbacks.
+;;;
+
+(test-equal-with-log "server-auth-none-callback: success"
+  'success
+  (run-client-test
+
+   ;; server
+   (lambda (server)
+     (server-listen server)
+     (let* ((service-request-callback
+             (lambda (server session service user-data)
+               (format-log/scm 'nolog
+                               "server-service-request-callback"
+                               "[GSSH DEBUG] service: ~a"
+                               service)
+               0))
+            (auth-none-callback
+             (lambda args
+               (format-log/scm 'nolog
+                               "server-auth-none-callback"
+                               "[GSSH DEBUG] args: ~a"
+                               args)
+               0))
+            (session
+             (server-accept server
+                            #:callbacks `((server-service-request-callback
+                                           . ,service-request-callback)
+                                          (server-auth-none-callback
+                                           . ,auth-none-callback)))))
+       (server-handle-key-exchange session)
+       (while (connected? session)
+         (format-log/scm 'nolog
+                         "server-auth-none-callback"
+                         "[GSSH DEBUG] message: ~a"
+                         (server-message-get session))
+         (sleep 1))))
+
+   ;; client
+   (lambda ()
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (userauth-none! session))))))
+
+
+
+;;;
 
 (define exit-status (test-runner-fail-count (test-runner-current)))
 
