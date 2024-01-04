@@ -38,6 +38,7 @@
 const char* CALLBACK_SERVER_AUTH_PASSWORD = "server-auth-password-callback";
 const char* CALLBACK_SERVER_AUTH_NONE     = "server-auth-none-callback";
 const char* CALLBACK_SERVER_AUTH_PUBKEY   = "server-auth-pubkey-callback";
+const char* CALLBACK_SERVER_AUTH_GSSAPI_MIC = "server-auth-gssapi-mic-callback";
 const char* CALLBACK_SERVER_SERVICE_REQUEST = "server-service-request-callback";
 const char* CALLBACK_SERVER_CHANNEL_REQUEST = "server-channel-request-callback";
 
@@ -332,6 +333,39 @@ _server_auth_pubkey_callback (ssh_session session,
 }
 
 static int
+_server_auth_gssapi_mic_callback (ssh_session session,
+                                  const char* user,
+                                  const char* principal,
+                                  void* userdata)
+{
+  SCM scm_list = (SCM) userdata;
+  SCM scm_server = scm_list_ref (scm_list, scm_from_int (0));
+  SCM scm_session = scm_list_ref (scm_list, scm_from_int (1));
+  gssh_session_t *sd = gssh_session_from_scm (scm_session);
+
+  SCM scm_callback = callback_ref (sd->callbacks,
+                                   CALLBACK_SERVER_AUTH_GSSAPI_MIC);
+
+  if (scm_procedure_p (scm_callback))
+    {
+      SCM scm_userdata = callback_userdata_ref (sd->callbacks);
+      SCM scm_user = scm_from_locale_string (user);
+      SCM scm_principal = scm_from_locale_string (principal);
+      SCM result = scm_call_5 (scm_callback,
+                               scm_server,
+                               scm_session,
+                               scm_user,
+                               scm_principal,
+                               scm_userdata);
+      return scm_to_int (result);
+    }
+  else
+    {
+      return SSH_AUTH_DENIED;
+    }
+}
+
+static int
 _server_service_request_callback (ssh_session session,
                                   const char* service,
                                   void* userdata)
@@ -456,6 +490,14 @@ Throw `guile-ssh-error' on error.  Return a new SSH session.\
                              CALLBACK_SERVER_AUTH_PUBKEY);
           cb->auth_pubkey_function = _server_auth_pubkey_callback;
         }
+
+      if (callback_set_p (callbacks, CALLBACK_SERVER_AUTH_GSSAPI_MIC))
+          {
+              callback_validate (session,
+                                 callbacks,
+                                 CALLBACK_SERVER_AUTH_GSSAPI_MIC);
+              cb->auth_gssapi_mic_function = _server_auth_gssapi_mic_callback;
+          }
 
       if (callback_set_p (callbacks, CALLBACK_SERVER_SERVICE_REQUEST))
         {
