@@ -2,7 +2,8 @@ name: Ubuntu/Guile 3.0
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - '*'
   pull_request:
     branches: [ master ]
 
