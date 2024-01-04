@@ -453,7 +453,7 @@ Throw `guile-ssh-error' on error.  Return a new SSH session.\
         {
           callback_validate (session,
                              callbacks,
-                            CALLBACK_SERVER_AUTH_PUBKEY);
+                             CALLBACK_SERVER_AUTH_PUBKEY);
           cb->auth_pubkey_function = _server_auth_pubkey_callback;
         }
 
