@@ -1,6 +1,6 @@
 /* server-func.c -- Functions for working with SSH server.
  *
- * Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
@@ -246,7 +246,7 @@ _server_auth_password_callback (ssh_session session,
   gssh_session_t *sd = gssh_session_from_scm (scm_session);
 
   SCM scm_callback = callback_ref (sd->callbacks,
-                                   "server-auth-password-callback");
+                                   CALLBACK_SERVER_AUTH_PASSWORD);
   if (scm_procedure_p (scm_callback))
     {
       SCM scm_userdata = callback_userdata_ref (sd->callbacks);
@@ -277,7 +277,7 @@ _server_auth_none_callback (ssh_session session,
   gssh_session_t *sd = gssh_session_from_scm (scm_session);
 
   SCM scm_callback = callback_ref (sd->callbacks,
-                                   "server-auth-none-callback");
+                                   CALLBACK_SERVER_AUTH_NONE);
   if (scm_procedure_p (scm_callback))
     {
       SCM scm_userdata = callback_userdata_ref (sd->callbacks);
@@ -309,7 +309,7 @@ _server_auth_pubkey_callback (ssh_session session,
   gssh_session_t *sd = gssh_session_from_scm (scm_session);
 
   SCM scm_callback = callback_ref (sd->callbacks,
-                                   "server-auth-pubkey-callback");
+                                   CALLBACK_SERVER_AUTH_PUBKEY);
 
   if (scm_procedure_p (scm_callback))
     {
