@@ -28,8 +28,16 @@ jobs:
       - name: Configure
         run: ./configure
       - name: Make
-        run: make
+        run: make -j$(nproc)
       - name: Run tests
-        run: make check
+        run: make -j$(nproc) check
       - name: Make distribution
-        run: make distcheck
+        run: make -j$(nproc) distcheck
+      - name: Upload the artifact
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: guile-ssh
+          compression-level: 0
+          path: "guile-ssh-*.tar.gz"
+
