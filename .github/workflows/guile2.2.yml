@@ -1,4 +1,4 @@
-name: Ubuntu 20.04/Guile 2.2
+name: Ubuntu/Guile 2.2
 
 on:
   push:
