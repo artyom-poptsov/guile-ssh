@@ -1,4 +1,4 @@
-name: Ubuntu 20.04/Guile 3.0
+name: Ubuntu/Guile 3.0
 
 on:
   push:
@@ -8,19 +8,39 @@ on:
 
 jobs:
   build:
-    name: Required Packages
-    strategy:
-      matrix:
-        distro:
-          - 'ubuntu:20.04'
-        include:
-          - distro: 'ubuntu:20.04'
-            pre: 'apt -qy install guile-3.0 guile-3.0-libs guile-3.0-dev guile-library texinfo libssh-dev libtool texlive gettext make automake autoconf gcc'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Test building on ${{ matrix.distro }}
-        env:
-          PRE: ${{ matrix.pre }}
+      - name: Install dependencies
         run: |
-          docker run --rm -e PRE -e DEBIAN_FRONTEND=noninteractive -v $PWD:/guile-ssh -w /guile-ssh ${{ matrix.distro }} /bin/sh -c '[ -n "${PRE}" ] && apt update && ${PRE} && autoreconf -vif && ./configure && make check'
+          sudo apt -qy install \
+              guile-3.0 \
+              guile-3.0-libs \
+              guile-3.0-dev \
+              guile-library \
+              texinfo \
+              libssh-dev \
+              libtool \
+              texlive \
+              gettext \
+              make \
+              automake \
+              autoconf \
+              gcc
+      - uses: actions/checkout@v2
+      - name: Autoreconf
+        run: autoreconf -vif
+      - name: Configure
+        run: ./configure
+      - name: Build
+        run: make -j$(nproc)
+      - name: Run tests
+        run: make -j$(nproc) check
+      - name: Make distribution
+        run: make -j$(nproc) distcheck
+      - name: Upload the artifact
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: guile-ssh
+          compression-level: 0
+          path: "guile-ssh-*.tar.gz"
