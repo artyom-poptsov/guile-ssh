@@ -1,0 +1,69 @@
+#+TITLE: Guile-SSH Architecture
+#+STARTUP: content hidestars
+
+Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+* Architecture
+The main goal of this project is to provide a Scheme interface to [[https://www.libssh.org/][libssh]]
+library which in turn implements SSH protocol (RFC 4250 and others.)
+
+There are two main reasons that Guile-SSH uses libssh:
+
+1. It was originally started as a wrapper to the libssh.
+
+2. It's not easy to do the implementation of SSH protocol right; as it is the
+   foundation for secure communication there's a great burden of maintaining
+   the security of the code.  =libssh= has comprehensive testing, is passed at
+   least one [[https://www.libssh.org/2019/12/10/libssh-0-9-3-and-libssh-0-8-8-security-release/][security audit]] and it has many users.
+
+In addition to the basic SSH client/server API (provided by libssh itself)
+Guile-SSH provides high-level procedures for operations over SSH channels.
+
+The project is split into two parts: a C library (=libguile-ssh=) and a Scheme
+=ssh= library.
+
+** Code Map
+*** Overview
+C library code is in =libguile-ssh= directory.  All the GNU Guile modules are
+in =modules= directory.
+
+*** C API
+C API is not public at the moment as it is not important for the task
+Guile-SSH tries accomplish.
+
+Nevertheless public and stable C API might be advantageous in some situations
+like writing other low-level Scheme libraries or low-level Guile-SSH testing.
+
+Each SMOB (Small Object) -- Scheme objects described in C -- is split in three files:
+- =*-type.c= contains the implementation of a SMOB and some very basic
+  procedures for it.
+- =*-func.c= contains the most of the procedures for working with that SMOB.
+- =*-main.c= contains the =init= procedure that initializes the SMOB.
+
+There are some common procedures that are written in separate files not
+related to any SMOB (like =log= procedures.)
+
+*** Scheme API
+Scheme API is public and should be kept stable when it's possible.  When this
+API changes a note must be issued in the =NEWS= file.
+
+All Scheme modules are in =modules/ssh= directory.
+
+*** Examples
+Examples are important as they provide a hint how the library can be used for
+real tasks.
+
+Guile-SSH examples are stored in =examples= directory in the root of the
+repository.
+
+*** Tests
+Tests are in =tests= directory.  They are written using SRFI-61.
+
+When a new functionality is being added a new test case (or several test
+cases) should be written for it.
+
+Tests are using SSH client and a server written in Guile-SSH from =examples=.
