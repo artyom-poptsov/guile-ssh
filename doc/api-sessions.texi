@@ -79,6 +79,9 @@ Example:
   ...)
 @end lisp
 
+All options are described in detail in @code{session-set!} procedure
+description.
+
 List of allowed keywords:
 @table @samp
 @item add-identity
