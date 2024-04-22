@@ -7,6 +7,17 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** =make-session= now loads config file before setting options
+=make-session= would always overwrite the explicitly set options passed by
+keywords with the values from the SSH configuration file.  That lead to
+unexpected behavior.
+
+This patch fixes this error.
+
+Reported by graywolf in
+<https://github.com/artyom-poptsov/guile-ssh/issues/38>
+
 * Changes in version 0.16.4 (2023-12-17)
 ** =private-key-from-file= now allows to read encrypted keys
 The procedure =private-key-from-file= from =(ssh key)= now has optional
