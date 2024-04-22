@@ -1,6 +1,6 @@
 ;;; session.scm -- SSH session management.
 
-;; Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -79,7 +79,21 @@
   "Make a new SSH session with specified configuration.\n
 Return a new SSH session."
   (let ((session (%make-session)))
+
     (session-set-if-specified! host)
+
+    (when config
+      (or host
+          (throw 'guile-ssh-error
+                 "'config' is specified, but 'host' option is missed."))
+      (cond
+       ((string? config)
+        (%gssh-session-parse-config! session config))
+       ((boolean? config)
+        (%gssh-session-parse-config! session #f))
+       (else
+        (throw 'guile-ssh-error "Wrong 'config' value" config))))
+
     (session-set-if-specified! port)
     (session-set-if-specified! user)
     (session-set-if-specified! ssh-dir)
@@ -101,18 +115,6 @@ Return a new SSH session."
     (session-set-if-specified! compression-level)
     (session-set-if-specified! nodelay)
     (session-set-if-specified! callbacks)
-
-    (when config
-      (or host
-          (throw 'guile-ssh-error
-                 "'config' is specified, but 'host' option is missed."))
-      (cond
-       ((string? config)
-        (%gssh-session-parse-config! session config))
-       ((boolean? config)
-        (%gssh-session-parse-config! session #f))
-       (else
-        (throw 'guile-ssh-error "Wrong 'config' value" config))))
 
     session))
 
