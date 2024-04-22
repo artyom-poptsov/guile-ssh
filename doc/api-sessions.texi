@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2014-2021 Artyom V. Poptsov
+@c Copyright (C) 2014-2024 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Sessions
@@ -90,6 +90,8 @@ List of allowed keywords:
 @item compression-level
 @item compression-s-c
 @item config
+Set the configuration file path.  Note that @var{host} must be set to properly
+load configuration otherwise @code{guile-ssh-error} will be thrown.
 @item host
 @item identity
 @item knownhosts
