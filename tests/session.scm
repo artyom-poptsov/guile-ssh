@@ -1,6 +1,6 @@
 ;;; session.scm -- Testing of session procedures without a connection.
 
-;; Copyright (C) 2014, 2015, 2016, 2017, 2018, 2019, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -223,6 +223,14 @@
 (test-error "make-session, only '#:config' is specified"
   'guile-ssh-error
   (make-session #:config %config))
+
+(test-equal "make-session: keywords must overwrite config options"
+  22
+  (let ((s (make-session #:host   "localhost"
+                         #:port   22
+                         ;; Configuration sets port to 2222
+                         #:config %config)))
+    (session-get s 'port)))
 
 (test-equal-with-log "blocking-flush!"
   'ok
