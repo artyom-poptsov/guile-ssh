@@ -8,8 +8,8 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Architecture
-The main goal of this project is to provide a Scheme interface to [[https://www.libssh.org/][libssh]]
-library which in turn implements SSH protocol (RFC 4250 and others.)
+The main goal of this project is to provide a [[https://www.gnu.org/software/guile/][GNU Guile]] (Scheme) interface to
+[[https://www.libssh.org/][libssh]] library which in turn implements [[https://en.wikipedia.org/wiki/Secure_Shell][SSH protocol]] (RFC 4250 and others.)
 
 There are two main reasons that Guile-SSH uses libssh:
 
@@ -17,8 +17,8 @@ There are two main reasons that Guile-SSH uses libssh:
 
 2. It's not easy to do the implementation of SSH protocol right; as it is the
    foundation for secure communication there's a great burden of maintaining
-   the security of the code.  =libssh= has comprehensive testing, is passed at
-   least one [[https://www.libssh.org/2019/12/10/libssh-0-9-3-and-libssh-0-8-8-security-release/][security audit]] and it has many users.
+   the security of the code.  =libssh= has comprehensive testing, it is passed
+   at least one [[https://www.libssh.org/2019/12/10/libssh-0-9-3-and-libssh-0-8-8-security-release/][security audit]] and it has many users.
 
 In addition to the basic SSH client/server API (provided by libssh itself)
 Guile-SSH provides high-level procedures for operations over SSH channels.
@@ -38,7 +38,8 @@ Guile-SSH tries accomplish.
 Nevertheless public and stable C API might be advantageous in some situations
 like writing other low-level Scheme libraries or low-level Guile-SSH testing.
 
-Each SMOB (Small Object) -- Scheme objects described in C -- is split in three files:
+Each SMOB (Small Object) -- a GNU Guile object described in C -- is split into
+three files:
 - =*-type.c= contains the implementation of a SMOB and some very basic
   procedures for it.
 - =*-func.c= contains the most of the procedures for working with that SMOB.
