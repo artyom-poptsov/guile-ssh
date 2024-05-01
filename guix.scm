@@ -1,3 +1,39 @@
+;;; guix.scm -- GNU Guix package definition.
+
+;; Copyright (C) 2022-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;;
+;; This file is a part of Guile-SSH.
+;;
+;; Guile-SSH is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
+;;
+;; Guile-SSH is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with Guile-SSH.  If not, see
+;; <http://www.gnu.org/licenses/>.
+
+
+;;; Commentary:
+
+;; Use this file to build Guile-SSH with GNU Guix:
+;;
+;;   guix build -f guix.scm
+;;
+;; By default Guile-SSH builds with libssh 0.10, but it is possible to switch
+;; it to libssh 0.9 by exporting an environment variable:
+;;
+;;   export GUILE_SSH_BUILD_WITH_LIBSSH_0_9=1
+;;   guix build -f guix.scm
+
+
+;;; Code:
+
 (use-modules (guix gexp)
              ((guix licenses) #:prefix license:)
              (guix packages)
@@ -49,6 +85,20 @@ transfer files, and use a secure and transparent tunnel for your remote
 applications.")
     (home-page "https://www.libssh.org")
     (license license:lgpl2.1+)))
+
+(define-public libssh9
+  (package
+    (inherit libssh)
+    (name "libssh")
+    (version "0.9.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://www.libssh.org/files/"
+                                  (version-major+minor version)
+                                  "/libssh-" version ".tar.xz"))
+              (sha256
+               (base32
+                "19f7h8s044pqfhfk35ky5lj4hvqhi2p2p46xkwbcsqz6jllkqc15"))))))
 
 (define-public guile-ssh
   (package
@@ -117,8 +167,17 @@ programs written in GNU Guile interpreter.  It is a wrapper to the underlying
 libssh library.")
     (license license:gpl3+)))
 
+(define-public guile-ssh/libssh9
+  (package
+   (inherit guile-ssh)
+   (name "guile-ssh")
+   (inputs (modify-inputs (package-inputs guile-ssh)
+             (replace "libssh" libssh9)))))
+
 
 
-guile-ssh
+(if (getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_9")
+    guile-ssh/libssh9
+    guile-ssh)
 
 ;;; guix.scm ends here.
