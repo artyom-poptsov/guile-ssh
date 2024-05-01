@@ -33,7 +33,7 @@ jobs:
       - name: "Build project guile-ssh"
         run: |
           guix build --file=guix.scm
-  x86_64-linux-gnu/libssh-0.9:
+  x86_64-linux-gnu-libssh-0-9:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Guix cache"
