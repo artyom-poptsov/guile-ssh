@@ -17,6 +17,10 @@ This patch fixes this error.
 
 Reported by graywolf in
 <https://github.com/artyom-poptsov/guile-ssh/issues/38>
+** =session-set!= now allows to set =rsa-min-size=
+Only available if Guile-SSH is compiled with libssh 0.10.
+** Add new tests.
+** Update the documentation.
 
 * Changes in version 0.16.4 (2023-12-17)
 ** =private-key-from-file= now allows to read encrypted keys

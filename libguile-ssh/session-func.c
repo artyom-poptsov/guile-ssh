@@ -1,6 +1,6 @@
 /* session-func.c -- Functions for working with SSH session.
  *
- * Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH.
  *
@@ -79,6 +79,10 @@ static gssh_symbol_t session_options[] = {
      This option was added to the libssh in
      4521ab73b6858efa0083ac96a1775719b1f649ae */
   { "public-key-accepted-types", SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES },
+#endif
+
+#if HAVE_LIBSSH_0_10
+  {"rsa-min-size",        SSH_OPTIONS_RSA_MIN_SIZE       },
 #endif
 
   { "callbacks",          GSSH_OPTIONS_CALLBACKS         },
@@ -396,6 +400,12 @@ set_option (SCM scm_session, gssh_session_t* sd, int type, SCM value)
                           "Option 'public-key-accepted-types' is not available"
                           " in the current version of libssh (%s)",
                           ssh_version (0));
+        break;
+#endif
+
+#if HAVE_LIBSSH_0_10
+    case SSH_OPTIONS_RSA_MIN_SIZE:
+        return set_int32_opt (session, type, value);
         break;
 #endif
 

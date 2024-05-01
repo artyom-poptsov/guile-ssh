@@ -176,8 +176,11 @@ replaced by the user home directory.
 
 Expected type of @var{value}: string.
 @item identity
-Set the identity file name.  By default identity, @file{id_dsa} and
-@file{id_rsa} are checked.
+Set the identity file name.  In libssh prior version 0.10 @file{id_dsa} and
+@file{id_rsa} are checked by default.
+
+In libssh 0.10 or newer versions @file{id_rsa}, @file{id_ecdsa} and
+@file{id_ed25519} are checked by default.
 
 The identity file used authenticate with public key.  It may include
 @code{%s} which will be replaced by the user home directory.
@@ -245,6 +248,15 @@ Expected type of @var{value}: string.
 Set the command to be executed in order to connect to server.
 
 Expected type of @var{value}: string.
+@item rsa-min-size
+Set the minimum RSA key size in bits to be accepted by the client for both
+authentication and hostkey verification.  The values under 768 bits are not
+accepted even with this configuration option as they are considered completely
+broken. Setting 0 will revert the value to defaults.  Default is 1024 bits or
+2048 bits in FIPS mode.
+
+Expected type of @var{value}: number.
+
 @item stricthostkeycheck
 Set the parameter @code{StrictHostKeyChecking} to avoid asking about a
 fingerprint.

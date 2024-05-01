@@ -116,6 +116,12 @@
      options)
     res))
 
+(unless (>= %libssh-minor-version 10)
+  (test-skip "session-set!, rsa-min-size"))
+(test-assert "session-set!, rsa-min-size"
+  (let ((session (%make-session)))
+    (session-set! session 'rsa-min-size 1024)))
+
 (test-assert "session-set!, invalid values"
   (let ((session (%make-session))
         (options '((host              12345 #t)
