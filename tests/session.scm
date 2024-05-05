@@ -232,7 +232,7 @@
 
 (test-equal "make-session: keywords must overwrite config options"
   22
-  (let ((s (make-session #:host   "localhost"
+  (let ((s (make-session #:host   "example"
                          #:port   22
                          ;; Configuration sets port to 2222
                          #:config %config)))
