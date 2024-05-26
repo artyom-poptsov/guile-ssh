@@ -91,3 +91,6 @@ See also files THANKS and ChangeLog.
   GNU Guix workflows for GitHub CI.
 * Maxim Cournoyer <maxim.cournoyer@gmail.com>
   Fixes for typos in the Texinfo documentation.
+* Darya Sev. <sdarsy@ya.ru>
+  Very helpful design advices for the new simplified version of the project
+  logo.

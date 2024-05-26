@@ -7,6 +7,10 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Unreleased
+** New simplified version of the project logo
+Thanks to Darya Sev. <sdarsy@ya.ru> for very helpful design advices for the
+new simplified version of the project logo.
 * Changes in version 0.17.0 (2024-05-01)
 ** =make-session= now loads config file before setting options
 =make-session= would always overwrite the explicitly set options passed by
