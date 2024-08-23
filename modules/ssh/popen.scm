@@ -1,6 +1,6 @@
 ;;; popen.scm -- Remote popen emulation.
 
-;; Copyright (C) 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -55,6 +55,43 @@
 
 (define OPEN_PTY "t")
 
+
+;; This procedure is taken from GNU Guile 3.0.0.
+;;
+;; Original comment:
+;;
+;; string-replace-substring By A. Wingo in
+;; https://lists.gnu.org/archive/html/guile-devel/2014-03/msg00058.html
+;; also in string-replace-substring guix:guix/utils.scm.
+
+(define (string-replace-substring str substring replacement)
+  "Return a new string where every instance of @var{substring} in string
+   @var{str} has been replaced by @var{replacement}. For example:
+
+   @lisp
+   (string-replace-substring \"a ring of strings\" \"ring\" \"rut\")
+   @result{} \"a rut of struts\"
+   @end lisp
+   "
+  (let ((sublen (string-length substring)))
+    (with-output-to-string
+      (lambda ()
+        (let lp ((start 0))
+          (cond
+           ((string-contains str substring start)
+            => (lambda (end)
+                 (display (substring/shared str start end))
+                 (display replacement)
+                 (lp (+ end sublen))))
+           (else
+            (display (substring/shared str start)))))))))
+
+
+
+(define (shell-quote s)
+  "Quote string S for sh-compatible shells."
+  (string-append "'" (string-replace-substring s "'" "'\\''") "'"))
+
 (define (open-remote-pipe session command mode)
   "Execute a COMMAND on the remote host using a SESSION with a pipe to it.
 Returns newly created channel port with the specified MODE."
@@ -70,7 +107,10 @@ Returns newly created channel port with the specified MODE."
 (define (open-remote-pipe* session mode prog . args)
   "Execute a PROG with optional ARGS on the remote host using a SESSION with a
 pipe to it.  Returns newly created channel port with the specified MODE."
-  (open-remote-pipe session (string-join (cons prog args)) mode))
+  (open-remote-pipe session
+                    (string-join (cons (shell-quote prog)
+                                       (map shell-quote args)))
+                    mode))
 
 
 (define (open-remote-input-pipe session command)
@@ -81,7 +121,10 @@ Returns newly created input channel port."
 (define (open-remote-input-pipe* session prog . args)
   "Execute a PROG with optional ARGS on the remote host using a SESSION with
 an input pipe to it.  Returns newly created input channel port."
-  (open-remote-pipe session (string-join (cons prog args)) OPEN_READ))
+  (open-remote-pipe session
+                    (string-join (cons (shell-quote prog)
+                                       (map shell-quote args)))
+                    OPEN_READ))
 
 
 (define (open-remote-output-pipe session command)
@@ -92,6 +135,9 @@ Returns newly created input channel port."
 (define (open-remote-output-pipe* session prog . args)
   "Execute a PROG with optional ARGS on the remote host using a SESSION with
 an output pipe to it.  Returns newly created output channel port."
-  (open-remote-pipe session (string-join (cons prog args)) OPEN_WRITE))
+  (open-remote-pipe session
+                    (string-join (cons (shell-quote prog)
+                                       (map shell-quote args)))
+                    OPEN_WRITE))
 
 ;;; popen.scm ends here.

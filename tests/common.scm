@@ -1,6 +1,6 @@
 ;;; common.scm -- Heper procedures and macros for tests.
 
-;; Copyright (C) 2015-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2015-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -427,9 +427,9 @@ scheme@(guile-user)> ")
   (define (state:message-handle-exec message session)
       (format-log/scm 'nolog "start-server/exec" "state:message-handle-exec: message: ~A" message)
     (let ((command (exec-req:cmd (message-get-req message))))
-      (format-log/scm 'nolog "start-server/exec" "command: ~A" command)
+      (format-log/scm 'nolog "start-server/exec" "command: ~S" command)
       (cond
-       ((string=? command "ping")
+       ((or (string=? command "'ping'") (string=? command "ping"))
         (message-reply-success message)
         (channel-request-send-exit-status *channel* 0)
         (write-line "pong" *channel*)
@@ -438,7 +438,8 @@ scheme@(guile-user)> ")
             (channel-send-eof *channel*))
           (lambda args
             (format-log/scm 'nolog "start-server/exec" "ERROR: ~a" args))))
-       ((string=? command "uname") ; For exit status testing
+       ((or (string=? command "'uname'") (string=? command "uname"))
+        ;; For exit status testing
         (body session message *channel*))
        ((string=? command "exit status") ; For exit status testing
         (message-reply-success message)
@@ -466,7 +467,7 @@ scheme@(guile-user)> ")
         (channel-request-send-exit-status *channel* 0)
         (channel-send-eof *channel*))
 
-       ((string=? command "guile -q")
+       ((or (string=? command "'guile -q'") (string=? command "'guile' '-q'"))
         (message-reply-success message)
         (display %guile-version-string *channel*)
         (body session message *channel*))

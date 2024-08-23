@@ -8,6 +8,18 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Unreleased
+** Change =(ssh popen)= procedures behavior                     :API_CHANGE:
+Now the following procedures handle the program arguments the same way as
+=open-pipe*= procedure. This also makes the their behavior match the
+description from the Guile-SSH documentation.
+
+This change affects the following procedures from =(ssh popen)=:
+- =open-remote-pipe*=
+- =open-remote-input-pipe*=
+- =open-remote-output-pipe*=
+
+Reported by graywolf in
+<https://github.com/artyom-poptsov/guile-ssh/issues/39>
 ** New simplified version of the project logo
 Thanks to Darya Sev. <sdarsy@ya.ru> for very helpful design advices for the
 new simplified version of the project logo.
