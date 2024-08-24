@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2015-2021 Artyom V. Poptsov
+@c Copyright (C) 2015-2024 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Distributed Forms
@@ -12,7 +12,8 @@ The @code{(ssh dist)} module provides the spirit of distributed computing for
 Guile.
 
 To make use of the procedures listed in this section you will need an SSH
-daemon and a GNU Guile REPL server both running on the remote host.
+daemon and a GNU Guile @abbr{REPL, Read-Eval-Print Loop} server both running
+on the remote host.
 
 Also note that currently there may be cases in which distributed procedures
 may fail to (de)serialise data; namely @code{make-vector} is one of such
@@ -23,26 +24,9 @@ instead of @code{#<unspecified>}.
 
 Node management procedures:
 
-@deffn {Scheme Procedure} make-node session [repl-port=37146] [#:start-repl-server?=#t] [#:stop-repl-server?=#f]
-Make a new node that uses an SSH @var{session} to connect to a @var{repl-port}
-number on the remote side.  Return a new node.
-
-If @var{start-repl-server?} is set to @code{#t} (which is by default) then
-start a REPL server on a remote host automatically in case when it is not
-started yet.
-
-If @var{stop-repl-server?} is set to #t then a REPL server will be stopped as
-soon as an evaluation is done.  Alternatively you could use
-@code{node-stop-server} procedure from @code{(ssh dist node)} to stop the
-server when it is not needed anymore.
-
-Note that when either @var{start-repl-server?} or @var{stop-repl-server?} are
-specified, Guile-SSH tries to use @command{pgrep}/@command{pkill} from
-@url{https://gitlab.com/procps-ng/procps, procps} package first to start/stop
-a remote Guile process, but if the package is missing then the Guile-SSH falls
-back to its own implementation of the commands (for more details see
-@pxref{Shell, Guile-SSH shell API})
-
+@deffn {Scheme Procedure} make-node session
+Make a new node that uses an SSH @var{session} to connect to a freshly started
+Guile REPL on the remote side.  Return the new @code{<node>} instance.
 @end deffn
 
 @deffn {Scheme Procedure} node? x
