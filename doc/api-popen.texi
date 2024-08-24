@@ -1,6 +1,6 @@
 @c -*-texinfo-*-
 @c This file is part of Guile-SSH Reference Manual.
-@c Copyright (C) 2015 Artyom V. Poptsov
+@c Copyright (C) 2015-2024 Artyom V. Poptsov
 @c See the file guile-ssh.texi for copying conditions.
 
 @node Remote Pipes
@@ -14,13 +14,13 @@ Reference Manual})
 @var{mode} argument allows to specify what kind of pipe should be created.
 Allowed values are: @code{OPEN_READ}, @code{OPEN_WRITE}, @code{OPEN_BOTH}.
 
-There is an additional value, @code{OPEN_PTY}, that allows to request a pseudo
-terminal.  The terminal is needed to run such commands as @code{top}.  Thus,
-to run @code{top} on the remote side you need to open a remote pipe with "t"
-flag set.
+There is an additional value, @code{OPEN_PTY}, that allows to request a
+@abbr{PTY, Pseudo Terminal}.  The terminal is needed to run such commands as
+@command{top}.  Thus, to run @command{top} on the remote side you need to open
+a remote pipe with ``t'' flag set.
 
-@strong{Note} that when a PTY is used, a server merges stderr stream with
-stdout.
+@strong{Note} that when a PTY is used, a server merges @code{stderr} and
+@code{stdout} streams.
 
 Values of the aforementioned constants:
 
@@ -37,13 +37,19 @@ Values of the aforementioned constants:
 
 @deffn {Scheme Procedure} open-remote-pipe session command mode
 Execute a @var{command} on the remote host using a @var{session} with a pipe
-to it.  Returns newly created channel port with the specified @var{mode}.
+to it.  Returns newly created channel port (@xref{Channels} for more info)
+with the specified @var{mode}.
 @end deffn
 
 @deffn {Scheme Procedure} open-remote-pipe* session mode prog [args...]
 Execute @var{prog} on the remote host with the given @var{args} using a
 @var{session} with a pipe to it.  Returns newly created channel port with the
 specified @var{mode}.
+
+The behavior is the same as for @code{open-pipe*} (@pxref{Pipes,,, guile, The
+GNU Guile Reference Manual}) -- the program name and each argument is quoted
+with single quotes and joined together separated by spaces, then the resulting
+string is executed on the remote side as a single command.
 @end deffn
 
 @deffn {Scheme Procedure} open-remote-input-pipe session command
@@ -67,8 +73,7 @@ Here's a self-explanatory little script that executes @code{uname -o} command
 on the local host and prints the result:
 
 @lisp
-#!/usr/bin/guile \
--e main -s
+#!/usr/bin/env -S guile -L modules -e main -s
 !#
 
 (use-modules (ice-9 rdelim)             ; @{read,write@}-line
@@ -78,7 +83,7 @@ on the local host and prints the result:
              (ssh popen))               ; remote pipes
 
 (define (main args)
-  ;; Make a session with local machine and the current user.
+  ;; Make an SSH session to the local machine and the current user.
   (let ((session (make-session #:host "localhost")))
 
     ;; Connect the session and perform the authentication.
@@ -88,7 +93,7 @@ on the local host and prints the result:
 
     ;; Execute the command on the remote side and get the input pipe
     ;; to it.
-    (let ((channel (open-remote-input-pipe session "uname -o")))
+    (let ((channel (open-remote-input-pipe* session "uname" "-o")))
       ;; Read and display the result.
       (write-line (read-line channel)))))
 @end lisp
@@ -103,8 +108,9 @@ the channel in a loop:
 @lisp
 (define OPEN_PTY_READ (string-append OPEN_PTY OPEN_READ))
 
-(let ((channel (open-remote-pipe* session OPEN_PTY_READ
-                                  "top" "-u avp")))
+(let ((channel (open-remote-pipe* session
+                                  OPEN_PTY_READ
+                                  "top" "-u" "avp")))
   (let r ((line (read-line channel)))
     (unless (eof-object? line)
       (write-line line)
@@ -133,8 +139,9 @@ Or we can do the same, but this time with streams:
   (let ((s (make-session #:host "example.org")))
     (connect! s)
     (userauth-agent! s)
-    (let ((rs (pipe->stream (open-remote-pipe* s OPEN_PTY_READ
-                                               "top" "-u avp"))))
+    (let ((rs (pipe->stream (open-remote-pipe* s
+                                               OPEN_PTY_READ
+                                               "top" "-u" "avp"))))
       (stream-for-each display rs))))
 @end lisp
 
@@ -153,7 +160,7 @@ from @code{(ssh channel)}.  For example:
 
 ;; Opening of a Guile-SSH session goes here ...
 
-(let ((p (open-remote-pipe* session OPEN_PTY_READ "top" "-u avp")))
+(let ((p (open-remote-pipe* session OPEN_PTY_READ "top" "-u" "avp")))
   (channel-set-pty-size! p 80 50)
   ;; Reading output from a port ...
   )
