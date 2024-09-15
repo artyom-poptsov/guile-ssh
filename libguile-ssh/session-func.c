@@ -66,6 +66,7 @@ static gssh_symbol_t session_options[] = {
   { "stricthostkeycheck", SSH_OPTIONS_STRICTHOSTKEYCHECK },
   { "compression",        SSH_OPTIONS_COMPRESSION        },
   { "compression-level",  SSH_OPTIONS_COMPRESSION_LEVEL  },
+  { "process-config?",    SSH_OPTIONS_PROCESS_CONFIG     },
 
 #if HAVE_LIBSSH_0_8_1
   { "nodelay",            SSH_OPTIONS_NODELAY            },
@@ -383,6 +384,7 @@ set_option (SCM scm_session, gssh_session_t* sd, int type, SCM value)
     case SSH_OPTIONS_SSH1:
     case SSH_OPTIONS_SSH2:
     case SSH_OPTIONS_STRICTHOSTKEYCHECK:
+    case SSH_OPTIONS_PROCESS_CONFIG:
 #if HAVE_LIBSSH_0_8_1
     case SSH_OPTIONS_NODELAY:
 #endif
