@@ -20,6 +20,15 @@ This change affects the following procedures from =(ssh popen)=:
 
 Reported by graywolf in
 <https://github.com/artyom-poptsov/guile-ssh/issues/39>
+** =make-session= now handles =#:config= set to =#f= properly
+Now =make-session= disables reading the default SSH configuration files when
+=#:config= is set to =#f= (as per Guile-SSH documentation.)
+
+When =#:config= is set to =#t= then the default SSH configuration files are
+read.  This is by default to keep the backward compatibility.
+
+Reported by graywolf in
+<https://github.com/artyom-poptsov/guile-ssh/issues/38>
 ** New simplified version of the project logo
 Thanks to Darya Sev. <sdarsy@ya.ru> for very helpful design advices for the
 new simplified version of the project logo.

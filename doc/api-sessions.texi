@@ -244,6 +244,13 @@ be ``yes'', ``no'' or a specific algorithm name if needed ("zlib",
 @verb{|"zlib@openssh.com"|}, "none").
 
 Expected type of @var{value}: string.
+@item process-config?
+Set it to @code{#f} to disable automatic processing of per-user and
+system-wide OpenSSH configuration files.  LibSSH automatically uses these
+configuration files unless you provide it with this option or with different
+file.
+
+Expected type of @var{value}: boolean.
 @item proxycommand
 Set the command to be executed in order to connect to server.
 

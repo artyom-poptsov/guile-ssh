@@ -74,7 +74,7 @@
                        knownhosts timeout timeout-usec ssh1 ssh2 log-verbosity
                        ciphers-c-s ciphers-s-c compression-c-s compression-s-c
                        proxycommand stricthostkeycheck compression
-                       compression-level nodelay callbacks config
+                       compression-level nodelay callbacks (config #t)
                        public-key-accepted-types)
   "Make a new SSH session with specified configuration.\n
 Return a new SSH session."
@@ -82,17 +82,19 @@ Return a new SSH session."
 
     (session-set-if-specified! host)
 
-    (when config
-      (or host
-          (throw 'guile-ssh-error
-                 "'config' is specified, but 'host' option is missed."))
-      (cond
-       ((string? config)
-        (%gssh-session-parse-config! session config))
-       ((boolean? config)
-        (%gssh-session-parse-config! session #f))
-       (else
-        (throw 'guile-ssh-error "Wrong 'config' value" config))))
+    (if config
+        (begin
+          (or host
+              (throw 'guile-ssh-error
+                     "'config' is specified, but 'host' option is missed."))
+          (cond
+           ((string? config)
+            (%gssh-session-parse-config! session config))
+           ((boolean? config)
+            (%gssh-session-parse-config! session #f))
+           (else
+            (throw 'guile-ssh-error "Wrong 'config' value" config))))
+        (session-set! session 'process-config? #f))
 
     (session-set-if-specified! port)
     (session-set-if-specified! user)
