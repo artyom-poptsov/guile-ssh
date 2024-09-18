@@ -234,12 +234,12 @@ set_int32_opt (ssh_session session, int type, SCM value)
 static inline int
 set_bool_opt (ssh_session session, int type, SCM value)
 {
-  int32_t bool;
+  int32_t bool_value;
 
   SCM_ASSERT (scm_is_bool (value), value, SCM_ARG3, "session-set!");
 
-  bool = scm_to_bool (value);
-  return ssh_options_set (session, type, &bool);
+  bool_value = scm_to_bool (value);
+  return ssh_options_set (session, type, &bool_value);
 }
 
 /* Convert VALUE to a socket file descriptor and pass it to
