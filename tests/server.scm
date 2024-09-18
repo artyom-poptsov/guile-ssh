@@ -1,6 +1,6 @@
 ;;; server.scm -- Testing of server procedures without a client.
 
-;; Copyright (C) 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015, 2016, 2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -127,7 +127,7 @@
     (make-server #:bindaddr      "127.0.0.1"
                  #:bindport      123456
                  #:rsakey        %rsakey
-                 #:dsakey        %dsakey
+                 #:dsakey        (and (dsa-support?) %dsakey)
                  #:banner        "banner"
                  #:log-verbosity 'nolog
                  #:blocking-mode #f)))
@@ -142,14 +142,16 @@
          (server (make-server #:bindaddr      bindaddr
                               #:bindport      bindport
                               #:rsakey        %rsakey
-                              #:dsakey        %dsakey
+                              #:dsakey        (and (dsa-support?) %dsakey)
                               #:banner        banner
                               #:log-verbosity log-verbosity
                               #:blocking-mode blocking-mode)))
     (and (eq? (server-get server 'bindaddr)      bindaddr)
          (eq? (server-get server 'bindport)      bindport)
          (eq? (server-get server 'rsakey)        %rsakey)
-         (eq? (server-get server 'dsakey)        %dsakey)
+         (if (dsa-support?)
+             (eq? (server-get server 'dsakey)        %dsakey)
+             #t)
          (eq? (server-get server 'banner)        banner)
          (eq? (server-get server 'log-verbosity) log-verbosity)
          (eq? (server-get server 'blocking-mode) blocking-mode))))
