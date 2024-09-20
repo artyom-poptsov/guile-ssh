@@ -100,6 +100,20 @@ applications.")
                (base32
                 "19f7h8s044pqfhfk35ky5lj4hvqhi2p2p46xkwbcsqz6jllkqc15"))))))
 
+(define-public libssh11
+  (package
+   (inherit libssh)
+   (name "libssh")
+   (version "0.11.1")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append "https://www.libssh.org/files/"
+                                (version-major+minor version)
+                                "/libssh-" version ".tar.xz"))
+            (sha256
+             (base32
+              "0y8v5ihrqnjxchvjhz8fcczndchaaxxim64bqm8q3q4i5v3xrdql"))))))
+
 (define-public guile-ssh
   (package
     (name "guile-ssh")
@@ -174,10 +188,21 @@ libssh library.")
    (inputs (modify-inputs (package-inputs guile-ssh)
              (replace "libssh" libssh9)))))
 
+(define-public guile-ssh/libssh11
+  (package
+   (inherit guile-ssh)
+   (name "guile-ssh")
+   (inputs (modify-inputs (package-inputs guile-ssh)
+                          (replace "libssh" libssh11)))))
+
 
 
-(if (getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_9")
-    guile-ssh/libssh9
-    guile-ssh)
+(cond
+ ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_9")
+  guile-ssh/libssh9)
+ ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_11")
+  guile-ssh/libssh11)
+ (else
+  guile-ssh))
 
 ;;; guix.scm ends here.
