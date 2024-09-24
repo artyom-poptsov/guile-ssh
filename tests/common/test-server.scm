@@ -10,7 +10,8 @@
              (ssh session)
              (ssh tunnel)
              (ssh log)
-             (ssh server))
+             (ssh server)
+             (ssh version))
 
 
 (define (main args)
@@ -41,7 +42,7 @@
                        #:bindaddr %addr
                        #:bindport port
                        #:rsakey   %rsakey
-                       #:dsakey   %dsakey
+                       #:dsakey   (and (dsa-support?) %dsakey)
                        #:log-verbosity 'functions)))
       (server-listen s)
       (let ((p (open-output-file (format #f

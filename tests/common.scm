@@ -31,6 +31,7 @@
   #:use-module (ssh auth)
   #:use-module (ssh log)
   #:use-module (ssh message)
+  #:use-module (ssh version)
   #:export (;; Variables
             %topdir
             %topbuilddir
@@ -263,7 +264,7 @@
                 #:bindaddr %addr
                 #:bindport *port*
                 #:rsakey   %rsakey
-                #:dsakey   %dsakey
+                #:dsakey   (and (dsa-support?) %dsakey)
                 #:log-verbosity 'functions)))
         (format-log/scm 'nolog "make-server-for-test"
                         "***** bindaddr: ~a; bindport: ~a" %addr *port*)
