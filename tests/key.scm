@@ -1,6 +1,6 @@
 ;;; key.scm -- Testing of Guile-SSH keys
 
-;; Copyright (C) 2014-2022 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -70,7 +70,8 @@
   (private-key-from-file %ecdsakey))
 
 (define *rsa-pub-key*   (public-key-from-file %rsakey-pub))
-(define *dsa-pub-key*   (public-key-from-file %dsakey-pub))
+(define *dsa-pub-key*   (and (dsa-support?)
+                             (public-key-from-file %dsakey-pub)))
 (define *ecdsa-pub-key* (when-openssl
                          (public-key-from-file %ecdsakey-pub)))
 
