@@ -5,7 +5,7 @@
 
 ;;; ssshd.scm -- Scheme Secure Shell Daemon.
 
-;; Copyright (C) 2013-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -38,7 +38,8 @@
              (ssh session)
              (ssh channel)
              (ssh key)
-             (ssh auth))                ; userauth-*
+             (ssh auth)                 ; userauth-*
+             (ssh version))
 
 
 ;;; Variables and constants
@@ -280,7 +281,7 @@ Options:
 
     (let ((server (make-server #:bindport      bindport
                                #:rsakey        rsakey
-                               #:dsakey        dsakey
+                               #:dsakey        (and (dsa-support?) dsakey)
                                #:log-verbosity (string->symbol ssh-debug)
                                #:banner        "Scheme Secure Shell Daemon"))
           (channel #f))
