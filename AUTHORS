@@ -94,3 +94,6 @@ See also files THANKS and ChangeLog.
 * Darya Sev. <sdarsy@ya.ru>
   Very helpful design advices for the new simplified version of the project
   logo.
+* Peter Tillemans <pti@snamellit.com>
+  Changes to 'libguile-ssh/session-func.c': fix compile error caused by bool
+  identifier.
