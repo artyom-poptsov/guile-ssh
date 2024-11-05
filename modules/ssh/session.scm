@@ -68,8 +68,9 @@
 (define-macro (session-set-if-specified! option)
   `(if ,option (session-set! session (quote ,option) ,option)))
 
-(define %libssh-minor-version
-  (string->number (cadr (string-split (get-libssh-version) #\.))))
+(define (get-libssh-minor-version)
+  (string->number (cadr (string-split (get-libssh-version)
+                                      #\.))))
 
 ;; This procedure is more convenient than primitive `%make-session',
 ;; but on other hand it should be a bit slower because of additional
@@ -98,17 +99,18 @@ Return a new SSH session."
             (%gssh-session-parse-config! session #f))
            (else
             (throw 'guile-ssh-error "Wrong 'config' value" config))))
-        (if (>= %libssh-minor-version 9)
-            (session-set! session 'process-config? #f)
-            (format-log 'rare
-                        'make-session
-                        (string-append
-                         "process-config? option is not available"
-                         " (using libssh 0.~a.)"
-                         " Falling back to the old Guile-SSH behavior "
-                         " (no config setting.)"
-                         " See <https://github.com/artyom-poptsov/guile-ssh/issues/38>.")
-                        %libssh-minor-version)))
+        (let ((libssh-minor-version (get-libssh-minor-version)))
+          (if (>= libssh-minor-version 9)
+              (session-set! session 'process-config? #f)
+              (format-log 'rare
+                          'make-session
+                          (string-append
+                           "process-config? option is not available"
+                           " (using libssh 0.~a.)"
+                           " Falling back to the old Guile-SSH behavior "
+                           " (no config setting.)"
+                           " See <https://github.com/artyom-poptsov/guile-ssh/issues/38>.")
+                          libssh-minor-version))))
 
     (session-set-if-specified! port)
     (session-set-if-specified! user)
