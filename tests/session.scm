@@ -222,9 +222,16 @@
   (make-session #:host   "localhost"
                 #:config %config))
 
-(test-assert "make-session, '#:config' as a boolean value"
+;; Setting '#:config' option to #f must set "process-config?" option to #f.
+(test-assert "make-session, '#:config' as a boolean value: #f"
   (make-session #:host   "localhost"
                 #:config #f))
+
+;; Setting '#:config' option to #t must initiate parsing the default user
+;; configuration file ('~/.ssh/config'.)
+(test-assert "make-session, '#:config' as a boolean value: #t"
+  (make-session #:host   "localhost"
+                #:config #t))
 
 (test-error "make-session, only '#:config' is specified"
   'guile-ssh-error
