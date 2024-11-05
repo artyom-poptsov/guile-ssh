@@ -96,6 +96,13 @@ List of allowed keywords:
 @item config
 Set the configuration file path.  Note that @var{host} must be set to properly
 load configuration otherwise @code{guile-ssh-error} will be thrown.
+
+If this option is set to @code{#t} the default user configuration file
+@file{~/.ssh/config} is read.
+
+On the other hand setting it to @code{#f} value means that no configuration
+file will be read (@code{process-config?} is set to @code{#f}.)
+
 @item host
 @item identity
 @item knownhosts
