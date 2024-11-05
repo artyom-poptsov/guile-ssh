@@ -416,8 +416,9 @@ passed as an argument.
 @node Callbacks
 @subsection Callbacks
 
-Guile-SSH uses an association list (alist) to represent session callbacks; the
-key is a callback name, and the value is expecting to be a procedure.
+Guile-SSH uses an association list (@pxref{Association Lists,,, guile, The GNU
+Guile Reference Manual}) to represent session callbacks; the key is a callback
+name, and the value is expecting to be a procedure.
 
 Session callbacks is the way to handle some events, notably the incoming
 reverse port forwarding requests on the server side.  Each callback is called
@@ -442,7 +443,7 @@ Example:
 
 ;; Now we can set our callback:
 (session-set! session
-              'callbacks 
+              'callbacks
               `((user-data               . #f)
                 (global-request-callback . ,handle-global-request)))
 
