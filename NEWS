@@ -29,6 +29,28 @@ read.  This is by default to keep the backward compatibility.
 
 Reported by graywolf in
 <https://github.com/artyom-poptsov/guile-ssh/issues/38>
+
+** session-func.c: Fix compile error caused by bool identifier       :BUGFIX:
+Fix a compilation error caused by the confusion of a variable name with
+boolean type name.
+
+Reported and fixed by Peter Tillemans <pti@snamellit.com> in
+<https://github.com/artyom-poptsov/guile-ssh/pull/43>
+** Documentation
+*** doc/api-popen.texi: Improve description; update examples
+*** doc/api-dist.texi: Fix the description of "make-node"
+*** doc/api-sessions.texi: Update and improve
+** Tests
+*** tests/session.scm: Bugfix                                        :BUGFIX:
+Set "host" to "example" so the default configuration from the test config will
+be read.
+*** tests/server.scm ("make-server", "server-get"): Bugfix           :BUGFIX:
+Don't try to use DSA key when it is disabled.
+*** tests/common.scm: Don't use DSA keys when DSA is not supported   :BUGFIX:
+*** tests/session: Expand "#:config" test suite
+** Examples
+*** examples/ssshd.scm.in (main): Bugfix: Handle deprecation of DSA  :BUGFIX:
+*** tests/key.scm: Bugfix: Handle DSA deprecation properly           :BUGFIX:
 ** New simplified version of the project logo
 Thanks to Darya Sev. <sdarsy@ya.ru> for very helpful design advices for the
 new simplified version of the project logo.
