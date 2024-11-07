@@ -257,6 +257,8 @@ system-wide OpenSSH configuration files.  LibSSH automatically uses these
 configuration files unless you provide it with this option or with different
 file.
 
+Compatibility: this option was added in libssh 0.9.0.
+
 Expected type of @var{value}: boolean.
 @item proxycommand
 Set the command to be executed in order to connect to server.
@@ -294,11 +296,10 @@ Expected type of @var{value}: an association list (alist).
 The option specifies whether an SSH config should be parsed or not, and
 optionally the path to a config file.
 
-Setting the @var{value} to @code{#t} means that the default
-@file{~/.ssh/config} should be parsed; in turn, setting the option to
-@code{#f} (the default value) means that the config should not be parsed at
-all.  If the value is a string, then the string is expected to be a path to
-config file.
+Setting the @var{value} to @code{#t} (the default value) means that the
+default @file{~/.ssh/config} should be parsed; in turn, setting the option to
+@code{#f} means that the config should not be parsed at all.  If the value is
+a string, then the string is expected to be a path to config file.
 
 The procedure reads the config file after all other specified options are set.
 When the config file is read, the options for @var{session} are set,
