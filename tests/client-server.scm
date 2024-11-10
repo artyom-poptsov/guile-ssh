@@ -754,9 +754,9 @@
                     (loop (cons result data)
                           (get-bytevector-n channel (/ vect-size 2))))
                   (lambda err
-                    (format (current-error-port)
-                            "    unexpected error: ~a~%"
-                            err)
+                    (format-log/scm 'nolog
+                                    "data transferring, remote side abruptly closed"
+                                    "err: ~a" err)
                     #f))))))))))
 
 
