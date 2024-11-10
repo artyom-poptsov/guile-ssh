@@ -1,6 +1,6 @@
 ;;; client-server.scm -- Guile-SSH client is SUT.
 
-;; Copyright (C) 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015, 2016, 2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -34,6 +34,7 @@
              (ssh channel)
              (ssh log)
              (ssh tunnel)
+             (ssh version)
              (srfi srfi-4)
              (tests common))
 
@@ -396,6 +397,16 @@
         (userauth-public-key! session (public-key-from-file %rsakey-pub)))))))
 
 
+(let* ((version (get-libssh-version))
+       (version (map string->number (string-split version #\.))))
+  (when (and (zero? (car version))
+             (or (= (cadr version) 7)
+                 (and (= (cadr version) 8)
+                      (< (caddr version) 3))))
+    ;; XXX: This test fails because of the problems with ECDSA public key
+    ;; authentication in libssh versions prior 0.8.3.
+    (test-skip "userauth-public-key!, success")))
+
 (test-equal-with-log "userauth-public-key!, success"
   'success
   (run-client-test
@@ -415,6 +426,27 @@
       (lambda (session)
         (authenticate-server session)
         (let ((prvkey (private-key-from-file %ecdsakey)))
+          (userauth-public-key! session prvkey)))))))
+
+(test-equal-with-log "userauth-public-key!, success (RSA)"
+  'success
+  (run-client-test
+
+   ;; server
+   (lambda (server)
+     (server-listen server)
+     (let ((session (server-accept server)))
+       (server-handle-key-exchange session)
+       (start-session-loop session
+                           (lambda (msg)
+                             (message-reply-success msg)))))
+
+   ;; client
+   (lambda ()
+     (call-with-connected-session
+      (lambda (session)
+        (authenticate-server session)
+        (let ((prvkey (private-key-from-file %rsakey)))
           (userauth-public-key! session prvkey)))))))
 
 
