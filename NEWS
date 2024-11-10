@@ -24,8 +24,9 @@ Reported by graywolf in
 Now =make-session= disables reading the default SSH configuration files when
 =#:config= is set to =#f= (as per Guile-SSH documentation.)  Note that =#f=
 value is handled through the "process-config?" option that was added in libssh
-0.9; when an older version of libssh is used, Guile-SSH falls back to the old
-behavior (that is, no config option setting for libssh.)
+0.9; when an older version of libssh is used, Guile-SSH falls back to setting
+the configuration file to =/dev/null= (which in turn prevent libssh from using
+the default configuration files.)
 
 When =#:config= is set to =#t= then the default SSH configuration files are
 read.  This is by default to keep the backward compatibility.
