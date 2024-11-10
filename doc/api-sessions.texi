@@ -101,7 +101,10 @@ If this option is set to @code{#t} the default user configuration file
 @file{~/.ssh/config} is read.
 
 On the other hand setting it to @code{#f} value means that no configuration
-file will be read (@code{process-config?} is set to @code{#f}.)
+file will be read (@code{process-config?} is set to @code{#f}.)  On older
+versions of libssh (prior to 0.9) setting @code{#:config} to @code{#f} is
+handled by setting the configuration file to @file{/dev/null} which in turn
+leads to ignoring the default configuration file.
 
 @item host
 @item identity
