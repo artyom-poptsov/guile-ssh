@@ -33,6 +33,50 @@ jobs:
       - name: "Build project guile-ssh"
         run: |
           guix build --file=guix.scm
+  x86_64-linux-gnu-libssh-0-8-0:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Guix cache"
+        uses: "actions/cache@v3"
+        with:
+          path: "~/.cache/guix"
+          # use a key that (almost) never matches
+          key: "guix-cache-${{ github.sha }}"
+          restore-keys: |
+            guix-cache-
+      - name: "Install Guix"
+        uses: "PromyLOPh/guix-install-action@v1"
+      - name: "Ensure no locale warning"
+        run: |
+          test -z "$(guix --version 2>&1 >/dev/null)"
+      - name: "Checkout repository"
+        uses: "actions/checkout@v3"
+      - name: "Build project guile-ssh"
+        run: |
+          export GUILE_SSH_BUILD_WITH_LIBSSH_0_8_0=1
+          guix build --file=guix.scm
+  x86_64-linux-gnu-libssh-0-8-1:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Guix cache"
+        uses: "actions/cache@v3"
+        with:
+          path: "~/.cache/guix"
+          # use a key that (almost) never matches
+          key: "guix-cache-${{ github.sha }}"
+          restore-keys: |
+            guix-cache-
+      - name: "Install Guix"
+        uses: "PromyLOPh/guix-install-action@v1"
+      - name: "Ensure no locale warning"
+        run: |
+          test -z "$(guix --version 2>&1 >/dev/null)"
+      - name: "Checkout repository"
+        uses: "actions/checkout@v3"
+      - name: "Build project guile-ssh"
+        run: |
+          export GUILE_SSH_BUILD_WITH_LIBSSH_0_8_1=1
+          guix build --file=guix.scm
   x86_64-linux-gnu-libssh-0-8:
     runs-on: "ubuntu-latest"
     steps:
