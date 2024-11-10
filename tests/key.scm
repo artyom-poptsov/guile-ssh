@@ -254,7 +254,9 @@
   ;;   LIBSSH_VERSION_MINOR  7
   ;;   LIBSSH_VERSION_MICRO  90
   (when (and (zero? (car version))
-             (= (cadr version) 7))
+             (or (= (cadr version) 7)
+                 (and (= (cadr version) 8)
+                      (< (caddr version) 3))))
     ;; XXX: Those tests fails with ""Unsupported private key method ssh-rsa"
     ;; error as support for keys in openssh container format (other than
     ;; ed25519) was added only in 0.8.3.
