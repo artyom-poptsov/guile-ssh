@@ -76,17 +76,12 @@ AM_CONDITIONAL(ENABLE_DSA, $ENABLE_DSA)
 # Check for needed libraries
 # -------------------------------------------------------------------------------
 
-PKG_CHECK_MODULES([LIBSSH], [libssh >= 0.6.4])
-PKG_CHECK_MODULES([LIBSSH_0_7_3], [libssh >= 0.7.3],
-                                [AC_DEFINE(HAVE_LIBSSH_0_7_3, 1, [Use libssh 0.7.3])],
-                                [AC_WARN([
-  Using a potentially vulnerable version of libssh
-  <https://www.libssh.org/2016/02/23/libssh-0-7-3-security-and-bugfix-release/>])])
-
 dnl Checking for libssh 0.8.x.
-PKG_CHECK_MODULES([LIBSSH_0_8], [libssh >= 0.8.0],
-                                [AC_DEFINE(HAVE_LIBSSH_0_8, 1, [Use libssh 0.8])],
-                                [AC_DEFINE(HAVE_LIBSSH_0_8, 0, [Use libssh < 0.8])])
+PKG_CHECK_MODULES(
+  [LIBSSH_0_8],
+  [libssh >= 0.8.0],
+  [AC_DEFINE(HAVE_LIBSSH_0_8, 1, [Use libssh 0.8])],
+  [AC_DEFINE(HAVE_LIBSSH_0_8, 0, [Use libssh < 0.8])])
 
 AM_CONDITIONAL(HAVE_LIBSSH_0_8, $HAVE_LIBSSH_0_8)
 
@@ -99,9 +94,20 @@ PKG_CHECK_MODULES([LIBSSH_0_8_1], [libssh >= 0.8.1],
 
 AM_CONDITIONAL(HAVE_LIBSSH_0_8_1, $HAVE_LIBSSH_0_8_1)
 
-PKG_CHECK_MODULES([LIBSSH_0_8_3], [libssh >= 0.8.3],
-                  [AC_DEFINE(HAVE_LIBSSH_0_8_3, 1, [Use libssh >= 0.8.3])],
-                  [AC_DEFINE(HAVE_LIBSSH_0_8_3, 0, [Use libssh < 0.8.3])])
+PKG_CHECK_MODULES(
+  [LIBSSH_0_8_3],
+  [libssh >= 0.8.3],
+  [AC_DEFINE(HAVE_LIBSSH_0_8_3, 1, [Use libssh >= 0.8.3])],
+  [AC_DEFINE(HAVE_LIBSSH_0_8_3, 0, [Use libssh < 0.8.3])
+  AC_WARN([
+    You are using an old version of libssh;
+    some Guile-SSH API may not work properly.
+    Please upgrade as soon as possible.
+    Support for libssh versions older than 0.8.3
+    will be dropped in the future Guile-SSH
+    releases.
+  ])])
+
 AM_CONDITIONAL(HAVE_LIBSSH_0_8_3, $HAVE_LIBSSH_0_8_3)
 
 PKG_CHECK_MODULES([LIBSSH_0_9], [libssh >= 0.9.0],
