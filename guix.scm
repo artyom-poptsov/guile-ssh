@@ -49,6 +49,7 @@
              (gnu packages kerberos)
              (gnu packages gnupg)
              (gnu packages texinfo)
+             (gnu packages python)
              (gnu packages pkg-config)
              (gnu packages base))
 
@@ -85,6 +86,36 @@ transfer files, and use a secure and transparent tunnel for your remote
 applications.")
     (home-page "https://www.libssh.org")
     (license license:lgpl2.1+)))
+
+(define-public libssh8-0
+  (package
+   (inherit libssh10)
+   (name "libssh")
+   (version "0.8.0")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append "https://www.libssh.org/files/"
+                                (version-major+minor version)
+                                "/libssh-" version ".tar.xz"))
+            (sha256
+             (base32
+              "1amgzvabl835vvzyv08hr05ak2ksp4jncbfnm2i0ayspf3b5qdg0"))))
+   (native-inputs (list python))))
+
+(define-public libssh8-1
+  (package
+   (inherit libssh10)
+   (name "libssh")
+   (version "0.8.1")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append "https://www.libssh.org/files/"
+                                (version-major+minor version)
+                                "/libssh-" version ".tar.xz"))
+            (sha256
+             (base32
+              "090r1fq8p89rwfv2x3wji3kyz31bf0z9mlv6pq7nrr55niki4zyi"))))
+   (native-inputs (list python))))
 
 (define-public libssh8
   (package
@@ -195,6 +226,20 @@ programs written in GNU Guile interpreter.  It is a wrapper to the underlying
 libssh library.")
     (license license:gpl3+)))
 
+(define-public guile-ssh/libssh8-0
+  (package
+   (inherit guile-ssh)
+   (name "guile-ssh")
+   (inputs (modify-inputs (package-inputs guile-ssh)
+                          (replace "libssh" libssh8-0)))))
+
+(define-public guile-ssh/libssh8-1
+  (package
+   (inherit guile-ssh)
+   (name "guile-ssh")
+   (inputs (modify-inputs (package-inputs guile-ssh)
+                          (replace "libssh" libssh8-1)))))
+
 (define-public guile-ssh/libssh8
   (package
    (inherit guile-ssh)
@@ -219,6 +264,10 @@ libssh library.")
 
 
 (cond
+ ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_8_0")
+  guile-ssh/libssh8-0)
+ ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_8_1")
+  guile-ssh/libssh8-1)
  ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_8")
   guile-ssh/libssh8)
  ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_9")
