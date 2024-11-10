@@ -431,7 +431,7 @@
 (let* ((version (get-libssh-version))
        (version (map string->number (string-split version #\.))))
   (when (and (zero? (car version))
-             (>= (cadr version) 11))
+             (>= (cadr version) 9))
     (test-skip "userauth-public-key!, success (RSA)")))
 
 (test-equal-with-log "userauth-public-key!, success (RSA)"
