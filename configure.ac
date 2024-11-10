@@ -21,7 +21,7 @@ You should have received a copy of the GNU General Public License
 along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 ]])
 
-AC_INIT([Guile-SSH], [0.17.0], [poptsov.artyom@gmail.com],
+AC_INIT([Guile-SSH], [0.18.0], [poptsov.artyom@gmail.com],
                      [guile-ssh],
                      [https://github.com/artyom-poptsov/guile-ssh])
 
@@ -29,7 +29,7 @@ AC_COPYRIGHT(GUILE_SSH_CONFIGURE_COPYRIGHT)
 
 dnl See
 dnl <https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html>
-LIBGUILE_SSH_INTERFACE="17:0:3"
+LIBGUILE_SSH_INTERFACE="18:0:0"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 AC_CONFIG_AUX_DIR([build-aux])
