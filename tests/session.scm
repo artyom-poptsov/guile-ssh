@@ -222,6 +222,10 @@
   (make-session #:host   "localhost"
                 #:config %config))
 
+(test-assert "make-session, '#:config' set to '/dev/null'"
+  (make-session #:host   "localhost"
+                #:config "/dev/null"))
+
 ;; Setting '#:config' option to #f must set "process-config?" option to #f.
 (test-assert "make-session, '#:config' as a boolean value: #f"
   (make-session #:host   "localhost"

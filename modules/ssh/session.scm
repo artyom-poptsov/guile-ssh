@@ -102,15 +102,18 @@ Return a new SSH session."
         (let ((libssh-minor-version (get-libssh-minor-version)))
           (if (>= libssh-minor-version 9)
               (session-set! session 'process-config? #f)
-              (format-log 'rare
-                          'make-session
-                          (string-append
-                           "process-config? option is not available"
-                           " (using libssh 0.~a.)"
-                           " Falling back to the old Guile-SSH behavior "
-                           " (no config setting.)"
-                           " See <https://github.com/artyom-poptsov/guile-ssh/issues/38>.")
-                          libssh-minor-version))))
+              (begin
+                (format-log 'rare
+                            'make-session
+                            (string-append
+                             "process-config? option is not available"
+                             " (using libssh 0.~a.)"
+                             " Falling back to setting the config to"
+                             " '/dev/null' to prevent reading the default"
+                             " configuration files."
+                             " See <https://github.com/artyom-poptsov/guile-ssh/issues/38>.")
+                            libssh-minor-version)
+                (%gssh-session-parse-config! session "/dev/null")))))
 
     (session-set-if-specified! port)
     (session-set-if-specified! user)
