@@ -71,10 +71,14 @@ static gssh_symbol_t session_options[] = {
   /* This option was added only in 0.9.0 (commit
      79f0c38fbd767f578d7b87fae15fb64faad32aab) */
   { "process-config?",    SSH_OPTIONS_PROCESS_CONFIG     },
+#else
+#  warning Option SSH_OPTIONS_PROCESS_CONFIG is not available.
 #endif
 
 #if HAVE_LIBSSH_0_8_1
   { "nodelay",            SSH_OPTIONS_NODELAY            },
+#else
+#  warning Option SSH_OPTIONS_NODELAY is not available.
 #endif
 
 #if HAVE_LIBSSH_0_8_3
@@ -91,6 +95,8 @@ static gssh_symbol_t session_options[] = {
 
 #if HAVE_LIBSSH_0_10
   {"rsa-min-size",        SSH_OPTIONS_RSA_MIN_SIZE       },
+#else
+#  warning Option SSH_OPTIONS_RSA_MIN_SIZE is not available.
 #endif
 
   { "callbacks",          GSSH_OPTIONS_CALLBACKS         },
