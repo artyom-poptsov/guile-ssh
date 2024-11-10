@@ -39,6 +39,30 @@ boolean type name.
 
 Reported and fixed by Peter Tillemans <pti@snamellit.com> in
 <https://github.com/artyom-poptsov/guile-ssh/pull/43>
+** session-func.c: Fix compilation with libssh < 0.8.3               :BUGFIX:
+Guile-SSH don't try to handle missing SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES in
+libssh older than 0.8.3 because it leads to compilation errors.  Instead now
+it issues a compilation warning.
+** session-func.c: Add compilation warnings for missing options
+Now Guile-SSH issues compilation warnings for missing libssh session options.
+** Drop support for libssh versions older than 0.8.0             :API_CHANGE:
+libssh 0.7.4 was released in 2017 and libssh 0.8.0 was released back in 2018
+so it is quite old already.  Since then some CVE were fixed, namely:
+- 0.8.4: CVE-2018-10933: libssh authentication bypass
+- 0.9.3: CVE-2019-14889: SCP: Unsanitized location leads to command execution
+- 0.9.4: CVE-2020-1730: Possible DoS in client and server when handling
+- 0.9.5: CVE-2020-16135: Avoid null pointer dereference in sftpserver (T232)
+- 0.9.6: CVE-2021-3634: Fix possible heap-buffer overflow when rekeying with
+  different key exchange mechanism.
+
+Also libssh introduced some new features since 0.8.0 so Guile-SSH will not
+probably work with libssh 0.7 anyway.  Guile-SSH with libssh 0.8 should work
+fine (according to tests) although some new Guile-SSH API will not be
+available (e.g. some types of private keys are not compatible with old
+versions of libssh.)
+
+Support for libssh version 0.8.0, 0.8.1 and 0.8.2 will be dropped in the next
+Guile-SSH releases.
 ** Documentation
 *** doc/api-popen.texi: Improve description; update examples
 *** doc/api-dist.texi: Fix the description of "make-node"
@@ -51,6 +75,18 @@ be read.
 Don't try to use DSA key when it is disabled.
 *** tests/common.scm: Don't use DSA keys when DSA is not supported   :BUGFIX:
 *** tests/session: Expand "#:config" test suite
+*** tests/client-server: Fix logging                             :BUGFIX:
+In test case "data transferring, remote side abruptly closed": Don't log
+errors into stderr, use libssh log instead.  Remove "error" word from the log
+string as surprisingly it tricks the test framework to think that some test
+error has happened.
+*** tests/client-server: Don't use ECDSA key with older versions of libssh :BUGFIX:
+Now test "userauth-public-key!, success") is skipped when libssh has version
+older than 0.8.3.
+
+Instead "userauth-public-key!, success (RSA)" test case is used for older
+versions of libssh.
+*** tests/sssh-ssshd: Don't use ECDSA keys with older versions of libssh :BUGFIX:
 ** Examples
 *** examples/ssshd.scm.in (main): Bugfix: Handle deprecation of DSA  :BUGFIX:
 *** tests/key.scm: Bugfix: Handle DSA deprecation properly           :BUGFIX:
