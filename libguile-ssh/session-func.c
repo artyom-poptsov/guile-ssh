@@ -85,6 +85,8 @@ static gssh_symbol_t session_options[] = {
      This option was added to the libssh in
      4521ab73b6858efa0083ac96a1775719b1f649ae */
   { "public-key-accepted-types", SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES },
+#else
+#  warning Option SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES is not available.
 #endif
 
 #if HAVE_LIBSSH_0_10
@@ -406,15 +408,6 @@ set_option (SCM scm_session, gssh_session_t* sd, int type, SCM value)
 
     case GSSH_OPTIONS_CALLBACKS:
       return set_callbacks (scm_session, sd, value);
-
-#if ! HAVE_LIBSSH_0_8_3
-    case SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES:
-        guile_ssh_error1 ("session-set!",
-                          "Option 'public-key-accepted-types' is not available"
-                          " in the current version of libssh (%s)",
-                          ssh_version (0));
-        break;
-#endif
 
 #if HAVE_LIBSSH_0_10
     case SSH_OPTIONS_RSA_MIN_SIZE:
