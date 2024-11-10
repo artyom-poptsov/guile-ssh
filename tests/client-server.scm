@@ -428,6 +428,12 @@
         (let ((prvkey (private-key-from-file %ecdsakey)))
           (userauth-public-key! session prvkey)))))))
 
+(let* ((version (get-libssh-version))
+       (version (map string->number (string-split version #\.))))
+  (when (and (zero? (car version))
+             (>= (cadr version) 11))
+    (test-skip "userauth-public-key!, success (RSA)")))
+
 (test-equal-with-log "userauth-public-key!, success (RSA)"
   'success
   (run-client-test
