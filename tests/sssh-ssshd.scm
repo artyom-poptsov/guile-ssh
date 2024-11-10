@@ -1,6 +1,6 @@
 ;;; sssh-ssshd.scm -- Communication between sssh and ssshd.
 
-;; Copyright (C) 2014, 2015 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014, 2015, 2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -24,7 +24,8 @@
              (ice-9 rdelim)
              (ice-9 regex)
              ;; Helper procedures
-             (tests common))
+             (tests common)
+             (ssh version))
 
 (test-begin-with-log "sssh-ssshd")
 
@@ -45,10 +46,19 @@
    " --rsakey=" %rsakey
    " --dsakey=" %dsakey))
 
+(define %libssh-version
+  (map string->number (string-split (get-libssh-version) #\.)))
+
 (define *sssh-cmd*
   (string-append
    %topbuilddir "/examples/sssh.scm"
-   " --identity-file=" %ecdsakey
+   ;; XXX: We cannot use ECDSA keys in libssh versions prior 0.8.3 because of
+   ;; the bug that was fixed only in 0.8.3.
+   " --identity-file=" (if (or (= (cadr %libssh-version) 7)
+                               (and (= (cadr %libssh-version) 8)
+                                    (< (caddr %libssh-version) 3)))
+                           %dsakey
+                           %ecdsakey)
    " --port=" (number->string *srv-port*)
    " --known-hosts-file=''"
    " " (inet-ntop AF_INET *srv-address*)
@@ -64,7 +74,10 @@
 
 (define (cleanup pid)
   (when pid
-    (kill pid SIGTERM)
+    (catch #t
+      (lambda ()
+        (kill pid SIGTERM))
+      (const #t))
     (catch #t
       (lambda ()
         (waitpid pid))
