@@ -246,6 +246,21 @@
 
 ;;; Check reading encrypted keys.
 
+(let* ((version (get-libssh-version))
+       (version (map string->number (string-split version #\.))))
+  (format-log/scm 'nolog "none" "***** version: ~a ~a ~a~%" (car version) (cadr version) (caddr version))
+  ;; XXX: libssh 0.8.0 version components:
+  ;;   LIBSSH_VERSION_MAJOR  0
+  ;;   LIBSSH_VERSION_MINOR  7
+  ;;   LIBSSH_VERSION_MICRO  90
+  (when (and (zero? (car version))
+             (= (cadr version) 7))
+    ;; XXX: Those tests fails with ""Unsupported private key method ssh-rsa"
+    ;; error as support for keys in openssh container format (other than
+    ;; ed25519) was added only in 0.8.3.
+    (test-skip "encrypted key: RSA")
+    (test-skip "encrypted key: RSA: access denied")))
+
 (test-assert-with-log "encrypted key: RSA"
   (private-key-from-file %rsakey-encrypted
                          #:auth-callback (lambda (prompt max-len echo? verify? userdata)
