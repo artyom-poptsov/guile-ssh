@@ -486,6 +486,116 @@ Return a fingerprint string on success, #f on error.\
 }
 #undef FUNC_NAME
 
+#if HAVE_LIBSSH_0_12
+static gssh_symbol_t sshsig_hash_types[] = {
+  { "sha256", SSHSIG_DIGEST_SHA2_256 },
+  { "sha512", SSHSIG_DIGEST_SHA2_512 },
+  { NULL,   -1                      }
+};
+
+SCM_DEFINE (guile_ssh_sign, "%gssh-sign", 4, 0, 0,
+            (SCM data_bv, SCM private_key, SCM sig_namespace, SCM hash_alg),
+            "\
+Sign binary DATA_BV (bytevector) using a PRIVATE_KEY with specified SIG_NAMESPACE and HASH_ALG.\n\
+HASH_ALG should be 'sha256 or 'sha512.\n\
+Return the armored signature string on success, #f on error.\
+")
+#define FUNC_NAME s_guile_ssh_sign
+{
+  gssh_key_t *kd = gssh_key_from_scm (private_key);
+  char *c_sig_namespace = NULL;
+  char *armored_sig = NULL;
+  const void *data;
+  size_t data_len;
+  const gssh_symbol_t *hash_type = NULL;
+  int res;
+  SCM ret;
+  ssh_pki_ctx ctx;
+
+  SCM_ASSERT (scm_is_bytevector (data_bv), data_bv, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (_private_key_p (kd), private_key, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (sig_namespace), sig_namespace, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT (scm_is_symbol (hash_alg), hash_alg, SCM_ARG4, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  data_len = scm_c_bytevector_length (data_bv);
+  data = SCM_BYTEVECTOR_CONTENTS (data_bv);
+
+  c_sig_namespace = scm_to_locale_string (sig_namespace);
+  scm_dynwind_free (c_sig_namespace);
+
+  hash_type = gssh_symbol_from_scm (sshsig_hash_types, hash_alg);
+  if (! hash_type)
+    guile_ssh_error1 (FUNC_NAME, "Wrong hash type", hash_alg);
+
+  ctx = ssh_pki_ctx_new();
+
+  res = sshsig_sign (data, data_len, kd->ssh_key, ctx, c_sig_namespace,
+                     hash_type->value, &armored_sig);
+
+  if (res == SSH_OK)
+    {
+      ret = scm_take_locale_string (armored_sig);
+    }
+  else
+    {
+      ret = SCM_BOOL_F;
+    }
+
+  scm_dynwind_end ();
+  return ret;
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_verify, "%gssh-verify", 3, 0, 0,
+            (SCM data_bv, SCM signature, SCM sig_namespace),
+            "\
+Verify a SIGNATURE for binary DATA_BV (bytevector) with SIG_NAMESPACE.\n\
+Return the signing key on success, #f on error.\
+")
+#define FUNC_NAME s_guile_ssh_verify
+{
+  char *c_signature = NULL;
+  char *c_sig_namespace = NULL;
+  const void *data;
+  size_t data_len;
+  ssh_key sign_key = NULL;
+  int res;
+  SCM ret;
+
+  SCM_ASSERT (scm_is_bytevector (data_bv), data_bv, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (signature), signature, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT (scm_is_string (sig_namespace), sig_namespace, SCM_ARG3, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  data_len = scm_c_bytevector_length (data_bv);
+  data = SCM_BYTEVECTOR_CONTENTS (data_bv);
+
+  c_signature = scm_to_locale_string (signature);
+  scm_dynwind_free (c_signature);
+
+  c_sig_namespace = scm_to_locale_string (sig_namespace);
+  scm_dynwind_free (c_sig_namespace);
+
+  res = sshsig_verify (data, data_len, c_signature, c_sig_namespace, &sign_key);
+
+  if (res == SSH_OK)
+    {
+      ret = gssh_key_to_scm (sign_key, SCM_BOOL_F);
+    }
+  else
+    {
+      ret = SCM_BOOL_F;
+    }
+
+  scm_dynwind_end ();
+  return ret;
+}
+#undef FUNC_NAME
+#endif /* HAVE_LIBSSH_0_12 */
+
 
 /* Initialize Scheme procedures. */
 void

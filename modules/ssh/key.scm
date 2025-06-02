@@ -38,12 +38,15 @@
 ;;   get-public-key-hash
 ;;   get-public-key-fingerprint
 ;;   bytevector->hex-string
+;;   sign
+;;   verify
 
 
 ;;; Code:
 
 (define-module (ssh key)
   #:use-module (ice-9 format)
+  #:use-module (ice-9 match)
   #:use-module (rnrs bytevectors)
   #:use-module (ssh log)
   #:export (key
@@ -60,7 +63,9 @@
             private-key-to-file
             get-public-key-fingerprint
             get-public-key-hash
-            bytevector->hex-string))
+            bytevector->hex-string
+            sign
+            verify))
 
 (define (bytevector->hex-string bv)
   "Convert bytevector BV to a colon separated hex string."
@@ -76,6 +81,39 @@
 
 (define* (get-public-key-fingerprint key #:optional (hash 'sha256))
   (%gssh-get-public-key-fingerprint key hash))
+
+(define* (sign data key
+               #:key
+               (namespace "file")
+               (hash 'sha512))
+  "Sign DATA using a private KEY with specified NAMESPACE and HASH.
+
+DATA can be a binary bytevector or a string.
+HASH should be 'sha256 or 'sha512.
+Return the armored signature string on success, #f on error."
+  (match data
+    ((? string?)
+     (%gssh-sign (string->utf8 data) key namespace hash))
+    ((? bytevector?)
+     (%gssh-sign data key namespace hash))
+    (_
+     (format (current-error-port) "sign: DATA must be a string or bytevector")
+     #f)))
+
+(define* (verify data signature
+                 #:key (namespace "file"))
+  "Verify a SIGNATURE for DATA with NAMESPACE.
+
+DATA can be a binary bytevector or a string.
+Return the signing key on success, #f on error."
+  (match data
+    ((? string?)
+     (%gssh-verify (string->utf8 data) signature namespace))
+    ((? bytevector?)
+     (%gssh-sign data key namespace hash))
+    (_
+     (format (current-error-port) "verify: DATA must be a string or bytevector")
+     #f)))
 
 (unless (getenv "GUILE_SSH_CROSS_COMPILING")
   (load-extension "libguile-ssh" "init_key"))

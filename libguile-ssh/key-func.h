@@ -26,6 +26,10 @@ extern SCM guile_ssh_public_key_to_string (SCM arg1);
 extern SCM guile_ssh_private_key_from_file (SCM arg1, SCM arg2);
 extern SCM guile_ssh_public_key_from_file (SCM arg1, SCM arg2);
 extern SCM guile_ssh_get_public_key_fingerprint (SCM arg1, SCM arg2);
+#if HAVE_LIBSSH_0_12
+extern SCM guile_ssh_sign (SCM arg1, SCM arg2, SCM arg3, SCM arg4);
+extern SCM guile_ssh_verify (SCM arg1, SCM arg2, SCM arg3);
+#endif
 
 extern void init_key_func (void);
 
