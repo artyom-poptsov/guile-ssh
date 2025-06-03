@@ -41,6 +41,12 @@
   (unless (dsa-support?)
     expr))
 
+(define %libssh-minor-version
+  (string->number (cadr (string-split (get-libssh-version) #\.))))
+(define-syntax-rule (unless-sshsig-supported expr)
+  (unless (>= %libssh-minor-version 12)
+    expr))
+
 (test-begin-with-log "key")
 
 (test-assert-with-log "public-key-from-file: RSA"
@@ -287,6 +293,115 @@
   (private-key-from-file %ecdsakey-encrypted
                          #:auth-callback (lambda (prompt max-len echo? verify? userdata)
                                            "123")))
+
+
+;;; Sign & Verify
+
+(define %test-data "Hello, Guile-SSH world!")
+
+(unless-sshsig-supported
+ (test-skip "sign: RSA"))
+(test-assert-with-log "sign: RSA"
+  (let* ((private-key (private-key-from-file %rsakey))
+         (signature (sign %test-data private-key)))
+    (and (string? signature)
+         (not (string-null? signature)))))
+
+(unless-sshsig-supported
+ (test-skip "sign: RSA, invalid data"))
+(test-assert-with-log "sign: RSA, invalid-data"
+  (not (sign #f (private-key-from-file %rsakey))))
+
+(unless-sshsig-supported
+ (test-skip "verify: RSA, valid signature"))
+(test-assert-with-log "verify: RSA, valid signature"
+  (let* ((private-key (private-key-from-file %rsakey))
+         (signature (sign %test-data private-key)))
+    (verify %test-data signature)))
+
+(unless-sshsig-supported
+ (test-skip "verify: RSA, invalid data"))
+(test-assert-with-log "verify: RSA, invalid data"
+  (let* ((private-key (private-key-from-file %rsakey))
+         (signature (sign %test-data private-key)))
+    (not (verify #f signature))))
+
+(unless-sshsig-supported
+ (test-skip "verify: RSA, invalid signature"))
+(test-assert-with-log "verify: RSA, invalid signature"
+  (not (verify %test-data "invalid-signature")))
+
+(unless-sshsig-supported
+ (test-skip "sign with custom namespace and hash"))
+(test-assert-with-log "sign with custom namespace and hash"
+  (let* ((private-key (private-key-from-file %rsakey))
+         (signature (sign %test-data private-key
+                         #:namespace "test"
+                         #:hash 'sha256)))
+    (and (string? signature)
+         (not (string-null? signature)))))
+
+(unless-sshsig-supported
+ (test-skip "verify with custom namespace"))
+(test-assert-with-log "verify with custom namespace"
+  (let* ((private-key (private-key-from-file %rsakey))
+         (signature (sign %test-data private-key #:namespace "test")))
+    (verify %test-data signature #:namespace "test")))
+
+(unless-sshsig-supported
+ (test-skip "verify: namespace mismatch"))
+(test-assert-with-log "verify: namespace mismatch"
+  (let* ((private-key (private-key-from-file %rsakey))
+         (signature (sign %test-data private-key #:namespace "test")))
+    (not (verify %test-data signature #:namespace "different"))))
+
+(unless-dsa-supported
+ (test-skip "sign: DSA"))
+(unless-sshsig-supported
+ (test-skip "sign: DSA"))
+(test-assert-with-log "sign: DSA"
+  (let* ((private-key (private-key-from-file %dsakey))
+         (signature (sign %test-data private-key)))
+    (and (string? signature)
+         (not (string-null? signature)))))
+
+(unless-dsa-supported
+ (test-skip "verify: DSA"))
+(unless-sshsig-supported
+ (test-skip "verify: DSA"))
+(test-assert-with-log "verify: DSA"
+  (let* ((private-key (private-key-from-file %dsakey))
+         (signature (sign %test-data private-key)))
+    (verify %test-data signature)))
+
+(unless-openssl
+ (test-skip "sign: ECDSA"))
+(unless-sshsig-supported
+ (test-skip "sign: ECDSA"))
+(test-assert-with-log "sign: ECDSA"
+  (let* ((private-key (private-key-from-file %ecdsakey))
+         (signature (sign %test-data private-key)))
+    (and (string? signature)
+         (not (string-null? signature)))))
+
+(unless-openssl
+ (test-skip "verify: ECDSA"))
+(unless-sshsig-supported
+ (test-skip "verify: ECDSA"))
+(test-assert-with-log "verify: ECDSA"
+  (let* ((private-key (private-key-from-file %ecdsakey))
+         (signature (sign %test-data private-key)))
+    (verify %test-data signature)))
+
+(unless-sshsig-supported
+ (test-skip "sign: invalid key type"))
+(test-error-with-log "sign: invalid key type"
+  (sign %test-data "not-a-key"))
+
+(unless-sshsig-supported
+ (test-skip "verify: invalid signature format"))
+(test-assert-with-log "verify: invalid signature format"
+  (not (verify %test-data "not-a-signature")))
 
 ;;;
 (define exit-status (test-runner-fail-count (test-runner-current)))
