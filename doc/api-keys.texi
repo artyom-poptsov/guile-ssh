@@ -112,6 +112,26 @@ Get a symbol that represents the type of the Guile-SSH @var{key}.
 Possible types are: @code{dss}, @code{rsa}, @code{rsa1}, @code{unknown}.
 @end deffn
 
+@deffn {Scheme Procedure} get-public-key-fingerprint public-key type
+@cindex fingerprint
+@tindex fingerprint
+Get a @var{public-key} fingerprint of @var{type} as a string.  Return the
+string on success, @code{#f} on error.
+
+See also @code{get-server-public-key} in @pxref{Sessions}.
+
+The @var{type} can be one of the following symbols: @code{md5},
+@code{sha1}, @code{sha256}.
+
+Example:
+
+@lisp
+(get-public-key-fingerprint *rsa-pub-key* 'sha1)
+@result{} "SHA1:FEE4m3ctVKMyGjtc15+LBeWuVFA"
+@end lisp
+
+@end deffn
+
 @deffn {Scheme Procedure} get-public-key-hash public-key type
 @cindex fingerprint
 @tindex fingerprint

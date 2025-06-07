@@ -244,6 +244,24 @@
              (eq? (get-key-type key) 'ecdsa-p256)))))
 
 
+;;; Key fingerprints.
+
+(test-assert-with-log "get-public-key-fingerprint: RSA SHA1"
+  (let ((fingerprint (get-public-key-fingerprint *rsa-pub-key* 'sha1)))
+    (and (string? fingerprint)
+         (> (string-length fingerprint) 0))))
+
+(test-assert-with-log "get-public-key-fingerprint: RSA SHA256"
+  (let ((fingerprint (get-public-key-fingerprint *rsa-pub-key* 'sha256)))
+    (and (string? fingerprint)
+         (> (string-length fingerprint) 0))))
+
+(test-assert-with-log "get-public-key-fingerprint: RSA MD5"
+  (let ((fingerprint (get-public-key-fingerprint *rsa-pub-key* 'md5)))
+    (and (string? fingerprint)
+         (> (string-length fingerprint) 0))))
+
+
 ;;; Check reading encrypted keys.
 
 (test-assert-with-log "encrypted key: RSA"

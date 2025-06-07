@@ -36,6 +36,7 @@
 ;;   private-key-from-file
 ;;   private-key-to-file
 ;;   get-public-key-hash
+;;   get-public-key-fingerprint
 ;;   bytevector->hex-string
 
 
@@ -57,6 +58,7 @@
             private-key->public-key
             private-key-from-file
             private-key-to-file
+            get-public-key-fingerprint
             get-public-key-hash
             bytevector->hex-string))
 
@@ -71,6 +73,9 @@
                                 (auth-callback #f)
                                 (user-data #f))
   (%private-key-from-file path auth-callback user-data))
+
+(define* (get-public-key-fingerprint key #:optional (hash 'sha256))
+  (%gssh-get-public-key-fingerprint key hash))
 
 (unless (getenv "GUILE_SSH_CROSS_COMPILING")
   (load-extension "libguile-ssh" "init_key"))
