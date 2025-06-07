@@ -25,6 +25,7 @@ extern SCM guile_ssh_string_to_public_key (SCM arg1, SCM arg2);
 extern SCM guile_ssh_public_key_to_string (SCM arg1);
 extern SCM guile_ssh_private_key_from_file (SCM arg1, SCM arg2);
 extern SCM guile_ssh_public_key_from_file (SCM arg1, SCM arg2);
+extern SCM guile_ssh_get_public_key_fingerprint (SCM arg1, SCM arg2);
 
 extern void init_key_func (void);
 

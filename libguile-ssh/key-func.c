@@ -384,16 +384,17 @@ Read public key from a file FILENAME.  Return a SSH key.\
 #undef FUNC_NAME
 
 static gssh_symbol_t hash_types[] = {
-  { "sha1", SSH_PUBLICKEY_HASH_SHA1 },
-  { "md5",  SSH_PUBLICKEY_HASH_MD5  },
-  { NULL,   -1                      }
+  { "sha1",   SSH_PUBLICKEY_HASH_SHA1   },
+  { "sha256", SSH_PUBLICKEY_HASH_SHA256 },
+  { "md5",    SSH_PUBLICKEY_HASH_MD5    },
+  { NULL,     -1                        }
 };
 
 SCM_DEFINE (guile_ssh_get_public_key_hash, "get-public-key-hash", 2, 0, 0,
             (SCM key, SCM type),
             "\
 Get hash of the public KEY as a bytevector.\n\
-Possible types are: 'sha1, 'md5\n\
+Possible types are: 'sha1, 'sha256, 'md5\n\
 Return a bytevector on success, #f on error.\
 ")
 #define FUNC_NAME s_guile_ssh_get_public_key_hash
@@ -423,6 +424,57 @@ Return a bytevector on success, #f on error.\
       ret = scm_c_make_bytevector (hash_len);
       for (idx = 0; idx < hash_len; ++idx)
         scm_c_bytevector_set_x (ret, idx, hash[idx]);
+    }
+  else
+    {
+      ret = SCM_BOOL_F;
+    }
+
+  scm_dynwind_end ();
+  return ret;
+}
+#undef FUNC_NAME
+
+SCM_DEFINE (guile_ssh_get_public_key_fingerprint, "%gssh-get-public-key-fingerprint", 2, 0, 0,
+            (SCM key, SCM type),
+            "\
+Get fingerprint of the public KEY as a formatted string.\n\
+Possible types are: 'sha1, 'sha256, 'md5\n\
+Return a fingerprint string on success, #f on error.\
+")
+#define FUNC_NAME s_guile_ssh_get_public_key_fingerprint
+{
+  gssh_key_t *kd = gssh_key_from_scm (key);
+  unsigned char *hash = NULL;
+  size_t hash_len;
+  char *fingerprint = NULL;
+  int res;
+  SCM ret;
+  const gssh_symbol_t *hash_type = NULL;
+
+  SCM_ASSERT (scm_is_symbol (type), type, SCM_ARG2, FUNC_NAME);
+
+  scm_dynwind_begin (0);
+
+  hash_type = gssh_symbol_from_scm (hash_types, type);
+  if (! hash_type)
+    guile_ssh_error1 (FUNC_NAME, "Wrong type", type);
+
+  res = ssh_get_publickey_hash (kd->ssh_key, hash_type->value,
+                                &hash, &hash_len);
+  scm_dynwind_free (hash);
+
+  if (res == SSH_OK)
+    {
+      fingerprint = ssh_get_fingerprint_hash (hash_type->value, hash, hash_len);
+      if (fingerprint)
+        {
+          ret = scm_take_locale_string (fingerprint);
+        }
+      else
+        {
+          ret = SCM_BOOL_F;
+        }
     }
   else
     {
