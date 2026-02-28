@@ -168,6 +168,54 @@ Example:
 
 @end deffn
 
+@deffn {Scheme Procedure} sign data key
+               [#:namespace=''file''] @
+               [#:hash='sha512]
+
+@cindex signature
+@tindex signature
+Sign @var{data} using a private @var{key} with specified @var{namespace} and
+@var{hash}.  @var{data} can be a binary bytevector or a string.  @var{hash}
+should be 'sha256 or 'sha512.  Return the armored signature string on success,
+@code{#f} on error.
+
+See also @code{verify}.
+
+Example:
+
+@lisp
+(let ((rsakey (private-key-from-file "tests/keys/rsakey"))
+      (test-string "Test input\0string"))
+  (call-with-output-file "/tmp/message.sig"
+    (lambda (port)
+      (format port (sign test-string rsakey)))))
+@result{} #t
+@end lisp
+
+@end deffn
+
+@deffn {Scheme Procedure} verify data signature
+               [#:namespace=''file'']
+
+@cindex signature
+@tindex signature
+Verify a @var{signature} for @var{data} with @var{namespace}. @var{data} can
+be a binary bytevector or a string. Return the signing key on success,
+@code{#f} on error.
+
+See also @code{sign}.
+
+Example:
+
+@lisp
+(verify "Test input\0string"
+        (call-with-input-file "/tmp/message.sig"
+          (@ (ice-9 textual-ports) get-string-all)))
+@result{} #<key rsa (public) ...>
+@end lisp
+
+@end deffn
+
 @c Local Variables:
 @c TeX-master: "guile-ssh.texi"
 @c End:
