@@ -105,6 +105,13 @@ PKG_CHECK_MODULES([LIBSSH_0_11],
 
 AM_CONDITIONAL(HAVE_LIBSSH_0_11, $HAVE_LIBSSH_0_11)
 
+PKG_CHECK_MODULES([LIBSSH_0_12],
+[libssh >= 0.12.0],
+[AC_DEFINE(HAVE_LIBSSH_0_12, 1, [Use libssh 0.12])],
+[AC_DEFINE(HAVE_LIBSSH_0_12, 0, [Use libssh < 0.12])])
+
+AM_CONDITIONAL(HAVE_LIBSSH_0_12, $HAVE_LIBSSH_0_12)
+
 # -------------------------------------------------------------------------------
 
 dnl These macros must be provided by guile.m4.

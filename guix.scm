@@ -169,6 +169,20 @@ applications.")
              (base32
               "00bp5692k05281dvzqzxksa4h35ahhz6wmy61q89wv6nwchc6ah0"))))))
 
+(define-public libssh-12
+  (package
+   (inherit libssh)
+   (name "libssh")
+   (version "0.12.0")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append "https://www.libssh.org/files/"
+                                (version-major+minor version)
+                                "/libssh-" version ".tar.xz"))
+            (sha256
+             (base32
+              "08bidaiq4z911zl3v7xc2zb6s8i4p7syfpsfxznmwzijv0jg8shs"))))))
+
 (define-public guile-ssh
   (package
     (name "guile-ssh")
@@ -253,6 +267,13 @@ libssh library.")
    (inputs (modify-inputs (package-inputs guile-ssh)
                           (replace "libssh" libssh-11)))))
 
+(define-public guile-ssh/libssh-12
+  (package
+   (inherit guile-ssh)
+   (name "guile-ssh")
+   (inputs (modify-inputs (package-inputs guile-ssh)
+                          (replace "libssh" libssh-12)))))
+
 
 
 (cond
@@ -262,6 +283,8 @@ libssh library.")
   guile-ssh/libssh-9)
  ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_11")
   guile-ssh/libssh-11)
+ ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_12")
+  guile-ssh/libssh-12)
  (else
   guile-ssh))
 
