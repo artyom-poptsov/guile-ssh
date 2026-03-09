@@ -397,16 +397,6 @@
         (userauth-public-key! session (public-key-from-file %rsakey-pub)))))))
 
 
-(let* ((version (get-libssh-version))
-       (version (map string->number (string-split version #\.))))
-  (when (and (zero? (car version))
-             (or (= (cadr version) 7)
-                 (and (= (cadr version) 8)
-                      (< (caddr version) 3))))
-    ;; XXX: This test fails because of the problems with ECDSA public key
-    ;; authentication in libssh versions prior 0.8.3.
-    (test-skip "userauth-public-key!, success")))
-
 (test-equal-with-log "userauth-public-key!, success"
   'success
   (run-client-test
