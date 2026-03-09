@@ -76,28 +76,12 @@ AM_CONDITIONAL(ENABLE_DSA, $ENABLE_DSA)
 # Check for needed libraries
 # -------------------------------------------------------------------------------
 
-dnl NOTE that Ubuntu 18.04 LTS have "fake" libssh 0.8
-dnl (0.8.0~20170825.94fa1e38-1ubuntu0.6) that is actually 0.7, so we need to
-dnl check 0.8.1+ to make sure we have a valid libssh 0.8.
-PKG_CHECK_MODULES([LIBSSH_0_8_1], [libssh >= 0.8.1],
-                                  [AC_DEFINE(HAVE_LIBSSH_0_8_1, 1, [Use libssh 0.8.1])],
-                                  [AC_DEFINE(HAVE_LIBSSH_0_8_1, 0, [Use libssh < 0.8.1])])
-
-AM_CONDITIONAL(HAVE_LIBSSH_0_8_1, $HAVE_LIBSSH_0_8_1)
-dnl Checking for libssh 0.8.x.
+nl Checking for libssh 0.8.x.
 PKG_CHECK_MODULES(
   [LIBSSH_0_8_3],
   [libssh >= 0.8.3],
   [AC_DEFINE(HAVE_LIBSSH_0_8_3, 1, [Use libssh >= 0.8.3])],
-  [AC_DEFINE(HAVE_LIBSSH_0_8_3, 0, [Use libssh < 0.8.3])
-  AC_WARN([
-    You are using an old version of libssh;
-    some Guile-SSH API may not work properly.
-    Please upgrade as soon as possible.
-    Support for libssh versions older than 0.8.3
-    will be dropped in the future Guile-SSH
-    releases.
-  ])])
+  [AC_DEFINE(HAVE_LIBSSH_0_8_3, 0, [Use libssh < 0.8.3])])
 
 AM_CONDITIONAL(HAVE_LIBSSH_0_8_3, $HAVE_LIBSSH_0_8_3)
 
