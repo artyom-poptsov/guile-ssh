@@ -1,6 +1,7 @@
 ;;; guix.scm -- GNU Guix package definition.
 
 ;; Copyright (C) 2022-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2026 Nicolas Graves <ngraves@ngraves.fr>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -56,6 +57,11 @@
 
 (define %source-dir (dirname (current-filename)))
 
+(define (libssh-tarball version)
+  (string-append "https://www.libssh.org/files/"
+                 (version-major+minor version)
+                 "/libssh-" version ".tar.xz"))
+
 
 
 (define-public libssh10
@@ -64,9 +70,7 @@
     (version "0.10.0")
     (source (origin
               (method url-fetch)
-              (uri (string-append "https://www.libssh.org/files/"
-                                  (version-major+minor version)
-                                  "/libssh-" version ".tar.xz"))
+              (uri (libssh-tarball version))
               (sha256
                (base32
                 "0mqbmz97p6wcq3k3lllnw2khvr3db3n2va45nz88m0yd6k2mih8d"))))
@@ -94,9 +98,7 @@ applications.")
    (version "0.8.3")
    (source (origin
             (method url-fetch)
-            (uri (string-append "https://www.libssh.org/files/"
-                                (version-major+minor version)
-                                "/libssh-" version ".tar.xz"))
+            (uri (libssh-tarball version))
             (sha256
              (base32
               "1l19pl0l8lp00a8yawvf2yp8xhb4fjgsdmvprv9qqdpj0vv32brh")))) ))
@@ -108,9 +110,7 @@ applications.")
     (version "0.9.0")
     (source (origin
               (method url-fetch)
-              (uri (string-append "https://www.libssh.org/files/"
-                                  (version-major+minor version)
-                                  "/libssh-" version ".tar.xz"))
+              (uri (libssh-tarball version))
               (sha256
                (base32
                 "19f7h8s044pqfhfk35ky5lj4hvqhi2p2p46xkwbcsqz6jllkqc15"))))))
@@ -122,9 +122,7 @@ applications.")
    (version "0.11.1")
    (source (origin
             (method url-fetch)
-            (uri (string-append "https://www.libssh.org/files/"
-                                (version-major+minor version)
-                                "/libssh-" version ".tar.xz"))
+            (uri (libssh-tarball version))
             (sha256
              (base32
               "0y8v5ihrqnjxchvjhz8fcczndchaaxxim64bqm8q3q4i5v3xrdql"))))))
