@@ -45,6 +45,7 @@
              (guix build-system gnu)
              (gnu packages autotools)
              (gnu packages base)
+             (gnu packages check)
              (gnu packages compression)
              (gnu packages gnupg)
              (gnu packages guile)
@@ -79,9 +80,37 @@
     (outputs '("out" "debug"))
     (arguments
      (list
-      ;; TODO: Add 'CMockery' and '-DWITH_TESTING=ON' for the test suite.
-      #:tests? #f))
+      #:configure-flags #~(list "-DUNIT_TESTING=ON")
+      #:modules
+      '((guix build cmake-build-system)
+        (guix build utils)
+        (srfi srfi-1))
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-after 'unpack 'patch-commands
+            (lambda* (#:key inputs #:allow-other-keys)
+              ;; Runtime sources.
+              (substitute* (filter file-exists?
+                                   (list "src/config.c"
+                                         "src/socket.c"))
+                (("\"/bin/sh\"")
+                 (format #f "~s" (search-input-file inputs "/bin/sh"))))
+              ;; Test sources.
+              (substitute* (filter file-exists?
+                                   '("tests/server/test_server/default_cb.c"))
+                (("\"/bin/sh\"")
+                 (format #f "~s" (which "sh"))))
+              (substitute* (find-files "tests/unittests" "\\.sh$")
+                (("/bin/echo")
+                 (which "echo")))))
+          (add-before 'check 'prepare-for-tests
+            ;; A few test rely on the assumption that HOME == user's pw_dir,
+            ;; which is not satisfied in Guix, where `pw_dir' is '/' while
+            ;; HOME is '/homeless-shelter'.
+            (lambda _
+              (setenv "HOME" "/"))))))
     (inputs (list zlib openssl mit-krb5))
+    (native-inputs (list cmocka))
     (synopsis "SSH client library")
     (description
      "libssh is a C library implementing the SSHv2 and SSHv1 protocol for client
@@ -101,7 +130,10 @@ applications.")
             (uri (libssh-tarball version))
             (sha256
              (base32
-              "1l19pl0l8lp00a8yawvf2yp8xhb4fjgsdmvprv9qqdpj0vv32brh")))) ))
+              "1l19pl0l8lp00a8yawvf2yp8xhb4fjgsdmvprv9qqdpj0vv32brh"))))
+   (arguments
+    ;; XXX: Two tests fail.
+    (list #:tests? #f))))
 
 (define-public libssh-9
   (package
@@ -113,7 +145,11 @@ applications.")
               (uri (libssh-tarball version))
               (sha256
                (base32
-                "1kg7ya1yc6m5iwld0nvgbprcr5xf21ymp0xyggb2im214drlp0wz"))))))
+                "1kg7ya1yc6m5iwld0nvgbprcr5xf21ymp0xyggb2im214drlp0wz"))))
+    (arguments
+     ;; XXX: Some tests require some configure flags.
+     ;; OPENSSH_KEYS ; SSHD_EXECUTABLE
+     (list #:tests? #f))))
 
 (define-public libssh-10 libssh)
 
