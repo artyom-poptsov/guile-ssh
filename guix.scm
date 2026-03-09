@@ -44,15 +44,15 @@
              (guix build-system cmake)
              (guix build-system gnu)
              (gnu packages autotools)
-             (gnu packages guile)
-             (gnu packages ssh)
+             (gnu packages base)
              (gnu packages compression)
-             (gnu packages kerberos)
              (gnu packages gnupg)
-             (gnu packages texinfo)
-             (gnu packages python)
+             (gnu packages guile)
+             (gnu packages kerberos)
              (gnu packages pkg-config)
-             (gnu packages base))
+             (gnu packages python)
+             (gnu packages ssh)
+             (gnu packages texinfo))
 
 
 (define %source-dir (dirname (current-filename)))
@@ -64,7 +64,7 @@
 
 
 
-(define-public libssh10
+(define-public libssh-10
   (package
     (name "libssh")
     (version "0.10.0")
@@ -91,9 +91,9 @@ applications.")
     (home-page "https://www.libssh.org")
     (license license:lgpl2.1+)))
 
-(define-public libssh8
+(define-public libssh-8
   (package
-   (inherit libssh10)
+   (inherit libssh-10)
    (name "libssh")
    (version "0.8.3")
    (source (origin
@@ -103,7 +103,7 @@ applications.")
              (base32
               "1l19pl0l8lp00a8yawvf2yp8xhb4fjgsdmvprv9qqdpj0vv32brh")))) ))
 
-(define-public libssh9
+(define-public libssh-9
   (package
     (inherit libssh)
     (name "libssh")
@@ -115,7 +115,7 @@ applications.")
                (base32
                 "19f7h8s044pqfhfk35ky5lj4hvqhi2p2p46xkwbcsqz6jllkqc15"))))))
 
-(define-public libssh11
+(define-public libssh-11
   (package
    (inherit libssh)
    (name "libssh")
@@ -182,7 +182,7 @@ applications.")
            pkg-config
            which
            guile-3.0)) ;needed when cross-compiling.
-    (inputs (list guile-3.0 libssh10 libgcrypt))
+    (inputs (list guile-3.0 libssh-10 libgcrypt))
     (synopsis "Guile bindings to libssh")
     (description
      "Guile-SSH is a library that provides access to the SSH protocol for
@@ -190,36 +190,36 @@ programs written in GNU Guile interpreter.  It is a wrapper to the underlying
 libssh library.")
     (license license:gpl3+)))
 
-(define-public guile-ssh/libssh8
+(define-public guile-ssh/libssh-8
   (package
    (inherit guile-ssh)
    (name "guile-ssh")
    (inputs (modify-inputs (package-inputs guile-ssh)
-                          (replace "libssh" libssh8)))))
+                          (replace "libssh" libssh-8)))))
 
-(define-public guile-ssh/libssh9
+(define-public guile-ssh/libssh-9
   (package
    (inherit guile-ssh)
    (name "guile-ssh")
    (inputs (modify-inputs (package-inputs guile-ssh)
-             (replace "libssh" libssh9)))))
+             (replace "libssh" libssh-9)))))
 
-(define-public guile-ssh/libssh11
+(define-public guile-ssh/libssh-11
   (package
    (inherit guile-ssh)
    (name "guile-ssh")
    (inputs (modify-inputs (package-inputs guile-ssh)
-                          (replace "libssh" libssh11)))))
+                          (replace "libssh" libssh-11)))))
 
 
 
 (cond
  ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_8")
-  guile-ssh/libssh8)
+  guile-ssh/libssh-8)
  ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_9")
-  guile-ssh/libssh9)
+  guile-ssh/libssh-9)
  ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_11")
-  guile-ssh/libssh11)
+  guile-ssh/libssh-11)
  (else
   guile-ssh))
 
