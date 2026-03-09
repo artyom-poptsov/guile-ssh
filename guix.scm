@@ -45,6 +45,7 @@
              (guix build-system gnu)
              (gnu packages autotools)
              (gnu packages base)
+             (gnu packages bash)
              (gnu packages check)
              (gnu packages compression)
              (gnu packages gnupg)
@@ -80,7 +81,10 @@
     (outputs '("out" "debug"))
     (arguments
      (list
-      #:configure-flags #~(list "-DUNIT_TESTING=ON")
+      #:configure-flags
+      #~(list #$@(if (%current-target-system)
+                     #~()
+                     #~("-DUNIT_TESTING=ON")))
       #:modules
       '((guix build cmake-build-system)
         (guix build utils)
@@ -109,8 +113,8 @@
             ;; HOME is '/homeless-shelter'.
             (lambda _
               (setenv "HOME" "/"))))))
-    (inputs (list zlib openssl mit-krb5))
     (native-inputs (list cmocka))
+    (inputs (list bash-minimal zlib openssl mit-krb5))
     (synopsis "SSH client library")
     (description
      "libssh is a C library implementing the SSHv2 and SSHv1 protocol for client
