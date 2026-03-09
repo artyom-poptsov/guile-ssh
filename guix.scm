@@ -107,13 +107,13 @@ applications.")
   (package
     (inherit libssh)
     (name "libssh")
-    (version "0.9.0")
+    (version "0.9.8")
     (source (origin
               (method url-fetch)
               (uri (libssh-tarball version))
               (sha256
                (base32
-                "19f7h8s044pqfhfk35ky5lj4hvqhi2p2p46xkwbcsqz6jllkqc15"))))))
+                "1kg7ya1yc6m5iwld0nvgbprcr5xf21ymp0xyggb2im214drlp0wz"))))))
 
 (define-public libssh-11
   (package
