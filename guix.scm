@@ -87,21 +87,6 @@ applications.")
     (home-page "https://www.libssh.org")
     (license license:lgpl2.1+)))
 
-(define-public libssh8-0
-  (package
-   (inherit libssh10)
-   (name "libssh")
-   (version "0.8.0")
-   (source (origin
-            (method url-fetch)
-            (uri (string-append "https://www.libssh.org/files/"
-                                (version-major+minor version)
-                                "/libssh-" version ".tar.xz"))
-            (sha256
-             (base32
-              "1amgzvabl835vvzyv08hr05ak2ksp4jncbfnm2i0ayspf3b5qdg0"))))
-   (native-inputs (list python))))
-
 (define-public libssh8-1
   (package
    (inherit libssh10)
@@ -226,13 +211,6 @@ programs written in GNU Guile interpreter.  It is a wrapper to the underlying
 libssh library.")
     (license license:gpl3+)))
 
-(define-public guile-ssh/libssh8-0
-  (package
-   (inherit guile-ssh)
-   (name "guile-ssh")
-   (inputs (modify-inputs (package-inputs guile-ssh)
-                          (replace "libssh" libssh8-0)))))
-
 (define-public guile-ssh/libssh8-1
   (package
    (inherit guile-ssh)
@@ -264,8 +242,6 @@ libssh library.")
 
 
 (cond
- ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_8_0")
-  guile-ssh/libssh8-0)
  ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_8_1")
   guile-ssh/libssh8-1)
  ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_8")

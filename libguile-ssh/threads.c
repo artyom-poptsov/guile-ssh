@@ -29,7 +29,7 @@
 
    See <https://api.libssh.org/stable/group__libssh.html> for details. */
 
-#if ! HAVE_LIBSSH_0_8
+#if ! HAVE_LIBSSH_0_8_3
 
 /* Current SSH threading state */
 static int pthreads_state = SSH_PTHREADS_DISABLED;
@@ -53,6 +53,6 @@ init_pthreads (void)
         }
 }
 
-#endif /* if ! HAVE_LIBSSH_0_8 */
+#endif /* if ! HAVE_LIBSSH_0_8_3 */
 
 /* threads.c ends here */
