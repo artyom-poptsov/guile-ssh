@@ -65,7 +65,7 @@
 
 
 
-(define-public libssh-10
+(define-public libssh
   (package
     (name "libssh")
     (version "0.10.6")
@@ -93,7 +93,7 @@ applications.")
 
 (define-public libssh-8
   (package
-   (inherit libssh-10)
+   (inherit libssh)
    (name "libssh")
    (version "0.8.3")
    (source (origin
@@ -114,6 +114,8 @@ applications.")
               (sha256
                (base32
                 "1kg7ya1yc6m5iwld0nvgbprcr5xf21ymp0xyggb2im214drlp0wz"))))))
+
+(define-public libssh-10 libssh)
 
 (define-public libssh-11
   (package
