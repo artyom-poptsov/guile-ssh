@@ -138,54 +138,50 @@ applications.")
     (build-system gnu-build-system)
     (outputs '("out" "debug"))
     (arguments
-     `(;; It makes no sense to build libguile-ssh.a.
-       #:configure-flags '("--disable-static")
+     (list
+      ;; It makes no sense to build libguile-ssh.a.
+      #:configure-flags #~(list "--disable-static")
 
-       #:phases (modify-phases %standard-phases
-                  (add-before 'build 'fix-libguile-ssh-file-name
-                    (lambda* (#:key outputs #:allow-other-keys)
-                      ;; Build and install libguile-ssh.so so that we can use
-                      ;; its absolute file name in .scm files, before we build
-                      ;; the .go files.
-                      (let* ((out (assoc-ref outputs "out"))
-                             (lib (string-append out "/lib")))
-                        (invoke "make" "install"
-                                "-C" "libguile-ssh"
-                                "-j" (number->string
-                                      (parallel-job-count)))
-                        (substitute* (find-files "." "\\.scm$")
-                          (("\"libguile-ssh\"")
-                           (string-append "\"" lib "/libguile-ssh\"")))
-                        #t)))
-                  ,@(if (%current-target-system)
-                        '()
-                        '((add-before 'check 'fix-guile-path
-                             (lambda* (#:key inputs #:allow-other-keys)
-                               (let ((guile (assoc-ref inputs "guile")))
-                                 (substitute* "tests/common.scm"
-                                   (("/usr/bin/guile")
-                                    (string-append guile "/bin/guile")))
-                                 #t)))))
-                  (add-after 'install 'remove-bin-directory
-                    (lambda* (#:key outputs #:allow-other-keys)
-                      (let* ((out (assoc-ref outputs "out"))
-                             (bin (string-append out "/bin"))
-                             (examples (string-append
-                                        out "/share/guile-ssh/examples")))
-                        (mkdir-p examples)
-                        (rename-file (string-append bin "/ssshd.scm")
-                                     (string-append examples "/ssshd.scm"))
-                        (rename-file (string-append bin "/sssh.scm")
-                                     (string-append examples "/sssh.scm"))
-                        (delete-file-recursively bin)
-                        #t))))))
-    (native-inputs (list autoconf
-                         automake
-                         libtool
-                         texinfo
-                         pkg-config
-                         which
-                         guile-3.0)) ;needed when cross-compiling.
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-before 'build 'fix-libguile-ssh-file-name
+            (lambda* (#:key outputs #:allow-other-keys)
+              ;; Build and install libguile-ssh.so so that we can use
+              ;; its absolute file name in .scm files, before we build
+              ;; the .go files.
+              (let ((lib (string-append #$output "/lib")))
+                (invoke "make" "install"
+                        "-C" "libguile-ssh"
+                        "-j" (number->string (parallel-job-count)))
+                (substitute* (find-files "." "\\.scm$")
+                  (("\"libguile-ssh\"")
+                   (string-append "\"" lib "/libguile-ssh\""))))))
+          #$@(if (%current-target-system)
+                 #~()
+                 #~((add-before 'check 'fix-guile-path
+                      (lambda* (#:key inputs #:allow-other-keys)
+                        (substitute* "tests/common.scm"
+                          (("/usr/bin/guile")
+                           (search-input-file inputs "/bin/guile")))))))
+          (add-after 'install 'remove-bin-directory
+            (lambda _
+              (let ((bin (string-append #$output "/bin"))
+                    (examples (string-append #$output
+                                             "/share/guile-ssh/examples")))
+                (mkdir-p examples)
+                (rename-file (string-append bin "/ssshd.scm")
+                             (string-append examples "/ssshd.scm"))
+                (rename-file (string-append bin "/sssh.scm")
+                             (string-append examples "/sssh.scm"))
+                (delete-file-recursively bin)))))))
+    (native-inputs
+     (list autoconf
+           automake
+           libtool
+           texinfo
+           pkg-config
+           which
+           guile-3.0)) ;needed when cross-compiling.
     (inputs (list guile-3.0 libssh10 libgcrypt))
     (synopsis "Guile bindings to libssh")
     (description
