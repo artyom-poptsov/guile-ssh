@@ -740,7 +740,7 @@ Return server's public key.  Throw `guile-ssh-error' on error.\
   kd = make_gssh_key ();
   /* TODO: Check `kd' for NULL. */
 
-#if HAVE_LIBSSH_0_8
+#if HAVE_LIBSSH_0_8_3
   res = ssh_get_server_publickey (sd->ssh_session, &kd->ssh_key);
 #else
   res = ssh_get_publickey (sd->ssh_session, &kd->ssh_key);

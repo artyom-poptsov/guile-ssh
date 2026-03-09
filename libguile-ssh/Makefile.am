@@ -94,7 +94,7 @@ BUILT_SOURCES = \
 libguile_ssh_la_CPPFLAGS = $(CFLAGS) $(GUILE_CFLAGS)
 
 SSH_LD_FLAGS = -lssh
-if ! HAVE_LIBSSH_0_8
+if ! HAVE_LIBSSH_0_8_3
 SSH_LD_FLAGS += -lssh_threads
 endif
 
