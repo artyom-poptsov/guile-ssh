@@ -68,13 +68,13 @@
 (define-public libssh-10
   (package
     (name "libssh")
-    (version "0.10.0")
+    (version "0.10.6")
     (source (origin
               (method url-fetch)
               (uri (libssh-tarball version))
               (sha256
                (base32
-                "0mqbmz97p6wcq3k3lllnw2khvr3db3n2va45nz88m0yd6k2mih8d"))))
+                "1hcxvsb4brznxqq6cjwxkk7yv4c48w4fcwxwd8dp9wdnyncd8q8q"))))
     (build-system cmake-build-system)
     (outputs '("out" "debug"))
     (arguments
