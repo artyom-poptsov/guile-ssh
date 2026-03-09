@@ -75,11 +75,7 @@ static gssh_symbol_t session_options[] = {
 #  warning Option SSH_OPTIONS_PROCESS_CONFIG is not available.
 #endif
 
-#if HAVE_LIBSSH_0_8_1
   { "nodelay",            SSH_OPTIONS_NODELAY            },
-#else
-#  warning Option SSH_OPTIONS_NODELAY is not available.
-#endif
 
 #if HAVE_LIBSSH_0_8_3
   /* Preferred public key algorithms to be used for authentication
@@ -404,9 +400,7 @@ set_option (SCM scm_session, gssh_session_t* sd, int type, SCM value)
     case SSH_OPTIONS_PROCESS_CONFIG:
 #endif
 
-#if HAVE_LIBSSH_0_8_1
     case SSH_OPTIONS_NODELAY:
-#endif
       return set_bool_opt (session, type, value);
 
     case SSH_OPTIONS_FD:
