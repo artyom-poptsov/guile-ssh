@@ -52,7 +52,8 @@
              (gnu packages pkg-config)
              (gnu packages python)
              (gnu packages ssh)
-             (gnu packages texinfo))
+             (gnu packages texinfo)
+             (gnu packages tls))
 
 
 (define %source-dir (dirname (current-filename)))
@@ -77,11 +78,10 @@
     (build-system cmake-build-system)
     (outputs '("out" "debug"))
     (arguments
-     '(#:configure-flags '("-DWITH_GCRYPT=ON")
-
-       ;; TODO: Add 'CMockery' and '-DWITH_TESTING=ON' for the test suite.
-       #:tests? #f))
-    (inputs (list zlib libgcrypt mit-krb5))
+     (list
+      ;; TODO: Add 'CMockery' and '-DWITH_TESTING=ON' for the test suite.
+      #:tests? #f))
+    (inputs (list zlib openssl mit-krb5))
     (synopsis "SSH client library")
     (description
      "libssh is a C library implementing the SSHv2 and SSHv1 protocol for client
