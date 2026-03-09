@@ -119,13 +119,13 @@ applications.")
   (package
    (inherit libssh)
    (name "libssh")
-   (version "0.11.1")
+   (version "0.11.4")
    (source (origin
             (method url-fetch)
             (uri (libssh-tarball version))
             (sha256
              (base32
-              "0y8v5ihrqnjxchvjhz8fcczndchaaxxim64bqm8q3q4i5v3xrdql"))))))
+              "00bp5692k05281dvzqzxksa4h35ahhz6wmy61q89wv6nwchc6ah0"))))))
 
 (define-public guile-ssh
   (package
