@@ -52,13 +52,7 @@
 (define *sssh-cmd*
   (string-append
    %topbuilddir "/examples/sssh.scm"
-   ;; XXX: We cannot use ECDSA keys in libssh versions prior 0.8.3 because of
-   ;; the bug that was fixed only in 0.8.3.
-   " --identity-file=" (if (or (= (cadr %libssh-version) 7)
-                               (and (= (cadr %libssh-version) 8)
-                                    (< (caddr %libssh-version) 3)))
-                           %dsakey
-                           %ecdsakey)
+   " --identity-file=" %ecdsakey
    " --port=" (number->string *srv-port*)
    " --known-hosts-file=''"
    " " (inet-ntop AF_INET *srv-address*)
