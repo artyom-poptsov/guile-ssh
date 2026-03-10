@@ -8,6 +8,33 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Changes since version 0.18.0
+** Introduce =sign= and =verify= functions
+
+Based on a functionality introduced in libssh@12, these functions allow to sign and verify a string from a OpenSSH key, and consequently to reproduce git signing with SSH using guile-ssh. This functionality also required the addition of the =get-public-key-fingerprint= procedure, along with tests and documentation.
+
+#+begin_src scheme
+(use-modules (ssh key)
+             (srfi srfi-26)
+             (ice-9 textual-ports))
+
+(define (public-keys-equal? pub1 pub2)
+  (string=? (public-key->string pub1)
+            (public-key->string pub2)))
+
+(define rsakey (private-key-from-file "tests/keys/rsakey"))
+(define test-string "Test input\0string")
+
+(call-with-output-file "/tmp/message.sig"
+  (cut format <> (sign test-string rsakey)))
+
+(and=>
+ (verify
+  "Test input\0string"
+  ;; "not a signature"
+  (call-with-input-file "/tmp/message.sig" get-string-all))
+ (cut public-keys-equal? rsakey <>))
+#+end_src
+
 ** Drop support for libssh versions older than 0.8.3
 libssh 0.8.3 was released in sept. 2018 and versions lower were deprecated and did not properly compe and test on the Github CI.
 
