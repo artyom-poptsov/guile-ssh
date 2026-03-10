@@ -7,6 +7,13 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+* Changes since version 0.18.0
+** Drop support for libssh versions older than 0.8.3
+libssh 0.8.3 was released in sept. 2018 and versions lower were deprecated and did not properly compe and test on the Github CI.
+
+** guix.scm: Complete revamp.
+To adapt to the numerous upstream package changes, and the aforementioned drop, the file has been completely rewritten.
+
 * Changes in version 0.18.0 (2024-11-10)
 ** Change =(ssh popen)= procedures behavior                     :API_CHANGE:
 Now the following procedures handle the program arguments the same way as
