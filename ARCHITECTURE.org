@@ -31,6 +31,18 @@ The project is split into two parts: a C library (=libguile-ssh=) and a Scheme
 C library code is in =libguile-ssh= directory.  All the GNU Guile modules are
 in =modules= directory.
 
+Files are usually installed according to the prefix specified to =configure=
+script (=/usr/local= by default.)
+
+Auxiliary files include:
+- =AUTHORS= contains list of people who contributed to the library
+  development.
+- =COPYING= contains the terms of GNU General Public License.
+- =INSTALL= contains general instructions for building/installing of
+  Guile-SSH.
+- =NEWS= describes user-visible changes.
+- =TODO= contains plans for the further development and list of known bugs.
+
 *** C API
 C API is not public at the moment as it is not important for the task
 Guile-SSH tries accomplish.
@@ -48,11 +60,37 @@ three files:
 There are some common procedures that are written in separate files not
 related to any SMOB (like =log= procedures.)
 
+All C code compiles into a =libguile-ssh.so= shared library that is being
+copied into the target system during the installation process.
+
 *** Scheme API
 Scheme API is public and should be kept stable when it's possible.  When this
 API changes a note must be issued in the =NEWS= file.
 
-All Scheme modules are in =modules/ssh= directory.
+All Scheme module source files are in =modules/ssh= directory.
+
+Scheme modules are being installed into =${GUILE_SITE}/ssh= directory on the
+target system.  All the modules will be compiled and produced =.go= files will
+be installed to =site-ccache= directory which is something like this:
+=${libdir}/guile/3.0/site-ccache/ssh/=.
+
+Guile-SSH includes the following Guile modules:
+- =auth.scm=    -- User authentication.
+- =agent.scm=   -- Interaction with SSH authentication agent instances.
+- =channel.scm= -- Channel manipulation.
+- =dist.scm=    -- Distributed forms.
+  - =dist/job.scm=  -- Low-level distributed job API.
+  - =dist/node.scm= -- Low-level distributed node API.
+- =key.scm=     -- Keys management.
+- =log.scm=     -- Interface to libssh logging facilities
+- =message.scm= -- Procedures for working with SSH messages.
+- =popen.scm=   -- Remote popen API.
+- =server.scm=  -- Server API.
+- =session.scm= -- Session management.
+- =sftp.scm=    -- SFTP client API.
+- =shell.scm=   -- High-level API to a remote shell.
+- =tunnel.scm=  -- SSH tunnels.
+- =version.scm= -- Information about versions.
 
 *** Examples
 Examples are important as they provide a hint how the library can be used for
@@ -61,6 +99,9 @@ real tasks.
 Guile-SSH examples are stored in =examples= directory in the root of the
 repository.
 
+Examples are being copied into =${prefix}/share/guile-ssh/examples= directory
+during the installation process.
+
 *** Tests
 Tests are in =tests= directory.  They are written using SRFI-61.
 
@@ -68,3 +109,9 @@ When a new functionality is being added a new test case (or several test
 cases) should be written for it.
 
 Tests are using SSH client and a server written in Guile-SSH from =examples=.
+
+*** Documentation
+Documentation is written in Texinfo format and can be found in =doc=
+directory.  It compiles into =guile-ssh.info= Info file and is being copied
+into =${prefix}/share/info/= during the installation process.
+

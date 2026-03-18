@@ -48,74 +48,6 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
  - [[https://www.gnu.org/software/guile/][GNU Guile]], version 2.0.12 or later (known to work with 2.0.12, 2.0.14,
    2.2.4, 3.0.1)
  - [[http://www.libssh.org/][libssh]], version 0.8.3 or later.
-
-* Distribution
-
-Files:
- - AUTHORS contains list of people who contributed to the library
-   development.
- - COPYING contains the terms of GNU General Public License.
- - INSTALL contains general instructions for building/installing of
-   Guile-SSH.
- - NEWS describes user-visible changes.
- - TODO contains plans for the further development and list of known bugs.
-
-Directories:
- - examples     -- Examples of Guile-SSH usage.
- - libguile-ssh -- Sources of the Guile-SSH library.
- - modules      -- Scheme modules.
- - doc          -- Documentation in Texinfo format.
- - tests        -- Unit tests.
-
-Files are usually installed according to the prefix specified to
-=configure= script, =/usr/local= by default.  Building and installing
-gives you:
-
-Libraries, in =${prefix}/lib=:
- - libguile-ssh.so.<version>
- - libguile-ssh.la
- - libguile-ssh.a
-
-Guile modules, in =${GUILE_SITE}/ssh=:
- - auth.scm    -- User authentication.
- - agent.scm   -- Interaction with SSH authentication agent instances.
- - channel.scm -- Channel manipulation.
- - dist.scm    -- Distributed forms.
-   - dist/job.scm  -- Low-level distributed job API.
-   - dist/node.scm -- Low-level distributed node API.
- - key.scm     -- Keys management.
- - log.scm     -- Interface to libssh logging facilities
- - message.scm -- Procedures for working with SSH messages.
- - popen.scm   -- Remote popen API.
- - server.scm  -- Server API.
- - session.scm -- Session management.
- - sftp.scm    -- SFTP client API.
- - shell.scm   -- High-level API to a remote shell.
- - tunnel.scm  -- SSH tunnels.
- - version.scm -- Information about versions.
-
-All the modules will be compiled and produced .go files will be installed to
-=site-ccache= directory which is something like this:
-=${libdir}/guile/2.0/site-ccache/ssh/=.
-
-Documentation in Info format, in =${prefix}/share/info/=:
- - guile-ssh.info
-
-Examples, in =${prefix}/share/guile-ssh/examples=:
- - ssshd.scm    -- SSH server example.
- - sssh.scm     -- SSH client example.
- + echo/
-   - client.scm -- Echo client example.
-   - server.scm -- Echo server example.
- + rpc/
-   - client.scm -- A simple Guile-RPC client that makes an RPC call over
-     a Guile-SSH tunnel.
-   - server.scm -- A simple Guile-RPC server.
- - rrepl.scm    -- Remote REPL example.
- - sscp.scm     -- Scheme secure copy.
- - pg-tunnel.scm -- Connect to a PostgreSQL instance through an SSH tunnel.
- - uptop.scm    -- Uppercase =top=, through a remote pipe.
-
 * Installation
 
 The library can be installed by the following means:
@@ -163,4 +95,17 @@ a suggestion.
 Please see the documentation in Info format for API documentation and usage
 examples -- you can open it by typing =info guile-ssh= in the shell, or using
 =C-h i m guile-ssh RET= combo in Emacs.  Also take a look on examples in the
-=examples= directory.
+=examples= directory:
+ - ssshd.scm    -- SSH server example.
+ - sssh.scm     -- SSH client example.
+ + echo/
+   - client.scm -- Echo client example.
+   - server.scm -- Echo server example.
+ + rpc/
+   - client.scm -- A simple Guile-RPC client that makes an RPC call over
+     a Guile-SSH tunnel.
+   - server.scm -- A simple Guile-RPC server.
+ - rrepl.scm    -- Remote REPL example.
+ - sscp.scm     -- Scheme secure copy.
+ - pg-tunnel.scm -- Connect to a PostgreSQL instance through an SSH tunnel.
+ - uptop.scm    -- Uppercase =top=, through a remote pipe.
