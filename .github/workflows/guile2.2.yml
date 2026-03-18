@@ -15,12 +15,18 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install guile-2.2 guile-2.2-libs guile-library
-          sudo apt install guile-2.2-dev texinfo texlive
-          sudo apt install automake autoconf
-          sudo apt install libssh-dev
-          sudo apt install libtool
-          sudo apt install gcc-9
+          sudo apt install -qy \
+              autoconf \
+              automake \
+              gcc-9 \
+              guile-2.2 \
+              guile-2.2-dev \
+              guile-2.2-libs \
+              guile-library
+              libssh-dev \
+              libtool \
+              texinfo \
+              texlive
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Autoreconf
