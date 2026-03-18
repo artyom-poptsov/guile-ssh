@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
+          sudo apt update
           sudo apt -qy install \
               guile-3.0 \
               guile-3.0-libs \
