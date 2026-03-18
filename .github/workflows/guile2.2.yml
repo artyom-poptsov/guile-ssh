@@ -22,7 +22,7 @@ jobs:
               guile-2.2 \
               guile-2.2-dev \
               guile-2.2-libs \
-              guile-library
+              guile-library \
               libssh-dev \
               libtool \
               texinfo \
