@@ -1,6 +1,7 @@
 ;;; client-server.scm -- Guile-SSH client is SUT.
 
-;; Copyright (C) 2014, 2015, 2016, 2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2014-2016, 2024, 2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2026 Nicolas Graves <ngraves@ngraves.fr>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;

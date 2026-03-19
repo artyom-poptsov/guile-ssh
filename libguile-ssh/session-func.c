@@ -1,7 +1,8 @@
 /* session-func.c -- Functions for working with SSH session.
  *
- * Copyright (C) 2013-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013-2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  * Copyright (C) 2024 Peter Tillemans <pti@snamellit.com>
+ * Copyright (C) 2026 Nicolas Graves <ngraves@ngraves.fr>
  *
  * This file is part of Guile-SSH.
  *

@@ -1,6 +1,7 @@
 ;;; key.scm -- SSH keys management.
 
-;; Copyright (C) 2013-2023 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013-2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2026 Nicolas Graves <ngraves@ngraves.fr>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;

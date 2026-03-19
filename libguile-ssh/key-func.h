@@ -1,4 +1,5 @@
-/* Copyright (C) 2013 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+/* Copyright (C) 2013-2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2026 Nicolas Graves <ngraves@ngraves.fr>
  *
  * This file is part of Guile-SSH
  * 

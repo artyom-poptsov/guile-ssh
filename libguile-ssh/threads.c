@@ -1,6 +1,7 @@
 /* threads.c -- Initialization of SSH threads
  *
- * Copyright (C) 2013, 2020 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2020, 2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2026 Nicolas Graves <ngraves@ngraves.fr>
  *
  * This file is part of Guile-SSH.
  *
