@@ -49,6 +49,7 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
    2.2.4, 3.0.1)
  - [[http://www.libssh.org/][libssh]], version 0.8.3 or later.
 * Installation
+[[https://repology.org/badge/vertical-allrepos/guile-ssh.svg]]
 
 The library can be installed by the following means:
   - Using GNU Guix: https://www.gnu.org/software/guix/
