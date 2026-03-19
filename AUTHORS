@@ -97,3 +97,23 @@ See also files THANKS and ChangeLog.
 * Peter Tillemans <pti@snamellit.com>
   Changes to 'libguile-ssh/session-func.c': fix compile error caused by bool
   identifier.
+* Nicolas Graves <ngraves@ngraves.fr>
+  Implementation of Guile-SSH signing API.
+
+  Changes to:
+    .github/workflows/guix.yml
+    configure.ac
+    doc/api-keys.texi
+    doc/guile-ssh.texi
+    guix.scm
+    libguile-ssh/Makefile.am
+    libguile-ssh/key-func.c
+    libguile-ssh/key-func.h
+    libguile-ssh/session-func.c
+    libguile-ssh/threads.c
+    libguile-ssh/threads.h
+    modules/ssh/key.scm
+    tests/client-server.scm
+    tests/key.scm
+    tests/server.scm
+    tests/sssh-ssshd.scm
