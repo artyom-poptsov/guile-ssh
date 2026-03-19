@@ -26,6 +26,15 @@ Guile-SSH provides high-level procedures for operations over SSH channels.
 The project is split into two parts: a C library (=libguile-ssh=) and a Scheme
 =ssh= library.
 
+** Versioning
+Guile-SSH uses [[https://semver.org/][semantic versioning]].  While the project in the [[https://semver.org/#spec-item-4][0.y.z phase]], =y=
+specifies notable changes in API (including the changes that break backward
+compatibility) and =z= denotes small backward-compatible changes and bug
+fixes.
+
+When the project reach =1.y.z= phase, we must adhere to the recommendations in
+the semantic versioning specs.
+
 ** Code Map
 *** Overview
 C library code is in =libguile-ssh= directory.  All the GNU Guile modules are
