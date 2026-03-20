@@ -131,12 +131,20 @@ Guix} repository:
 $ guix install guile-ssh
 @end example
 
-If you want to get the environment for Guile-SSH development there's
-@file{guix.scm} file in the root of the repository that can be used with
-@command{guix shell}:
-
+If you want to get the environment for Guile-SSH development, use
 @example
-$ guix shell -D -f ./guix.scm
+$ guix shell -D guile-ssh
+@end example
+
+To select a modified development version from changes in
+@file{.guix/modules/guile-ssh-packages.scm}, use
+@example
+$ guix shell -L .guix/modules -D guile-ssh
+@end example
+
+To build package variants like CI or Guix would do it, use
+@example
+$ guix build -L .guix/modules -e '(@ (guile-ssh-packages) guile-ssh)'
 @end example
 
 @section Ubuntu GNU/Linux

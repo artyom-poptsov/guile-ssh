@@ -38,8 +38,12 @@ Based on a functionality introduced in libssh@12, these functions allow to sign 
 ** Drop support for libssh versions older than 0.8.3
 libssh 0.8.3 was released in sept. 2018 and versions lower were deprecated and did not properly compe and test on the Github CI.
 
-** guix.scm: Complete revamp.
-To adapt to the numerous upstream package changes, and the aforementioned drop, the file has been completely rewritten.
+** CI/guix: Complete revamp.
+To adapt to the numerous upstream package changes, and the aforementioned drop, the =guix.scm= file has been completely rewritten.
+
+Then it has been moved to =.guix/modules/guile-ssh-packages.scm= as a proper module with package definition to allow a refactor of =guix.yml= CI file.
+
+The CI on Github now does not run =guix pull= after the last tarball, but it's most likely fine since most of our package definitions are our own, and Guix made the =1.5.0= release since.  This cuts CI time spent on Guix from 30 to 3 mins.
 
 * Changes in version 0.18.0 (2024-11-10)
 ** Change =(ssh popen)= procedures behavior                     :API_CHANGE:
