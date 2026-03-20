@@ -8,6 +8,9 @@ Copyright (C) Artyom V. Poptsov <poptsov.artyom@gmail.com>
   notice and this notice are preserved.
 
 * Changes since version 0.18.0
+** modules/ssh/key.scm: =make-keypair= length is now optional :API_CHANGE:
+=libssh='s =ssh_pki_generate= uses a default size when it's set to 0. Make the =length= argument of =make-keypair= optional and rely on this default when unset.
+
 ** Introduce =sign= and =verify= functions
 
 Based on a functionality introduced in libssh@12, these functions allow to sign and verify a string from a OpenSSH key, and consequently to reproduce git signing with SSH using guile-ssh. This functionality also required the addition of the =get-public-key-fingerprint= procedure, along with tests and documentation.
