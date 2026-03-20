@@ -13,7 +13,7 @@
 The @code{(ssh key)} module provides procedures for handling of
 Guile-SSH keys.
 
-@strong{Note} that Guile-SSH does not support ECDSA keys if libssh 0.6.3 is
+@strong{Note} that Guile-SSH does not support ECDSA keys if libssh is
 compiled with GCrypt instead of OpenSSL.
 
 @deffn {Scheme Procedure} make-keypair type length
@@ -94,7 +94,7 @@ Usage example:
 Export @var{private-key} to a PAM file @var{file-name} on a disk.  Throw
 @code{guile-ssh-error} on error.  Return value is undefined.
 
-@strong{Note} that this procedure won't work if libssh 0.6.3 is compiled with
+@strong{Note} that this procedure won't work if libssh is compiled with
 GCrypt cryptographic library.
 @end deffn
 
