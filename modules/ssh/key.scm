@@ -54,7 +54,6 @@
             key?
             public-key?
             private-key?
-            make-keypair
             get-key-type
             public-key->string
             string->public-key
@@ -65,6 +64,7 @@
             get-public-key-fingerprint
             get-public-key-hash
             bytevector->hex-string
+            make-keypair
             sign
             verify))
 
@@ -82,6 +82,12 @@
 
 (define* (get-public-key-fingerprint key #:optional (hash 'sha256))
   (%gssh-get-public-key-fingerprint key hash))
+
+(define* (make-keypair type #:optional (length 0))
+  "Generate a keypair of specified TYPE and LENGTH.  This may take some time.
+Return newly generated private key.  Throw `guile-ssh-error' on error.
+When LENGTH is 0, the default size will be used."
+  (%gssh-make-keypair type length))
 
 (define* (sign data key
                #:key

@@ -47,7 +47,7 @@ and 'ecdsa variants if libssh >= 0.9.\
   return _ssh_key_type_to_scm (type);
 }
 
-SCM_DEFINE (guile_ssh_make_keypair, "make-keypair", 2, 0, 0,
+SCM_DEFINE (guile_ssh_make_keypair, "%gssh-make-keypair", 2, 0, 0,
             (SCM type, SCM length),
             "\
 Generate a keypair of specified TYPE and LENGTH.  This may take some time.\
@@ -60,7 +60,7 @@ Return newly generated private key.  Throw `guile-ssh-error' on error.\
   int c_length;
   int res;
 
-  SCM_ASSERT (scm_is_unsigned_integer (length, 9, UINT32_MAX), length,
+  SCM_ASSERT (scm_is_unsigned_integer (length, 0, UINT32_MAX), length,
               SCM_ARG2, FUNC_NAME);
 
   if (! c_type)
