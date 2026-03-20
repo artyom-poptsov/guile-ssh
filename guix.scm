@@ -127,7 +127,6 @@ applications.")
 (define-public libssh-8
   (package
    (inherit libssh)
-   (name "libssh")
    (version "0.8.3")
    (source (origin
             (method url-fetch)
@@ -142,7 +141,6 @@ applications.")
 (define-public libssh-9
   (package
     (inherit libssh)
-    (name "libssh")
     (version "0.9.8")
     (source (origin
               (method url-fetch)
@@ -160,7 +158,6 @@ applications.")
 (define-public libssh-11
   (package
    (inherit libssh)
-   (name "libssh")
    (version "0.11.4")
    (source (origin
             (method url-fetch)
@@ -172,7 +169,6 @@ applications.")
 (define-public libssh-12
   (package
    (inherit libssh)
-   (name "libssh")
    (version "0.12.0")
    (source (origin
             (method url-fetch)
