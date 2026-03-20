@@ -53,6 +53,9 @@
 (test-assert-with-log "public-key-from-file: RSA"
   (public-key-from-file %rsakey-pub))
 
+(test-assert-with-log "public-key-from-file: ED22519"
+  (public-key-from-file %ed25519key-pub))
+
 (unless-dsa-supported
  (test-skip "public-key-from-file: DSA"))
 (test-assert-with-log "public-key-from-file: DSA"
@@ -76,11 +79,12 @@
 (test-assert "private-key-from-file: ECDSA"
   (private-key-from-file %ecdsakey))
 
-(define *rsa-pub-key*   (public-key-from-file %rsakey-pub))
-(define *dsa-pub-key*   (and (dsa-support?)
-                             (public-key-from-file %dsakey-pub)))
-(define *ecdsa-pub-key* (when-openssl
-                         (public-key-from-file %ecdsakey-pub)))
+(define *rsa-pub-key*     (public-key-from-file %rsakey-pub))
+(define *ed25519-pub-key* (public-key-from-file %ed25519key-pub))
+(define *dsa-pub-key*     (and (dsa-support?)
+                               (public-key-from-file %dsakey-pub)))
+(define *ecdsa-pub-key*   (when-openssl
+                           (public-key-from-file %ecdsakey-pub)))
 
 (test-equal "key?: not a key"
   #f
@@ -88,6 +92,9 @@
 
 (test-assert "key?: RSA"
   (key? (private-key-from-file %rsakey)))
+
+(test-assert "key?: ED25519"
+  (key? (private-key-from-file %ed25519key)))
 
 (unless-dsa-supported
  (test-skip "key?: DSA"))
@@ -101,6 +108,9 @@
 
 (test-assert "key?: RSA (public)"
   (key? *rsa-pub-key*))
+
+(test-assert "key?: ED25519 (public)"
+  (key? *ed25519-pub-key*))
 
 (unless-dsa-supported
  (test-skip "key?: DSA (public)"))
@@ -136,6 +146,9 @@
 (test-assert-with-log "private-key->public-key: RSA"
   (private-key->public-key (private-key-from-file %rsakey)))
 
+(test-assert-with-log "private-key->public-key: ED25519"
+  (private-key->public-key (private-key-from-file %ed25519key)))
+
 (unless-dsa-supported
  (test-skip "private-key->public-key: DSA"))
 (test-assert-with-log "private-key->public-key: DSA"
@@ -149,6 +162,9 @@
 
 (test-assert-with-log "get-key-type: RSA"
   (equal? (eq? 'rsa (get-key-type (private-key-from-file %rsakey)))))
+
+(test-assert-with-log "get-key-type: ED25519"
+  (equal? (eq? 'ed25519 (get-key-type (private-key-from-file %ed25519key)))))
 
 (unless-dsa-supported
  (test-skip "get-key-type: DSA"))
@@ -179,6 +195,8 @@
 
 (define %rsakey-pub-string
   "AAAAB3NzaC1yc2EAAAADAQABAAABAQC+8H9j5Yt3xeqaAxXAtSbBsW0JsJegngwfLveHA0ev3ndEKruylR6CZgf6OxshTwUeBaqn7jJMf+6RRQPTcxihgtZAfdyKdPGWDtmePBnG64+uGEaP8N3KvCzlANKf5tmxS8brJlQhxKL8t+3IE8w3QmCMnCGKWprsL/ygPA9koWauUqqKvOQbZXdUEfLvZfnsE1laRyK4dwLiiM2vyGZM/2yePLP4xYu/uYdPFaukxt3DMcgrEy9zuVcU8wbkJMKM57sambvituzMVVqRdeMX9exZv32qcXlpChl4XjFClQ0lqOb8S8CNTPXm3zQ2ZJrQtUHiD54RYhlXD7X0TO6v")
+(define %ed25519key-pub-string
+  "AAAAC3NzaC1lZDI1NTE5AAAAIFqjWgQYx90eaap/8B0QeQdFaPMzwyai5LWrvMnnxep5")
 (define %dsakey-pub-string
   "AAAAB3NzaC1kc3MAAACBAOpnJ64w3Qo3HkCCODTPpLqPUrDLg0bxWdoae2tsXFwhBthIlCV8N0hTzOj1Qrgnx/WiuDk5qXSKOHisyqVBv8sGLOUTBy0Fdz1SobZ9+WGu5+5EiJm78MZcgtHXHu1GPuImANifbSaDJpIGKItq0V5WhpLXyQC7o0Vt70sGQboVAAAAFQDeu+6APBWXtqq2Ch+nODn7VDSIhQAAAIA5iGHYbztSq8KnWj1J/6GTvsPp1JFqZ3hFX5wlGIV4XxBdeEZnCPrhYJumM7SRjYjWMpW5eqFNs5o3d+rJPFFwDo7yW10WC3Bfpo5xRxU35xf/aFAVbm3vi/HRQvv4cFrwTLvPHgNYGYdZiHXCXPoYIh+WoKT9n3MfrBXB4hpAmwAAAIEArkWuRnbjfPVFpXrWGw6kMPVdhOZr1ghdlG5bY31y4UKUlmHvXx5YZ776dSRSMJY2u4lS73+SFgwPdkmpgGma/rZdd9gly9T7SiSr/4qXJyS8Muh203xsAU3ukRocY8lsvllKEGiCJmrUTJWmj0UYEDsbqy2k/1Yz2Q/awygyk9c=")
 (define %ecdsakey-pub-string
@@ -188,6 +206,10 @@
 (test-equal "public-key->string, RSA"
   (public-key->string *rsa-pub-key*)
   %rsakey-pub-string)
+
+(test-equal "public-key->string, ed25519"
+  (public-key->string *ed25519-pub-key*)
+  %ed25519key-pub-string)
 
 (unless-dsa-supported
  (test-skip "public-key->string, DSA"))
@@ -204,6 +226,10 @@
 (test-equal "string->public-key, RSA"
   (public-key->string (string->public-key %rsakey-pub-string 'rsa))
   %rsakey-pub-string)
+
+(test-equal "string->public-key, ED25519"
+  (public-key->string (string->public-key %ed25519key-pub-string 'ed25519))
+  %ed25519key-pub-string)
 
 (unless-dsa-supported
  (test-skip "string->public-key, DSA"))
@@ -234,6 +260,11 @@
   (let ((key (make-keypair 'rsa 1024)))
     (and (key? key)
          (eq? (get-key-type key) 'rsa))))
+
+(test-assert-with-log "make-keypair: ED25519"
+  (let ((key (make-keypair 'ed25519)))
+    (and (key? key)
+         (eq? (get-key-type key) 'ed25519))))
 
 (unless-dsa-supported
  (test-skip "make-keypair: DSS"))
@@ -355,6 +386,25 @@
   (let* ((private-key (private-key-from-file %rsakey))
          (signature (sign %test-data private-key #:namespace "test")))
     (not (verify %test-data signature #:namespace "different"))))
+
+(unless-openssl
+ (test-skip "sign: ED25519"))
+(unless-sshsig-supported
+ (test-skip "sign: ED25519"))
+(test-assert-with-log "sign: ED25519"
+  (let* ((private-key (private-key-from-file %ed25519key))
+         (signature (sign %test-data private-key)))
+    (and (string? signature)
+         (not (string-null? signature)))))
+
+(unless-openssl
+ (test-skip "verify: ED25519"))
+(unless-sshsig-supported
+ (test-skip "verify: ED25519"))
+(test-assert-with-log "verify: ED25519"
+  (let* ((private-key (private-key-from-file %ed25519key))
+         (signature (sign %test-data private-key)))
+    (verify %test-data signature)))
 
 (unless-dsa-supported
  (test-skip "sign: DSA"))

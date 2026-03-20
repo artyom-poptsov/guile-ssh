@@ -40,6 +40,8 @@
             %addr
             %rsakey
             %rsakey-pub
+            %ed25519key
+            %ed25519key-pub
             %dsakey
             %dsakey-pub
             %ecdsakey
@@ -84,16 +86,18 @@
 
 
 ;; Keys
-(define %rsakey       (format #f "~a/tests/keys/rsakey"       %topdir))
-(define %rsakey-pub   (format #f "~a/tests/keys/rsakey.pub"   %topdir))
-(define %dsakey       (format #f "~a/tests/keys/dsakey"       %topdir))
-(define %dsakey-pub   (format #f "~a/tests/keys/dsakey.pub"   %topdir))
-(define %ecdsakey     (format #f "~a/tests/keys/ecdsakey"     %topdir))
-(define %ecdsakey-pub (format #f "~a/tests/keys/ecdsakey.pub" %topdir))
+(define %rsakey         (format #f "~a/tests/keys/rsakey"       %topdir))
+(define %rsakey-pub     (format #f "~a/tests/keys/rsakey.pub"   %topdir))
+(define %ed25519key     (format #f "~a/tests/keys/ed25519key"     %topdir))
+(define %ed25519key-pub (format #f "~a/tests/keys/ed25519key.pub" %topdir))
+(define %dsakey         (format #f "~a/tests/keys/dsakey"       %topdir))
+(define %dsakey-pub     (format #f "~a/tests/keys/dsakey.pub"   %topdir))
+(define %ecdsakey       (format #f "~a/tests/keys/ecdsakey"     %topdir))
+(define %ecdsakey-pub   (format #f "~a/tests/keys/ecdsakey.pub" %topdir))
 
-(define %ecdsakey-encrypted (format #f "~a/tests/keys/encrypted-ecdsa-key" %topdir))
-(define %rsakey-encrypted   (format #f "~a/tests/keys/encrypted-rsa-key" %topdir))
-(define %dsakey-encrypted   (format #f "~a/tests/keys/encrypted-dsa-key" %topdir))
+(define %rsakey-encrypted     (format #f "~a/tests/keys/encrypted-rsa-key" %topdir))
+(define %dsakey-encrypted     (format #f "~a/tests/keys/encrypted-dsa-key" %topdir))
+(define %ecdsakey-encrypted   (format #f "~a/tests/keys/encrypted-ecdsa-key" %topdir))
 
 
 (define (format-log/scm level proc-name message . args)
