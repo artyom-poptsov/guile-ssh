@@ -28,7 +28,7 @@
 ;;;
 
 
-;; ECDSA doesn't work if libssh 0.6.3 was compiled GCrypt
+;; ECDSA doesn't work if libssh was compiled GCrypt
 (define %openssl? (eq? (get-crypto-library) 'openssl))
 (define-syntax-rule (when-openssl test)
   (or (not %openssl?)
