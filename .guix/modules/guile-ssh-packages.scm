@@ -1,4 +1,4 @@
-;;; guix.scm -- GNU Guix package definition.
+;;; guile-ssh-packages.scm -- GNU Guix package definitions.
 
 ;; Copyright (C) 2022-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;; Copyright (C) 2026 Nicolas Graves <ngraves@ngraves.fr>
@@ -24,41 +24,37 @@
 
 ;; Use this file to build Guile-SSH with GNU Guix:
 ;;
-;;   guix build -f guix.scm
-;;
-;; By default Guile-SSH builds with libssh 0.10, but it is possible to switch
-;; it to libssh 0.9 by exporting an environment variable:
-;;
-;;   export GUILE_SSH_BUILD_WITH_LIBSSH_0_9=1
-;;   guix build -f guix.scm
+;;   guix build -L .guix/modules -e '(@ (guile-ssh-packages) guile-ssh/libssh-12)'
 
 
 ;;; Code:
 
-(use-modules (guix gexp)
-             ((guix licenses) #:prefix license:)
-             (guix packages)
-             (guix git-download)
-             (guix download)
-             (guix utils)
-             (guix build-system cmake)
-             (guix build-system gnu)
-             (gnu packages autotools)
-             (gnu packages base)
-             (gnu packages bash)
-             (gnu packages check)
-             (gnu packages compression)
-             (gnu packages gnupg)
-             (gnu packages guile)
-             (gnu packages kerberos)
-             (gnu packages pkg-config)
-             (gnu packages python)
-             (gnu packages ssh)
-             (gnu packages texinfo)
-             (gnu packages tls))
+(define-module (guile-ssh-packages)
+  #:use-module (guix gexp)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix packages)
+  #:use-module (guix git-download)
+  #:use-module (guix download)
+  #:use-module (guix utils)
+  #:use-module (guix build-system cmake)
+  #:use-module (guix build-system gnu)
+  #:use-module (gnu packages autotools)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages bash)
+  #:use-module (gnu packages check)
+  #:use-module (gnu packages compression)
+  #:use-module (gnu packages gnupg)
+  #:use-module (gnu packages guile)
+  #:use-module (gnu packages kerberos)
+  #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages ssh)
+  #:use-module (gnu packages texinfo)
+  #:use-module (gnu packages tls))
 
 
-(define %source-dir (dirname (current-filename)))
+(define %source-dir
+  (dirname (dirname (dirname (current-filename)))))
 
 (define (libssh-tarball version)
   (string-append "https://www.libssh.org/files/"
@@ -269,19 +265,5 @@ libssh library.")
    (name "guile-ssh")
    (inputs (modify-inputs (package-inputs guile-ssh)
                           (replace "libssh" libssh-12)))))
-
-
-
-(cond
- ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_8")
-  guile-ssh/libssh-8)
- ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_9")
-  guile-ssh/libssh-9)
- ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_11")
-  guile-ssh/libssh-11)
- ((getenv "GUILE_SSH_BUILD_WITH_LIBSSH_0_12")
-  guile-ssh/libssh-12)
- (else
-  guile-ssh))
 
 ;;; guix.scm ends here.
