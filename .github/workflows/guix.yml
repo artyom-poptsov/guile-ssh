@@ -23,6 +23,8 @@ jobs:
             package: guile-ssh/libssh-11
           - target: x86_64-linux-gnu
             package: guile-ssh/libssh-12
+          - target: x86_64-linux-gnu
+            package: guile-ssh/libssh-10/gcrypt
           - target: aarch64-linux-gnu
             package: guile-ssh
           - target: riscv64-linux-gnu
