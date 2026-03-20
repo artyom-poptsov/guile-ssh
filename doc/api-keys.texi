@@ -20,7 +20,10 @@ compiled with GCrypt instead of OpenSSL.
 Generate a keypair of specified @var{type} and @var{length} (in bits).  This
 may take some time.
 
-Possible key types are: @code{dss}, @code{rsa}, @code{rsa1}, @code{ecdsa}.
+Possible key types are: @code{dss}, @code{rsa}, @code{rsa1}, @code{ecdsa}
+and @code{ed25519}.  If libssh version is greater than 0.9, the @var{type} can
+also be among @code{ecdsa-p256}, @code{ecdsa-p384}, @code{ecdsa-p521},
+@code{ecdsa-p256-cert01}, @code{ecdsa-p384-cert01}, @code{ecdsa-p521-cert01}.
 
 Return newly generated private key.  Throw @code{guile-ssh-error} on error.
 @end deffn
@@ -50,7 +53,10 @@ Convert a public key of @var{type} represented as Base64 @var{string}
 to a Guile-SSH key.  Throw @code{guile-ssh-error} on error.
 
 The @var{type} must be one of the following symbols: @code{dss},
-@code{rsa}, @code{rsa1}, @code{ecdsa}
+@code{rsa}, @code{rsa1}, @code{ed25519}, @code{ecdsa}.  If libssh version is
+greater than 0.9, the @var{type} can also be among @code{ecdsa-p256},
+@code{ecdsa-p384}, @code{ecdsa-p521}, @code{ecdsa-p256-cert01},
+@code{ecdsa-p384-cert01}, @code{ecdsa-p521-cert01}.
 @end deffn
 
 @deffn {Scheme Procedure} private-key-from-file @

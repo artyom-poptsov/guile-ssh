@@ -38,7 +38,8 @@ SCM_DEFINE (guile_ssh_key_get_type, "get-key-type", 1, 0, 0,
             (SCM key),
             "\
 Get a symbol that represents the type of the SSH key KEY.\n\
-Possible types are: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown\
+Possible types are: 'dss, 'rsa, 'rsa1, 'ecdsa, 'ed25519, 'unknown\
+and 'ecdsa variants if libssh >= 0.9.\
 ")
 {
   gssh_key_t *data = gssh_key_from_scm (key);

@@ -100,8 +100,11 @@ _print (SCM smob, SCM port, scm_print_state *pstate)
 }
 
 
-/* Convert SSH key type to/from a Scheme symbol.
-   Possible symbols are: 'dss, 'rsa, 'rsa1, 'ecdsa, 'unknown */
+/*
+  Convert SSH key type to/from a Scheme symbol.
+  Possible symbols are: 'dss, 'rsa, 'rsa1, 'ecdsa, its variants if
+  libssh >= 0.9, 'ed25519, 'unknown.
+*/
 
 SCM
 _ssh_key_type_to_scm (int type)
