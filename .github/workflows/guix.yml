@@ -16,15 +16,15 @@ jobs:
           - target: x86_64-linux-gnu
             package: guile-ssh
           - target: x86_64-linux-gnu
-            package: guile-ssh/libssh-8
+            package: guile-ssh/libssh-0.8
           - target: x86_64-linux-gnu
-            package: guile-ssh/libssh-9
+            package: guile-ssh/libssh-0.9
           - target: x86_64-linux-gnu
-            package: guile-ssh/libssh-11
+            package: guile-ssh/libssh-0.11
           - target: x86_64-linux-gnu
-            package: guile-ssh/libssh-12
+            package: guile-ssh/libssh-0.12
           - target: x86_64-linux-gnu
-            package: guile-ssh/libssh-10/gcrypt
+            package: guile-ssh/libssh-0.10/gcrypt
           - target: aarch64-linux-gnu
             package: guile-ssh
           - target: riscv64-linux-gnu

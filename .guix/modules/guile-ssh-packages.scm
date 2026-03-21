@@ -24,7 +24,7 @@
 
 ;; Use this file to build Guile-SSH with GNU Guix:
 ;;
-;;   guix build -L .guix/modules -e '(@ (guile-ssh-packages) guile-ssh/libssh-12)'
+;;   guix build -L .guix/modules -e '(@ (guile-ssh-packages) guile-ssh/libssh-0.12)'
 
 
 ;;; Code:
@@ -126,7 +126,7 @@ applications.")
     (home-page "https://www.libssh.org")
     (license license:lgpl2.1+)))
 
-(define libssh-8
+(define libssh-0.8
   (package
    (inherit libssh)
    (version "0.8.3")
@@ -140,17 +140,17 @@ applications.")
     ;; XXX: Two tests fail.
     (list #:tests? #f))))
 
-(define libssh-8/gcrypt
+(define libssh-0.8/gcrypt
   (package
-    (inherit libssh-8)
+    (inherit libssh-0.8)
     (arguments
-     (substitute-keyword-arguments (package-arguments libssh-8)
+     (substitute-keyword-arguments (package-arguments libssh-0.8)
        ((#:configure-flags flags #~(list))
         #~(cons* "-DWITH_GCRYPT=1" #$flags))))
     (inputs (modify-inputs (package-inputs libssh)
               (replace "openssl" libgcrypt)))))
 
-(define libssh-9
+(define libssh-0.9
   (package
     (inherit libssh)
     (version "0.9.8")
@@ -165,29 +165,29 @@ applications.")
      ;; OPENSSH_KEYS ; SSHD_EXECUTABLE
      (list #:tests? #f))))
 
-(define libssh-9/gcrypt
+(define libssh-0.9/gcrypt
   (package
-    (inherit libssh-9)
+    (inherit libssh-0.9)
     (arguments
-     (substitute-keyword-arguments (package-arguments libssh-9)
+     (substitute-keyword-arguments (package-arguments libssh-0.9)
        ((#:configure-flags flags #~(list))
         #~(cons* "-DWITH_GCRYPT=1" #$flags))))
     (inputs (modify-inputs (package-inputs libssh)
               (replace "openssl" libgcrypt)))))
 
-(define libssh-10 libssh)
+(define libssh-0.10 libssh)
 
-(define libssh-10/gcrypt
+(define libssh-0.10/gcrypt
   (package
-    (inherit libssh-10)
+    (inherit libssh-0.10)
     (arguments
-     (substitute-keyword-arguments (package-arguments libssh-10)
+     (substitute-keyword-arguments (package-arguments libssh-0.10)
        ((#:configure-flags flags #~(list))
         #~(cons* "-DWITH_GCRYPT=1" #$flags))))
     (inputs (modify-inputs (package-inputs libssh)
               (replace "openssl" libgcrypt)))))
 
-(define libssh-11
+(define libssh-0.11
   (package
    (inherit libssh)
    (version "0.11.4")
@@ -198,18 +198,18 @@ applications.")
              (base32
               "00bp5692k05281dvzqzxksa4h35ahhz6wmy61q89wv6nwchc6ah0"))))))
 
-(define libssh-11/gcrypt
+(define libssh-0.11/gcrypt
   (package
-    (inherit libssh-11)
+    (inherit libssh-0.11)
     (arguments
-     (substitute-keyword-arguments (package-arguments libssh-11)
+     (substitute-keyword-arguments (package-arguments libssh-0.11)
        ((#:configure-flags flags #~(list))
         #~(cons* "-DWITH_GCRYPT=1" #$flags))))
     (inputs (modify-inputs (package-inputs libssh)
               ;; XXX: Build fails without openssl.
               (append libgcrypt)))))
 
-(define libssh-12
+(define libssh-0.12
   (package
    (inherit libssh)
    (version "0.12.0")
@@ -222,11 +222,11 @@ applications.")
              (base32
               "08bidaiq4z911zl3v7xc2zb6s8i4p7syfpsfxznmwzijv0jg8shs"))))))
 
-(define libssh-12/gcrypt
+(define libssh-0.12/gcrypt
   (package
-    (inherit libssh-12)
+    (inherit libssh-0.12)
     (arguments
-     (substitute-keyword-arguments (package-arguments libssh-12)
+     (substitute-keyword-arguments (package-arguments libssh-0.12)
        ((#:configure-flags flags #~(list))
         #~(cons* "-DWITH_GCRYPT=1" #$flags))))
     (inputs (modify-inputs (package-inputs libssh)
@@ -288,7 +288,7 @@ applications.")
            pkg-config
            which
            guile-3.0)) ;needed when cross-compiling.
-    (inputs (list guile-3.0 libssh-10))
+    (inputs (list guile-3.0 libssh-0.10))
     (synopsis "Guile bindings to libssh")
     (description
      "Guile-SSH is a library that provides access to the SSH protocol for
@@ -296,65 +296,65 @@ programs written in GNU Guile interpreter.  It is a wrapper to the underlying
 libssh library.")
     (license license:gpl3+)))
 
-(define-public guile-ssh/libssh-8
+(define-public guile-ssh/libssh-0.8
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-8")
+    (name "guile-ssh-with-libssh-0.8")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-8)))))
+              (replace "libssh" libssh-0.8)))))
 
-(define-public guile-ssh/libssh-8/gcrypt
+(define-public guile-ssh/libssh-0.8/gcrypt
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-8-gcrypt")
+    (name "guile-ssh-with-libssh-0.8-gcrypt")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-8/gcrypt)))))
+              (replace "libssh" libssh-0.8/gcrypt)))))
 
-(define-public guile-ssh/libssh-9
+(define-public guile-ssh/libssh-0.9
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-9")
+    (name "guile-ssh-with-libssh-0.9")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-9)))))
+              (replace "libssh" libssh-0.9)))))
 
-(define-public guile-ssh/libssh-9/gcrypt
+(define-public guile-ssh/libssh-0.9/gcrypt
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-9-gcrypt")
+    (name "guile-ssh-with-libssh-0.9-gcrypt")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-9/gcrypt)))))
+              (replace "libssh" libssh-0.9/gcrypt)))))
 
-(define-public guile-ssh/libssh-10
+(define-public guile-ssh/libssh-0.10
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-10")
+    (name "guile-ssh-with-libssh-0.10")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-10)))))
+              (replace "libssh" libssh-0.10)))))
 
-(define-public guile-ssh/libssh-10/gcrypt
+(define-public guile-ssh/libssh-0.10/gcrypt
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-10-gcrypt")
+    (name "guile-ssh-with-libssh-0.10-gcrypt")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-10/gcrypt)))))
+              (replace "libssh" libssh-0.10/gcrypt)))))
 
-(define-public guile-ssh/libssh-11
+(define-public guile-ssh/libssh-0.11
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-11")
+    (name "guile-ssh-with-libssh-0.11")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-11)))))
+              (replace "libssh" libssh-0.11)))))
 
-(define-public guile-ssh/libssh-11/gcrypt
+(define-public guile-ssh/libssh-0.11/gcrypt
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-11-gcrypt")
+    (name "guile-ssh-with-libssh-0.11-gcrypt")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-11/gcrypt)))))
+              (replace "libssh" libssh-0.11/gcrypt)))))
 
-(define-public guile-ssh/libssh-12
+(define-public guile-ssh/libssh-0.12
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-12")
+    (name "guile-ssh-with-libssh-0.12")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-12)))))
+              (replace "libssh" libssh-0.12)))))
 
-(define-public guile-ssh/libssh-12/gcrypt
+(define-public guile-ssh/libssh-0.12/gcrypt
   (package/inherit guile-ssh
-    (name "guile-ssh-with-libssh-12-gcrypt")
+    (name "guile-ssh-with-libssh-0.12-gcrypt")
     (inputs (modify-inputs (package-inputs guile-ssh)
-              (replace "libssh" libssh-12/gcrypt)))))
+              (replace "libssh" libssh-0.12/gcrypt)))))
 
 guile-ssh
 ;;; guile-ssh-packages.scm ends here.
