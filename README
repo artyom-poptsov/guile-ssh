@@ -59,7 +59,7 @@ guix build -f guix.scm
 You can build a variant against a specific libssh version, as in this example:
 
 #+begin_src sh
-guix build -L .guix/modules guile-ssh-with-libssh-8
+guix build -L .guix/modules guile-ssh-with-libssh-0.8
 #+end_src
 
 Last, you can build the entire configuration matrix (several architectures, several libssh versions, several Guile versions) like so:
