@@ -50,11 +50,17 @@
   #:use-module (gnu packages python)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages texinfo)
-  #:use-module (gnu packages tls))
+  #:use-module (gnu packages tls)
+  #:use-module (srfi srfi-26))
 
 
 (define %source-dir
-  (dirname (dirname (dirname (current-filename)))))
+  (or
+   ;; Works for guix build -L .guix/modules -m .guix/manifest.scm
+   (and=> (current-source-directory)
+          (cut string-append <> "/../.."))
+   ;; Works for guix build -L .guix/modules package and Github CI
+   (dirname (dirname (dirname (current-filename))))))
 
 (define (libssh-tarball version)
   (string-append "https://www.libssh.org/files/"
@@ -63,7 +69,7 @@
 
 
 
-(define-public libssh
+(define libssh
   (package
     (name "libssh")
     (version "0.10.6")
@@ -120,7 +126,7 @@ applications.")
     (home-page "https://www.libssh.org")
     (license license:lgpl2.1+)))
 
-(define-public libssh-8
+(define libssh-8
   (package
    (inherit libssh)
    (version "0.8.3")
@@ -134,7 +140,7 @@ applications.")
     ;; XXX: Two tests fail.
     (list #:tests? #f))))
 
-(define-public libssh-8/gcrypt
+(define libssh-8/gcrypt
   (package
     (inherit libssh-8)
     (arguments
@@ -144,7 +150,7 @@ applications.")
     (inputs (modify-inputs (package-inputs libssh)
               (replace "openssl" libgcrypt)))))
 
-(define-public libssh-9
+(define libssh-9
   (package
     (inherit libssh)
     (version "0.9.8")
@@ -159,7 +165,7 @@ applications.")
      ;; OPENSSH_KEYS ; SSHD_EXECUTABLE
      (list #:tests? #f))))
 
-(define-public libssh-9/gcrypt
+(define libssh-9/gcrypt
   (package
     (inherit libssh-9)
     (arguments
@@ -169,9 +175,9 @@ applications.")
     (inputs (modify-inputs (package-inputs libssh)
               (replace "openssl" libgcrypt)))))
 
-(define-public libssh-10 libssh)
+(define libssh-10 libssh)
 
-(define-public libssh-10/gcrypt
+(define libssh-10/gcrypt
   (package
     (inherit libssh-10)
     (arguments
@@ -181,7 +187,7 @@ applications.")
     (inputs (modify-inputs (package-inputs libssh)
               (replace "openssl" libgcrypt)))))
 
-(define-public libssh-11
+(define libssh-11
   (package
    (inherit libssh)
    (version "0.11.4")
@@ -192,7 +198,7 @@ applications.")
              (base32
               "00bp5692k05281dvzqzxksa4h35ahhz6wmy61q89wv6nwchc6ah0"))))))
 
-(define-public libssh-11/gcrypt
+(define libssh-11/gcrypt
   (package
     (inherit libssh-11)
     (arguments
@@ -203,7 +209,7 @@ applications.")
               ;; XXX: Build fails without openssl.
               (append libgcrypt)))))
 
-(define-public libssh-12
+(define libssh-12
   (package
    (inherit libssh)
    (version "0.12.0")
@@ -216,7 +222,7 @@ applications.")
              (base32
               "08bidaiq4z911zl3v7xc2zb6s8i4p7syfpsfxznmwzijv0jg8shs"))))))
 
-(define-public libssh-12/gcrypt
+(define libssh-12/gcrypt
   (package
     (inherit libssh-12)
     (arguments
@@ -232,7 +238,7 @@ applications.")
     (name "guile-ssh")
     (version "git")
     (home-page "https://github.com/artyom-poptsov/guile-ssh")
-    (source (local-file %source-dir
+    (source (local-file %source-dir "guile-ssh-checkout"
                         #:recursive? #t
                         #:select? (git-predicate %source-dir)))
     (build-system gnu-build-system)
@@ -350,4 +356,5 @@ libssh library.")
     (inputs (modify-inputs (package-inputs guile-ssh)
               (replace "libssh" libssh-12/gcrypt)))))
 
-;;; guix.scm ends here.
+guile-ssh
+;;; guile-ssh-packages.scm ends here.

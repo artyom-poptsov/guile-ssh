@@ -48,6 +48,26 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
  - [[https://www.gnu.org/software/guile/][GNU Guile]], version 2.0.12 or later (known to work with 2.0.12, 2.0.14,
    2.2.4, 3.0.1 up to 3.0.11)
  - [[http://www.libssh.org/][libssh]], version 0.8.3 or later.
+* Contributing
+
+You can use Guix to build Guile-SSH non-interactively, like so:
+
+#+begin_src sh
+guix build -f guix.scm
+#+end_src
+
+You can build a variant against a specific libssh version, as in this example:
+
+#+begin_src sh
+guix build -L .guix/modules guile-ssh-with-libssh-8
+#+end_src
+
+Last, you can build the entire configuration matrix (several architectures, several libssh versions, several Guile versions) like so:
+
+#+begin_src sh
+guix build -L .guix/modules -m .guix/manifest.scm
+#+end_src
+
 * Installation
 [[https://repology.org/badge/vertical-allrepos/guile-ssh.svg]]
 
