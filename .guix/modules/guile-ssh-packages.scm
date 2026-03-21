@@ -288,7 +288,7 @@ applications.")
            pkg-config
            which
            guile-3.0)) ;needed when cross-compiling.
-    (inputs (list guile-3.0 libssh-10 libgcrypt))
+    (inputs (list guile-3.0 libssh-10))
     (synopsis "Guile bindings to libssh")
     (description
      "Guile-SSH is a library that provides access to the SSH protocol for
