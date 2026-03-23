@@ -21,25 +21,26 @@
 
 ;;; Commentary:
 
-;; This module contains API that is used for SSH key management.
+;; This module contains the API for SSH key management, for signing data and
+;; for verifying the signatures.
 ;;
 ;; These methods are exported:
 ;;
-;;   key?
-;;   public-key?
-;;   private-key?
-;;   make-keypair
+;;   bytevector->hex-string
 ;;   get-key-type
-;;   public-key->string
-;;   string->pubilc-key
-;;   public-key-from-file
+;;   get-public-key-fingerprint
+;;   get-public-key-hash
+;;   key?
+;;   make-keypair
 ;;   private-key->public-key
 ;;   private-key-from-file
 ;;   private-key-to-file
-;;   get-public-key-hash
-;;   get-public-key-fingerprint
-;;   bytevector->hex-string
+;;   private-key?
+;;   public-key->string
+;;   public-key-from-file
+;;   public-key?
 ;;   sign
+;;   string->pubilc-key
 ;;   verify
 
 
@@ -68,19 +69,34 @@
             sign
             verify))
 
+
+;;; Auxiliary procedures.
+
 (define (bytevector->hex-string bv)
   "Convert bytevector BV to a colon separated hex string."
   (string-join (map (lambda (e) (format #f "~2,'0x" e))
                     (bytevector->u8-list bv))
                ":"))
 
+
+;; Key management.
+
 (define* (private-key-from-file path
                                 #:key
                                 (auth-callback #f)
                                 (user-data #f))
+  "Read private key from a file PATH.  If the the key is encrypted the user will
+be asked using AUTH-CALLBACK for passphrase to decrypt the key. When
+AUTH-CALLBACK is called, USER-DATA is passed to it as an argument.  If no
+AUTH-CALLBACK is provided then the procedure denies access to an encrypted
+key.
+
+Return a new Guile-SSH key or #f on error."
   (%private-key-from-file path auth-callback user-data))
 
 (define* (get-public-key-fingerprint key #:optional (hash 'sha256))
+  "Get a public KEY fingerprint of HASH type as a string.  Return the
+string on success, #f on error."
   (%gssh-get-public-key-fingerprint key hash))
 
 (define* (make-keypair type #:optional (length 0))
@@ -88,6 +104,9 @@
 Return newly generated private key.  Throw `guile-ssh-error' on error.
 When LENGTH is 0, the default size will be used."
   (%gssh-make-keypair type length))
+
+
+;;; Digital signatures API.
 
 (define* (sign data key
                #:key
@@ -121,6 +140,9 @@ Return the signing key on success, #f on error."
     (_
      (format (current-error-port) "verify: DATA must be a string or bytevector")
      #f)))
+
+
+;;; Library loading.
 
 (unless (getenv "GUILE_SSH_CROSS_COMPILING")
   (load-extension "libguile-ssh" "init_key"))
