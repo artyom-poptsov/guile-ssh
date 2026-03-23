@@ -1,6 +1,6 @@
 ;;; session.scm -- SSH session management.
 
-;; Copyright (C) 2013-2024 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+;; Copyright (C) 2013-2024, 2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ;;
 ;; This file is a part of Guile-SSH.
 ;;
@@ -45,6 +45,7 @@
 
 (define-module (ssh session)
   #:use-module (ice-9 optargs)
+  #:use-module (ssh key)
   #:use-module (ssh log)
   #:use-module (ssh version)
   #:export (session
