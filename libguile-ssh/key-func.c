@@ -30,10 +30,6 @@
 #include "error.h"
 
 
-/* Get the type of the key KEY_SMOB.
-
-   Return a key type as a Scheme symbol.  The type can be one of the
-   following list: 'dss, 'rsa, 'rsa1, 'unknown */
 SCM_DEFINE (guile_ssh_key_get_type, "get-key-type", 1, 0, 0,
             (SCM key),
             "\
