@@ -14,8 +14,9 @@
 The @code{(ssh key)} module provides procedures for handling of
 Guile-SSH keys.
 
-@strong{Note} that Guile-SSH does not support ECDSA keys if libssh is
-compiled with GCrypt instead of OpenSSL.
+@strong{Note} that Guile-SSH does not support @abbr{ECDSA, Elliptic Curve
+Digital Signature Algorithm} keys if libssh is compiled with GCrypt instead of
+OpenSSL.
 
 @deffn {Scheme Procedure} make-keypair type length
 Generate a keypair of specified @var{type} and @var{length} (in bits).  This
