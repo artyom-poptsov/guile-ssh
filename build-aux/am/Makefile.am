@@ -1,9 +1,9 @@
-## Config file for GNU Automake. 
+## Configuration file for GNU Automake.
 ##
-## Copyright (C) 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright © 2014, 2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of Guile-SSH.
-## 
+##
 ## Guile-SSH is free software: you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
 ## published by the Free Software Foundation, either version 3 of the
