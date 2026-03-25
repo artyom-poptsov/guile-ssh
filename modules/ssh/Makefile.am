@@ -1,4 +1,4 @@
-## Copyright (C) 2013-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2013-2021, 2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of Guile-SSH.
 ##
@@ -20,13 +20,22 @@ include $(top_srcdir)/build-aux/am/guile.am
 SUBDIRS = dist
 
 SOURCES = \
-	auth.scm channel.scm key.scm session.scm	\
-	server.scm message.scm version.scm log.scm	\
-	tunnel.scm dist.scm sftp.scm popen.scm		\
-	shell.scm agent.scm
+  agent.scm \
+  auth.scm \
+  channel.scm \
+  dist.scm \
+  key.scm \
+  log.scm \
+  message.scm \
+  popen.scm \
+  server.scm \
+  session.scm \
+  sftp.scm \
+  shell.scm \
+  tunnel.scm \
+  version.scm
 
-ETAGS_ARGS = auth.scm channel.scm key.scm session.scm server.scm \
-	message.scm version.scm popen.scm agent.scm
+ETAGS_ARGS = $(SOURCES)
 
 moddir=$(prefix)/share/guile/site/$(GUILE_EFFECTIVE_VERSION)/ssh
 godir=$(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/site-ccache/ssh
