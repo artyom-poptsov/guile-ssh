@@ -20,11 +20,15 @@ acquired from =get-server-public-key= procedure.)
 Reported by graywolf in
 <https://github.com/artyom-poptsov/guile-ssh/issues/41>
 ** Add tests for =ed25519= keys
-Tests were not run for the =ed25519= key despite its widespread use, now they do.
+Tests were not run for the =ed25519= key despite its widespread use, now they
+do.
 
 ** Introduce =sign= and =verify= functions
-
-Based on a functionality introduced in libssh@12, these functions allow to sign and verify a string from a OpenSSH key, and consequently to reproduce git signing with SSH using guile-ssh. This functionality also required the addition of the =get-public-key-fingerprint= procedure, along with tests and documentation.
+Based on a functionality introduced in libssh@12, these functions allow to
+sign and verify a string from a OpenSSH key, and consequently to reproduce git
+signing with SSH using guile-ssh. This functionality also required the
+addition of the =get-public-key-fingerprint= procedure, along with tests and
+documentation.
 
 #+begin_src scheme
 (use-modules (ssh key)
@@ -50,15 +54,21 @@ Based on a functionality introduced in libssh@12, these functions allow to sign 
 #+end_src
 
 ** Drop support for libssh versions older than 0.8.3
-libssh 0.8.3 was released in sept. 2018 and versions lower were deprecated and did not properly compe and test on the Github CI.
+libssh 0.8.3 was released in sept. 2018 and versions lower were deprecated and
+did not properly compe and test on the Github CI.
 
 ** CI/guix: Complete revamp.
-To adapt to the numerous upstream package changes, and the aforementioned drop, the =guix.scm= file has been completely rewritten.
+To adapt to the numerous upstream package changes, and the aforementioned
+drop, the =guix.scm= file has been completely rewritten.
 
-Then it has been moved to =.guix/modules/guile-ssh-packages.scm= as a proper module with package definition to allow a refactor of =guix.yml= CI file.
+Then it has been moved to =.guix/modules/guile-ssh-packages.scm= as a proper
+module with package definition to allow a refactor of =guix.yml= CI file.
 
-The CI on Github now does not run =guix pull= after the last tarball, but it's most likely fine since most of our package definitions are our own, and Guix made the =1.5.0= release since.  This cuts CI time spent on Guix from 30 to 3 mins.
-
+The CI on Github now does not run =guix pull= after the last tarball, but it's
+most likely fine since most of our package definitions are our own, and Guix
+made the =1.5.0= release since.  This cuts CI time spent on Guix from 30 to 3
+minutes.
+
 * Changes in version 0.18.0 (2024-11-10)
 ** Change =(ssh popen)= procedures behavior                     :API_CHANGE:
 Now the following procedures handle the program arguments the same way as
