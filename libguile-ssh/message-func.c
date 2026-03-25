@@ -1,6 +1,6 @@
 /* message-func.c -- Functions for working with SSH messages.
  *
- * Copyright (C) 2013, 2014 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+ * Copyright (C) 2013, 2014, 2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
  *
  * This file is part of Guile-SSH
  *
@@ -31,6 +31,23 @@
 #include "key-type.h"
 #include "error.h"
 #include "log.h"
+
+
+/* TODO: The following procedures are deprecated in libssh in favor of the new
+   callback-based server implementation:
+   - ssh_message_auth_password
+   - ssh_message_auth_pubkey
+   - ssh_message_auth_publickey_state
+   - ssh_message_channel_request_pty_term
+   - ssh_message_channel_request_pty_width
+   - ssh_message_channel_request_pty_height
+   - ssh_message_channel_request_pty_pxheight
+   - ssh_message_channel_request_pty_pxwidth
+
+   We should deprecate this API as well and provide a proper callback-based
+   server.
+
+   See <https://api.libssh.org/master/group__libssh__server.html> */
 
 
 /* Procedures that are used for replying on requests. */
@@ -287,16 +304,17 @@ Get type of the message MSG.\
 
 
 /* These procedures return a Scheme vector that represents a SSH
-   request.  The goal is to unify way of working with requests. */
+   request.  The goal is to unify way of working with requests.
 
-/* <result> = "#(" <user> <WSP> <password> <WSP> <key> ")" */
+   Vector format:
+     <result> = "#(" <user> <WSP> <password> <WSP> <key> ")" */
 static SCM
 get_auth_req (ssh_message msg, SCM scm_msg) /* FIXME: accept only SCM */
 {
   SCM result = scm_c_make_vector (4, SCM_UNDEFINED);
   const char *user     = ssh_message_auth_user (msg);
-  const char *password = ssh_message_auth_password (msg);
-  ssh_key public_key   = ssh_message_auth_pubkey (msg);
+  const char *password = ssh_message_auth_password (msg); /* XXX: Deprecated */
+  ssh_key public_key   = ssh_message_auth_pubkey (msg);   /* XXX: Deprecated */
   SCM pkey_state;
 
   if (user)
@@ -312,6 +330,7 @@ get_auth_req (ssh_message msg, SCM scm_msg) /* FIXME: accept only SCM */
   SCM_SIMPLE_VECTOR_SET (result, 2, gssh_key_to_scm(public_key, scm_msg));
 
   pkey_state = gssh_symbol_to_scm (pubkey_state_type,
+                                   /* XXX: Deprecated. */
                                   (int) ssh_message_auth_publickey_state (msg));
   SCM_SIMPLE_VECTOR_SET (result, 3, pkey_state);
 
@@ -324,6 +343,7 @@ static SCM
 get_pty_req (ssh_message msg)
 {
   SCM result = scm_c_make_vector (5, SCM_UNDEFINED);
+  /* XXX: "ssh_message_channel_request_pty_*" procedures are deprecated */
   const char *term = ssh_message_channel_request_pty_term (msg);
   int w   = ssh_message_channel_request_pty_width (msg);
   int h   = ssh_message_channel_request_pty_height (msg);
