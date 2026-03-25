@@ -27,13 +27,16 @@ The project is split into two parts: a C library (=libguile-ssh=) and a Scheme
 =ssh= library.
 
 ** Versioning
-Guile-SSH uses [[https://semver.org/][semantic versioning]].  While the project in the [[https://semver.org/#spec-item-4][0.y.z phase]], =y=
-specifies notable changes in API (including the changes that break backward
-compatibility) and =z= denotes small backward-compatible changes and bug
-fixes.
+Guile-SSH uses [[https://semver.org/][semantic versioning]].
 
-When the project reach =1.y.z= phase, we must adhere to the recommendations in
-the semantic versioning specs.
+Starting from the version 1.0.0, the format is =MAJOR.MINOR.PATCH=, where the
+rules for incrementing each part are:
+
+- =MAJOR= version is incremented when incompatible API changes are introduced.
+- =MINOR= version is incremented when some functionality is added in a
+  backward compatible manner.
+- =PATCH= version is incremented when backward compatible bug fixes are
+  introduced.
 
 ** Code Map
 *** Overview

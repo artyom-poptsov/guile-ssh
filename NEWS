@@ -8,7 +8,7 @@ Copyright (C) Nicolas Graves <ngraves@ngraves.fr>
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-* Changes since version 0.18.0
+* Changes in version 1.0.0 (2026-03-25)
 ** modules/ssh/key.scm: =make-keypair= length is now optional :API_CHANGE:
 =libssh='s =ssh_pki_generate= uses a default size when it's set to 0. Make the
 =length= argument of =make-keypair= optional and rely on this default when

@@ -12,7 +12,7 @@
 # -------------------------------------------------------------------------------
 
 AC_INIT([Guile-SSH],
-  [0.18.0],
+  [1.0.0],
   [poptsov.artyom@gmail.com],
   [guile-ssh],
   [https://github.com/artyom-poptsov/guile-ssh])
@@ -20,7 +20,7 @@ AC_INIT([Guile-SSH],
 # -------------------------------------------------------------------------------
 dnl See
 dnl <https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html>
-LIBGUILE_SSH_INTERFACE="18:0:0"
+LIBGUILE_SSH_INTERFACE="19:0:1"
 AC_SUBST(LIBGUILE_SSH_INTERFACE)
 
 AC_CONFIG_AUX_DIR([build-aux])
