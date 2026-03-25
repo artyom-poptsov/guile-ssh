@@ -1,4 +1,4 @@
-## Copyright (C) 2015-2021 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright (C) 2015-2021, 2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
 ##
 ## This file is part of Guile-SSH.
 ##
@@ -18,8 +18,10 @@
 include $(top_srcdir)/build-aux/am/guile.am
 
 SOURCES = \
-	node.scm	\
-	job.scm
+  node.scm \
+  job.scm
+
+ETAGS_ARGS = $(SOURCES)
 
 moddir=$(prefix)/share/guile/site/$(GUILE_EFFECTIVE_VERSION)/ssh/dist
 godir=$(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/site-ccache/ssh/dist
