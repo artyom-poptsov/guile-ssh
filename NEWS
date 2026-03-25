@@ -55,7 +55,7 @@ documentation.
 
 ** Drop support for libssh versions older than 0.8.3
 libssh 0.8.3 was released in sept. 2018 and versions lower were deprecated and
-did not properly compe and test on the Github CI.
+did not properly compile and test on the Github CI.
 
 ** CI/guix: Complete revamp.
 To adapt to the numerous upstream package changes, and the aforementioned
