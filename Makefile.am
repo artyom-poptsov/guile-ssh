@@ -1,6 +1,7 @@
-## Config file for GNU Automake. 
+## Config file for GNU Automake.
 ##
-## Copyright (C) 2013, 2014, 2015, 2016 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright © 2013, 2014, 2015, 2016, 2026 Artyom V. Poptsov <poptsov.artyom@gmail.com>
+## Copyright © 2016 Ludovic Courtès <ludo@gnu.org>
 ##
 ## This file is part of Guile-SSH.
 ##
@@ -17,22 +18,29 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I build-aux/m4 --install
+ACLOCAL_AMFLAGS = \
+  -I build-aux/m4 --install
 
-SUBDIRS = build-aux libguile-ssh examples doc modules tests
+SUBDIRS = \
+  build-aux \
+  libguile-ssh \
+  examples \
+  doc \
+  modules \
+  tests
 
-EXTRA_DIST =					\
-	build-aux/config.rpath			\
-	build-aux/compile			\
-	.dir-locals.el				\
-	TODO
+EXTRA_DIST = \
+  build-aux/config.rpath \
+  build-aux/compile \
+  .dir-locals.el \
+  TODO
 
 gen-ChangeLog:
-	if test -d .git; then				\
-	  $(top_srcdir)/build-aux/gitlog-to-changelog	\
-	    194fd7d..HEAD > $(distdir)/cl-t;		\
-	  rm -f $(distdir)/ChangeLog;			\
-	  mv $(distdir)/cl-t $(distdir)/ChangeLog;	\
+	if test -d .git; then \
+	  $(top_srcdir)/build-aux/gitlog-to-changelog \
+	    194fd7d..HEAD > $(distdir)/cl-t; \
+	  rm -f $(distdir)/ChangeLog; \
+	  mv $(distdir)/cl-t $(distdir)/ChangeLog; \
 	fi
 
 dist-hook: gen-ChangeLog
