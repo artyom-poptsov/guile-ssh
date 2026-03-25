@@ -18,8 +18,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Guile-SSH.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = \
-  -I build-aux/m4 --install
+ACLOCAL_AMFLAGS = -I build-aux/m4 --install
 
 SUBDIRS = \
   build-aux \
