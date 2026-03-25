@@ -158,9 +158,6 @@ AC_CONFIG_FILES([
 AM_CONDITIONAL([CROSS_COMPILING],
   [test "x$cross_compiling" = "xyes"])
 
-# Generate a Makefile, based on the results.
-AC_OUTPUT
-
 if test "$guilesitedir" != "$GUILE_SITE"; then
   # Guile has a different prefix than this module
   AC_MSG_WARN([]
@@ -188,5 +185,10 @@ AS_IF(
   [AC_MSG_NOTICE(
      [Guile-SSH configured without DSA public key algorithm support.])]
 )
+
+# -------------------------------------------------------------------------------
+
+# Generate a Makefile, based on the results.
+AC_OUTPUT
 
 dnl configure.ac ends here.
