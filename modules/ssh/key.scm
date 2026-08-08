@@ -136,7 +136,7 @@ Return the signing key on success, #f on error."
     ((? string?)
      (%gssh-verify (string->utf8 data) signature namespace))
     ((? bytevector?)
-     (%gssh-sign data key namespace hash))
+     (%gssh-verify data signature namespace))
     (_
      (format (current-error-port) "verify: DATA must be a string or bytevector")
      #f)))
