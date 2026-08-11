@@ -48,6 +48,10 @@
   (unless (>= %libssh-minor-version 12)
     expr))
 
+(define-syntax-rule (unless-sk-supported expr)
+  (unless (>= %libssh-minor-version 10)
+    expr))
+
 (test-begin-with-log "key")
 
 (test-assert-with-log "public-key-from-file: RSA"
@@ -65,6 +69,16 @@
  (test-skip "public-key-from-file: ECDSA"))
 (test-assert-with-log "public-key-from-file: ECDSA"
   (public-key-from-file %ecdsakey-pub))
+
+(unless-sk-supported
+ (test-skip "public-key-from-file: SK-ECDSA"))
+(test-assert-with-log "public-key-from-file: SK-ECDSA"
+  (public-key-from-file %skecdsakey-pub))
+
+(unless-sk-supported
+ (test-skip "public-key-from-file: SK-ED25519"))
+(test-assert-with-log "public-key-from-file: SK-ED25519"
+  (public-key-from-file %sked25519key-pub))
 
 (test-assert "private-key-from-file: RSA"
   (private-key-from-file %rsakey))
@@ -179,6 +193,16 @@
         ;; For libssh versions prior to 0.9
         (eq? 'ecdsa (get-key-type key)))))
 
+(unless-sk-supported
+ (test-skip "get-key-type: SK-ECDSA"))
+(test-assert-with-log "get-key-type: SK-ECDSA"
+  (eq? 'sk-ecdsa (get-key-type (public-key-from-file %skecdsakey-pub))))
+
+(unless-sk-supported
+ (test-skip "get-key-type: SK-ED25519"))
+(test-assert-with-log "get-key-type: SK-ED25519"
+  (eq? 'sk-ed25519 (get-key-type (public-key-from-file %sked25519key-pub))))
+
 
 (unless-openssl
  (test-skip "private-key-to-file"))
@@ -201,6 +225,10 @@
   "AAAAB3NzaC1kc3MAAACBAOpnJ64w3Qo3HkCCODTPpLqPUrDLg0bxWdoae2tsXFwhBthIlCV8N0hTzOj1Qrgnx/WiuDk5qXSKOHisyqVBv8sGLOUTBy0Fdz1SobZ9+WGu5+5EiJm78MZcgtHXHu1GPuImANifbSaDJpIGKItq0V5WhpLXyQC7o0Vt70sGQboVAAAAFQDeu+6APBWXtqq2Ch+nODn7VDSIhQAAAIA5iGHYbztSq8KnWj1J/6GTvsPp1JFqZ3hFX5wlGIV4XxBdeEZnCPrhYJumM7SRjYjWMpW5eqFNs5o3d+rJPFFwDo7yW10WC3Bfpo5xRxU35xf/aFAVbm3vi/HRQvv4cFrwTLvPHgNYGYdZiHXCXPoYIh+WoKT9n3MfrBXB4hpAmwAAAIEArkWuRnbjfPVFpXrWGw6kMPVdhOZr1ghdlG5bY31y4UKUlmHvXx5YZ776dSRSMJY2u4lS73+SFgwPdkmpgGma/rZdd9gly9T7SiSr/4qXJyS8Muh203xsAU3ukRocY8lsvllKEGiCJmrUTJWmj0UYEDsbqy2k/1Yz2Q/awygyk9c=")
 (define %ecdsakey-pub-string
   "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHcpje/fp21KjuZFKgmKAAwHeYJ6e3ny4LwEVjZr8hOCVlBvqj7/krVqxbwZI7EcowbpYI1F8ZszS7zfUhKT3U4=")
+(define %skecdsakey-pub-string
+  "AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBG/X90PSo1sFubgmYfBr0BB0fDNg4EOSm0ABQlzItfeRzySgouhAXquFQoZ5k/qm/4BqdVFPI538hMZSZluC3uEAAAAUc3NoOnRlc3RAZXhhbXBsZS5jb20=")
+(define %sked25519key-pub-string
+  "AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINr1udr8IT2FdkMxfojftF7oCXM1VmHTIHwP9TfxJLa+AAAAFHNzaDp0ZXN0QGV4YW1wbGUuY29t")
 
 
 (test-equal "public-key->string, RSA"
@@ -244,6 +272,18 @@
       (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa-p256))
       (public-key->string (string->public-key %ecdsakey-pub-string 'ecdsa)))
   %ecdsakey-pub-string)
+
+(unless-sk-supported
+ (test-skip "string->public-key, SK-ECDSA"))
+(test-equal "string->public-key, SK-ECDSA"
+  (public-key->string (string->public-key %skecdsakey-pub-string 'sk-ecdsa))
+  %skecdsakey-pub-string)
+
+(unless-sk-supported
+ (test-skip "string->public-key, SK-ED25519"))
+(test-equal "string->public-key, SK-ED25519"
+  (public-key->string (string->public-key %sked25519key-pub-string 'sk-ed25519))
+  %sked25519key-pub-string)
 
 (test-assert-with-log "string->public-key, RSA, gc test"
   (let ((max-keys 1000))

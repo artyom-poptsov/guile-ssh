@@ -47,6 +47,13 @@ static const gssh_symbol_t key_types[] = {
   { "ecdsa-p521-cert01", SSH_KEYTYPE_ECDSA_P521_CERT01 },
 #endif
 
+#if HAVE_LIBSSH_0_10
+  { "sk-ecdsa",          SSH_KEYTYPE_SK_ECDSA          },
+  { "sk-ecdsa-cert01",   SSH_KEYTYPE_SK_ECDSA_CERT01   },
+  { "sk-ed25519",        SSH_KEYTYPE_SK_ED25519        },
+  { "sk-ed25519-cert01", SSH_KEYTYPE_SK_ED25519_CERT01 },
+#endif
+
   { "ed25519", SSH_KEYTYPE_ED25519 },
   { "unknown", SSH_KEYTYPE_UNKNOWN },
   { NULL,      -1                  }
@@ -103,7 +110,8 @@ _print (SCM smob, SCM port, scm_print_state *pstate)
 /*
   Convert SSH key type to/from a Scheme symbol.
   Possible symbols are: 'dss, 'rsa, 'rsa1, 'ecdsa, its variants if
-  libssh >= 0.9, 'ed25519, 'unknown.
+  libssh >= 0.9, 'sk-ecdsa, 'sk-ed25519 and their -cert01 variants if
+  libssh >= 0.10, 'ed25519, 'unknown.
 */
 
 SCM

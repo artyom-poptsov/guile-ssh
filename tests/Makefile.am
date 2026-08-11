@@ -71,6 +71,8 @@ EXTRA_DIST = \
   keys/ecdsakey.pub \
   keys/ed25519key \
   keys/ed25519key.pub \
+  keys/skecdsakey.pub \
+  keys/sked25519key.pub \
   keys/rsakey \
   keys/rsakey.pub \
   keys/encrypted-ecdsa-key \
