@@ -20,7 +20,8 @@
 
 (add-to-load-path (getenv "abs_top_srcdir"))
 
-(use-modules (srfi srfi-64)
+(use-modules (rnrs bytevectors)
+             (srfi srfi-64)
              (ssh key)
              (ssh version)
              (tests common))
@@ -367,6 +368,33 @@
  (test-skip "verify: RSA, invalid signature"))
 (test-assert-with-log "verify: RSA, invalid signature"
   (not (verify %test-data "invalid-signature")))
+
+(unless-sshsig-supported
+ (test-skip "sign: RSA, bytevector data"))
+(test-assert-with-log "sign: RSA, bytevector data"
+  (let* ((private-key (private-key-from-file %rsakey))
+         (signature (sign (string->utf8 %test-data) private-key)))
+    (and (string? signature)
+         (not (string-null? signature)))))
+
+(unless-sshsig-supported
+ (test-skip "verify: RSA, bytevector data, valid signature"))
+(test-assert-with-log "verify: RSA, bytevector data, valid signature"
+  (let* ((private-key (private-key-from-file %rsakey))
+         (signature (sign (string->utf8 %test-data) private-key)))
+    (verify (string->utf8 %test-data) signature)))
+
+(unless-sshsig-supported
+ (test-skip "verify: RSA, bytevector data, invalid signature"))
+(test-assert-with-log "verify: RSA, bytevector data, invalid signature"
+  (not (verify (string->utf8 %test-data) "invalid-signature")))
+
+(unless-sshsig-supported
+ (test-skip "verify: RSA, string data signed, verified as bytevector"))
+(test-assert-with-log "verify: RSA, string data signed, verified as bytevector"
+  (let* ((private-key (private-key-from-file %rsakey))
+         (signature (sign %test-data private-key)))
+    (verify (string->utf8 %test-data) signature)))
 
 (unless-sshsig-supported
  (test-skip "sign with custom namespace and hash"))
