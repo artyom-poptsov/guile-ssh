@@ -46,6 +46,8 @@
             %dsakey-pub
             %ecdsakey
             %ecdsakey-pub
+            %skecdsakey-pub
+            %sked25519key-pub
             %rsakey-encrypted
             %ed25519key-encrypted
             %ecdsakey-encrypted
@@ -95,6 +97,8 @@
 (define %dsakey-pub     (format #f "~a/tests/keys/dsakey.pub"   %topdir))
 (define %ecdsakey       (format #f "~a/tests/keys/ecdsakey"     %topdir))
 (define %ecdsakey-pub   (format #f "~a/tests/keys/ecdsakey.pub" %topdir))
+(define %skecdsakey-pub   (format #f "~a/tests/keys/skecdsakey.pub"   %topdir))
+(define %sked25519key-pub (format #f "~a/tests/keys/sked25519key.pub" %topdir))
 
 (define %rsakey-encrypted     (format #f "~a/tests/keys/encrypted-rsa-key" %topdir))
 (define %ed25519key-encrypted (format #f "~a/tests/keys/encrypted-ed25519-key" %topdir))
