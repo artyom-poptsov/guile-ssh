@@ -83,6 +83,10 @@
     (outputs '("out" "debug"))
     (arguments
      (list
+      ;; Even as few as 6 processors have been reported to cause test
+      ;; failures, see
+      ;; https://codeberg.org/guix/guix/pulls/6776#issuecomment-11085680
+      #:parallel-tests? #f
       #:configure-flags
       #~(list #$@(if (%current-target-system)
                      #~()
