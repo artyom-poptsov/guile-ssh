@@ -1,0 +1,42 @@
+* Contributing to Guile-SSH
+
+** Coding style
+
+Guile-SSH uses [[https://www.gnu.org/prep/standards/standards.html][GNU coding style]] for C code (=libguile-ssh= sub-directory.)
+
+** Writing commit messages
+
+We recommend to use [[https://www.conventionalcommits.org/][Conventional Commits]] for writing commit messages.
+
+The format is well-documented and formalized, and such commit messages can be
+parsed automatically by scripts/bots (e.g. for preparing release notes.)
+
+- The length of the first line in the commit message SHOULD be around 50
+  characters in length (including change type and scope), and MUST NOT be
+  longer than 72 characters.  It helps to keep the Git history readable in all
+  circumstances.
+- Take your time and write detailed commit descriptions (in other words, the
+  body of the message), unless the change you have made is trivial.  This
+  allows a viewer to quickly understand what was changed and why, without the
+  need to look inside the code.  The commit message body MUST be separated
+  from the short description (the first line) by an empty line.  The length of
+  each line in the commit message body MUST NOT be greater than 72 characters.
+- While the Conventional Commits specification does not formalize the commit
+  message body format, we suggest to use [[https://www.gnu.org/prep/standards/html_node/Style-of-Change-Logs.html][GNU ChangeLog format]] inside commit
+  description body in the cases when it is useful to indicate what file was
+  changed, and which part of it.
+
+A commit message example:
+
+#+begin_example
+feat(libguile-ssh): add "foo-procedure"
+
+A long description of the changes that has been made.  If it is too long
+we must add line breaks.  This optionally follows by the list of files
+that were changed in the commit in the GNU ChangeLog format.
+
+* libguile-ssh/auth.c (foo-procedure): New procedure.
+* libguile-ssh/auth.h: Export it.
+
+Signed-off-by: Random J. Hacker <rjh@example.org>
+#+end_example

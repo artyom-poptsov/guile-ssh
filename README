@@ -50,6 +50,8 @@ written in [[https://www.gnu.org/software/guile/][GNU Guile]] interpreter.  It i
  - [[http://www.libssh.org/][libssh]], version 0.8.3 or later.
 * Contributing
 
+See [[./CONTRIBUTING.org][CONTRIBUTING]] file for contributing guidelines.
+
 You can use Guix to build Guile-SSH non-interactively, like so:
 
 #+begin_src sh
